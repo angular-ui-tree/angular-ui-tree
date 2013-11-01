@@ -1,4 +1,4 @@
-UINestedSortable Component for Angular UI
+Angular UI NestedSortable
 ======================
 
 An Angularjs ui component that can sort nested lists.
@@ -52,7 +52,7 @@ HTML View or Templates
 
 ### Sample1
 
-A nested list bind with a nested array.  
+A nested list, it binds with a nested array, it the sort order changed, the data will be updated.  
 [Try Sample1](http://jimliu.github.io/Angular-NestedSortable/demo/sample1.html)
 
 ### Sample2
