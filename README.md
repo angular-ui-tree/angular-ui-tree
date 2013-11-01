@@ -42,10 +42,21 @@ HTML View or Templates
 ```  
 
 - Adding `ui-nested-sortable` to your root element.
-- Using `ng-model` to bind the list data with element.
+- Using `ng-model` to bind the list data with element. It should be an array.
 - Adding `ui-nested-sortable-item` to your item element, it always follow the `ng-repeat` attribute.
 - Adding `ui-nested-sortable-handle` to mark which element do you want to handle the drage action
 - All `ui-nested-sortable`, `ng-model`, `ui-nested-sortable-item` and `ui-nested-sortable-handle` are necessary. And they can be nested.
 
 
+## Samples
+
+### Sample1
+
+A nested list bind with a nested array.  
+[Try Sample1](http://jimliu.github.io/Angular-NestedSortable/demo/sample1.html)
+
+### Sample2
+
+Two-level list, the data type of top level is 'chapter', the data type of the secend level is 'lecture', the node can only be dragged & dropped to another node which with same data type.  
+[Try Sampl1](http://jimliu.github.io/Angular-NestedSortable/demo/sample2.html)
 
