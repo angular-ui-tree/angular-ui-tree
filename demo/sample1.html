@@ -17,7 +17,7 @@
               <div ui-nested-sortable-handle>
                 {{item.title}}
               </div>
-              <ol ui-nested-sortable="options" ng-if="item.items" ng-model="item.items">
+              <ol ui-nested-sortable="options" ng-model="item.items">
                 <li ng-repeat="subItem in item.items" ui-nested-sortable-item="">
                   <div ui-nested-sortable-handle>
                     {{subItem.title}}
