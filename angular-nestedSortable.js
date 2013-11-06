@@ -187,6 +187,9 @@ angular.module('ui.nestedSortable', [])
 				callbacks.itemAdded = function(scope, sourceItem, destIndex) {
 					
 				}
+				callbacks.itemMoved = function(sourceScope, sourceItem, sourceIndex, destScope, destIndex) {
+
+				}
 
 				scope.$watch(attrs.uiNestedSortable, function(newVal, oldVal){
 					angular.forEach(newVal, function(value, key){
@@ -381,6 +384,7 @@ angular.module('ui.nestedSortable', [])
 							else {
 								scope.callbacks.itemRemoved(scope.sortableElement.scope(), source, sourceIndex);
 								targetScope.callbacks.itemAdded(targetScope, source, destIndex);
+								scope.callbacks.itemMoved(scope.sortableElement.scope(), source, sourceIndex, targetScope, destIndex);
 							}
 						};
 
