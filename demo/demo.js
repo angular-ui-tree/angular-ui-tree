@@ -136,10 +136,15 @@ app.controller('sample2Ctrl', function ($scope) {
 			$scope.$apply();
 		},
 		itemRemoved: function(scope, sourceItem, sourceIndex) {
-			$scope.info = "Chapter [" + scope.chapter.title + "] removed a lecture [" + sourceItem.title + "] from " + sourceIndex + ".";
+			var info = "Chapter [" + scope.chapter.title + "] removed a lecture [" + sourceItem.title + "] from " + sourceIndex + ".";
+			console.log(info);
 		},
 		itemAdded: function(scope, sourceItem, destIndex) {
-			$scope.info += "\r\nChapter [" + scope.chapter.title + "] added a lecture [" + sourceItem.title + "] to " + destIndex;
+			var info = "Chapter [" + scope.chapter.title + "] added a lecture [" + sourceItem.title + "] to " + destIndex;
+			console.log(info);
+		},
+		itemMoved: function(sourceScope, sourceItem, sourceIndex, destScope, destIndex) {
+			$scope.info = "Lecture [" + sourceItem.title + "] moved from [" + sourceScope.chapter.title + "][" + sourceIndex + "] to [" + destScope.chapter.title + "][" + destIndex + "]";
 			$scope.$apply();
 		},
 	};
