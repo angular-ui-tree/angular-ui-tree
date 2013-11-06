@@ -107,8 +107,6 @@ angular.module('ui.nestedSortable', [])
 		}		
 		$scope.insertSortableItem = function(index, itemModelData) {
 			$scope.sortableModelValue.splice(index, 0, itemModelData);
-		}
-		$scope.applyChange = function() {
 			$scope.$apply();
 		}
 	}
@@ -124,7 +122,9 @@ angular.module('ui.nestedSortable', [])
 		$scope.removeItem = function() {
 			var index = $scope.$index;
 			if (index > -1) {
-				return $scope.sortableModelValue.splice(index, 1)[0];;
+				var item = $scope.sortableModelValue.splice(index, 1)[0];
+				$scope.$apply();
+				return item;
 			}
 			return null;
 		}
@@ -177,6 +177,15 @@ angular.module('ui.nestedSortable', [])
 
 				callbacks.accept = function(modelData) {
 					return true;
+				}
+				callbacks.orderChanged = function(scope, sourceItem, sourceIndex, destIndex) {
+					
+				}
+				callbacks.itemRemoved = function(scope, sourceItem, sourceIndex) {
+					
+				}
+				callbacks.itemAdded = function(scope, sourceItem, destIndex) {
+					
 				}
 
 				scope.$watch(attrs.uiNestedSortable, function(newVal, oldVal){
@@ -236,7 +245,7 @@ angular.module('ui.nestedSortable', [])
 						firstMoving, targetItem, targetBefore;
 
 				var placeElm,hiddenPlaceElm;
-				var targetScope, toIndex;
+				var targetScope, sourceIndex, destIndex, saveParent;
 
 				var dragStartEvent = function(e) {	
     			if (e.button == 2 || e.which == 3) // disable right click 
@@ -250,6 +259,7 @@ angular.module('ui.nestedSortable', [])
 
 					firstMoving = true;
 					targetScope = null;
+					sourceIndex = scope.$index;
 					var tagName = scope.sortableItemElement.prop('tagName');
 					placeElm = angular.element(document.createElement(tagName))
 																.addClass(config.placeHolderClass);
@@ -307,22 +317,24 @@ angular.module('ui.nestedSortable', [])
 							return;
 						};
 
-						// check if target accept current item
-
+						sameParent = false;
 						// move vertical
 						if (!pos.dirAx) {
 							targetBefore = e.pageY < ($helper.offset(targetElm).top + $helper.height(targetElm) / 2);
 							if (targetBefore) {
 								if (currentAccept) {
 									targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
-									toIndex = targetItem.$index;
+									destIndex = targetItem.$index;
 									targetScope = targetItem;
+									sameParent = (scope.sortableElement == targetScope.sortableElement);
+									if (sameParent && sourceIndex < destIndex) 
+										destIndex--;
 								}
 								else if (childAccept && targetItem.$index > 0) {
 									targetElm = angular.element(targetElm.parent().children()[targetItem.$index - 1]);
 									targetItem = targetElm.scope();
 									targetItem.subSortableElement.append(placeElm);
-									toIndex = 0;
+									destIndex = 0;
 									targetScope = targetItem.subSortableElement.scope();
 								}
 								
@@ -330,12 +342,13 @@ angular.module('ui.nestedSortable', [])
 							else {
 								if (currentAccept) {
 									targetElm.after(placeElm);
-									toIndex = targetItem.$index + 1;
+									destIndex = targetItem.$index + 1;
 									targetScope = targetItem;
+									sameParent = (scope.sortableElement == targetScope.sortableElement);
 								}
 								else if (childAccept) {
 									targetItem.subSortableElement.append(placeElm);
-									toIndex = 0;
+									destIndex = 0;
 									targetScope = targetItem.subSortableElement.scope();
 								}
 							}
@@ -358,11 +371,17 @@ angular.module('ui.nestedSortable', [])
 						dragElm = null;					
 
 						// update model data
-						if (targetScope) {
-							var data = scope.removeItem();
-							scope.applyChange();
-							targetScope.insertSortableItem(toIndex, data);
-							targetScope.applyChange();
+						if (targetScope && !(sameParent && sourceIndex == destIndex)) {
+							var source = scope.removeItem();
+							targetScope.insertSortableItem(destIndex, source);
+
+							if (sameParent) {
+								scope.callbacks.orderChanged(scope.sortableElement.scope(), source, sourceIndex, destIndex);
+							}
+							else {
+								scope.callbacks.itemRemoved(scope.sortableElement.scope(), source, sourceIndex);
+								targetScope.callbacks.itemAdded(targetScope, source, destIndex);
+							}
 						};
 
 

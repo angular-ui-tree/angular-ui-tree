@@ -46,6 +46,7 @@ HTML View or Templates
 - Adding `ui-nested-sortable-item` to your item element, it always follow the `ng-repeat` attribute.
 - Adding `ui-nested-sortable-handle` to mark which element do you want to handle the drage action
 - All `ui-nested-sortable`, `ng-model`, `ui-nested-sortable-item` and `ui-nested-sortable-handle` are necessary. And they can be nested.
+- If you add a `nodrag` attribute to an element, the element won't response for the drag action.
 
 
 ## Samples
