@@ -28,7 +28,10 @@
           </ol>          
         </td>
         <td>
-          <textarea class="code">{{ chapters | json }}</textarea>
+          <div class="info">
+            {{info}}
+          </div>
+          <pre class="code">{{ chapters | json }}</pre>
         </td>
       </tr>
     </table>

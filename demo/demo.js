@@ -114,18 +114,34 @@ app.controller('sample2Ctrl', function ($scope) {
 		}
 	];
 
-
+	$scope.info = "";
 	$scope.chapters = chapters;
 
 	$scope.chaptersOptions = {
 		accept: function(data) {
 			return (data.type == 'chapter'); // only accept chapter
-		}
+		},
+		orderChanged: function(scope, sourceItem, sourceIndex, destIndex) {
+			$scope.info = "Chapter [" + sourceItem.title + "] changed order from " + sourceIndex + " to " + destIndex;
+			$scope.$apply();
+		},
+		
 	};
 	$scope.lecturesOptions = {
 		accept: function(data) {
 			return (data.type == 'lecture'); // only accept lecture
-		}
+		},
+		orderChanged: function(scope, sourceItem, sourceIndex, destIndex) {
+			$scope.info = "Lecture [" + sourceItem.title + "] changed order from " + sourceIndex + " to " + destIndex;
+			$scope.$apply();
+		},
+		itemRemoved: function(scope, sourceItem, sourceIndex) {
+			$scope.info = "Chapter [" + scope.chapter.title + "] removed a lecture [" + sourceItem.title + "] from " + sourceIndex + ".";
+		},
+		itemAdded: function(scope, sourceItem, destIndex) {
+			$scope.info += "\r\nChapter [" + scope.chapter.title + "] added a lecture [" + sourceItem.title + "] to " + destIndex;
+			$scope.$apply();
+		},
 	};
 
 });
