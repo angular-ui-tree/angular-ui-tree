@@ -238,7 +238,10 @@ angular.module('ui.nestedSortable', [])
 				var placeElm,hiddenPlaceElm;
 				var targetScope, toIndex;
 
-				var dragStartEvent = function(e) {
+				var dragStartEvent = function(e) {	
+    			if (e.button == 2 || e.which == 3) // disable right click 
+    				return; 
+
 					var target = angular.element(e.target);
 					if (typeof target.attr('nodrag') != "undefined") 
 						return;

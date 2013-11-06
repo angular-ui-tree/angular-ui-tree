@@ -17,7 +17,7 @@
               <div ui-nested-sortable-handle>
                 {{item.title}}
               </div>
-              <ol ui-nested-sortable="options" ng-if="item.items" ng-model="item.items">
+              <ol ui-nested-sortable="options" ng-model="item.items">
                 <li ng-repeat="subItem in item.items" ui-nested-sortable-item="">
                   <div ui-nested-sortable-handle>
                     {{subItem.title}}
@@ -37,7 +37,7 @@
 
 
   </div>
-  <script src="http://code.angularjs.org/1.2.0-rc.3/angular.min.js"></script>
+  <script src="http://code.angularjs.org/1.2.0-rc.2/angular.min.js"></script>
   <script type="text/javascript" src="../angular-nestedSortable.js"></script>
   <script type="text/javascript" src="demo.js"></script>
 </body>
