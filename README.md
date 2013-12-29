@@ -59,5 +59,5 @@ A nested list, it binds with a nested array, it the sort order changed, the data
 ### Sample2
 
 Two-level list, the data type of top level is 'chapter', the data type of the secend level is 'lecture', the node can only be dragged & dropped to another node which with same data type.  
-[Try Sampl1](http://jimliu.github.io/Angular-NestedSortable/demo/sample2.html)
+[Try Sampl2](http://jimliu.github.io/Angular-NestedSortable/demo/sample2.html)
 

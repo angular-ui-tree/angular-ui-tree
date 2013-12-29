@@ -305,6 +305,13 @@ angular.module('ui.nestedSortable', [])
 							firstMoving = false;
 							return;
 						};
+						/**
+			            * move horizontal
+			            */
+			            if (pos.dirAx && pos.distAxX >= config.threshold) {
+			            	// todo:
+			            	// console.log("move horizontal");
+			            }
 
 						var targetElm = angular.element(document.elementFromPoint(e.pageX - document.body.scrollLeft, e.pageY - (window.pageYOffset || document.documentElement.scrollTop)));
 						
