@@ -320,7 +320,13 @@ angular.module('ui.nestedSortable', [])
 							return;
 						targetItem = targetElm.scope();
 						targetElm = targetItem.sortableItemElement;
-						var currentAccept = targetItem.callbacks.accept(scope.itemData());
+
+						var targetItemData = null;
+						if (targetItem) {
+							targetItemData = targetItem.itemData();
+						}
+						
+						var currentAccept = targetItem.callbacks.accept(scope.itemData(), targetItemData);
 						var childAccept = targetItem.subSortableElement
 																&& targetItem.subSortableElement.scope().callbacks.accept(scope.itemData());
 						if (!currentAccept && !childAccept) {
