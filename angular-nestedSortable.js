@@ -1,6 +1,7 @@
  /*
  * Angularjs UI Nested Sortable
  * v 0.1.0 / 29 Oct 2013
+ * v 0.1.1 / 25 Jan 2014
  * http://github.com/jimliu/angular-nestedSortable
  *
  * Reference codes:
@@ -336,9 +337,9 @@ angular.module('ui.nestedSortable', [])
 						sameParent = false;
 						// move vertical
 						if (!pos.dirAx) {
-							var moveTop = $helper.offset(placeElm).top > $helper.offset(targetElm).top;
-							var line = moveTop ? $helper.offset(targetElm).top + $helper.height(targetElm) / 2 : $helper.offset(targetElm).top;
-							targetBefore = e.pageY < line;
+							var dirUp = $helper.offset(placeElm).top > $helper.offset(targetElm).top;
+							var redLine = dirUp ? $helper.offset(targetElm).top + $helper.height(targetElm) / 2 : $helper.offset(targetElm).top;
+							targetBefore = e.pageY < redLine;
 							if (targetBefore) {
 								if (currentAccept) {
 									targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
