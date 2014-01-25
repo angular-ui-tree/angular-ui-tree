@@ -336,7 +336,9 @@ angular.module('ui.nestedSortable', [])
 						sameParent = false;
 						// move vertical
 						if (!pos.dirAx) {
-							targetBefore = e.pageY < ($helper.offset(targetElm).top + $helper.height(targetElm) / 2);
+							var moveTop = $helper.offset(placeElm).top > $helper.offset(targetElm).top;
+							var line = moveTop ? $helper.offset(targetElm).top + $helper.height(targetElm) / 2 : $helper.offset(targetElm).top;
+							targetBefore = e.pageY < line;
 							if (targetBefore) {
 								if (currentAccept) {
 									targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
