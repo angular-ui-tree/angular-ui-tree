@@ -1,0 +1,24 @@
+{
+    "name": "Angular-NestedSortable",
+    "version": "0.1.1",
+    "homepage": "https://github.com/JimLiu/Angular-NestedSortable",
+    "authors": [
+        "Jim Liu <junminliu@gmail.com>"
+    ],
+    "description": "NestedSortable directive for the angular.js",
+    "main": "angular-nestedSortable.js",
+    "keywords": [
+        "angular"
+    ],
+    "dependencies": {
+        "angular": "~1.0.8"
+    },
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "app/components",
+        "test",
+        "tests"
+    ]
+}

@@ -1,8 +1,6 @@
 var app = angular.module('nestedSortableDemoApp', [
 	'ui.nestedSortable'
 ]);
-
-app.controller('sample1Ctrl', function ($scope) {
 	
 	var list = [
 		{
@@ -17,7 +15,23 @@ app.controller('sample1Ctrl', function ($scope) {
 				{
 					"id": 21,
 					"title": "item2.1",
-					"items": [],
+					"items": [
+						{
+							"id": 211,
+							"title": "item2.1.1",
+							"items": []
+						},
+						{
+							"id": 212,
+							"title": "item2.1.2",
+							"items": []
+						},
+						{
+							"id": 213,
+							"title": "item2.1.3",
+							"items": []
+						}
+					],
 				},
 				{
 					"id": 22,
@@ -43,7 +57,23 @@ app.controller('sample1Ctrl', function ($scope) {
 				{
 					"id": 33,
 					"title": "item3.3",
-					"items": [],
+					"items": [
+						{
+							"id": 331,
+							"title": "item3.3.1",
+							"items": []
+						},
+						{
+							"id": 332,
+							"title": "item3.3.2",
+							"items": []
+						},
+						{
+							"id": 333,
+							"title": "item3.3.3",
+							"items": []
+						}
+					],
 				}
 			],
 		},
@@ -54,8 +84,12 @@ app.controller('sample1Ctrl', function ($scope) {
 		}
 	];
 
+app.controller('sample1Ctrl', function ($scope) {
 	$scope.list = list;
+});
 
+app.controller('sample3Ctrl', function ($scope) {
+	$scope.list = list;
 });
 
 app.controller('sample2Ctrl', function ($scope) {

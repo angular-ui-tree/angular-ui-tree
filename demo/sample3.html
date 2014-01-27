@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html ng-app="nestedSortableDemoApp">
+<head>
+  <meta charset="utf-8">
+  <title>Angular - nestedSortable Demo</title>
+  <link rel="stylesheet" href="demo.css">
+ </head>
+<body>
+  <div class="container" ng-controller="sample3Ctrl">
+    <h2>Angular - nestedSortable Sample3</h2>
+
+    <table width="100%" border="0" >
+      <tr valign="top">
+        <td width="50%">
+          <script type="text/ng-template" id="items_renderer.html">
+            <div ui-nested-sortable-handle>
+              {{item.title}}
+            </div>
+            <ol ui-nested-sortable="options" ng-model="item.items">
+              <li ng-repeat="item in item.items" ui-nested-sortable-item="" ng-include="'items_renderer.html'">
+              </li>
+            </ol>
+          </script>
+
+          <ol ui-nested-sortable="options" ng-model="list">
+            <li ng-repeat="item in list" ui-nested-sortable-item="" ng-include="'items_renderer.html'"></li>
+          </ol>
+        </td>
+        <td>
+          <div class="info">
+            {{info}}
+          </div>
+          <pre class="code">{{ list | json }}</pre>
+        </td>
+      </tr>
+    </table>
+
+  </div>
+  <script data-require="angular.js@*" data-semver="1.2.9" src="http://code.angularjs.org/1.2.9/angular.js"></script>
+  <script type="text/javascript" src="../angular-nestedSortable.js"></script>
+  <script type="text/javascript" src="demo.js"></script>
+</body>
+</html>
