@@ -1,8 +1,6 @@
 var app = angular.module('nestedSortableDemoApp', [
 	'ui.nestedSortable'
 ]);
-
-app.controller('sample1Ctrl', function ($scope) {
 	
 	var list = [
 		{
@@ -86,8 +84,12 @@ app.controller('sample1Ctrl', function ($scope) {
 		}
 	];
 
+app.controller('sample1Ctrl', function ($scope) {
 	$scope.list = list;
+});
 
+app.controller('sample3Ctrl', function ($scope) {
+	$scope.list = list;
 });
 
 app.controller('sample2Ctrl', function ($scope) {
