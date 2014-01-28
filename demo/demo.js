@@ -1,88 +1,88 @@
 var app = angular.module('nestedSortableDemoApp', [
 	'ui.nestedSortable'
 ]);
-	
-	var list = [
-		{
-			"id": 1,
-			"title": "item1",
-			"items": [],
-		},
-		{
-			"id": 2,
-			"title": "item2",
-			"items": [
-				{
-					"id": 21,
-					"title": "item2.1",
-					"items": [
-						{
-							"id": 211,
-							"title": "item2.1.1",
-							"items": []
-						},
-						{
-							"id": 212,
-							"title": "item2.1.2",
-							"items": []
-						},
-						{
-							"id": 213,
-							"title": "item2.1.3",
-							"items": []
-						}
-					],
-				},
-				{
-					"id": 22,
-					"title": "item2.2",
-					"items": [],
-				}
-			],
-		},
-		{
-			"id": 3,
-			"title": "item3",
-			"items": [
-				{
-					"id": 31,
-					"title": "item3.1",
-					"items": [],
-				},
-				{
-					"id": 32,
-					"title": "item3.2",
-					"items": [],
-				},
-				{
-					"id": 33,
-					"title": "item3.3",
-					"items": [
-						{
-							"id": 331,
-							"title": "item3.3.1",
-							"items": []
-						},
-						{
-							"id": 332,
-							"title": "item3.3.2",
-							"items": []
-						},
-						{
-							"id": 333,
-							"title": "item3.3.3",
-							"items": []
-						}
-					],
-				}
-			],
-		},
-		{
-			"id": 4,
-			"title": "item4",
-			"items": [],
-		}
-	];
+
+var list = [
+	{
+		"id": 1,
+		"title": "item1",
+		"items": [],
+	},
+	{
+		"id": 2,
+		"title": "item2",
+		"items": [
+			{
+				"id": 21,
+				"title": "item2.1",
+				"items": [
+					{
+						"id": 211,
+						"title": "item2.1.1",
+						"items": []
+					},
+					{
+						"id": 212,
+						"title": "item2.1.2",
+						"items": []
+					},
+					{
+						"id": 213,
+						"title": "item2.1.3",
+						"items": []
+					}
+				],
+			},
+			{
+				"id": 22,
+				"title": "item2.2",
+				"items": [],
+			}
+		],
+	},
+	{
+		"id": 3,
+		"title": "item3",
+		"items": [
+			{
+				"id": 31,
+				"title": "item3.1",
+				"items": [],
+			},
+			{
+				"id": 32,
+				"title": "item3.2",
+				"items": [],
+			},
+			{
+				"id": 33,
+				"title": "item3.3",
+				"items": [
+					{
+						"id": 331,
+						"title": "item3.3.1",
+						"items": []
+					},
+					{
+						"id": 332,
+						"title": "item3.3.2",
+						"items": []
+					},
+					{
+						"id": 333,
+						"title": "item3.3.3",
+						"items": []
+					}
+				],
+			}
+		],
+	},
+	{
+		"id": 4,
+		"title": "item4",
+		"items": [],
+	}
+];
 
 app.controller('sample1Ctrl', function ($scope) {
 	$scope.list = list;
