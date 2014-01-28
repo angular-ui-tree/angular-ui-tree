@@ -1,7 +1,7 @@
  /*
  * Angularjs UI Nested Sortable
  * v 0.1.0 / 29 Oct 2013
- * v 0.1.1 / 25 Jan 2014
+ * v 0.2.0 / 28 Jan 2014
  * http://github.com/jimliu/angular-nestedSortable
  *
  * Reference codes:
@@ -249,11 +249,11 @@ angular.module('ui.nestedSortable', [])
 						firstMoving, targetItem, targetBefore;
 
 				var placeElm,hiddenPlaceElm;
-				var targetScope, sourceIndex, destIndex, saveParent;
+				var targetScope, sourceIndex, destIndex, sameParent;
 
 				var dragStartEvent = function(e) {
-    			if (e.button == 2 || e.which == 3) // disable right click
-    				return;
+				if (e.button == 2 || e.which == 3) // disable right click
+					return;
 
 					var target = angular.element(e.target);
 					if (typeof target.attr('nodrag') != "undefined")
@@ -306,13 +306,6 @@ angular.module('ui.nestedSortable', [])
 							firstMoving = false;
 							return;
 						};
-						/**
-			            * move horizontal
-			            */
-			            if (pos.dirAx && pos.distAxX >= config.threshold) {
-			            	// todo:
-			            	// console.log("move horizontal");
-			            }
 
 						var targetElm = angular.element(document.elementFromPoint(e.pageX - document.body.scrollLeft, e.pageY - (window.pageYOffset || document.documentElement.scrollTop)));
 
@@ -359,16 +352,16 @@ angular.module('ui.nestedSortable', [])
 
 							}
 							else {
-								if (currentAccept) {
+								if (childAccept) {
+									targetItem.subSortableElement.append(placeElm);
+									destIndex = 0;
+									targetScope = targetItem.subSortableElement.scope();
+								}
+								else if (currentAccept) {
 									targetElm.after(placeElm);
 									destIndex = targetItem.$index + 1;
 									targetScope = targetItem;
 									sameParent = (scope.sortableElement == targetScope.sortableElement);
-								}
-								else if (childAccept) {
-									targetItem.subSortableElement.append(placeElm);
-									destIndex = 0;
-									targetScope = targetItem.subSortableElement.scope();
 								}
 							}
 						}

@@ -14,7 +14,7 @@ An Angularjs ui component that can sort nested lists.
 
 Angularjs script
 
-```Javscript
+```js
 var app = angular.module('nestedSortableDemoApp', [
 	'ui.nestedSortable'
 ]);
@@ -24,7 +24,7 @@ Injecting `ui.nestedSortable` to your App.
 
 
 HTML View or Templates
-```
+```html
 <ol ui-nested-sortable="" ng-model="list">
   <li ng-repeat="item in list" ui-nested-sortable-item="">
     <div ui-nested-sortable-handle>
