@@ -1,7 +1,7 @@
  /*
  * Angularjs UI Nested Sortable
  * v 0.1.0 / 29 Oct 2013
- * v 0.2.0 / 28 Jan 2014
+ * v 0.2.1 / 28 Jan 2014
  * http://github.com/jimliu/angular-nestedSortable
  *
  * Reference codes:
