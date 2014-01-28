@@ -248,7 +248,7 @@ angular.module('ui.nestedSortable', [])
 				var pos, dragElm, dragItemElm,
 						firstMoving, targetItem, targetBefore;
 
-				var placeElm,hiddenPlaceElm;
+				var placeElm, hiddenPlaceElm;
 				var targetScope, sourceIndex, destIndex, sameParent;
 
 				var dragStartEvent = function(e) {
@@ -307,6 +307,8 @@ angular.module('ui.nestedSortable', [])
 							return;
 						};
 
+						var moveHorizontal = ($helper.offset(dragElm).left - $helper.offset(placeElm).left) >= config.threshold;
+
 						var targetElm = angular.element(document.elementFromPoint(e.pageX - document.body.scrollLeft, e.pageY - (window.pageYOffset || document.documentElement.scrollTop)));
 
 						if (targetElm.attr('sortable-elment-type') != 'item'
@@ -334,7 +336,15 @@ angular.module('ui.nestedSortable', [])
 							var redLine = dirUp ? $helper.offset(targetElm).top + $helper.height(targetElm) / 2 : $helper.offset(targetElm).top;
 							targetBefore = e.pageY < redLine;
 							if (targetBefore) {
-								if (currentAccept) {
+								if ((childAccept && targetItem.$index > 0 && targetItem.subSortableElement) 
+									 && (moveHorizontal || !currentAccept)) {
+									targetElm = angular.element(targetElm.parent().children()[targetItem.$index - 1]);
+									targetItem = targetElm.scope();
+									targetItem.subSortableElement.append(placeElm);
+									destIndex = 0;
+									targetScope = targetItem.subSortableElement.scope();
+								}
+								else if (currentAccept) {
 									targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
 									destIndex = targetItem.$index;
 									targetScope = targetItem;
@@ -342,17 +352,10 @@ angular.module('ui.nestedSortable', [])
 									if (sameParent && sourceIndex < destIndex)
 										destIndex--;
 								}
-								else if (childAccept && targetItem.$index > 0) {
-									targetElm = angular.element(targetElm.parent().children()[targetItem.$index - 1]);
-									targetItem = targetElm.scope();
-									targetItem.subSortableElement.append(placeElm);
-									destIndex = 0;
-									targetScope = targetItem.subSortableElement.scope();
-								}
-
 							}
 							else {
-								if (childAccept) {
+								if (childAccept && targetItem.subSortableElement 
+									&& (moveHorizontal || !currentAccept)) {
 									targetItem.subSortableElement.append(placeElm);
 									destIndex = 0;
 									targetScope = targetItem.subSortableElement.scope();
