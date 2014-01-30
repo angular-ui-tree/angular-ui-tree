@@ -1,7 +1,7 @@
  /*
  * Angularjs UI Nested Sortable
  * v 0.1.0 / 29 Oct 2013
- * v 1.0.0 / 30 Jan 2014
+ * v 1.0.1 / 30 Jan 2014
  * http://github.com/jimliu/angular-nestedSortable
  *
  * Reference codes:
@@ -253,7 +253,7 @@ angular.module('ui.nestedSortable', [])
 				if (config.handleClass) {
 					element.addClass(config.handleClass);
 				};
-				var pos, dragElm, dragItemElm,
+				var pos, dragElm, dragItemElm, dragItem,
 						firstMoving, targetItem, targetBefore;
 
 				var placeElm, hiddenPlaceElm;
@@ -277,6 +277,7 @@ angular.module('ui.nestedSortable', [])
 																.addClass(config.placeHolderClass);
 					hiddenPlaceElm = angular.element(document.createElement(tagName));
 
+					dragItem = scope;
 					dragItemElm = scope.sortableItemElement;
 					pos = $helper.positionStarted(e, dragItemElm);
 					placeElm.css('height', $helper.height(dragItemElm) + 'px');
@@ -353,8 +354,9 @@ angular.module('ui.nestedSortable', [])
 								// we can't decrease a level if an item preceeds the current one
 								next = placeElm.next();
 								if (!next.length) {
-									var targetItem = dragItemElm.parentScope.sortableElement.parentItemScope;
-									if (targetItem) {
+									dragItem = dragItem.sortableItemElement.parentScope.sortableElement.parentItemScope;
+									if (dragItem) {
+										targetItem = dragItem;
 										var currentAccept = targetItem.callbacks.accept(scope.itemData(), targetItemData);
 										if (currentAccept) {
 											targetItem.sortableItemElement.after(placeElm);
