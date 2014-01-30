@@ -1,7 +1,7 @@
  /*
  * Angularjs UI Nested Sortable
  * v 0.1.0 / 29 Oct 2013
- * v 0.2.1 / 28 Jan 2014
+ * v 1.0.0 / 30 Jan 2014
  * http://github.com/jimliu/angular-nestedSortable
  *
  * Reference codes:
@@ -110,6 +110,9 @@ angular.module('ui.nestedSortable', [])
 			$scope.sortableModelValue.splice(index, 0, itemModelData);
 			$scope.$apply();
 		}
+		$scope.initSubItemElement = function(subElement) {
+			subElement.parentScope = $scope;
+		}
 	}
 ])
 .controller('NestedSortableItemController', ['$scope', '$attrs', 'nestedSortableConfig',
@@ -118,6 +121,7 @@ angular.module('ui.nestedSortable', [])
 		$scope.subSortableElement = null;
 		$scope.initItem = function(element) {
 			$scope.sortableItemElement = element;
+			$scope.initSubItemElement(element);
 			element.attr('sortable-elment-type', 'item');
 		}
 		$scope.removeItem = function() {
@@ -134,6 +138,9 @@ angular.module('ui.nestedSortable', [])
 		}
 		$scope.setSubSortableElement = function(subElement){
 			$scope.subSortableElement = subElement;
+			if (subElement) {
+				subElement.parentItemScope = $scope;
+			};
 		};
 	}
 ])
@@ -207,6 +214,7 @@ angular.module('ui.nestedSortable', [])
 				element.on('$destroy', function() {
 					if (itemCtrl) { // if it was removed, unlink to parent
 						scope.setSubSortableElement(null);
+						element.parentItemScope = null;
 					};
 				});
 			}
@@ -307,7 +315,58 @@ angular.module('ui.nestedSortable', [])
 							return;
 						};
 
-						var moveHorizontal = ($helper.offset(dragElm).left - $helper.offset(placeElm).left) >= config.threshold;
+						// move horizontal
+						if (pos.dirAx && pos.distAxX >= config.threshold) {
+							pos.distAxX = 0;
+							sameParent = false;
+
+							var prev = null;
+							var prevElm = null;
+							// try to find the prev element of placeElm
+							for (var i = 0; i < placeElm.parent().children().length; i++) {
+								var elm = placeElm.parent().children()[i];
+								if (elm == hiddenPlaceElm[0]) 
+									continue;
+								if (elm == placeElm[0]) {
+									if (prevElm) {
+										prev = angular.element(prevElm);
+									};
+									break;
+								}
+								prevElm = elm;
+							};
+
+							var collapsed = false; // todo: node can be collapsed
+							// increase horizontal level if previous sibling exists and is not collapsed
+							if (pos.distX > 0 && prev && !collapsed) {
+								targetItem = prev.scope();
+								var childAccept = targetItem.subSortableElement
+																&& targetItem.subSortableElement.scope().callbacks.accept(scope.itemData());
+								if (childAccept) {
+									targetItem.subSortableElement.append(placeElm);
+									destIndex = 0;
+									targetScope = targetItem.subSortableElement.scope();
+								};
+							}
+							// decrease horizontal level
+							if (pos.distX < 0) {
+								// we can't decrease a level if an item preceeds the current one
+								next = placeElm.next();
+								if (!next.length) {
+									var targetItem = dragItemElm.parentScope.sortableElement.parentItemScope;
+									if (targetItem) {
+										var currentAccept = targetItem.callbacks.accept(scope.itemData(), targetItemData);
+										if (currentAccept) {
+											targetItem.sortableItemElement.after(placeElm);
+											destIndex = targetItem.$index + 1;
+											targetScope = targetItem;
+										};
+									};
+								}
+							}
+						};
+
+						var moveRight = ($helper.offset(dragElm).left - $helper.offset(placeElm).left) >= config.threshold;
 
 						var targetElm = angular.element(document.elementFromPoint(e.pageX - document.body.scrollLeft, e.pageY - (window.pageYOffset || document.documentElement.scrollTop)));
 
@@ -329,15 +388,15 @@ angular.module('ui.nestedSortable', [])
 							return;
 						};
 
-						sameParent = false;
 						// move vertical
 						if (!pos.dirAx) {
+							sameParent = false;
 							var dirUp = $helper.offset(placeElm).top > $helper.offset(targetElm).top;
 							var redLine = dirUp ? $helper.offset(targetElm).top + $helper.height(targetElm) / 2 : $helper.offset(targetElm).top;
 							targetBefore = e.pageY < redLine;
 							if (targetBefore) {
-								if ((childAccept && targetItem.$index > 0 && targetItem.subSortableElement) 
-									 && (moveHorizontal || !currentAccept)) {
+								if ((childAccept && targetItem.$index > 0) 
+									 && (moveRight || !currentAccept)) {
 									targetElm = angular.element(targetElm.parent().children()[targetItem.$index - 1]);
 									targetItem = targetElm.scope();
 									targetItem.subSortableElement.append(placeElm);
@@ -354,8 +413,8 @@ angular.module('ui.nestedSortable', [])
 								}
 							}
 							else {
-								if (childAccept && targetItem.subSortableElement 
-									&& (moveHorizontal || !currentAccept)) {
+								if (childAccept 
+									&& (moveRight || !currentAccept)) {
 									targetItem.subSortableElement.append(placeElm);
 									destIndex = 0;
 									targetScope = targetItem.subSortableElement.scope();

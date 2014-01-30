@@ -53,7 +53,7 @@ HTML View or Templates
 
 ### Sample 1
 
-A nested list, it binds with a nested array, it the sort order changed, the data will be updated.  
+A nested list, it binds with a nested array, if it's sort order is changed, the data will be updated.  
 [Try Sample1](http://jimliu.github.io/Angular-NestedSortable/demo/sample1.html)
 
 ### Sample 2
