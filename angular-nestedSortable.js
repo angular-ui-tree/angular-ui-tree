@@ -266,6 +266,11 @@ angular.module('ui.nestedSortable', [])
 					var target = angular.element(e.target);
 					if (typeof target.attr('nodrag') != "undefined")
 						return;
+						
+					var moveObj = e;
+					if (moveObj !== null && moveObj.type === "touchstart" && moveObj.targetTouches !== undefined) {
+						moveObj = e.targetTouches.item(0);
+					}
 
 					e.preventDefault();
 
@@ -279,7 +284,7 @@ angular.module('ui.nestedSortable', [])
 
 					dragItem = scope;
 					dragItemElm = scope.sortableItemElement;
-					pos = $helper.positionStarted(e, dragItemElm);
+					pos = $helper.positionStarted(moveObj, dragItemElm);
 					placeElm.css('height', $helper.height(dragItemElm) + 'px');
 					dragElm = angular.element(document.createElement(scope.sortableElement.prop('tagName')))
 														.addClass(scope.sortableElement.attr('class')).addClass(config.dragClass);
@@ -292,23 +297,28 @@ angular.module('ui.nestedSortable', [])
 
 					$document.find('body').append(dragElm);
 					dragElm.css({
-						'left' : e.pageX - pos.offsetX + 'px',
-						'top'  : e.pageY - pos.offsetY + 'px'
+						'left' : moveObj.pageX - pos.offsetX + 'px',
+						'top'  : moveObj.pageY - pos.offsetY + 'px'
 					});
 
 					angular.element($window).bind('mouseup', dragEndEvent);
 					angular.element($window).bind('mousemove', dragMoveEvent);
+					angular.element($window).bind('touchmove', dragMoveEvent); // Mobile
 				};
 
 
 				var dragMoveEvent = function(e)
 				{
+					var moveObj = e;
+					if (e !== null && e.type === "touchmove") {
+						moveObj = e.touches.item(0);
+					}
 					if (dragElm) {
 						e.preventDefault();
 
 						dragElm.css({
-								'left' : e.pageX - pos.offsetX + 'px',
-								'top'  : e.pageY - pos.offsetY + 'px'
+								'left' : moveObj.pageX - pos.offsetX + 'px',
+								'top'  : moveObj.pageY - pos.offsetY + 'px'
 						});
 						$helper.positionMoved(e, pos, firstMoving);
 						if (firstMoving) {
@@ -370,7 +380,7 @@ angular.module('ui.nestedSortable', [])
 
 						var moveRight = ($helper.offset(dragElm).left - $helper.offset(placeElm).left) >= config.threshold;
 
-						var targetElm = angular.element(document.elementFromPoint(e.pageX - document.body.scrollLeft, e.pageY - (window.pageYOffset || document.documentElement.scrollTop)));
+						var targetElm = angular.element(document.elementFromPoint(moveObj.pageX - document.body.scrollLeft, moveObj.pageY - (window.pageYOffset || document.documentElement.scrollTop)));
 
 						if (targetElm.attr('sortable-elment-type') != 'item'
 							&& targetElm.attr('sortable-elment-type') != 'handle')
@@ -395,7 +405,7 @@ angular.module('ui.nestedSortable', [])
 							sameParent = false;
 							var dirUp = $helper.offset(placeElm).top > $helper.offset(targetElm).top;
 							var redLine = dirUp ? $helper.offset(targetElm).top + $helper.height(targetElm) / 2 : $helper.offset(targetElm).top;
-							targetBefore = e.pageY < redLine;
+							targetBefore = moveObj.pageY < redLine;
 							if (targetBefore) {
 								if ((childAccept && targetItem.$index > 0) 
 									 && (moveRight || !currentAccept)) {
@@ -465,10 +475,13 @@ angular.module('ui.nestedSortable', [])
 					}
 
 					angular.element($window).unbind('mouseup', dragEndEvent);
+					angular.element($window).unbind('touchend', dragEndEvent); // Mobile
 					angular.element($window).unbind('mousemove', dragMoveEvent);
+					angular.element($window).unbind('touchmove', dragMoveEvent); // Mobile
 				}
 
 				element.bind('mousedown', dragStartEvent);
+				element.bind('touchstart', dragStartEvent); // Mobile
 
 			}
 		};
