@@ -1,7 +1,7 @@
  /*
  * Angularjs UI Nested Sortable
  * v 0.1.0 / 29 Oct 2013
- * v 1.0.1 / 30 Jan 2014
+ * v 1.0.2 / 4 Feb 2014
  * http://github.com/jimliu/angular-nestedSortable
  *
  * Reference codes:
@@ -183,7 +183,7 @@ angular.module('ui.nestedSortable', [])
 					};
 				}
 
-				callbacks.accept = function(modelData) {
+				callbacks.accept = function(modelData, scope) {
 					return true;
 				}
 				callbacks.orderChanged = function(scope, sourceItem, sourceIndex, destIndex) {
@@ -353,7 +353,7 @@ angular.module('ui.nestedSortable', [])
 							if (pos.distX > 0 && prev && !collapsed) {
 								targetItem = prev.scope();
 								var childAccept = targetItem.subSortableElement
-																&& targetItem.subSortableElement.scope().callbacks.accept(scope.itemData());
+																&& targetItem.subSortableElement.scope().callbacks.accept(scope.itemData(), dragItemElm.scope());
 								if (childAccept) {
 									targetItem.subSortableElement.append(placeElm);
 									destIndex = 0;
@@ -364,11 +364,11 @@ angular.module('ui.nestedSortable', [])
 							if (pos.distX < 0) {
 								// we can't decrease a level if an item preceeds the current one
 								next = placeElm.next();
-								if (!next.length) {
+								if (!next.length && dragItem) {
 									dragItem = dragItem.sortableItemElement.parentScope.sortableElement.parentItemScope;
 									if (dragItem) {
 										targetItem = dragItem;
-										var currentAccept = targetItem.callbacks.accept(scope.itemData(), targetItemData);
+										var currentAccept = targetItem.callbacks.accept(scope.itemData(), dragItemElm.scope());
 										if (currentAccept) {
 											targetItem.sortableItemElement.after(placeElm);
 											destIndex = targetItem.$index + 1;
@@ -394,9 +394,9 @@ angular.module('ui.nestedSortable', [])
 							targetItemData = targetItem.itemData();
 						}
 						
-						var currentAccept = targetItem.callbacks.accept(scope.itemData(), targetItemData);
+						var currentAccept = targetItem.callbacks.accept(scope.itemData(), dragItemElm.scope());
 						var childAccept = targetItem.subSortableElement
-																&& targetItem.subSortableElement.scope().callbacks.accept(scope.itemData());
+																&& targetItem.subSortableElement.scope().callbacks.accept(scope.itemData(), dragItemElm.scope());
 						if (!currentAccept && !childAccept) {
 							return;
 						};

@@ -162,7 +162,7 @@ app.controller('sample2Ctrl', function ($scope) {
 		
 	};
 	$scope.lecturesOptions = {
-		accept: function(data) {
+		accept: function(data, scope) {
 			return (data.type == 'lecture'); // only accept lecture
 		},
 		orderChanged: function(scope, sourceItem, sourceIndex, destIndex) {
