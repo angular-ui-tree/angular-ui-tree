@@ -51,6 +51,11 @@ HTML View or Templates
 
 ## Samples
 
+### Sample 3
+
+A nested recursive list, it binds with an unlimited nested array.  
+[Try Sample3](http://jimliu.github.io/Angular-NestedSortable/demo/sample3.html)
+
 ### Sample 1
 
 A nested list, it binds with a nested array, if it's sort order is changed, the data will be updated.  
@@ -61,7 +66,3 @@ A nested list, it binds with a nested array, if it's sort order is changed, the 
 Two-level list, the data type of top level is 'chapter', the data type of the secend level is 'lecture', the node can only be dragged & dropped to another node which with same data type.  
 [Try Sampl2](http://jimliu.github.io/Angular-NestedSortable/demo/sample2.html)
 
-### Sample 3
-
-A nested recursive list, it binds with an unlimited nested array.  
-[Try Sample3](http://jimliu.github.io/Angular-NestedSortable/demo/sample3.html)
