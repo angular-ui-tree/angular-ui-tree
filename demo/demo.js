@@ -84,6 +84,32 @@ var list = [
 	}
 ];
 
+/*
+list = [
+	{
+		"id": 1,
+		"title": "item1",
+		"items": [
+			{
+				"id": 11,
+				"title": "item1.1",
+				"items": [],
+			},
+			{
+				"id": 12,
+				"title": "item1.2",
+				"items": [],
+			},
+		],
+	},
+	{
+		"id": 2,
+		"title": "item2",
+		"items": [],
+	}
+];	
+*/
+
 app.controller('sample1Ctrl', function ($scope) {
 	$scope.list = list;
 });
