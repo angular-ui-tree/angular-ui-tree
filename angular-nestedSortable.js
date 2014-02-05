@@ -298,7 +298,11 @@ angular.module('ui.nestedSortable', [])
 						
 					var moveObj = e;
 					if (hasTouch) {
-						moveObj = e.targetTouches.item(0);
+						if (e.targetTouches !== undefined) {
+							moveObj = e.targetTouches.item(0);
+						} else if (e.originalEvent !== undefined && e.originalEvent.targetTouches !== undefined) {
+							moveObj = e.originalEvent.targetTouches.item(0);
+						}
 					}
 
 					e.preventDefault();
@@ -371,7 +375,11 @@ angular.module('ui.nestedSortable', [])
 				var dragMoveEvent = function(e) {
 					var moveObj = e;
 					if (hasTouch) {
-						moveObj = e.touches.item(0);
+						if (e.touches !== undefined) {
+							moveObj = e.touches.item(0);
+						} else if (e.originalEvent !== undefined && e.originalEvent.touches !== undefined) {
+							moveObj = e.originalEvent.touches.item(0);
+						}
 					}
 					if (dragElm) {
 						e.preventDefault();
