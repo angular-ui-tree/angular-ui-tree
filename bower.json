@@ -8,10 +8,15 @@
     "description": "NestedSortable directive for the angular.js",
     "main": "angular-nestedSortable.js",
     "keywords": [
-        "angular"
+        "angular",
+        "NestedSortable",
+        "sortable",
+        "nested",
+        "tree",
+        "node"
     ],
     "dependencies": {
-        "angular": "~1.0.8"
+        "angular": ">= 1.2.0"
     },
     "ignore": [
         "**/.*",
