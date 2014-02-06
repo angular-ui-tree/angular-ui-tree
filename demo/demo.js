@@ -189,6 +189,7 @@ app.controller('sample2Ctrl', function ($scope) {
 	};
 	$scope.lecturesOptions = {
 		accept: function(data, sourceItemScope, targetScope) {
+			console.log("parent chapter data: ", targetScope.parentItemScope().itemData());
 			return (data.type == 'lecture'); // only accept lecture
 		},
 		orderChanged: function(scope, sourceItem, sourceIndex, destIndex) {
