@@ -178,7 +178,7 @@ app.controller('sample2Ctrl', function ($scope) {
 	$scope.chapters = chapters;
 
 	$scope.chaptersOptions = {
-		accept: function(data) {
+		accept: function(data, sourceItemScope, targetScope) {
 			return (data.type == 'chapter'); // only accept chapter
 		},
 		orderChanged: function(scope, sourceItem, sourceIndex, destIndex) {
@@ -188,7 +188,7 @@ app.controller('sample2Ctrl', function ($scope) {
 		
 	};
 	$scope.lecturesOptions = {
-		accept: function(data, scope) {
+		accept: function(data, sourceItemScope, targetScope) {
 			return (data.type == 'lecture'); // only accept lecture
 		},
 		orderChanged: function(scope, sourceItem, sourceIndex, destIndex) {

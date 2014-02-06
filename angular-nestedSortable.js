@@ -1,7 +1,7 @@
  /*
  * Angularjs UI Nested Sortable
  * v 0.1.0 / 29 Oct 2013
- * v 1.1.0 / 5 Feb 2014
+ * v 1.1.1 / 6 Feb 2014
  * http://github.com/jimliu/angular-nestedSortable
  *
  * Reference codes:
@@ -154,12 +154,18 @@ angular.module('ui.nestedSortable', [])
 			};
 			return $scope.subSortableElement.scope();
 		}
-		$scope.accept = function(dragItemScope) {
-			return $scope.callbacks.accept(dragItemScope.itemData(), dragItemScope);
+		$scope.accept = function(sourceItemScope) {
+			return $scope.callbacks.accept(sourceItemScope.itemData(), sourceItemScope, $scope.parentScope());
 		}
-		$scope.childAccept = function(dragItemScope) {
+		$scope.childAccept = function(sourceItemScope) {
 			return $scope.subScope() && 
-						$scope.subScope().callbacks.accept(dragItemScope.itemData(), dragItemScope);
+						$scope.subScope().callbacks.accept(sourceItemScope.itemData(), sourceItemScope, $scope.subScope());
+		}
+		$scope.prev = function() {
+			if ($scope.$index > 0) {
+				return $scope.items[$scope.$index - 1];
+			}
+			return null;
 		}
 	}
 ])
@@ -202,7 +208,7 @@ angular.module('ui.nestedSortable', [])
 					};
 				}
 
-				callbacks.accept = function(modelData, scope) {
+				callbacks.accept = function(modelData, sourceItemScope, targetScope) {
 					return true;
 				}
 				callbacks.orderChanged = function(scope, sourceItem, sourceIndex, destIndex) {
@@ -454,10 +460,6 @@ angular.module('ui.nestedSortable', [])
 						}
 						
 						var currentAccept = targetItem.accept(scope);
-						var childAccept = targetItem.childAccept(scope);
-						if (!currentAccept && !childAccept) {
-							return;
-						};
 
 						// move vertical
 						if (!pos.dirAx) {
@@ -466,39 +468,41 @@ angular.module('ui.nestedSortable', [])
 							var redLine = dirUp ? $helper.offset(targetElm).top + $helper.height(targetElm) / 2 : $helper.offset(targetElm).top;
 							targetBefore = moveObj.pageY < redLine;
 							if (targetBefore) {
-								if ((childAccept && targetItem.$index > 0) 
-									 && (moveRight || !currentAccept)) {
-									targetElm = angular.element(targetElm.parent().children()[targetItem.$index - 1]);
-									targetItem = targetElm.scope();
+								var prev = targetItem.prev();
+								var childAccept = prev && prev.childAccept(scope);
+								if (childAccept
+									 && (moveRight || !currentAccept)) { // move to it's prev node
+									targetItem = prev;
 									targetItem.subSortableElement.append(placeElm);
-									destIndex = 0;
-									targetScope = targetItem.subSortableElement.scope();
+									destIndex = targetItem.subScope().items.length;
+									targetScope = targetItem.subScope();
 									dragItem.reset(destIndex, targetScope, scope);
 								}
 								else if (currentAccept) {
 									targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
 									destIndex = targetItem.$index;
-									targetScope = targetItem;
+									targetScope = targetItem.parentScope();
 									sameParent = (scope.sortableElement == targetScope.sortableElement);
 									if (sameParent && sourceIndex < destIndex)
 										destIndex--;
-									dragItem.reset(destIndex, targetScope.parentScope(), scope);
+									dragItem.reset(destIndex, targetScope, scope);
 								}
 							}
 							else {
+								var childAccept = targetItem.childAccept(scope);
 								if (childAccept 
 									&& (moveRight || !currentAccept)) {
 									targetItem.subSortableElement.append(placeElm);
-									destIndex = 0;
-									targetScope = targetItem.subSortableElement.scope();
+									destIndex = targetItem.subScope().items.length;
+									targetScope = targetItem.subScope();
 									dragItem.reset(destIndex, targetScope, scope);
 								}
 								else if (currentAccept) {
 									targetElm.after(placeElm);
 									destIndex = targetItem.$index + 1;
-									targetScope = targetItem;
+									targetScope = targetItem.parentScope();
 									sameParent = (scope.sortableElement == targetScope.sortableElement);
-									dragItem.reset(destIndex, targetScope.parentScope(), scope);
+									dragItem.reset(destIndex, targetScope, scope);
 								}
 							}
 						}
