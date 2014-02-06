@@ -1,7 +1,7 @@
 Angular UI NestedSortable
 ======================
 
-An Angularjs ui component that can sort nested lists.
+An Angularjs ui component that can sort nested lists and bind data, and it dosen't need to depend on jQuery.
 
 
 ## Features
@@ -64,6 +64,7 @@ Two-level list, the data type of top level is 'chapter', the data type of the se
 ### Sample 1
 
 A nested list, it binds with a nested array, if it's sort order is changed, the data will be updated.  
+In this sample, it can only support 3-level nodes.
 [Try Sample1](http://jimliu.github.io/Angular-NestedSortable/demo/sample1.html)
 
 ## ngmodules
