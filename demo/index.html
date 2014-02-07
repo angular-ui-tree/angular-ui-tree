@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>AngularJS NestedSortable demo</title>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="demo.css">
+</head>
+<body ng-app="demo">
+
+  <div class="container" ng-controller="sample3Ctrl">
+    <div class="jumbotron">
+      <h1>NestedSortable demo's</h1>
+      <p>
+        NestedSortable is an AngularJS component that can render nested lists wit drag and drop support.
+      </p>
+      <p>
+        <a class="btn btn-lg btn-primary" href="https://github.com/JimLiu/Angular-NestedSortable" role="button" target="_blank">GitHub repository</a>
+      </p>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-4">
+        <h3>Sample 1</h3>
+        <p>
+          A nested list, it binds with a nested array, if it's sort order is changed, the data will be updated.
+          In this sample, it can only support 3-level nodes.
+        </p>
+        <p>
+          <a href="sample1.html">Try sample 1</a>
+        </p>
+      </div>
+
+      <div class="col-md-4">
+        <h3>Sample 2</h3>
+        <p>
+          Two-level list, the data type of top level is 'chapter', the data type of the secend level is 'lecture', the node can only be dragged & dropped to another node which with same data type.
+        </p>
+        <a href="sample2.html">Try sample 3</a>
+      </div>
+
+      <div class="col-md-4">
+        <h3>Sample 3</h3>
+        <p>
+          A nested recursive list, it binds with an unlimited nested array.
+        </p>
+        <a href="sample3.html">Try Sample 3</a>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+  <!-- JavaScript -->
+  <script src="bower_components/angular/angular.min.js"></script>
+  <script src="../dist/angular-nested-sortable.js"></script>
+  <script src="demo.js"></script>
+</body>
+</html>
