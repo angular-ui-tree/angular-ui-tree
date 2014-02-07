@@ -71,3 +71,32 @@ In this sample, it can only support 3-level nodes.
 
 [Give us a like on ngmodules](http://ngmodules.org/modules/Angular-NestedSortable)
 
+## Development environment setup
+#### Prerequisites
+
+* [Node Package Manager](https://npmjs.org/) (NPM)
+* [Git](http://git-scm.com/)
+
+#### Dependencies
+
+* [Grunt](http://gruntjs.com/) (task automation)
+* [Bower](http://bower.io/) (package management)
+
+#### Installation
+Run the commands below in the project root directory.
+
+#####1. Install Grunt and Bower
+
+    $ sudo npm install -g grunt-cli bower
+    
+#####2. Install project dependencies
+
+    $ npm install
+    $ bower install
+
+## Useful commands
+
+####Test code
+At the moment we only test with JSHint. Later on we can extend requirements for the source code and add real unit- and E22 tests.
+
+    $ grunt jshint
