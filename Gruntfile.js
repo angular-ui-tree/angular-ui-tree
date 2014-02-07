@@ -111,12 +111,27 @@ module.exports = function (grunt) {
             }
         },
 
+        // karma
+        karma: {
+            options: {
+                configFile: 'karma.conf.js',
+                autoWatch: true
+            },
+
+            single: {
+                singleRun: true
+            },
+
+            continuous: {
+                singleRun: false
+            }
+        }
     });
 
     // default
     grunt.registerTask('default', []);
-
-    grunt.registerTask('build', ['jshint:source', 'clean:build', 'concat:build', 'uglify:build']);
-
+    grunt.registerTask('build', ['jshint:source', 'karma:single', 'clean:build', 'concat:build', 'uglify:build']);
     grunt.registerTask('webserver', ['build', 'open', 'connect:demo', 'watch']);
+    grunt.registerTask('test', ['karma:single']);
+    grunt.registerTask('test:continuous', ['karma:continuous']);
 };

@@ -17,7 +17,9 @@
   ],
   "dependencies": {
     "angular": ">= 1.2.0",
-    "bootstrap": "~3.1.0"
+    "bootstrap": "~3.1.0",
+    "jasmine-jquery": "~1.0.0",
+    "angular-mocks": "~1.2.11"
   },
   "ignore": [
     "**/.*",
