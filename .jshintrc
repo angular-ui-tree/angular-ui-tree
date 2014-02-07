@@ -1,0 +1,31 @@
+{
+    "bitwise": true,
+    "immed": true,
+    "newcap": true,
+    "noarg": true,
+    "noempty": true,
+    "nonew": true,
+    "trailing": true,
+    "maxlen": 200,
+    "boss": true,
+    "eqnull": true,
+    "expr": true,
+    "globalstrict": true,
+    "laxbreak": true,
+    "loopfunc": true,
+    "sub": false,
+    "undef": true,
+    "curly": true,
+    "browser": true,
+    "indent": 4,
+    "globals": {
+        "jQuery": true,
+        "$": true,
+        "_": true,
+        "angular": true,
+        "module": true,
+        "require": true,
+        "IE": true,
+        "console": true
+    }
+}
