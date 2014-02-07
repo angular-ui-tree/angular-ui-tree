@@ -1,10 +1,6 @@
-body {
-  padding-top: 25px;
-}
-
-.jumbotron {
+.container .jumbotron {
   text-align: center;
-  background-color: transparent;
+  border-radius: 0;
 }
 .jumbotron .btn {
   font-size: 21px;

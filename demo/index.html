@@ -19,39 +19,43 @@
     </div>
     
     <div class="row">
+      <div class="col-md-12">
+        <h2>See it in action</h2>
+      </div>
+    </div>
+
+    <div class="row">
       <div class="col-md-4">
-        <h3>Sample 1</h3>
+        <h3>Unlimited nesting</h3>
         <p>
-          A nested list, it binds with a nested array, if it's sort order is changed, the data will be updated.
+          A nested recursive list which binds with an unlimited nested array.
+          You can specify which template should be used for the nodes.
+        </p>
+        <a class="btn btn-default" href="sample3.html">Try example</a>
+      </div>
+
+      <div class="col-md-4">
+        <h3>Selective drag &amp; drop</h3>
+        <p>
+          The data type of top level is 'chapter', the data type of the secend level is 'lecture'.
+          The node can only be dragged &amp; dropped to another node which with same data type.
+        </p>
+        <a class="btn btn-default" href="sample2.html">Try example</a>
+      </div>
+
+      <div class="col-md-4">
+        <h3>Full DOM control</h3>
+        <p>
+          A nested list which binds with a nested array. The data will be updated when it's sort order is changed.
           In this sample, it can only support 3-level nodes.
         </p>
         <p>
-          <a href="sample1.html">Try sample 1</a>
+          <a class="btn btn-default" href="sample1.html">Try example</a>
         </p>
-      </div>
-
-      <div class="col-md-4">
-        <h3>Sample 2</h3>
-        <p>
-          Two-level list, the data type of top level is 'chapter', the data type of the secend level is 'lecture', the node can only be dragged & dropped to another node which with same data type.
-        </p>
-        <a href="sample2.html">Try sample 3</a>
-      </div>
-
-      <div class="col-md-4">
-        <h3>Sample 3</h3>
-        <p>
-          A nested recursive list, it binds with an unlimited nested array.
-        </p>
-        <a href="sample3.html">Try Sample 3</a>
       </div>
     </div>
   </div>
-
-
-
-
-
+  
   <!-- JavaScript -->
   <script src="bower_components/angular/angular.min.js"></script>
   <script src="../dist/angular-nested-sortable.js"></script>
