@@ -60,9 +60,18 @@ module.exports = function (grunt) {
         // concat
         concat: {
             build: {
-              src: ['<%= cfg.srcDir %>/angular-nested-sortable.js'],
-              dest: '<%= cfg.buildDir %>/angular-nested-sortable.js',
-            },
+                src: [
+                    '<%= cfg.srcDir %>/main.js',
+                    '<%= cfg.srcDir %>/helper.js',
+                    '<%= cfg.srcDir %>/nestedSortableCtrl.js',
+                    '<%= cfg.srcDir %>/nestedSortableHandlerCtrl.js',
+                    '<%= cfg.srcDir %>/nestedSortableItemCtrl.js',
+                    '<%= cfg.srcDir %>/uiNestedSortable.js',
+                    '<%= cfg.srcDir %>/uiNestedSortableHandle.js',
+                    '<%= cfg.srcDir %>/uiNestedSortableItem.js'
+                ],
+                dest: '<%= cfg.buildDir %>/angular-nested-sortable.js'
+            }
         },
 
         // uglify
