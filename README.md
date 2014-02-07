@@ -96,7 +96,23 @@ Run the commands below in the project root directory.
 
 ## Useful commands
 
-####Test code
-At the moment we only test with JSHint. Later on we can extend requirements for the source code and add real unit- and E22 tests.
+####Running a Local Development Web Server
+To debug code and run end-to-end tests, it is often useful to have a local HTTP server. For this purpose, we have made available a local web server based on Node.js.
 
-    $ grunt jshint
+To start the web server, run:
+
+  $ grunt webserver
+
+To access the local server, enter the following URL into your web browser:
+
+  http://localhost:8080/
+
+By default, it serves the contents of the demo project.
+
+
+####Building NestedSortable
+To build NestedSortable, you use the following command.
+
+  $ grunt build
+
+This will generate non-minified and minified JavaScript files in the `dist` directory.
