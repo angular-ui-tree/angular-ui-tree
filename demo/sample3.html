@@ -7,50 +7,52 @@
   <!-- Stylesheets -->
   <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="demo.css">
-
-  
 </head>
 <body ng-app="demo">
 
   <div class="container" ng-controller="sample3Ctrl">
-    <div class="row">
-      <div class="col-md-12">
-        <h2>AngularJS NestedSortable demo</h2>
-        <h3>Lists with unlimited depth</h3>
-      </div>
-    </div>
+    <h1 class="page-header">NestedSortable - demo 3</h1>
+    <a href="index.html"><i class="glyphicon glyphicon-chevron-left"></i> Back to overview page</a>
 
     <div class="row">
-      <div class="col-md-6">
-
-        <!-- Nested list template -->
-        <script type="text/ng-template" id="items_renderer.html">
-          <div ui-nested-sortable-handle>
-            {{item.title}}
-          </div>
-          <ol ui-nested-sortable="options" ng-model="item.items">
-            <li ng-repeat="item in item.items" ui-nested-sortable-item="" ng-include="'items_renderer.html'">
-            </li>
-          </ol>
-        </script>
-  
+      <div class="col-lg-6">
+        <h3>Tree view</h3>
         <ol ui-nested-sortable="options" ng-model="list">
-          <li ng-repeat="item in list" ui-nested-sortable-item="" ng-include="'items_renderer.html'"></li>
-        </ol>
+            <li ng-repeat="item in list" ui-nested-sortable-item="">
+              <div ui-nested-sortable-handle>
+                {{item.title}}
+              </div>
+              <ol ui-nested-sortable="options" ng-model="item.items">
+                <li ng-repeat="subItem in item.items" ui-nested-sortable-item="">
+                  <div ui-nested-sortable-handle>
+                    {{subItem.title}}
+                  </div>
+                  <ol ui-nested-sortable="options" ng-model="subItem.items">
+                    <li ng-repeat="subItem1 in subItem.items" ui-nested-sortable-item="">
+                      <div ui-nested-sortable-handle>
+                        {{subItem1.title}}
+                      </div>
+                    </li>
+                  </ol>
+                </li>
+              </ol>
+            </li>      
+          </ol>          
       </div>
 
-      <div class="col-md-6">
+      <div class="col-lg-6">
+        <h3>Data binding</h3>
         <div class="info">
-            {{info}}
-          </div>
-          <pre class="code">{{ list | json }}</pre>
+          {{info}}
+        </div>
+        <pre class="code">{{ list | json }}</pre>
       </div>
     </div>
-  </div>
 
-  <!-- JavaScript -->
+  </div>
+  
   <script src="bower_components/angular/angular.min.js"></script>
-  <script src="../dist/angular-nested-sortable.js"></script>
-  <script src="demo.js"></script>
+  <script type="text/javascript" src="../dist/angular-nested-sortable.js"></script>
+  <script type="text/javascript" src="demo.js"></script>
 </body>
 </html>

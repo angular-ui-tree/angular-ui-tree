@@ -10,40 +10,34 @@
 </head>
 <body ng-app="demo">
 
+  <!-- Nested list template -->
+  <script type="text/ng-template" id="items_renderer.html">
+    <div ui-nested-sortable-handle>
+      {{item.title}}
+    </div>
+    <ol ui-nested-sortable="options" ng-model="item.items">
+      <li ng-repeat="item in item.items" ui-nested-sortable-item="" ng-include="'items_renderer.html'">
+      </li>
+    </ol>
+  </script>
+
   <div class="container" ng-controller="sample1Ctrl">
-    <h1 class="page-header">NestedSortable - Demo 1</h1>
+    <h1 class="page-header">NestedSortable - demo 1</h1>
     <a href="index.html"><i class="glyphicon glyphicon-chevron-left"></i> Back to overview page</a>
 
     <div class="row">
       <div class="col-lg-6">
         <h3>Tree view</h3>
+        
         <ol ui-nested-sortable="options" ng-model="list">
-            <li ng-repeat="item in list" ui-nested-sortable-item="">
-              <div ui-nested-sortable-handle>
-                {{item.title}}
-              </div>
-              <ol ui-nested-sortable="options" ng-model="item.items">
-                <li ng-repeat="subItem in item.items" ui-nested-sortable-item="">
-                  <div ui-nested-sortable-handle>
-                    {{subItem.title}}
-                  </div>
-                  <ol ui-nested-sortable="options" ng-model="subItem.items">
-                    <li ng-repeat="subItem1 in subItem.items" ui-nested-sortable-item="">
-                      <div ui-nested-sortable-handle>
-                        {{subItem1.title}}
-                      </div>
-                    </li>
-                  </ol>
-                </li>
-              </ol>
-            </li>      
-          </ol>          
+          <li ng-repeat="item in list" ui-nested-sortable-item="" ng-include="'items_renderer.html'"></li>
+        </ol>
       </div>
 
       <div class="col-lg-6">
         <h3>Data binding</h3>
         <div class="info">
-          {{info}}
+            {{info}}
         </div>
         <pre class="code">{{ list | json }}</pre>
       </div>
