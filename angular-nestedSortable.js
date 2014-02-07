@@ -86,7 +86,7 @@
                         }
                         pos.dirAx = newAx;
                     }
-                }
+                };
             }
         ])
         .constant('nestedSortableConfig', {
@@ -103,31 +103,37 @@
                 $scope.sortableModelValue = null;
                 $scope.callbacks = null;
                 $scope.items = [];
+                
                 $scope.initSortable = function(element) {
                     $scope.sortableElement = element;
-                }
+                };
+
                 $scope.insertSortableItem = function(index, itemModelData, itemScope) {
                     $scope.sortableModelValue.splice(index, 0, itemModelData);
                     $scope.$apply();
-                }
+                };
+
                 $scope.initSubItemElement = function(subElement) {
                     subElement.parentScope = $scope;
-                }
+                };
+
                 $scope.parentItemScope = function() {
                     return $scope.sortableElement.parentItemScope;
-                }
+                };
             }
         ])
         .controller('NestedSortableItemController', ['$scope', '$attrs', 'nestedSortableConfig',
             function ($scope, $attrs, nestedSortableConfig) {
                 $scope.sortableItemElement = null;
                 $scope.subSortableElement = null;
+                
                 $scope.initItem = function(element) {
                     $scope.sortableItemElement = element;
                     $scope.initSubItemElement(element);
                     $scope.items.splice($scope.$index, 0, $scope);
                     element.attr('sortable-elment-type', 'item');
-                }
+                };
+
                 $scope.removeItem = function() {
                     var index = $scope.$index;
                     if (index > -1) {
@@ -137,48 +143,58 @@
                         return item;
                     }
                     return null;
-                }
+                };
+
                 $scope.itemData = function() {
                     return $scope.sortableModelValue[$scope.$index];
-                }
+                };
+
                 $scope.setSubSortableElement = function(subElement){
                     $scope.subSortableElement = subElement;
                     if (subElement) {
                         subElement.parentItemScope = $scope;
-                    };
-                }
+                    }
+                };
+
                 $scope.parentScope = function() {
                     return $scope.sortableItemElement.parentScope;
-                }
+                };
+
                 $scope.subScope = function() {
                     if (!$scope.subSortableElement) {
                         return null;
-                    };
+                    }
+
                     var subScope = $scope.subSortableElement.scope();
-                    if (subScope && !subScope.sortableModelValue) // has no children data
+                    if (subScope && !subScope.sortableModelValue) {
+                        // has no children data
                         subScope = null;
+                    }
+
                     return subScope;
-                }
+                };
+
                 $scope.accept = function(sourceItemScope) {
                     return $scope.callbacks.accept(sourceItemScope.itemData(), sourceItemScope, $scope.parentScope());
-                }
+                };
+
                 $scope.childAccept = function(sourceItemScope) {
-                    return $scope.subScope() && 
-                                $scope.subScope().callbacks.accept(sourceItemScope.itemData(), sourceItemScope, $scope.subScope());
-                }
+                    return $scope.subScope() && $scope.subScope().callbacks.accept(sourceItemScope.itemData(), sourceItemScope, $scope.subScope());
+                };
+
                 $scope.prev = function() {
                     if ($scope.$index > 0) {
                         return $scope.items[$scope.$index - 1];
                     }
                     return null;
-                }
+                };
             }
         ])
         .controller('NestedSortableHandleController', ['$scope', '$attrs', 'nestedSortableConfig',
             function ($scope, $attrs, nestedSortableConfig) {
                 $scope.initHandle = function(element) {
                     element.attr('sortable-elment-type', 'handle');
-                }
+                };
             }
         ])
         .directive('uiNestedSortable', [ 'nestedSortableConfig', '$window',
@@ -198,14 +214,15 @@
 
                         if (config.listClass) {
                             element.addClass(config.listClass);
-                        };
+                        }
 
                         var ngModel = controllersArr[0];
                         var itemCtrl = controllersArr[1];
                         scope.initSortable(element);
+                        
                         if (itemCtrl) { // if it has a parent, link it with parent
                             scope.setSubSortableElement(element);
-                        };
+                        }
 
                         if (ngModel) {
                             ngModel.$render = function() {
@@ -215,28 +232,33 @@
 
                         callbacks.accept = function(modelData, sourceItemScope, targetScope) {
                             return true;
-                        }
+                        };
+
                         callbacks.orderChanged = function(scope, sourceItem, sourceIndex, destIndex) {
 
-                        }
+                        };
+
                         callbacks.itemRemoved = function(scope, sourceItem, sourceIndex) {
 
-                        }
+                        };
+
                         callbacks.itemAdded = function(scope, sourceItem, destIndex) {
 
-                        }
+                        };
+
                         callbacks.itemMoved = function(sourceScope, sourceItem, sourceIndex, destScope, destIndex) {
 
-                        }
+                        };
 
                         scope.$watch(attrs.uiNestedSortable, function(newVal, oldVal){
                             angular.forEach(newVal, function(value, key){
-                                if( callbacks[key] ){
+                                if (callbacks[key]) {
                                     if (typeof value === "function") {
                                         callbacks[key] = value;
-                                    };
+                                    }
                                 }
                             });
+
                             scope.callbacks = callbacks;
                         }, true);
 
@@ -245,11 +267,11 @@
                             if (itemCtrl) { // if it was removed, unlink to parent
                                 scope.setSubSortableElement(null);
                                 element.parentItemScope = null;
-                            };
+                            }
                         });
                     }
                 };
-        }])
+            }])
         .directive('uiNestedSortableItem', [ 'nestedSortableConfig', '$window',
             function(nestedSortableConfig, $window) {
                 return {
@@ -262,12 +284,13 @@
 
                         if (config.itemClass) {
                             element.addClass(config.itemClass);
-                        };
+                        }
 
                         scope.initItem(element);
                     }
                 };
-        }])
+            }
+        ])
         .directive('uiNestedSortableHandle', [ 'nestedSortableConfig', '$helper', '$window', '$document',
             function(nestedSortableConfig, $helper, $window, $document) {
                 return {
@@ -282,7 +305,7 @@
 
                         if (config.handleClass) {
                             element.addClass(config.handleClass);
-                        };
+                        }
 
                         var pos, dragElm, dragItemElm, dragItem,
                                 firstMoving, targetItem, targetBefore;
@@ -297,15 +320,18 @@
                                 arrayCopy.push(sourceArray[i]);
                             }
                             return arrayCopy;
-                        }
+                        };
 
                         var dragStartEvent = function(e) {
-                            if (!hasTouch && (e.button == 2 || e.which == 3)) // disable right click
+                            if (!hasTouch && (e.button == 2 || e.which == 3)) {
+                                // disable right click
                                 return;
+                            }
 
                             var target = angular.element(e.target);
-                            if (typeof target.attr('nodrag') != "undefined")
+                            if (typeof target.attr('nodrag') != "undefined") {
                                 return;
+                            }
                                 
                             var moveObj = e;
                             if (hasTouch) {
@@ -332,19 +358,21 @@
                                     var i = this.items.indexOf(dragItemScope);
                                     if (i > -1) {
                                         this.items.splice(i, 1);
-                                    };
+                                    }
                                     this.items.splice(index, 0, dragItemScope);
                                 },
+
                                 prev: function() {
                                     if (this.index > 0) {
                                         return this.items[this.index - 1];
                                     }
                                     return null;
                                 },
+
                                 next: function() {
                                     if (this.index < this.items.length - 1) {
                                         return this.items[this.index + 1];
-                                    };
+                                    }
                                     return null;
                                 }
                             };
@@ -384,7 +412,9 @@
 
 
                         var dragMoveEvent = function(e) {
+                            var currentAccept, prev, childAccept;
                             var moveObj = e;
+
                             if (hasTouch) {
                                 if (e.touches !== undefined) {
                                     moveObj = e.touches.item(0);
@@ -405,7 +435,7 @@
                                 if (firstMoving) {
                                     firstMoving = false;
                                     return;
-                                };
+                                }
 
                                 // move horizontal
                                 if (pos.dirAx && pos.distAxX >= config.threshold) {
@@ -415,47 +445,48 @@
                                     var collapsed = false; // todo: node can be collapsed
                                     // increase horizontal level if previous sibling exists and is not collapsed
                                     if (pos.distX > 0) {
-                                        var prev = dragItem.prev();
+                                        prev = dragItem.prev();
                                         if (prev && !collapsed) {
-                                            var childAccept = prev.childAccept(scope);
+                                            childAccept = prev.childAccept(scope);
                                             if (childAccept) {
                                                 prev.subSortableElement.append(placeElm);
                                                 destIndex = prev.subScope().items.length;
                                                 targetScope = prev.subScope();
                                                 if (targetScope.items.indexOf(scope) > -1) {
                                                     destIndex--;
-                                                };
+                                                }
                                                 dragItem.reset(destIndex, targetScope, scope);
-                                            };
-                                        };
+                                            }
+                                        }
                                     }
 
                                     // decrease horizontal level
                                     if (pos.distX < 0) {
                                         // we can't decrease a level if an item preceeds the current one
-                                        next = dragItem.next();
+                                        var next = dragItem.next();
                                         if (!next) {
                                             targetItem = dragItem.scope.parentItemScope();
                                             if (targetItem) {
-                                                var currentAccept = targetItem.accept(scope);
+                                                currentAccept = targetItem.accept(scope);
                                                 if (currentAccept) {
                                                     targetItem.sortableItemElement.after(placeElm);
                                                     destIndex = targetItem.$index + 1;
                                                     targetScope = targetItem;
                                                     dragItem.reset(destIndex, targetItem.parentScope(), scope);
-                                                };
-                                            };
+                                                }
+                                            }
                                         }
                                     }
-                                };
+                                }
 
                                 var moveRight = ($helper.offset(dragElm).left - $helper.offset(placeElm).left) >= config.threshold;
 
-                                var targetElm = angular.element(document.elementFromPoint(moveObj.pageX - document.body.scrollLeft, moveObj.pageY - (window.pageYOffset || document.documentElement.scrollTop)));
+                                var targetElm = angular.element(document.elementFromPoint(moveObj.pageX - document.body.scrollLeft,
+                                                moveObj.pageY - (window.pageYOffset || document.documentElement.scrollTop)));
 
-                                if (targetElm.attr('sortable-elment-type') != 'item'
-                                    && targetElm.attr('sortable-elment-type') != 'handle')
+                                if (targetElm.attr('sortable-elment-type') != 'item' && targetElm.attr('sortable-elment-type') != 'handle') {
                                     return;
+                                }
                                 targetItem = targetElm.scope();
                                 targetElm = targetItem.sortableItemElement;
 
@@ -464,7 +495,7 @@
                                     targetItemData = targetItem.itemData();
                                 }
                                 
-                                var currentAccept = targetItem.accept(scope);
+                                currentAccept = targetItem.accept(scope);
 
                                 // move vertical
                                 if (!pos.dirAx) {
@@ -473,8 +504,8 @@
                                     var redLine = dirUp ? $helper.offset(targetElm).top + $helper.height(targetElm) / 2 : $helper.offset(targetElm).top;
                                     targetBefore = moveObj.pageY < redLine;
                                     if (targetBefore) {
-                                        var prev = targetItem.prev();
-                                        var childAccept = prev && prev.childAccept(scope);
+                                        prev = targetItem.prev();
+                                        childAccept = prev && prev.childAccept(scope);
                                         if (childAccept
                                              && (moveRight || !currentAccept)) { // move to it's prev node
                                             targetItem = prev;
@@ -488,21 +519,21 @@
                                             destIndex = targetItem.$index;
                                             targetScope = targetItem.parentScope();
                                             sameParent = (scope.sortableElement == targetScope.sortableElement);
-                                            if (sameParent && sourceIndex < destIndex)
+                                            if (sameParent && sourceIndex < destIndex) {
                                                 destIndex--;
+                                            }
                                             dragItem.reset(destIndex, targetScope, scope);
                                         }
                                     }
                                     else {
-                                        var childAccept = targetItem.childAccept(scope);
-                                        if (childAccept 
-                                            && (moveRight || !currentAccept)) {
+                                        childAccept = targetItem.childAccept(scope);
+
+                                        if (childAccept && (moveRight || !currentAccept)) {
                                             targetItem.subSortableElement.append(placeElm);
                                             destIndex = targetItem.subScope().items.length;
                                             targetScope = targetItem.subScope();
                                             dragItem.reset(destIndex, targetScope, scope);
-                                        }
-                                        else if (currentAccept) {
+                                        } else if (currentAccept) {
                                             targetElm.after(placeElm);
                                             destIndex = targetItem.$index + 1;
                                             targetScope = targetItem.parentScope();
@@ -513,7 +544,7 @@
                                 }
 
                             }
-                        }
+                        };
 
                         var dragEndEvent = function(e) {
                             if (dragElm) {
@@ -540,9 +571,7 @@
                                         targetScope.callbacks.itemAdded(targetScope, source, destIndex);
                                         scope.callbacks.itemMoved(scope.sortableElement.scope(), source, sourceIndex, targetScope, destIndex);
                                     }
-                                };
-
-
+                                }
                             }
 
                             if (hasTouch) {
@@ -555,7 +584,7 @@
                                 angular.element($window).unbind('mousemove', dragMoveEvent);
                             }
 
-                        }
+                        };
 
                         if (hasTouch) {
                             element.bind('touchstart', dragStartEvent); // Mobile
@@ -565,5 +594,6 @@
                         }
                     }
                 };
-        }]);
+            }
+        ]);
 })();
