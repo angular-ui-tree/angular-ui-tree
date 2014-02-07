@@ -9,8 +9,9 @@ module.exports = function (grunt) {
     };
 
     var cfg = {
-        src: 'angular-nestedSortable.js'
-    }
+        srcDir: 'source',
+        buildDir: 'dist'
+    };
 
     // project configuration
     grunt.initConfig({
@@ -19,7 +20,7 @@ module.exports = function (grunt) {
         // watch
         watch: {
             files: [
-                '<%= cfg.src %>'
+                '<%= cfg.srcDir %>/**/.js'
             ],
             tasks: ['jshint']
         },
@@ -27,15 +28,32 @@ module.exports = function (grunt) {
         // jshint
         jshint: {
             files: {
-                src: ['<%= cfg.src %>']
+                src: ['<%= cfg.srcDir %>/**/*.js']
             },
             options: {
                 'jshintrc': true,
                 reporter: require('jshint-stylish')
             }
+        },
+
+        // clean
+        clean: {
+            build: ['<%= cfg.buildDir %>']
+        },
+
+        // uglify
+        uglify: {
+            build: {
+                files: {
+                    '<%= cfg.buildDir %>/angular-nested-sortable.min.js': ['<%= cfg.srcDir %>/angular-nested-sortable.js']
+                }
+            }
         }
+
     });
 
     // default
     grunt.registerTask('default', ['watch']);
+
+    grunt.registerTask('build', ['jshint', 'clean:build', 'uglify:build'])
 };
