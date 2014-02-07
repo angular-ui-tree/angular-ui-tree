@@ -152,7 +152,10 @@ angular.module('ui.nestedSortable', [])
 			if (!$scope.subSortableElement) {
 				return null;
 			};
-			return $scope.subSortableElement.scope();
+			var subScope = $scope.subSortableElement.scope();
+			if (subScope && !subScope.sortableModelValue) // has no children data
+				subScope = null;
+			return subScope;
 		}
 		$scope.accept = function(sourceItemScope) {
 			return $scope.callbacks.accept(sourceItemScope.itemData(), sourceItemScope, $scope.parentScope());
