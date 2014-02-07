@@ -41,11 +41,22 @@ module.exports = function (grunt) {
             build: ['<%= cfg.buildDir %>']
         },
 
+        // concat
+        concat: {
+            build: {
+              src: ['<%= cfg.srcDir %>/angular-nested-sortable.js'],
+              dest: '<%= cfg.buildDir %>/angular-nested-sortable.js',
+            },
+        },
+
         // uglify
         uglify: {
+            options: {
+                mangle: false
+            },
             build: {
                 files: {
-                    '<%= cfg.buildDir %>/angular-nested-sortable.min.js': ['<%= cfg.srcDir %>/angular-nested-sortable.js']
+                    '<%= cfg.buildDir %>/angular-nested-sortable.min.js': ['<%= cfg.buildDir %>/angular-nested-sortable.js']
                 }
             }
         }
@@ -55,5 +66,5 @@ module.exports = function (grunt) {
     // default
     grunt.registerTask('default', ['watch']);
 
-    grunt.registerTask('build', ['jshint', 'clean:build', 'uglify:build'])
+    grunt.registerTask('build', ['jshint', 'clean:build', 'concat:build', 'uglify:build']);
 };
