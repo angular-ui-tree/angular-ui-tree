@@ -20,6 +20,9 @@ module.exports = function (grunt) {
         
         // watch
         watch: {
+            options: {
+                livereload: true
+            },
             files: [
                 '<%= cfg.srcDir %>/**/.js',
                 '<%= cfg.demoDir %>/**/*.js',
@@ -72,7 +75,32 @@ module.exports = function (grunt) {
                     '<%= cfg.buildDir %>/angular-nested-sortable.min.js': ['<%= cfg.buildDir %>/angular-nested-sortable.js']
                 }
             }
-        }
+        },
+
+        // connect
+        connect: {
+            options: {
+                port: 8080,
+                livereload: 35729,
+                hostname: '0.0.0.0'
+            },
+            demo: {
+                options: {
+                    middleware: function (connect) {
+                        return [
+                            mountFolder(connect, '')
+                        ];
+                    }
+                }
+            }
+        },
+
+        // open
+        open: {
+            server: {
+                path: 'http://localhost:<%= connect.options.port %>/<%= cfg.demoDir %>/'
+            }
+        },
 
     });
 
@@ -80,4 +108,6 @@ module.exports = function (grunt) {
     grunt.registerTask('default', ['watch']);
 
     grunt.registerTask('build', ['jshint:source', 'clean:build', 'concat:build', 'uglify:build']);
+
+    grunt.registerTask('serve', ['build', 'open', 'connect:demo', 'watch']);
 };
