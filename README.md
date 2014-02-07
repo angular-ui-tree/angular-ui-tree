@@ -1,8 +1,7 @@
 Angular UI NestedSortable
 ======================
 
-An Angularjs ui component that can sort nested lists and bind data, and it dosen't need to depend on jQuery.
-
+An AngularJS UI component that can sort nested lists, provides drag &amp; drop support and doesn't depend on jQuery.
 
 ## Features
 
