@@ -101,11 +101,11 @@ To debug code and run end-to-end tests, it is often useful to have a local HTTP 
 
 To start the web server, run:
 
-  $ grunt webserver
+    $ grunt webserver
 
 To access the local server, enter the following URL into your web browser:
 
-  http://localhost:8080/
+    http://localhost:8080/demo/
 
 By default, it serves the contents of the demo project.
 
@@ -113,6 +113,6 @@ By default, it serves the contents of the demo project.
 ####Building NestedSortable
 To build NestedSortable, you use the following command.
 
-  $ grunt build
+    $ grunt build
 
 This will generate non-minified and minified JavaScript files in the `dist` directory.
