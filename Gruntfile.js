@@ -105,9 +105,9 @@ module.exports = function (grunt) {
     });
 
     // default
-    grunt.registerTask('default', ['watch']);
+    grunt.registerTask('default', []);
 
     grunt.registerTask('build', ['jshint:source', 'clean:build', 'concat:build', 'uglify:build']);
 
-    grunt.registerTask('serve', ['build', 'open', 'connect:demo', 'watch']);
+    grunt.registerTask('webserver', ['build', 'open', 'connect:demo', 'watch']);
 };
