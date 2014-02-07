@@ -22,16 +22,38 @@
     </div>
     
     <div class="row">
-      <div class="col-md-12">
-        <h3>NestedSortable in action:</h3>
-        <ol>
-          <li><a href="sample1.html">Sample 1</a></li>
-          <li><a href="sample2.html">Sample 2</a></li>
-          <li><a href="sample3.html">Sample 3</a></li>
-        </ol>
+      <div class="col-md-4">
+        <h3>Sample 1</h3>
+        <p>
+          A nested list, it binds with a nested array, if it's sort order is changed, the data will be updated.
+          In this sample, it can only support 3-level nodes.
+        </p>
+        <p>
+          <a href="sample1.html">Try sample 1</a>
+        </p>
+      </div>
+
+      <div class="col-md-4">
+        <h3>Sample 2</h3>
+        <p>
+          Two-level list, the data type of top level is 'chapter', the data type of the secend level is 'lecture', the node can only be dragged & dropped to another node which with same data type.
+        </p>
+        <a href="sample2.html">Try sample 3</a>
+      </div>
+
+      <div class="col-md-4">
+        <h3>Sample 3</h3>
+        <p>
+          A nested recursive list, it binds with an unlimited nested array.
+        </p>
+        <a href="sample3.html">Try Sample 3</a>
       </div>
     </div>
   </div>
+
+
+
+
 
   <!-- JavaScript -->
   <script src="bower_components/angular/angular.min.js"></script>
