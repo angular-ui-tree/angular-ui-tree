@@ -11,3 +11,5 @@ Thumbs.db
 # Project dependencies #
 ########################
 bower_components
+node_modules
+
