@@ -10,6 +10,9 @@ An Angularjs ui component that can sort nested lists and bind data, and it dosen
 - It is possible to define elements that will not accept a new item/list
 - Data binding. If you change the order, the data you bound will be updated.
 
+## Demo
+Watch the NestedSortable component in action on the [demo page](http://jimliu.github.io/Angular-NestedSortable/demo/sample3.html).
+
 ## Usage
 
 Angularjs script
@@ -20,8 +23,6 @@ var app = angular.module('nestedSortableDemoApp', [
 ]);
 ```  
 Injecting `ui.nestedSortable` to your App.
-
-
 
 HTML View or Templates
 ```html
@@ -47,25 +48,6 @@ HTML View or Templates
 - Adding `ui-nested-sortable-handle` to mark which element do you want to handle the drage action
 - All `ui-nested-sortable`, `ng-model`, `ui-nested-sortable-item` and `ui-nested-sortable-handle` are necessary. And they can be nested.
 - If you add a `nodrag` attribute to an element, the element won't response for the drag action.
-
-
-## Samples
-
-### Sample 3
-
-A nested recursive list, it binds with an unlimited nested array.  
-[Try Sample3](http://jimliu.github.io/Angular-NestedSortable/demo/sample3.html)
-
-### Sample 2
-
-Two-level list, the data type of top level is 'chapter', the data type of the secend level is 'lecture', the node can only be dragged & dropped to another node which with same data type.  
-[Try Sampl2](http://jimliu.github.io/Angular-NestedSortable/demo/sample2.html)
-
-### Sample 1
-
-A nested list, it binds with a nested array, if it's sort order is changed, the data will be updated.  
-In this sample, it can only support 3-level nodes.
-[Try Sample1](http://jimliu.github.io/Angular-NestedSortable/demo/sample1.html)
 
 ## ngmodules
 
