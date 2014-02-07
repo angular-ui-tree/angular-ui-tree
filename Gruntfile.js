@@ -10,7 +10,8 @@ module.exports = function (grunt) {
 
     var cfg = {
         srcDir: 'source',
-        buildDir: 'dist'
+        buildDir: 'dist',
+        demoDir: 'demo'
     };
 
     // project configuration
@@ -20,19 +21,31 @@ module.exports = function (grunt) {
         // watch
         watch: {
             files: [
-                '<%= cfg.srcDir %>/**/.js'
+                '<%= cfg.srcDir %>/**/.js',
+                '<%= cfg.demoDir %>/**/*.js',
+                '!<%= cfg.demoDir %>/bower_components/**/*'
             ],
             tasks: ['jshint']
         },
 
         // jshint
         jshint: {
-            files: {
-                src: ['<%= cfg.srcDir %>/**/*.js']
-            },
             options: {
                 'jshintrc': true,
                 reporter: require('jshint-stylish')
+            },
+            source: {
+                files: {
+                    src: ['<%= cfg.srcDir %>/**/*.js']
+                }
+            },
+            demo: {
+                files: {
+                    src: [
+                        '<%= cfg.demoDir %>/**/*.js',
+                        '!<%= cfg.demoDir %>/bower_components/**/*'
+                    ]
+                }
             }
         },
 
@@ -66,5 +79,5 @@ module.exports = function (grunt) {
     // default
     grunt.registerTask('default', ['watch']);
 
-    grunt.registerTask('build', ['jshint', 'clean:build', 'concat:build', 'uglify:build']);
+    grunt.registerTask('build', ['jshint:source', 'clean:build', 'concat:build', 'uglify:build']);
 };
