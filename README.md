@@ -75,10 +75,6 @@ Run the commands below in the project root directory.
     $ npm install
     $ bower install
 
-#####3. Generate dist
-    
-    $ grunt build
-
 ## Useful commands
 
 ####Running a Local Development Web Server
