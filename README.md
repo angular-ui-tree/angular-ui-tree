@@ -100,8 +100,6 @@ To build NestedSortable, you use the following command.
 
 This will generate non-minified and minified JavaScript files in the `dist` directory.
 
-This will generate non-minified and minified JavaScript files in the `dist` directory.
-
 ####Run tests
 You can run the tests once or continuous.
 
