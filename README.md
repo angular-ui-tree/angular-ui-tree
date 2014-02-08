@@ -1,6 +1,8 @@
 Angular UI NestedSortable
 ======================
 
+[![Build Status](https://travis-ci.org/JimLiu/Angular-NestedSortable.png?branch=master)](https://travis-ci.org/JimLiu/Angular-NestedSortable)
+
 An AngularJS UI component that can sort nested lists, provides drag &amp; drop support and doesn't depend on jQuery.
 
 ## Features
