@@ -157,5 +157,7 @@ describe('main', function () {
       expect(tree.children('li').eq(1).find('> ol').children('li').first().find('> ol').children('li').eq(1)).toHaveText('item2.1.2');
     });
 
+    // TODO: simulate drag and drop events and check if the position of the nodes is still correct
+    // code to simulate d&d: https://github.com/jquery/jquery-ui/blob/master/tests/jquery.simulate.js
 
 });
