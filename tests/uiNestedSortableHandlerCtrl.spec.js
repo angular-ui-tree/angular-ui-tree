@@ -125,6 +125,7 @@ describe('nestedSortableHandlerCtrl', function () {
         expect(tree.find('ol')).toExist();
     });
 
+    // test if nodes and child nodes all are rendered
     it('should show 15 nodes', function () {
       var tree = createTree();
       expect(tree.find('li').length).toEqual(15);
@@ -144,5 +145,17 @@ describe('nestedSortableHandlerCtrl', function () {
       var tree = createTree();
       expect(tree.children('li').eq(2).find('> ol').children('li').length).toEqual(3);
     });
+
+    // test if the node text is shown
+    it('should show \'item1\' as text for the first node', function () {
+      var tree = createTree();
+      expect(tree.children('li').first()).toHaveText('item1');
+    });
+
+    it('should show \'item2.1.2\' as text for the second child node of the first child node of node 2', function () {
+      var tree = createTree();
+      expect(tree.children('li').eq(1).find('> ol').children('li').first().find('> ol').children('li').eq(1)).toHaveText('item2.1.2');
+    });
+
 
 });
