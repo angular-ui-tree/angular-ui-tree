@@ -3,8 +3,8 @@
   
   angular.module('ui.nestedSortable')
 
-    .controller('NestedSortableController', ['$scope', '$attrs', 'nestedSortableConfig',
-      function ($scope, $attrs, nestedSortableConfig) {
+    .controller('NestedSortableController', ['$scope', 'nestedSortableConfig',
+      function ($scope, nestedSortableConfig) {
         $scope.sortableElement = null;
         $scope.sortableModelValue = null;
         $scope.callbacks = null;
@@ -14,7 +14,8 @@
           $scope.sortableElement = element;
         };
 
-        $scope.insertSortableItem = function(index, itemModelData, itemScope) {
+        $scope.insertSortableItem = function(index, itemModelData) {
+          console.log($scope.sortableModelValue);
           $scope.sortableModelValue.splice(index, 0, itemModelData);
           $scope.$apply();
         };
