@@ -9,30 +9,109 @@ describe('nestedSortableHandlerCtrl', function () {
         scope = $rootScope;
         $compile = _$compile_;
 
-        element = angular.element('<ol ui-nested-sortable="chaptersOptions" ng-model="chapters">' +
-                                    '<li ng-repeat="chapter in chapters" ui-nested-sortable-item>' +
-                                      '<div ui-nested-sortable-handle class="chapter-title">' +
-                                        '{{chapter.title}}' +
-                                      '</div>' +
-                                      '<ol ui-nested-sortable="lecturesOptions" ng-model="chapter.lectures">' +
-                                        '<li ng-repeat="lecture in chapter.lectures" ui-nested-sortable-item>' +
-                                          '<div ui-nested-sortable-handle>' +
-                                            '{{lecture.title}}' +
-                                          '</div>' +
-                                        '</li>' +
-                                      '</ol>' +
-                                    '</li>' +
-                                  '</ol>');
+        element = angular.element('<ol ui-nested-sortable="options" ng-model="list">' +
+            '<li ng-repeat="item in list" ui-nested-sortable-item="">' +
+              '<div ui-nested-sortable-handle>' +
+                '{{item.title}}' +
+              '</div>' +
+              '<ol ui-nested-sortable="options" ng-model="item.items">' +
+                '<li ng-repeat="subItem in item.items" ui-nested-sortable-item="">' +
+                  '<div ui-nested-sortable-handle>' +
+                    '{{subItem.title}}' +
+                  '</div>' +
+                  '<ol ui-nested-sortable="options" ng-model="subItem.items">' +
+                    '<li ng-repeat="subItem1 in subItem.items" ui-nested-sortable-item="">' +
+                      '<div ui-nested-sortable-handle>' +
+                        '{{subItem1.title}}' +
+                      '</div>' +
+                    '</li>' +
+                  '</ol>' +
+                '</li>' +
+              '</ol>' +
+            '</li>' + 
+          '</ol>');
 
-        scope.chapters = [{
+        scope.list = [
+        {
           "id": 1,
           "title": "item1",
-          "items": [{
-            "id": 2,
-            "title": "item1.1",
-            "items": []
-          }]
-        }];
+          "items": [],
+        },
+        {
+          "id": 2,
+          "title": "item2",
+          "items": [
+            {
+              "id": 21,
+              "title": "item2.1",
+              "items": [
+                {
+                  "id": 211,
+                  "title": "item2.1.1",
+                  "items": []
+                },
+                {
+                  "id": 212,
+                  "title": "item2.1.2",
+                  "items": []
+                },
+                {
+                  "id": 213,
+                  "title": "item2.1.3",
+                  "items": []
+                }
+              ],
+            },
+            {
+              "id": 22,
+              "title": "item2.2",
+              "items": [],
+            }
+          ],
+        },
+        {
+          "id": 3,
+          "title": "item3",
+          "items": [
+            {
+              "id": 31,
+              "title": "item3.1",
+              "items": [],
+            },
+            {
+              "id": 32,
+              "title": "item3.2",
+              "items": [],
+            },
+            {
+              "id": 33,
+              "title": "item3.3",
+              "items": [
+                {
+                  "id": 331,
+                  "title": "item3.3.1",
+                  "items": []
+                },
+                {
+                  "id": 332,
+                  "title": "item3.3.2",
+                  "items": []
+                },
+                {
+                  "id": 333,
+                  "title": "item3.3.3",
+                  "items": []
+                }
+              ],
+            }
+          ],
+        },
+        {
+          "id": 4,
+          "title": "item4",
+          "items": [],
+        }
+      ];
     }));
 
     function createTree() {
@@ -43,7 +122,28 @@ describe('nestedSortableHandlerCtrl', function () {
 
     it('should be created', function () {
         var tree = createTree();
-        expect(tree.find('ol').length).toEqual(1);
+        expect(tree.find('ol')).toExist();
+        console.log(tree);
+    });
+
+    it('should show 15 nodes', function () {
+      var tree = createTree();
+      expect(tree.find('li').length).toEqual(15);
+    });
+
+    it('should show 4 root nodes', function () {
+      var tree = createTree();
+      expect(tree.children('li').length).toEqual(4);
+    });
+
+    it('should show the first node with no child nodes', function () {
+      var tree = createTree();
+      expect(tree.children('li').first().children('li').length).toEqual(0);
+    });
+
+    it('should show the third node with 3 child nodes', function () {
+      var tree = createTree();
+      expect(tree.children('li').eq(2).find('> ol').children('li').length).toEqual(3);
     });
 
 });
