@@ -372,6 +372,11 @@
                 items: copyArray(scope.items),
                 scope: scope,
                 reset: function(index, scope, dragItemScope) {
+                  sameParent = (scope.sortableElement == dragItemScope.sortableElement);
+                  if (sameParent && sourceIndex < index) {
+                    index--;
+                  }
+                  destIndex = index;
                   this.index = index;
                   this.scope = scope;
                   this.items = copyArray(scope.items);
@@ -474,9 +479,6 @@
                         prev.subSortableElement.append(placeElm);
                         destIndex = prev.subScope().items.length;
                         targetScope = prev.subScope();
-                        if (targetScope.items.indexOf(scope) > -1) {
-                          destIndex--;
-                        }
                         dragItem.reset(destIndex, targetScope, scope);
                       }
                     }
@@ -523,10 +525,13 @@
                 // move vertical
                 if (!pos.dirAx) {
                   sameParent = false;
-                  var dirUp = $helper.offset(placeElm).top > $helper.offset(targetElm).top;
-                  var redLine = dirUp ? $helper.offset(targetElm).top + $helper.height(targetElm) / 2 : $helper.offset(targetElm).top;
-                  targetBefore = moveObj.pageY < redLine;
-
+                  // check it's new position
+                  var targetOffset = $helper.offset(targetElm);
+                  if ($helper.offset(placeElm).top > targetOffset.top) { // the move direction is up?
+                    targetBefore = $helper.offset(dragElm).top < targetOffset.top + $helper.height(targetElm) / 2;
+                  } else {
+                    targetBefore = moveObj.pageY < targetOffset.top;
+                  }
                   if (targetBefore) {
                     prev = targetItem.prev();
                     childAccept = prev && prev.childAccept(scope);
@@ -542,12 +547,6 @@
                       targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
                       destIndex = targetItem.$index;
                       targetScope = targetItem.parentScope();
-                      sameParent = (scope.sortableElement == targetScope.sortableElement);
-                      
-                      if (sameParent && sourceIndex < destIndex) {
-                        destIndex--;
-                      }
-
                       dragItem.reset(destIndex, targetScope, scope);
                     }
                   } else {
@@ -562,7 +561,6 @@
                       targetElm.after(placeElm);
                       destIndex = targetItem.$index + 1;
                       targetScope = targetItem.parentScope();
-                      sameParent = (scope.sortableElement == targetScope.sortableElement);
                       dragItem.reset(destIndex, targetScope, scope);
                     }
                   }
