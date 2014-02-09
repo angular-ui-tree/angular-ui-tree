@@ -1,0 +1,80 @@
+.container .jumbotron {
+  text-align: center;
+  border-radius: 0;
+}
+.jumbotron .btn {
+  font-size: 21px;
+  padding: 14px 24px;
+}
+
+pre {
+    border: 1px solid #CCC;
+}
+
+.code {
+    border: 1px solid #CCC;
+}
+.info {
+}
+
+.chapter-title {
+    background-color: #687074 !important;
+    color: #FFF !important;
+}
+
+.nestedSortable-list {
+	display: block;
+	position: relative;
+	margin: 0px;
+	padding: 0px;
+	list-style: none;
+}
+.nestedSortable-list .nestedSortable-list {
+    padding-left: 30px;
+}
+.nestedSortable-item, .nestedSortable-placeholder {
+	display: block;
+	position: relative;
+	margin: 0px;
+	padding: 0px;
+	min-height: 20px;
+	line-height: 20px;
+}
+.nestedSortable-handle {
+    cursor: move;
+    display: block;
+    min-height: 38px;
+    margin: 5px 0;
+    padding: 8px 12px;
+    background: #f8faff;
+    border: 1px solid #dae2ea;
+    color: #7c9eb2;
+    text-decoration: none;
+    font-weight: bold;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.nestedSortable-handle:hover {
+    color: #438eb9;
+    background: #f4f6f7;
+    border-color: #dce2e8;
+}
+.nestedSortable-placeholder {
+    margin: 5px 0;
+    padding: 0;
+    min-height: 30px;
+    background: #f0f9ff;
+    border: 2px dashed #bed2db;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.nestedSortable-drag {
+    position: absolute;
+    pointer-events: none;
+    z-index: 999;
+    opacity: .8;
+}
+
