@@ -77,6 +77,7 @@ module.exports = function (grunt) {
         // uglify
         uglify: {
             options: {
+                preserveComments: 'some',
                 mangle: false
             },
             build: {
