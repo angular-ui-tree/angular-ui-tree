@@ -15,7 +15,6 @@
         };
 
         $scope.insertSortableItem = function(index, itemModelData) {
-          console.log($scope.sortableModelValue);
           $scope.sortableModelValue.splice(index, 0, itemModelData);
           $scope.$apply();
         };
