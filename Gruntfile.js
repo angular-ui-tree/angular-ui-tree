@@ -10,7 +10,7 @@ module.exports = function (grunt) {
 
     var cfg = {
         srcDir: 'source',
-        buildDir: 'dist',
+        buildDir: 'demo/dist',
         demoDir: 'demo'
     };
 

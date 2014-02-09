@@ -12,7 +12,7 @@ An AngularJS UI component that can sort nested lists, provides drag &amp; drop s
 - Data binding. If you change the order, the data you bound will be updated.
 
 ## Demo
-Watch the NestedSortable component in action on the [demo page](http://jimliu.github.io/Angular-NestedSortable/demo/sample3.html).
+Watch the NestedSortable component in action on the [demo page](http://jimliu.github.io/Angular-NestedSortable/).
 
 ## Usage
 
