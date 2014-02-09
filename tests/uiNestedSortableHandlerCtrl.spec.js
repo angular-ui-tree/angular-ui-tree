@@ -123,7 +123,6 @@ describe('nestedSortableHandlerCtrl', function () {
     it('should be created', function () {
         var tree = createTree();
         expect(tree.find('ol')).toExist();
-        console.log(tree);
     });
 
     it('should show 15 nodes', function () {
