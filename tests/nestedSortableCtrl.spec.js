@@ -145,4 +145,14 @@ describe('nestedSortableCtrl', function () {
         scope.insertSortableItem(index, itemModelData);
         expect(scope.sortableModelValue[index].title).toEqual('baz');
     });
+
+    it('should should set the parent scope of a newly initialized child node', function () {
+        var tree, subitem;
+
+        tree = createTree();
+        subItem = {};
+        
+        scope.initSubItemElement(subItem);
+        expect(subItem.parentScope).toEqual(scope);
+    });
 });
