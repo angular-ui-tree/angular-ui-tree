@@ -151,8 +151,16 @@ describe('nestedSortableCtrl', function () {
 
         tree = createTree();
         subItem = {};
-        
+
         scope.initSubItemElement(subItem);
         expect(subItem.parentScope).toEqual(scope);
     });
+
+    it('should return the correct parent item scope', function () {
+        var sortable = {parentItemScope: 'foo'};
+        scope.initSortable(sortable);
+        expect(scope.parentItemScope()).toEqual('foo');
+    });
 });
+
+
