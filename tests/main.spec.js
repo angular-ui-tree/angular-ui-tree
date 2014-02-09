@@ -9,6 +9,7 @@ describe('main', function () {
         scope = $rootScope;
         $compile = _$compile_;
 
+        // TODO: move test element + data to a generic module so we can reuse it for other tests
         element = angular.element('<ol ui-nested-sortable="options" ng-model="list">' +
             '<li ng-repeat="item in list" ui-nested-sortable-item="">' +
               '<div ui-nested-sortable-handle>' +
