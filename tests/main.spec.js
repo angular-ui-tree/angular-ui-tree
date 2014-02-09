@@ -1,4 +1,4 @@
-describe('nestedSortableHandlerCtrl', function () {
+describe('main', function () {
 
     var scope, $compile;
     var element;
