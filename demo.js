@@ -76,6 +76,21 @@
         console.log(info);
       },
     };
+    $scope.remove = function(scope) {
+      //scope.removeItem();
+      var index = scope.$index;
+      if (index > -1) {
+        scope.sortableModelValue.splice(index, 1)[0];
+      }
+    }
+    $scope.newSubItem = function(scope) {
+      var itemData = scope.itemData();
+      itemData.items.push({
+        id: itemData.id * 10 + itemData.items.length,
+        title: itemData.title + '.' + (itemData.items.length + 1),
+        items: []
+      });
+    }
   })
 
   .controller('sample2Ctrl', function($scope) {

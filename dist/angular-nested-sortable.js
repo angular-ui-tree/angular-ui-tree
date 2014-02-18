@@ -1,5 +1,5 @@
 /**
- * @license Angular NestedSortable v1.2.0
+ * @license Angular NestedSortable v1.2.2
  * (c) 2010-2014. https://github.com/JimLiu/Angular-NestedSortable
  * License: MIT
  */
@@ -185,7 +185,9 @@
             if (index > -1) {
               var item = $scope.sortableModelValue.splice(index, 1)[0];
               $scope.items.splice(index, 1)[0];
-              $scope.$apply();
+              if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+                $scope.$apply();
+              }
               return item;
             }
 
@@ -362,8 +364,14 @@
               }
 
               var target = angular.element(e.target);
-              if (typeof target.attr('nodrag') != "undefined") {
-                return;
+              var nodrag = function (targetElm) {
+                return (typeof targetElm.attr('nodrag')) != "undefined";
+              };
+              while (target && target[0] && target[0] != element) {
+                if (nodrag(target)) {
+                  return;
+                }
+                target = target.parent();
               }
                   
               var moveObj = e;
