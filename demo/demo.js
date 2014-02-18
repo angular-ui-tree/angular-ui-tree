@@ -68,7 +68,7 @@
     $scope.options = {
       accept: function(data, sourceItemScope, targetScope) {
         console.log("target level: " + targetScope.level());
-        console.log("target data: ", targetScope.parentItemScope().itemData());
+        console.log("parent data: ", targetScope.parentItemScope() ? targetScope.parentItemScope().itemData() : "null");
         return true;
       },
       orderChanged: function(scope, sourceItem, sourceIndex, destIndex) {

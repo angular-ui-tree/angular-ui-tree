@@ -26,6 +26,14 @@
         $scope.parentItemScope = function() {
           return $scope.sortableElement.parentItemScope;
         };
+
+        $scope.level = function() {
+          var parentItem = $scope.parentItemScope();
+          if (parentItem) {
+            return parentItem.level() + 1;
+          }
+          return 1;
+        };
       }
     ]);
 })();
