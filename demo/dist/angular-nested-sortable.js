@@ -1,5 +1,5 @@
 /**
- * @license Angular NestedSortable v1.2.1
+ * @license Angular NestedSortable v1.2.2
  * (c) 2010-2014. https://github.com/JimLiu/Angular-NestedSortable
  * License: MIT
  */
@@ -364,8 +364,14 @@
               }
 
               var target = angular.element(e.target);
-              if (typeof target.attr('nodrag') != "undefined") {
-                return;
+              var nodrag = function (targetElm) {
+                return (typeof targetElm.attr('nodrag')) != "undefined";
+              };
+              while (target && target[0] && target[0] != element) {
+                if (nodrag(target)) {
+                  return;
+                }
+                target = target.parent();
               }
                   
               var moveObj = e;
