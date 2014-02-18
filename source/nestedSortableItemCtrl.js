@@ -20,7 +20,9 @@
             if (index > -1) {
               var item = $scope.sortableModelValue.splice(index, 1)[0];
               $scope.items.splice(index, 1)[0];
-              $scope.$apply();
+              if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+                $scope.$apply();
+              }
               return item;
             }
 

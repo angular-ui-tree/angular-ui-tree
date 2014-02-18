@@ -1,5 +1,5 @@
 /**
- * @license Angular NestedSortable v1.2.0
+ * @license Angular NestedSortable v1.2.1
  * (c) 2010-2014. https://github.com/JimLiu/Angular-NestedSortable
  * License: MIT
  */
@@ -185,7 +185,9 @@
             if (index > -1) {
               var item = $scope.sortableModelValue.splice(index, 1)[0];
               $scope.items.splice(index, 1)[0];
-              $scope.$apply();
+              if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+                $scope.$apply();
+              }
               return item;
             }
 

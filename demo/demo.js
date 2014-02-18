@@ -76,6 +76,17 @@
         console.log(info);
       },
     };
+    $scope.remove = function(scope) {
+      scope.removeItem();
+    }
+    $scope.newSubItem = function(scope) {
+      var itemData = scope.itemData();
+      itemData.items.push({
+        id: itemData.id * 10 + itemData.items.length,
+        title: itemData.title + '.' + (itemData.items.length + 1),
+        items: []
+      });
+    }
   })
 
   .controller('sample2Ctrl', function($scope) {

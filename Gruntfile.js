@@ -29,7 +29,7 @@ module.exports = function (grunt) {
                 '!<%= cfg.demoDir %>/dist/*.js',
                 '!<%= cfg.demoDir %>/bower_components/**/*'
             ],
-            tasks: ['jshint:source', 'clean:build', 'concat:build']
+            tasks: ['jshint:source', 'clean:build', 'concat:build', 'uglify:build']
         },
 
         // jshint
