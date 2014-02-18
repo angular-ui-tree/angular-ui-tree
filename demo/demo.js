@@ -77,7 +77,11 @@
       },
     };
     $scope.remove = function(scope) {
-      scope.removeItem();
+      //scope.removeItem();
+      var index = scope.$index;
+      if (index > -1) {
+        scope.sortableModelValue.splice(index, 1)[0];
+      }
     }
     $scope.newSubItem = function(scope) {
       var itemData = scope.itemData();
