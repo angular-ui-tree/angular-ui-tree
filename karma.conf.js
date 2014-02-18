@@ -12,7 +12,7 @@ module.exports = function (config) {
         // files to load in the browser
         files: [
             // components
-            cfg.bowerComponents + '/jquery/jquery.js',
+            cfg.bowerComponents + '/jquery/dist/jquery.js',
             cfg.bowerComponents + '/jasmine-jquery/lib/jasmine-jquery.js',
             cfg.bowerComponents + '/angular/angular.js',
             cfg.bowerComponents + '/angular-mocks/angular-mocks.js',
