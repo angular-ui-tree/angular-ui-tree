@@ -29,7 +29,7 @@
       <div class="col-lg-6">
         <h3>Tree view</h3>
         
-        <ol ui-nested-sortable="options" ng-model="list">
+        <ol ui-nested-sortable="options" ng-model="list" >
           <li ng-repeat="item in list" ui-nested-sortable-item="" ng-include="'items_renderer.html'"></li>
         </ol>
       </div>
@@ -46,7 +46,7 @@
   </div>
   
   <script src="bower_components/angular/angular.min.js"></script>
-  <script type="text/javascript" src="dist/angular-nested-sortable.min.js"></script>
+  <script type="text/javascript" src="dist/angular-nested-sortable.js"></script>
   <script type="text/javascript" src="demo.js"></script>
 </body>
 </html>

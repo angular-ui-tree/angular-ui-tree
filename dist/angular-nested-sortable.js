@@ -1,3 +1,8 @@
+/**
+ * @license Angular NestedSortable v1.2.0
+ * (c) 2010-2014. https://github.com/JimLiu/Angular-NestedSortable
+ * License: MIT
+ */
 (function () {
   'use strict';
 
@@ -132,6 +137,14 @@
 
         $scope.parentItemScope = function() {
           return $scope.sortableElement.parentItemScope;
+        };
+
+        $scope.level = function() {
+          var parentItem = $scope.parentItemScope();
+          if (parentItem) {
+            return parentItem.level() + 1;
+          }
+          return 1;
         };
       }
     ]);
