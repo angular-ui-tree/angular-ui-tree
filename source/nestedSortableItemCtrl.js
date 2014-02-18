@@ -42,6 +42,16 @@
             return $scope.sortableItemElement.parentScope;
           };
 
+          $scope.level = function() {
+            var l = 1;
+            var parent = $scope.parentScope();
+            while (parent && parent.parentScope) {
+              l++;
+              parent = parent.parentScope();
+            }
+            return l;
+          };
+
           $scope.subScope = function() {
             if (!$scope.subSortableElement) {
               return null;

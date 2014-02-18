@@ -24,11 +24,12 @@ module.exports = function (grunt) {
                 livereload: true
             },
             files: [
-                '<%= cfg.srcDir %>/**/.js',
+                '<%= cfg.srcDir %>/**/*.js',
                 '<%= cfg.demoDir %>/**/*.js',
+                '!<%= cfg.demoDir %>/dist/*.js',
                 '!<%= cfg.demoDir %>/bower_components/**/*'
             ],
-            tasks: ['jshint']
+            tasks: ['jshint:source', 'clean:build', 'concat:build']
         },
 
         // jshint
