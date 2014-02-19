@@ -67,6 +67,7 @@
     }];
     $scope.options = {
       accept: function(data, sourceItemScope, targetScope) {
+        console.log("source sub levels: " + sourceItemScope.maxSubLevels());
         console.log("target level: " + targetScope.level());
         console.log("parent data: ", targetScope.parentItemScope() ? targetScope.parentItemScope().itemData() : "null");
         return true;

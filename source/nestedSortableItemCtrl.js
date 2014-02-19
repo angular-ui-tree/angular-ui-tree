@@ -29,6 +29,27 @@
             return null;
           };
 
+          var subLevel = 0;
+          var countSubLevel = function(scope) {
+            var count = 0;
+            for (var i = 0; i < scope.items.length; i++) {
+              var itemSub = scope.items[i].subScope();
+              if (itemSub) {
+                count = 1;
+                countSubLevel(itemSub);
+              }
+            }
+            subLevel += count;
+          };
+
+          $scope.maxSubLevels = function() {
+            subLevel = 0;
+            if ($scope.subScope()) {
+              countSubLevel($scope.subScope());
+            }
+            return subLevel;
+          };
+
           $scope.itemData = function() {
             return $scope.sortableModelValue[$scope.$index];
           };
