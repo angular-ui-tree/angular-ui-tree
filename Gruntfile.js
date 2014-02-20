@@ -30,7 +30,7 @@ module.exports = function (grunt) {
                 '!<%= cfg.demoDir %>/dist/*.js',
                 '!<%= cfg.demoDir %>/bower_components/**/*'
             ],
-            tasks: ['jshint:source', 'clean:build', 'concat:build', 'uglify:build']
+            tasks: ['jshint:source', 'clean:build', 'concat:build', 'uglify:build', 'copy']
         },
 
         // ### Config for grunt-contrib-clean
