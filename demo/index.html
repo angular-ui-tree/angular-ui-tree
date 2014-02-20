@@ -19,13 +19,27 @@
     </div>
 
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-4">
+        <h2>What?</h2>
+        <p>
+          Angular NestedSortable is an AngularJS UI component that can sort nested lists, provides drag &amp; drop support and doesn't depend on jQuery.
+        </p>
+      </div>
+      <div class="col-md-4">
         <h2>Features</h2>
         <ul>
-          <li>Items can be sorted in their own list, moved across the tree, or nested under other items.</li>
-          <li>It is possible to define elements that will not accept a new item/list</li>
-          <li>Data binding. If you change the order, the data you bound will be updated.</li>
+          <li>Uses the native AngularJS scope for data binding</li>
+          <li>Sorted and move items through the entire tree</li>
+          <li>Prevent elements from accepting child nodes</li>
         </ul>
+      </div>
+      <div class="col-md-4">
+        <h2>Examples</h2>
+        <ol>
+          <li><a href="sample1.html">Unlimited nesting</a> (<a href="sample1-ie.html">IE compatible</a>)</li>
+          <li><a href="sample2.html">Selective drag &amp; drop</a> (<a href="sample2-ie.html">IE compatible</a>)</li>
+          <li><a href="sample3.html">Full DOM control</a> (<a href="sample3-ie.html">IE compatible</a>)</li>
+        </ol>
       </div>
     </div>
     
@@ -36,40 +50,41 @@
     </div>
 
     <div class="row">
-      <div class="col-md-4">
-        <h4>1. Unlimited nesting</h4>
-        <p>
-          A nested recursive list which binds with an unlimited nested array.
-          You can specify which template should be used for the nodes.
-        </p>
-        <a class="btn btn-default" href="sample1.html">Try example</a>
-        <a class="btn btn-default" href="sample1-ie.html">Try example (IE compatible)</a>
-      </div>
+      <div class="col-md-12">
 
-      <div class="col-md-4">
-        <h4>2. Selective drag &amp; drop</h4>
-        <p>
-          The data type of top level is 'chapter', the data type of the secend level is 'lecture'.
-          The node can only be dragged &amp; dropped to another node which with same data type.
-        </p>
-        <a class="btn btn-default" href="sample2.html">Try example</a>
-        <a class="btn btn-default" href="sample2-ie.html">Try example (IE compatible)</a>
-      </div>
+        <!-- Nested list template -->
+        <script type="text/ng-template" id="items_renderer.html">
+          <div ui-nested-sortable-handle>
+            {{item.title}}
+            <a class="pull-right btn btn-danger btn-xs" nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
+            <a class="pull-right btn btn-primary btn-xs" nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
+          </div>
+          <ol ui-nested-sortable="options" ng-model="item.items">
+            <li ng-repeat="item in item.items" ui-nested-sortable-item="" ng-include="'items_renderer.html'">
+            </li>
+          </ol>
+        </script>
 
-      <div class="col-md-4">
-        <h4>3. Full DOM control</h4>
-        <p>
-          A nested list which binds with a nested array. The data will be updated when it's sort order is changed.
-          In this sample, it can only support 3-level nodes.
-        </p>
-        <p>
-          <a class="btn btn-default" href="sample3.html">Try example</a>
-          <a class="btn btn-default" href="sample3-ie.html">Try example (IE compatible)</a>
-        </p>
+          <div class="row" ng-controller="MainCtrl">
+            <div class="col-lg-6">
+              <ol ui-nested-sortable="options" ng-model="list" >
+                <li ng-repeat="item in list" ui-nested-sortable-item="" ng-include="'items_renderer.html'"></li>
+              </ol>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="info">
+                  {{info}}
+              </div>
+              <pre class="code">{{ list | json }}</pre>
+            </div>
+          </div>
+
+        </div>
+
       </div>
     </div>
-  </div>
-  
+
   <!-- JavaScript -->
   <script src="bower_components/angular/angular.min.js"></script>
   <script src="../dist/angular-nested-sortable.min.js"></script>

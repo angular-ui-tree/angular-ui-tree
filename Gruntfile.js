@@ -33,8 +33,7 @@ module.exports = function (grunt) {
             tasks: ['jshint:source', 'clean:build', 'concat:build', 'uglify:build', 'copy']
         },
 
-        // ### Config for grunt-contrib-clean
-        // Clean up files as part of other tasks
+        // clean up files as part of other tasks
         clean: {
             build: {
                 src: ['<%= cfg.buildDir %>/**']
@@ -44,8 +43,7 @@ module.exports = function (grunt) {
             }
         },
 
-        // ### Config for grunt-contrib-copy
-        // Prepare files for demo
+        // prepare files for demo
         copy: {
             demo: {
                 files: [{
@@ -140,11 +138,13 @@ module.exports = function (grunt) {
             },
 
             single: {
-                singleRun: true
+                singleRun: true,
+                browsers: ['PhantomJS']
             },
 
             continuous: {
-                singleRun: false
+                singleRun: false,
+                browsers: ['PhantomJS', 'Firefox']
             }
         }
     });
