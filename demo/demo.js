@@ -3,7 +3,7 @@
 
   angular.module('demo', ['ui.nestedSortable'])
 
-  .controller('sample1Ctrl', function($scope) {
+  .controller('sample1Ctrl', function($scope, $log) {
     $scope.list = [{
       "id": 1,
       "title": "item1",
@@ -67,14 +67,14 @@
     }];
     $scope.options = {
       accept: function(data, sourceItemScope, targetScope) {
-        console.log("source sub levels: " + sourceItemScope.maxSubLevels());
-        console.log("target level: " + targetScope.level());
-        console.log("parent data: ", targetScope.parentItemScope() ? targetScope.parentItemScope().itemData() : "null");
+        $log.info("source sub levels: " + sourceItemScope.maxSubLevels());
+        $log.info("target level: " + targetScope.level());
+        $log.info("parent data: ", targetScope.parentItemScope() ? targetScope.parentItemScope().itemData() : "null");
         return true;
       },
       orderChanged: function(scope, sourceItem, sourceIndex, destIndex) {
         var info = "Item [" + sourceItem.title + "] changed order from " + sourceIndex + " to " + destIndex;
-        console.log(info);
+        $log.info(info);
       },
     };
     $scope.remove = function(scope) {
@@ -94,7 +94,7 @@
     }
   })
 
-  .controller('sample2Ctrl', function($scope) {
+  .controller('sample2Ctrl', function($scope, $log) {
 
     var chapters = [{
       "id": 1,
@@ -154,7 +154,7 @@
 
     $scope.lecturesOptions = {
       accept: function(data, sourceItemScope, targetScope) {
-        console.log("parent chapter data: ", targetScope.parentItemScope().itemData());
+        $log.info("parent chapter data: ", targetScope.parentItemScope().itemData());
         return (data.type == 'lecture'); // only accept lecture
       },
       orderChanged: function(scope, sourceItem, sourceIndex, destIndex) {
@@ -163,11 +163,11 @@
       },
       itemRemoved: function(scope, sourceItem, sourceIndex) {
         var info = "Chapter [" + scope.chapter.title + "] removed a lecture [" + sourceItem.title + "] from " + sourceIndex + ".";
-        console.log(info);
+        $log.info(info);
       },
       itemAdded: function(scope, sourceItem, destIndex) {
         var info = "Chapter [" + scope.chapter.title + "] added a lecture [" + sourceItem.title + "] to " + destIndex;
-        console.log(info);
+        $log.info(info);
       },
       itemMoved: function(sourceScope, sourceItem, sourceIndex, destScope, destIndex) {
         $scope.info = "Lecture [" + sourceItem.title + "] moved from [" + sourceScope.chapter.title + "][" + sourceIndex + "] to [" + destScope.chapter.title + "][" + destIndex + "]";

@@ -469,12 +469,12 @@
               });
 
               if (hasTouch) {
-                angular.element($window).bind('touchend', dragEndEvent); // Mobile
-                angular.element($window).bind('touchcancel', dragEndEvent); // Mobile                        
-                angular.element($window).bind('touchmove', dragMoveEvent); // Mobile
+                angular.element($document).bind('touchend', dragEndEvent); // Mobile
+                angular.element($document).bind('touchcancel', dragEndEvent); // Mobile
+                angular.element($document).bind('touchmove', dragMoveEvent); // Mobile
               } else {
-                angular.element($window).bind('mouseup', dragEndEvent);
-                angular.element($window).bind('mousemove', dragMoveEvent);
+                angular.element($document).bind('mouseup', dragEndEvent);
+                angular.element($document).bind('mousemove', dragMoveEvent);
               }
             };
 
@@ -547,8 +547,19 @@
 
                 var moveRight = ($helper.offset(dragElm).left - $helper.offset(placeElm).left) >= config.threshold;
 
-                var targetElm = angular.element(document.elementFromPoint(moveObj.pageX - document.body.scrollLeft,
-                                moveObj.pageY - (window.pageYOffset || document.documentElement.scrollTop)));
+                var targetX = moveObj.pageX - document.body.scrollLeft;
+                var targetY = moveObj.pageY - (window.pageYOffset || document.documentElement.scrollTop);
+
+                // Select the drag target. Because IE does not support CSS 'pointer-events: none', it will always
+                // pick the drag element itself as the target. To prevent this, we hide the drag element while
+                // selecting the target.
+                if (angular.isFunction(dragElm.hide)) {
+                  dragElm.hide();
+                }
+                var targetElm = angular.element(document.elementFromPoint(targetX, targetY));
+                if (angular.isFunction(dragElm.show)) {
+                  dragElm.show();
+                }
 
                 if (targetElm.attr('sortable-elment-type') != 'item' && targetElm.attr('sortable-elment-type') != 'handle') {
                   return;
@@ -639,13 +650,13 @@
               }
 
               if (hasTouch) {
-                angular.element($window).unbind('touchend', dragEndEvent); // Mobile
-                angular.element($window).unbind('touchcancel', dragEndEvent); // Mobile
-                angular.element($window).unbind('touchmove', dragMoveEvent); // Mobile
+                angular.element($document).unbind('touchend', dragEndEvent); // Mobile
+                angular.element($document).unbind('touchcancel', dragEndEvent); // Mobile
+                angular.element($document).unbind('touchmove', dragMoveEvent); // Mobile
               }
               else {
-                angular.element($window).unbind('mouseup', dragEndEvent);
-                angular.element($window).unbind('mousemove', dragMoveEvent);
+                angular.element($document).unbind('mouseup', dragEndEvent);
+                angular.element($document).unbind('mousemove', dragMoveEvent);
               }
             };
 

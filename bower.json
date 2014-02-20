@@ -16,12 +16,13 @@
     "node"
   ],
   "dependencies": {
-    "angular": ">= 1.2.0"
+    "angular": ">= 1.2.0",
+    "es5-shim": "2.3.0"
   },
   "devDependencies": {
     "angular": ">= 1.2.0",
     "bootstrap": "~3.1.0",
-    "jquery": "*",
+    "jquery": ">=1.10.x",
     "jasmine-jquery": "~1.0.0",
     "angular-mocks": "~1.2.11"
   },
