@@ -140,11 +140,13 @@ module.exports = function (grunt) {
             },
 
             single: {
-                singleRun: true
+                singleRun: true,
+                browsers: ['PhantomJS']
             },
 
             continuous: {
-                singleRun: false
+                singleRun: false,
+                browsers: ['PhantomJS', 'Firefox']
             }
         }
     });
