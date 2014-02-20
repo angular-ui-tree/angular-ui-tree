@@ -10,7 +10,7 @@ module.exports = function (grunt) {
 
     var cfg = {
         srcDir: 'source',
-        buildDir: 'demo/dist',
+        buildDir: 'dist',
         demoDir: 'demo'
     };
 
@@ -26,10 +26,34 @@ module.exports = function (grunt) {
             files: [
                 '<%= cfg.srcDir %>/**/*.js',
                 '<%= cfg.demoDir %>/**/*.js',
+                '!<%= cfg.buildDir %>/*.js',
                 '!<%= cfg.demoDir %>/dist/*.js',
                 '!<%= cfg.demoDir %>/bower_components/**/*'
             ],
             tasks: ['jshint:source', 'clean:build', 'concat:build', 'uglify:build']
+        },
+
+        // ### Config for grunt-contrib-clean
+        // Clean up files as part of other tasks
+        clean: {
+            build: {
+                src: ['<%= cfg.buildDir %>/**']
+            },
+            demo: {
+                src: ['<%= cfg.demoDir %>/dist/**']
+            }
+        },
+
+        // ### Config for grunt-contrib-copy
+        // Prepare files for demo
+        copy: {
+            demo: {
+                files: [{
+                    expand: true,
+                    src: ['<%= cfg.buildDir %>/*.js'],
+                    dest: '<%= cfg.demoDir %>/'
+                }]
+            }
         },
 
         // jshint
@@ -51,11 +75,6 @@ module.exports = function (grunt) {
                     ]
                 }
             }
-        },
-
-        // clean
-        clean: {
-            build: ['<%= cfg.buildDir %>']
         },
 
         // concat
@@ -132,7 +151,7 @@ module.exports = function (grunt) {
 
     // default
     grunt.registerTask('default', ['webserver']);
-    grunt.registerTask('build', ['jshint:source', 'karma:single', 'clean:build', 'concat:build', 'uglify:build']);
+    grunt.registerTask('build', ['jshint:source', 'karma:single', 'clean:build', 'concat:build', 'uglify:build', 'copy']);
     grunt.registerTask('webserver', ['build', 'open', 'connect:demo', 'watch']);
     grunt.registerTask('test', ['karma:single']);
     grunt.registerTask('test:continuous', ['karma:continuous']);

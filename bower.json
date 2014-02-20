@@ -6,7 +6,7 @@
     "Jim Liu <junminliu@gmail.com>"
   ],
   "description": "NestedSortable directive for the angular.js",
-  "main": "demo/dist/angular-nested-sortable.js",
+  "main": "dist/angular-nested-sortable.js",
   "keywords": [
     "angular",
     "NestedSortable",
