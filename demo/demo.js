@@ -3,6 +3,70 @@
 
   angular.module('demo', ['ui.nestedSortable'])
 
+  .controller('MainCtrl', function($scope) {
+    $scope.list = [{
+      "id": 1,
+      "title": "1. dragon-breath",
+      "items": []
+    }, {
+      "id": 2,
+      "title": "2. moiré-vision",
+      "items": [{
+        "id": 21,
+        "title": "2.1. tofu-animation",
+        "items": [{
+          "id": 211,
+          "title": "2.1.1. spooky-giraffe",
+          "items": []
+        }, {
+          "id": 212,
+          "title": "2.1.2. bubble-burst",
+          "items": []
+        }],
+      }, {
+        "id": 22,
+        "title": "2.2. barehand-atomsplitting",
+        "items": []
+      }],
+    }, {
+      "id": 3,
+      "title": "3. unicorn-zapper",
+      "items": []
+    }, {
+      "id": 4,
+      "title": "4. romantic-transclusion",
+      "items": []
+    }];
+
+    $scope.options = {
+      accept: function(data, sourceItemScope, targetScope) {
+        console.log("source sub levels: " + sourceItemScope.maxSubLevels());
+        console.log("target level: " + targetScope.level());
+        console.log("parent data: ", targetScope.parentItemScope() ? targetScope.parentItemScope().itemData() : "null");
+        return true;
+      },
+      orderChanged: function(scope, sourceItem, sourceIndex, destIndex) {
+        var info = "Item [" + sourceItem.title + "] changed order from " + sourceIndex + " to " + destIndex;
+        console.log(info);
+      },
+    };
+    $scope.remove = function(scope) {
+      //scope.removeItem();
+      var index = scope.$index;
+      if (index > -1) {
+        scope.sortableModelValue.splice(index, 1)[0];
+      }
+    }
+    $scope.newSubItem = function(scope) {
+      var itemData = scope.itemData();
+      itemData.items.push({
+        id: itemData.id * 10 + itemData.items.length,
+        title: itemData.title + '.' + (itemData.items.length + 1),
+        items: []
+      });
+    }
+  })
+
   .controller('sample1Ctrl', function($scope) {
     $scope.list = [{
       "id": 1,

@@ -49,6 +49,43 @@
     </div>
 
     <div class="row">
+      <div class="col-md-12">
+
+        <!-- Nested list template -->
+        <script type="text/ng-template" id="items_renderer.html">
+          <div ui-nested-sortable-handle>
+            {{item.title}}
+            <a class="pull-right btn btn-danger btn-xs" nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
+            <a class="pull-right btn btn-primary btn-xs" nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
+          </div>
+          <ol ui-nested-sortable="options" ng-model="item.items">
+            <li ng-repeat="item in item.items" ui-nested-sortable-item="" ng-include="'items_renderer.html'">
+            </li>
+          </ol>
+        </script>
+
+          <div class="row" ng-controller="MainCtrl">
+            <div class="col-lg-6">
+              <ol ui-nested-sortable="options" ng-model="list" >
+                <li ng-repeat="item in list" ui-nested-sortable-item="" ng-include="'items_renderer.html'"></li>
+              </ol>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="info">
+                  {{info}}
+              </div>
+              <pre class="code">{{ list | json }}</pre>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+<!--
+    <div class="row">
       <div class="col-md-4">
         <h4>1. Unlimited nesting</h4>
         <p>
@@ -79,6 +116,7 @@
       </div>
     </div>
   </div>
+-->
   
   <!-- JavaScript -->
   <script src="bower_components/angular/angular.min.js"></script>
