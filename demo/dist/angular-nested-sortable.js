@@ -1,5 +1,5 @@
 /**
- * @license Angular NestedSortable v1.2.3
+ * @license Angular NestedSortable v1.2.4
  * (c) 2010-2014. https://github.com/JimLiu/Angular-NestedSortable
  * License: MIT
  */
@@ -18,6 +18,7 @@
     });
 
 })();
+
 (function () {
   'use strict';
 
