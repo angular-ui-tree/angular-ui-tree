@@ -3,13 +3,27 @@ Angular UI NestedSortable
 
 [![Build Status](https://travis-ci.org/JimLiu/Angular-NestedSortable.png?branch=master)](https://travis-ci.org/JimLiu/Angular-NestedSortable)
 
-An AngularJS UI component that can sort nested lists, provides drag &amp; drop support and doesn't depend on jQuery.
+Angular NestedSortable is an AngularJS UI component that can sort nested lists, provides drag & drop support and doesn't depend on jQuery.
 
 ## Features
 
-- Items can be sorted in their own list, moved across the tree, or nested under other items.
-- It is possible to define elements that will not accept a new item/list
-- Data binding. If you change the order, the data you bound will be updated.
+- Uses the native AngularJS scope for data binding
+- Sorted and move items through the entire tree
+- Prevent elements from accepting child nodes
+
+## Supported browsers
+
+The Angular NestedSortable is tested with the following browsers:
+
+- Chrome (stable)
+- Firefox
+- IE 8, 9 and 10
+
+For IE8 support, make sure you do the following:
+
+- include an [ES5 shim](https://github.com/es-shims/es5-shim)
+- make your [AngularJS application compatible with Internet Explorer](http://docs.angularjs.org/guide/ie)
+- use [jQuery 1.x](http://jquery.com/browser-support/)
 
 ## Demo
 Watch the NestedSortable component in action on the [demo page](http://jimliu.github.io/Angular-NestedSortable/).
