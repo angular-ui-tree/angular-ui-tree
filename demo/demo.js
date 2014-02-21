@@ -67,7 +67,7 @@
     }
   })
 
-  .controller('sample1Ctrl', function($scope) {
+  .controller('sample1Ctrl', function($scope, $log) {
     $scope.list = [{
       "id": 1,
       "title": "item1",
