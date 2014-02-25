@@ -1,5 +1,5 @@
 /**
- * @license AngularJS v1.2.14-build.2301+sha.4d7e1ce
+ * @license AngularJS v1.2.14-build.2273+sha.666137d
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -498,17 +498,7 @@ angular.mock.$IntervalProvider = function() {
       nextRepeatId++;
       return promise;
     };
-    /**
-     * @ngdoc method
-     * @name $interval#cancel
-     * @description
-     *
-     * Clears the interval.
-     *
-     * @param {promise} The promise of the interval to cancel.
-     *
-     * @return {boolean}
-     */
+
     $interval.cancel = function(promise) {
       if(!promise) return false;
       var fnIndex;
@@ -1684,6 +1674,7 @@ angular.mock.$RootElementProvider = function() {
  * In addition, ngMock also extends various core ng services such that they can be
  * inspected and controlled in a synchronous manner within test code.
  *
+ * {@installModule mock}
  *
  * <div doc-module-components="ngMock"></div>
  *

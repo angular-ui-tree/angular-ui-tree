@@ -38,6 +38,8 @@
       "items": []
     }];
 
+    $scope.selectedItem = {};
+
     $scope.options = {
       accept: function(data, sourceItemScope, targetScope) {
         $log.info("source sub levels: " + sourceItemScope.maxSubLevels());
@@ -49,7 +51,16 @@
         var info = "Item [" + sourceItem.title + "] changed order from " + sourceIndex + " to " + destIndex;
         $log.info(info);
       },
+      itemClicked: function (sourceItem) {
+          var info = "Item [" + sourceItem.title + "] clicked";
+          $log.info(info);
+
+          $scope.$apply(function () {
+              $scope.selectedItem = sourceItem;
+          });
+      }
     };
+
     $scope.remove = function(scope) {
       //scope.removeItem();
       var index = scope.$index;
@@ -67,7 +78,7 @@
     }
   })
 
-  .controller('sample1Ctrl', function($scope) {
+  .controller('sample1Ctrl', function($scope, $log) {
     $scope.list = [{
       "id": 1,
       "title": "item1",

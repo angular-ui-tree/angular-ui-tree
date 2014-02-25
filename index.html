@@ -56,8 +56,8 @@
         <script type="text/ng-template" id="items_renderer.html">
           <div ui-nested-sortable-handle>
             {{item.title}}
-            <a class="pull-right btn btn-danger btn-xs" nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
-            <a class="pull-right btn btn-primary btn-xs" nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
+            <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
+            <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
           </div>
           <ol ui-nested-sortable="options" ng-model="item.items">
             <li ng-repeat="item in item.items" ui-nested-sortable-item="" ng-include="'items_renderer.html'">
@@ -67,15 +67,17 @@
 
           <div class="row" ng-controller="MainCtrl">
             <div class="col-lg-6">
+              <h3>Draggable Tree</h3>
               <ol ui-nested-sortable="options" ng-model="list" >
                 <li ng-repeat="item in list" ui-nested-sortable-item="" ng-include="'items_renderer.html'"></li>
               </ol>
             </div>
 
             <div class="col-lg-6">
-              <div class="info">
-                  {{info}}
-              </div>
+              <h3>Selected Item</h3>
+              <pre class="code">{{ selectedItem | json }}</pre>
+
+              <h3>Full tree</h3>
               <pre class="code">{{ list | json }}</pre>
             </div>
           </div>
