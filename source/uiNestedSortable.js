@@ -4,7 +4,7 @@
   angular.module('ui.nestedSortable')
 
     .directive('uiNestedSortable', [ 'nestedSortableConfig', '$window',
-      function(nestedSortableConfig, $window) {
+      function(nestedSortableConfig) {
         return {
           require: ['ngModel', '?^uiNestedSortableItem'],
           restrict: 'A',
@@ -53,6 +53,10 @@
             };
 
             callbacks.itemMoved = function(sourceScope, sourceItem, sourceIndex, destScope, destIndex) {
+
+            };
+
+            callbacks.itemClicked = function(sourceItem) {
 
             };
 
