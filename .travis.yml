@@ -12,3 +12,6 @@ before_script:
 
 script:
   - grunt test
+  
+notifications:
+  - email: false
