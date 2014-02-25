@@ -67,15 +67,17 @@
 
           <div class="row" ng-controller="MainCtrl">
             <div class="col-lg-6">
+              <h3>Draggable Tree</h3>
               <ol ui-nested-sortable="options" ng-model="list" >
                 <li ng-repeat="item in list" ui-nested-sortable-item="" ng-include="'items_renderer.html'"></li>
               </ol>
             </div>
 
             <div class="col-lg-6">
-              <div class="info">
-                  {{info}}
-              </div>
+              <h3>Selected Item</h3>
+              <pre class="code">{{ selectedItem | json }}</pre>
+
+              <h3>Full tree</h3>
               <pre class="code">{{ list | json }}</pre>
             </div>
           </div>
