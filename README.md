@@ -82,20 +82,23 @@ The Callbacks can be passed through the directive.
 myAppModule.controller('MyController', function($scope) {
   $scope.items = [...];
   $scope.sortableOptions = {
-    accept = function(modelData, sourceItemScope, targetScope) {
+    accept: function(modelData, sourceItemScope, targetScope) {
       return true;
-    };
-    itemRemoved = function(scope, modelData, sourceIndex) {
+    },
+    itemRemoved: function(scope, modelData, sourceIndex) {
 
-    };
-    itemAdded = function(scope, modelData, destIndex) {
+    },
+    itemAdded: function(scope, modelData, destIndex) {
 
-    };
-    itemMoved = function(sourceScope, modelData, sourceIndex, destScope, destIndex) {
+    },
+    itemMoved: function(sourceScope, modelData, sourceIndex, destScope, destIndex) {
 
-    };
-    orderChanged = function(scope, modelData, sourceIndex, destIndex) {
+    },
+    orderChanged: function(scope, modelData, sourceIndex, destIndex) {
 
+    },
+    itemClicked: function(modelData) {
+      
     };
   };
 });
@@ -115,7 +118,8 @@ myAppModule.controller('MyController', function($scope) {
 - `itemRemoved` callback: When a sub-item is removed.
 - `itemAdded` callback: When a sub-item is added.
 - `itemMoved` callback: When a sub-item is moved from a node to another node.
-- `orderChanged` callback: It's only fired if the item drag & drop under the same parent node.
+- `orderChanged` callback: Is only fired if the dragged item gets dropped at the same parent node.
+- `itemClicked` callback: When an item is clicked.
 
 #### Parameters
 - `scope`, `sourceScope` or `sourceItemScope` is the `scope` object of the dragging item
