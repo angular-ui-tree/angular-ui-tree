@@ -146,11 +146,26 @@ module.exports = function (grunt) {
                 singleRun: false,
                 browsers: ['PhantomJS', 'Firefox']
             }
+        },
+
+        // available tasks
+        tasks_list: {
+            options: {},
+            project: {
+                options: {
+                    tasks: [
+                        {name: 'build', info: 'Create a build of (tested) the source files'},
+                        {name: 'webserver', info: 'Build the project, watch filechanges and start a webserver'},
+                        {name: 'test', info: 'Runt tests'},
+                        {name: 'test:continuous', info: 'Runt tests continuously'}
+                    ]
+                }
+            }
         }
     });
 
     // default
-    grunt.registerTask('default', ['webserver']);
+    grunt.registerTask('default', ['tasks_list:project']);
     grunt.registerTask('build', ['jshint:source', 'karma:single', 'clean:build', 'concat:build', 'uglify:build', 'copy']);
     grunt.registerTask('webserver', ['build', 'open', 'connect:demo', 'watch']);
     grunt.registerTask('test', ['karma:single']);
