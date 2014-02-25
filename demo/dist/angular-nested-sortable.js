@@ -387,7 +387,8 @@
 
               var target = angular.element(e.target);
               var nodrag = function (targetElm) {
-                return (typeof targetElm.attr('nodrag')) != "undefined";
+                return (typeof targetElm.attr('nodrag')) != "undefined"
+                        || (typeof targetElm.attr('data-nodrag')) != "undefined";
               };
               while (target && target[0] && target[0] != element) {
                 if (nodrag(target)) {
