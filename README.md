@@ -72,6 +72,7 @@ HTML View or Templates
 - Adding `ui-nested-sortable-handle` to mark which element do you want to handle the drage action
 - All `ui-nested-sortable`, `ng-model`, `ui-nested-sortable-item` and `ui-nested-sortable-handle` are necessary. And they can be nested.
 - If you add a `data-nodrag` attribute to an element, the element won't response for the drag action.
+- If you changed the datasource bound, sometimes you have to call [`$scope.$apply()`](http://docs.angularjs.org/api/ng/type/$rootScope.Scope#$apply) to refresh the view, otherwise you will get an error `Cannot read property '0' of undefined` (Issue #32).
 
 
 ### Callbacks
