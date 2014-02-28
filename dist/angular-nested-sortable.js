@@ -1,5 +1,5 @@
 /**
- * @license Angular NestedSortable v1.2.6
+ * @license Angular NestedSortable v1.2.7
  * (c) 2010-2014. https://github.com/JimLiu/Angular-NestedSortable
  * License: MIT
  */
@@ -572,6 +572,11 @@
                 if (angular.isFunction(dragElm.hide)) {
                   dragElm.hide();
                 }
+
+                // when using elementFromPoint() inside an iframe, you have to call
+                // elementFromPoint() twice to make sure IE8 returns the correct value
+                document.elementFromPoint(targetX, targetY);
+
                 var targetElm = angular.element(document.elementFromPoint(targetX, targetY));
                 if (angular.isFunction(dragElm.show)) {
                   dragElm.show();
