@@ -13,7 +13,8 @@
             var config = {};
             var placeElm, hiddenPlaceElm, targetScope, sourceIndex,
                 destIndex, sameParent, pos, dragElm, dragItemElm,
-                dragItem, firstMoving, targetItem, targetBefore;
+                dragItem, firstMoving, targetItem, targetBefore,
+                clickedElm, clickedElmDragged;
 
             angular.extend(config, nestedSortableConfig);
             scope.initHandle(element);
@@ -36,9 +37,13 @@
                 // disable right click
                 return;
               }
-
-              var sourceItem = angular.element(e.target).scope().itemData();
-              scope.callbacks.itemClicked(sourceItem);
+              
+              clickedElm = angular.element(e.target);
+              clickedElmDragged = false
+              var sourceItem = clickedElm.scope().itemData();
+              clickedElm.bind('mouseup', function(){
+                  scope.callbacks.itemClicked(sourceItem, clickedElmDragged);
+              });
 
               var target = angular.element(e.target);
               var nodrag = function (targetElm) {
@@ -139,7 +144,9 @@
             var dragMoveEvent = function(e) {
               var currentAccept, prev, childAccept;
               var moveObj = e;
-
+              
+              clickedElmDragged = true;
+              
               if (hasTouch) {
                 if (e.touches !== undefined) {
                   moveObj = e.touches.item(0);
