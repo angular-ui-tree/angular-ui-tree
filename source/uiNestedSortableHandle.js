@@ -39,10 +39,10 @@
               }
               
               clickedElm = angular.element(e.target);
-              clickedElmDragged = false
+              clickedElmDragged = false;
               var sourceItem = clickedElm.scope().itemData();
               clickedElm.bind('mouseup', function(){
-                  scope.callbacks.itemClicked(sourceItem, clickedElmDragged);
+                scope.callbacks.itemClicked(sourceItem, clickedElmDragged);
               });
 
               var target = angular.element(e.target);
