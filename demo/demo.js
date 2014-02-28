@@ -51,13 +51,13 @@
         var info = "Item [" + sourceItem.title + "] changed order from " + sourceIndex + " to " + destIndex;
         $log.info(info);
       },
-      itemClicked: function (sourceItem) {
-          var info = "Item [" + sourceItem.title + "] clicked";
-          $log.info(info);
+      itemClicked: function(sourceItem) {
+        var info = "Item [" + sourceItem.title + "] clicked";
+        $log.info(info);
 
-          $scope.$apply(function () {
-              $scope.selectedItem = sourceItem;
-          });
+        $scope.$apply(function() {
+          $scope.selectedItem = sourceItem;
+        });
       }
     };
 
@@ -67,7 +67,8 @@
       if (index > -1) {
         scope.sortableModelValue.splice(index, 1)[0];
       }
-    }
+    };
+
     $scope.newSubItem = function(scope) {
       var itemData = scope.itemData();
       itemData.items.push({
@@ -75,7 +76,7 @@
         title: itemData.title + '.' + (itemData.items.length + 1),
         items: []
       });
-    }
+    };
   })
 
   .controller('sample1Ctrl', function($scope, $log) {
@@ -144,6 +145,7 @@
       accept: function(data, sourceItemScope, targetScope) {
         $log.info("source sub levels: " + sourceItemScope.maxSubLevels());
         $log.info("target level: " + targetScope.level());
+        $log.info("destIndex: ", targetScope.$index);
         $log.info("parent data: ", targetScope.parentItemScope() ? targetScope.parentItemScope().itemData() : "null");
         return true;
       },
@@ -158,7 +160,7 @@
       if (index > -1) {
         scope.sortableModelValue.splice(index, 1)[0];
       }
-    }
+    };
     $scope.newSubItem = function(scope) {
       var itemData = scope.itemData();
       itemData.items.push({
@@ -166,7 +168,7 @@
         title: itemData.title + '.' + (itemData.items.length + 1),
         items: []
       });
-    }
+    };
   })
 
   .controller('sample2Ctrl', function($scope, $log) {
