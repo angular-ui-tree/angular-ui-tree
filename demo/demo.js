@@ -41,7 +41,7 @@
     $scope.selectedItem = {};
 
     $scope.options = {
-      accept: function(data, sourceItemScope, targetScope) {
+      accept: function(data, sourceItemScope, targetScope, destIndex) {
         $log.info("source sub levels: " + sourceItemScope.maxSubLevels());
         $log.info("target level: " + targetScope.level());
         $log.info("parent data: ", targetScope.parentItemScope() ? targetScope.parentItemScope().itemData() : "null");
@@ -142,10 +142,10 @@
       "items": [],
     }];
     $scope.options = {
-      accept: function(data, sourceItemScope, targetScope) {
+      accept: function(data, sourceItemScope, targetScope, destIndex) {
         $log.info("source sub levels: " + sourceItemScope.maxSubLevels());
         $log.info("target level: " + targetScope.level());
-        $log.info("destIndex: ", targetScope.$index);
+        $log.info("target items count: ", targetScope.items.length);
         $log.info("parent data: ", targetScope.parentItemScope() ? targetScope.parentItemScope().itemData() : "null");
         return true;
       },
@@ -219,7 +219,7 @@
     $scope.chapters = chapters;
 
     $scope.chaptersOptions = {
-      accept: function(data, sourceItemScope, targetScope) {
+      accept: function(data, sourceItemScope, targetScope, destIndex) {
         return (data.type == 'chapter'); // only accept chapter
       },
       orderChanged: function(scope, sourceItem, sourceIndex, destIndex) {
@@ -230,7 +230,7 @@
     };
 
     $scope.lecturesOptions = {
-      accept: function(data, sourceItemScope, targetScope) {
+      accept: function(data, sourceItemScope, targetScope, destIndex) {
         $log.info("parent chapter data: ", targetScope.parentItemScope().itemData());
         return (data.type == 'lecture'); // only accept lecture
       },

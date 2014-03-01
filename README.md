@@ -83,7 +83,7 @@ The Callbacks can be passed through the directive.
 myAppModule.controller('MyController', function($scope) {
   $scope.items = [...];
   $scope.sortableOptions = {
-    accept: function(modelData, sourceItemScope, targetScope) {
+    accept: function(modelData, sourceItemScope, targetScope, destIndex) {
       return true;
     },
     itemRemoved: function(scope, modelData, sourceIndex) {
