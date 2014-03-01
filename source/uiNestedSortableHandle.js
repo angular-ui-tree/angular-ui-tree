@@ -220,6 +220,11 @@
                 if (angular.isFunction(dragElm.hide)) {
                   dragElm.hide();
                 }
+
+                // when using elementFromPoint() inside an iframe, you have to call
+                // elementFromPoint() twice to make sure IE8 returns the correct value
+                document.elementFromPoint(targetX, targetY);
+
                 var targetElm = angular.element(document.elementFromPoint(targetX, targetY));
                 if (angular.isFunction(dragElm.show)) {
                   dragElm.show();
