@@ -1,5 +1,5 @@
 /**
- * @license Angular NestedSortable v1.2.8
+ * @license Angular NestedSortable v1.3.0
  * (c) 2010-2014. https://github.com/JimLiu/Angular-NestedSortable
  * License: MIT
  */
@@ -173,6 +173,7 @@
         function ($scope, $attrs, nestedSortableConfig) {
           $scope.sortableItemElement = null;
           $scope.subSortableElement = null;
+          $scope.collapsed = false;
           
           $scope.initItem = function(element) {
             $scope.sortableItemElement = element;
@@ -527,11 +528,10 @@
                   pos.distAxX = 0;
                   sameParent = false;
 
-                  var collapsed = false; // todo: node can be collapsed
                   // increase horizontal level if previous sibling exists and is not collapsed
                   if (pos.distX > 0) {
                     prev = dragItem.prev();
-                    if (prev && !collapsed) {
+                    if (prev && !prev.collapsed) {
                       childAccept = prev.childAccept(scope, prev.subScope(), prev.subScope().items.length);
                       if (childAccept) {
                         prev.subSortableElement.append(placeElm);
@@ -609,7 +609,7 @@
                     childAccept = prev && prev.childAccept(scope, targetItem.subScope(), targetItem.subScope().items.length);
                     currentAccept = targetItem.accept(scope, targetItem.parentScope(), targetItem.$index);
 
-                    if (childAccept && (moveRight || !currentAccept)) {
+                    if (childAccept && (moveRight || !currentAccept) && !prev.collapsed) {
                       // move to it's prev node
                       targetItem = prev;
                       targetItem.subSortableElement.append(placeElm);
@@ -626,7 +626,7 @@
                     childAccept = targetItem.childAccept(scope, targetItem.subScope(), targetItem.subScope().items.length);
                     currentAccept = targetItem.accept(scope, targetItem.parentScope(), targetItem.$index + 1);
 
-                    if (childAccept && (moveRight || !currentAccept)) {
+                    if (childAccept && (moveRight || !currentAccept) && !targetItem.collapsed) {
                       targetItem.subSortableElement.append(placeElm);
                       destIndex = targetItem.subScope().items.length;
                       targetScope = targetItem.subScope();

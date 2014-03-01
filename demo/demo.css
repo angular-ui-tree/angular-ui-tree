@@ -22,6 +22,10 @@ pre {
     color: #FFF !important;
 }
 
+.btn {
+    margin-right: 8px;
+}
+
 .nestedSortable-list {
 	display: block;
 	position: relative;

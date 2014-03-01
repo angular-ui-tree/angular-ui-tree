@@ -15,9 +15,10 @@
     <div ui-nested-sortable-handle>
       {{item.title}}
       <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
-      <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
+      <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)"><span class="glyphicon glyphicon-plus"></span></a>
+      <a class="pull-right btn btn-success btn-xs" data-nodrag ng-click="toggle(this)"><span class="glyphicon" ng-class="{'glyphicon-chevron-up': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
     </div>
-    <ol ui-nested-sortable="options" ng-model="item.items">
+    <ol ui-nested-sortable="options" ng-model="item.items" ng-class="{hidden: collapsed}">
       <li ng-repeat="item in item.items" ui-nested-sortable-item="" ng-include="'items_renderer.html'">
       </li>
     </ol>

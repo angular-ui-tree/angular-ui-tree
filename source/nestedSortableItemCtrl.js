@@ -7,6 +7,7 @@
         function ($scope, $attrs, nestedSortableConfig) {
           $scope.sortableItemElement = null;
           $scope.subSortableElement = null;
+          $scope.collapsed = false;
           
           $scope.initItem = function(element) {
             $scope.sortableItemElement = element;

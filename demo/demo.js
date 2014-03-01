@@ -41,24 +41,7 @@
     $scope.selectedItem = {};
 
     $scope.options = {
-      accept: function(data, sourceItemScope, targetScope, destIndex) {
-        $log.info("source sub levels: " + sourceItemScope.maxSubLevels());
-        $log.info("target level: " + targetScope.level());
-        $log.info("parent data: ", targetScope.parentItemScope() ? targetScope.parentItemScope().itemData() : "null");
-        return true;
-      },
-      orderChanged: function(scope, sourceItem, sourceIndex, destIndex) {
-        var info = "Item [" + sourceItem.title + "] changed order from " + sourceIndex + " to " + destIndex;
-        $log.info(info);
-      },
-      itemClicked: function(sourceItem) {
-        var info = "Item [" + sourceItem.title + "] clicked";
-        $log.info(info);
 
-        $scope.$apply(function() {
-          $scope.selectedItem = sourceItem;
-        });
-      }
     };
 
     $scope.remove = function(scope) {
@@ -67,6 +50,9 @@
       if (index > -1) {
         scope.sortableModelValue.splice(index, 1)[0];
       }
+    };
+    $scope.toggle = function(scope) {
+      scope.collapsed = !scope.collapsed;
     };
 
     $scope.newSubItem = function(scope) {
@@ -153,6 +139,9 @@
         var info = "Item [" + sourceItem.title + "] changed order from " + sourceIndex + " to " + destIndex;
         $log.info(info);
       },
+    };
+    $scope.toggle = function(scope) {
+      scope.collapsed = !scope.collapsed;
     };
     $scope.remove = function(scope) {
       //scope.removeItem();

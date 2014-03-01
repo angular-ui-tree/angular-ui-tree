@@ -133,6 +133,11 @@ myAppModule.controller('MyController', function($scope) {
 ### Scope of Sortable
 The `scope` of a `ui-nested-sortable` element.
 
+#### Properties
+##### sortableModelValue
+**DataType**: `Array` 
+The data bound with current scope.
+
 #### Methods
 ##### parentItemScope()
 if a `ui-nested-sortable` element belongs to another `ui-nested-sortable-item` element, using `parentItemScope()` to get the scope of it's parent item.
@@ -141,6 +146,12 @@ Calculate it's level in the tree. The level of a root element is 1.
 
 ### Scope of Item
 The `scope` of a `ui-nested-sortable-item` element.
+
+#### Properties
+##### collapsed
+**DataType**: `Bool` 
+`true`: Current item is collapsed; 
+`false`: Current item is expanded.
 
 #### Methods
 ##### itemData()
