@@ -135,7 +135,7 @@ The `scope` of a `ui-nested-sortable` element.
 
 #### Properties
 ##### sortableModelValue
-**DataType**: `Array` 
+Data type: `Array`  
 The data bound with current scope.
 
 #### Methods
@@ -149,8 +149,8 @@ The `scope` of a `ui-nested-sortable-item` element.
 
 #### Properties
 ##### collapsed
-**DataType**: `Bool` 
-`true`: Current item is collapsed; 
+Data type: `Bool`  
+`true`: Current item is collapsed;  
 `false`: Current item is expanded.
 
 #### Methods
