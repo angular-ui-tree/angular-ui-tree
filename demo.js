@@ -41,24 +41,7 @@
     $scope.selectedItem = {};
 
     $scope.options = {
-      accept: function(data, sourceItemScope, targetScope) {
-        $log.info("source sub levels: " + sourceItemScope.maxSubLevels());
-        $log.info("target level: " + targetScope.level());
-        $log.info("parent data: ", targetScope.parentItemScope() ? targetScope.parentItemScope().itemData() : "null");
-        return true;
-      },
-      orderChanged: function(scope, sourceItem, sourceIndex, destIndex) {
-        var info = "Item [" + sourceItem.title + "] changed order from " + sourceIndex + " to " + destIndex;
-        $log.info(info);
-      },
-      itemClicked: function (sourceItem) {
-          var info = "Item [" + sourceItem.title + "] clicked";
-          $log.info(info);
 
-          $scope.$apply(function () {
-              $scope.selectedItem = sourceItem;
-          });
-      }
     };
 
     $scope.remove = function(scope) {
@@ -67,7 +50,11 @@
       if (index > -1) {
         scope.sortableModelValue.splice(index, 1)[0];
       }
-    }
+    };
+    $scope.toggle = function(scope) {
+      scope.collapsed = !scope.collapsed;
+    };
+
     $scope.newSubItem = function(scope) {
       var itemData = scope.itemData();
       itemData.items.push({
@@ -75,7 +62,7 @@
         title: itemData.title + '.' + (itemData.items.length + 1),
         items: []
       });
-    }
+    };
   })
 
   .controller('sample1Ctrl', function($scope, $log) {
@@ -141,9 +128,10 @@
       "items": [],
     }];
     $scope.options = {
-      accept: function(data, sourceItemScope, targetScope) {
+      accept: function(data, sourceItemScope, targetScope, destIndex) {
         $log.info("source sub levels: " + sourceItemScope.maxSubLevels());
         $log.info("target level: " + targetScope.level());
+        $log.info("target items count: ", targetScope.items.length);
         $log.info("parent data: ", targetScope.parentItemScope() ? targetScope.parentItemScope().itemData() : "null");
         return true;
       },
@@ -152,13 +140,16 @@
         $log.info(info);
       },
     };
+    $scope.toggle = function(scope) {
+      scope.collapsed = !scope.collapsed;
+    };
     $scope.remove = function(scope) {
       //scope.removeItem();
       var index = scope.$index;
       if (index > -1) {
         scope.sortableModelValue.splice(index, 1)[0];
       }
-    }
+    };
     $scope.newSubItem = function(scope) {
       var itemData = scope.itemData();
       itemData.items.push({
@@ -166,7 +157,7 @@
         title: itemData.title + '.' + (itemData.items.length + 1),
         items: []
       });
-    }
+    };
   })
 
   .controller('sample2Ctrl', function($scope, $log) {
@@ -217,7 +208,7 @@
     $scope.chapters = chapters;
 
     $scope.chaptersOptions = {
-      accept: function(data, sourceItemScope, targetScope) {
+      accept: function(data, sourceItemScope, targetScope, destIndex) {
         return (data.type == 'chapter'); // only accept chapter
       },
       orderChanged: function(scope, sourceItem, sourceIndex, destIndex) {
@@ -228,7 +219,7 @@
     };
 
     $scope.lecturesOptions = {
-      accept: function(data, sourceItemScope, targetScope) {
+      accept: function(data, sourceItemScope, targetScope, destIndex) {
         $log.info("parent chapter data: ", targetScope.parentItemScope().itemData());
         return (data.type == 'lecture'); // only accept lecture
       },

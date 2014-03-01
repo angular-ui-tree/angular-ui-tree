@@ -22,6 +22,10 @@ pre {
     color: #FFF !important;
 }
 
+.btn {
+    margin-right: 8px;
+}
+
 .nestedSortable-list {
 	display: block;
 	position: relative;
@@ -43,7 +47,6 @@ pre {
 .nestedSortable-handle {
     cursor: move;
     display: block;
-    min-height: 38px;
     margin: 5px 0;
     padding: 8px 12px;
     background: #f8faff;
@@ -54,6 +57,7 @@ pre {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+    line-height: 1.5em;
 }
 .nestedSortable-handle:hover {
     color: #438eb9;

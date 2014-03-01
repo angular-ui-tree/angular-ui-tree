@@ -1,5 +1,5 @@
 /**
- * @license Angular NestedSortable v1.2.5
+ * @license Angular NestedSortable v1.3.0
  * (c) 2010-2014. https://github.com/JimLiu/Angular-NestedSortable
  * License: MIT
  */
@@ -173,6 +173,7 @@
         function ($scope, $attrs, nestedSortableConfig) {
           $scope.sortableItemElement = null;
           $scope.subSortableElement = null;
+          $scope.collapsed = false;
           
           $scope.initItem = function(element) {
             $scope.sortableItemElement = element;
@@ -245,12 +246,12 @@
             return subScope;
           };
 
-          $scope.accept = function(sourceItemScope) {
-            return $scope.callbacks.accept(sourceItemScope.itemData(), sourceItemScope, $scope.parentScope());
+          $scope.accept = function(sourceItemScope, destScope, destIndex) {
+            return $scope.callbacks.accept(sourceItemScope.itemData(), sourceItemScope, destScope, destIndex);
           };
 
-          $scope.childAccept = function(sourceItemScope) {
-            return $scope.subScope() && $scope.subScope().callbacks.accept(sourceItemScope.itemData(), sourceItemScope, $scope.subScope());
+          $scope.childAccept = function(sourceItemScope, destScope, destIndex) {
+            return $scope.subScope() && $scope.subScope().callbacks.accept(sourceItemScope.itemData(), sourceItemScope, destScope, destIndex);
           };
 
           $scope.prev = function() {
@@ -365,7 +366,8 @@
             var config = {};
             var placeElm, hiddenPlaceElm, targetScope, sourceIndex,
                 destIndex, sameParent, pos, dragElm, dragItemElm,
-                dragItem, firstMoving, targetItem, targetBefore;
+                dragItem, firstMoving, targetItem, targetBefore,
+                clickedElm, clickedElmDragged;
 
             angular.extend(config, nestedSortableConfig);
             scope.initHandle(element);
@@ -388,9 +390,13 @@
                 // disable right click
                 return;
               }
-
-              var sourceItem = angular.element(e.target).scope().itemData();
-              scope.callbacks.itemClicked(sourceItem);
+              
+              clickedElm = angular.element(e.target);
+              clickedElmDragged = false;
+              var sourceItem = clickedElm.scope().itemData();
+              clickedElm.bind('mouseup', function(){
+                scope.callbacks.itemClicked(sourceItem, clickedElmDragged);
+              });
 
               var target = angular.element(e.target);
               var nodrag = function (targetElm) {
@@ -491,7 +497,9 @@
             var dragMoveEvent = function(e) {
               var currentAccept, prev, childAccept;
               var moveObj = e;
-
+              
+              clickedElmDragged = true;
+              
               if (hasTouch) {
                 if (e.touches !== undefined) {
                   moveObj = e.touches.item(0);
@@ -520,12 +528,11 @@
                   pos.distAxX = 0;
                   sameParent = false;
 
-                  var collapsed = false; // todo: node can be collapsed
                   // increase horizontal level if previous sibling exists and is not collapsed
                   if (pos.distX > 0) {
                     prev = dragItem.prev();
-                    if (prev && !collapsed) {
-                      childAccept = prev.childAccept(scope);
+                    if (prev && !prev.collapsed) {
+                      childAccept = prev.childAccept(scope, prev.subScope(), prev.subScope().items.length);
                       if (childAccept) {
                         prev.subSortableElement.append(placeElm);
                         destIndex = prev.subScope().items.length;
@@ -542,7 +549,7 @@
                     if (!next) {
                       targetItem = dragItem.scope.parentItemScope();
                       if (targetItem) {
-                        currentAccept = targetItem.accept(scope);
+                        currentAccept = targetItem.accept(scope, targetItem, targetItem.$index + 1);
                         if (currentAccept) {
                           targetItem.sortableItemElement.after(placeElm);
                           destIndex = targetItem.$index + 1;
@@ -565,6 +572,11 @@
                 if (angular.isFunction(dragElm.hide)) {
                   dragElm.hide();
                 }
+
+                // when using elementFromPoint() inside an iframe, you have to call
+                // elementFromPoint() twice to make sure IE8 returns the correct value
+                document.elementFromPoint(targetX, targetY);
+
                 var targetElm = angular.element(document.elementFromPoint(targetX, targetY));
                 if (angular.isFunction(dragElm.show)) {
                   dragElm.show();
@@ -582,8 +594,6 @@
                   targetItemData = targetItem.itemData();
                 }
 
-                currentAccept = targetItem.accept(scope);
-
                 // move vertical
                 if (!pos.dirAx) {
                   sameParent = false;
@@ -596,9 +606,10 @@
                   }
                   if (targetBefore) {
                     prev = targetItem.prev();
-                    childAccept = prev && prev.childAccept(scope);
+                    childAccept = prev && prev.childAccept(scope, targetItem.subScope(), targetItem.subScope().items.length);
+                    currentAccept = targetItem.accept(scope, targetItem.parentScope(), targetItem.$index);
 
-                    if (childAccept && (moveRight || !currentAccept)) {
+                    if (childAccept && (moveRight || !currentAccept) && !prev.collapsed) {
                       // move to it's prev node
                       targetItem = prev;
                       targetItem.subSortableElement.append(placeElm);
@@ -612,9 +623,10 @@
                       dragItem.reset(destIndex, targetScope, scope);
                     }
                   } else {
-                    childAccept = targetItem.childAccept(scope);
+                    childAccept = targetItem.childAccept(scope, targetItem.subScope(), targetItem.subScope().items.length);
+                    currentAccept = targetItem.accept(scope, targetItem.parentScope(), targetItem.$index + 1);
 
-                    if (childAccept && (moveRight || !currentAccept)) {
+                    if (childAccept && (moveRight || !currentAccept) && !targetItem.collapsed) {
                       targetItem.subSortableElement.append(placeElm);
                       destIndex = targetItem.subScope().items.length;
                       targetScope = targetItem.subScope();
@@ -680,6 +692,7 @@
     ]);
 
 })();
+
 (function () {
   'use strict';
 
