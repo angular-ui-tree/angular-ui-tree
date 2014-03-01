@@ -245,12 +245,12 @@
             return subScope;
           };
 
-          $scope.accept = function(sourceItemScope) {
-            return $scope.callbacks.accept(sourceItemScope.itemData(), sourceItemScope, $scope.parentScope());
+          $scope.accept = function(sourceItemScope, destScope, destIndex) {
+            return $scope.callbacks.accept(sourceItemScope.itemData(), sourceItemScope, destScope, destIndex);
           };
 
-          $scope.childAccept = function(sourceItemScope) {
-            return $scope.subScope() && $scope.subScope().callbacks.accept(sourceItemScope.itemData(), sourceItemScope, $scope.subScope());
+          $scope.childAccept = function(sourceItemScope, destScope, destIndex) {
+            return $scope.subScope() && $scope.subScope().callbacks.accept(sourceItemScope.itemData(), sourceItemScope, destScope, destIndex);
           };
 
           $scope.prev = function() {
@@ -532,7 +532,7 @@
                   if (pos.distX > 0) {
                     prev = dragItem.prev();
                     if (prev && !collapsed) {
-                      childAccept = prev.childAccept(scope);
+                      childAccept = prev.childAccept(scope, prev.subScope(), prev.subScope().items.length);
                       if (childAccept) {
                         prev.subSortableElement.append(placeElm);
                         destIndex = prev.subScope().items.length;
@@ -549,7 +549,7 @@
                     if (!next) {
                       targetItem = dragItem.scope.parentItemScope();
                       if (targetItem) {
-                        currentAccept = targetItem.accept(scope);
+                        currentAccept = targetItem.accept(scope, targetItem, targetItem.$index + 1);
                         if (currentAccept) {
                           targetItem.sortableItemElement.after(placeElm);
                           destIndex = targetItem.$index + 1;
@@ -589,8 +589,6 @@
                   targetItemData = targetItem.itemData();
                 }
 
-                currentAccept = targetItem.accept(scope);
-
                 // move vertical
                 if (!pos.dirAx) {
                   sameParent = false;
@@ -603,7 +601,8 @@
                   }
                   if (targetBefore) {
                     prev = targetItem.prev();
-                    childAccept = prev && prev.childAccept(scope);
+                    childAccept = prev && prev.childAccept(scope, targetItem.subScope(), targetItem.subScope().items.length);
+                    currentAccept = targetItem.accept(scope, targetItem.parentScope(), targetItem.$index);
 
                     if (childAccept && (moveRight || !currentAccept)) {
                       // move to it's prev node
@@ -619,7 +618,8 @@
                       dragItem.reset(destIndex, targetScope, scope);
                     }
                   } else {
-                    childAccept = targetItem.childAccept(scope);
+                    childAccept = targetItem.childAccept(scope, targetItem.subScope(), targetItem.subScope().items.length);
+                    currentAccept = targetItem.accept(scope, targetItem.parentScope(), targetItem.$index + 1);
 
                     if (childAccept && (moveRight || !currentAccept)) {
                       targetItem.subSortableElement.append(placeElm);

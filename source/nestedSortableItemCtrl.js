@@ -79,12 +79,12 @@
             return subScope;
           };
 
-          $scope.accept = function(sourceItemScope) {
-            return $scope.callbacks.accept(sourceItemScope.itemData(), sourceItemScope, $scope.parentScope());
+          $scope.accept = function(sourceItemScope, destScope, destIndex) {
+            return $scope.callbacks.accept(sourceItemScope.itemData(), sourceItemScope, destScope, destIndex);
           };
 
-          $scope.childAccept = function(sourceItemScope) {
-            return $scope.subScope() && $scope.subScope().callbacks.accept(sourceItemScope.itemData(), sourceItemScope, $scope.subScope());
+          $scope.childAccept = function(sourceItemScope, destScope, destIndex) {
+            return $scope.subScope() && $scope.subScope().callbacks.accept(sourceItemScope.itemData(), sourceItemScope, destScope, destIndex);
           };
 
           $scope.prev = function() {
