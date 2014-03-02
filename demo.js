@@ -2,7 +2,6 @@
   'use strict';
 
   angular.module('demo', ['ui.nestedSortable'])
-
   .controller('MainCtrl', function($scope, $log) {
     $scope.list = [{
       "id": 1,
@@ -41,6 +40,11 @@
     $scope.selectedItem = {};
 
     $scope.options = {
+      itemClicked: function(sourceItem, clickedElmDragged) {
+        $scope.$apply(function() {
+          $scope.selectedItem = sourceItem;
+        });
+      }
 
     };
 
@@ -240,70 +244,6 @@
         $scope.$apply();
       },
     };
-  })
-
-  .controller('sample3Ctrl', function($scope) {
-    $scope.list = [{
-      "id": 1,
-      "title": "item1",
-      "items": [],
-    }, {
-      "id": 2,
-      "title": "item2",
-      "items": [{
-        "id": 21,
-        "title": "item2.1",
-        "items": [{
-          "id": 211,
-          "title": "item2.1.1",
-          "items": []
-        }, {
-          "id": 212,
-          "title": "item2.1.2",
-          "items": []
-        }, {
-          "id": 213,
-          "title": "item2.1.3",
-          "items": []
-        }],
-      }, {
-        "id": 22,
-        "title": "item2.2",
-        "items": [],
-      }],
-    }, {
-      "id": 3,
-      "title": "item3",
-      "items": [{
-        "id": 31,
-        "title": "item3.1",
-        "items": [],
-      }, {
-        "id": 32,
-        "title": "item3.2",
-        "items": [],
-      }, {
-        "id": 33,
-        "title": "item3.3",
-        "items": [{
-          "id": 331,
-          "title": "item3.3.1",
-          "items": []
-        }, {
-          "id": 332,
-          "title": "item3.3.2",
-          "items": []
-        }, {
-          "id": 333,
-          "title": "item3.3.3",
-          "items": []
-        }],
-      }],
-    }, {
-      "id": 4,
-      "title": "item4",
-      "items": [],
-    }];
   });
 
 })();
