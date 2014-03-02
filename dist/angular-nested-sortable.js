@@ -1,5 +1,5 @@
 /**
- * @license Angular NestedSortable v1.3.2
+ * @license Angular NestedSortable v1.3.3
  * (c) 2010-2014. https://github.com/JimLiu/Angular-NestedSortable
  * License: MIT
  */
@@ -14,6 +14,7 @@
       handleClass: 'nestedSortable-handle',
       placeHolderClass: 'nestedSortable-placeholder',
       dragClass: 'nestedSortable-drag',
+      subListClass: 'nestedSortable-sublist',
       threshold: 30
     });
 
@@ -295,6 +296,9 @@
             scope.initSortable(element);
             
             if (itemCtrl) { // if it has a parent, link it with parent
+              if (config.subListClass) {
+                element.addClass(config.subListClass);
+              }
               scope.setSubSortableElement(element);
             }
 
@@ -325,6 +329,18 @@
             };
 
             callbacks.itemClicked = function(sourceItem) {
+
+            };
+
+            callbacks.start = function(scope, sourceItem, elements) {
+
+            };
+
+            callbacks.move = function(scope, sourceItem, elements) {
+
+            };
+
+            callbacks.stop = function(scope, sourceItem, elements) {
 
             };
 
@@ -369,6 +385,8 @@
                 destIndex, sameParent, pos, dragElm, dragItemElm,
                 dragItem, firstMoving, targetItem, targetBefore,
                 clickedElm, clickedElmDragged, sourceItem;
+
+            var elements; // As a parameter for callbacks
 
             angular.extend(config, nestedSortableConfig);
             scope.initHandle(element);
@@ -487,6 +505,13 @@
                 'left' : moveObj.pageX - pos.offsetX + 'px',
                 'top'  : moveObj.pageY - pos.offsetY + 'px'
               });
+
+              elements = {
+                placeholder: placeElm,
+                dragging: dragElm,
+              };
+
+              scope.callbacks.start(scope, sourceItem, elements);
 
               if (hasTouch) {
                 angular.element($document).bind('touchend', dragEndEvent); // Mobile
@@ -644,6 +669,8 @@
                     }
                   }
                 }
+
+                scope.callbacks.move(scope, sourceItem, elements);
               }
             };
 
@@ -660,6 +687,7 @@
                 dragElm = null;
 
                 scope.callbacks.itemClicked(sourceItem, clickedElmDragged);
+                scope.callbacks.stop(scope, sourceItem, elements);
 
                 // update model data
                 if (targetScope && !(sameParent && sourceIndex == destIndex)) {

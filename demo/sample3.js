@@ -8,6 +8,7 @@
     handleClass: 'nestedSortable-table-handle',
     placeHolderClass: 'nestedSortable-table-placeholder',
     dragClass: 'nestedSortable-table-drag',
+    subListClass: 'nestedSortable-table-sublist',
     threshold: 30
   })
   .controller('sample3Ctrl', function($scope) {
@@ -72,6 +73,13 @@
       "title": "item4",
       "items": [],
     }];
+
+    $scope.options = {
+      start: function(scope, sourceItem, elements) {
+        console.log(elements.placeholder);
+      },
+    };
+
   });
 
 })();

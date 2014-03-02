@@ -27,6 +27,9 @@
             scope.initSortable(element);
             
             if (itemCtrl) { // if it has a parent, link it with parent
+              if (config.subListClass) {
+                element.addClass(config.subListClass);
+              }
               scope.setSubSortableElement(element);
             }
 
@@ -57,6 +60,18 @@
             };
 
             callbacks.itemClicked = function(sourceItem) {
+
+            };
+
+            callbacks.start = function(scope, sourceItem, elements) {
+
+            };
+
+            callbacks.move = function(scope, sourceItem, elements) {
+
+            };
+
+            callbacks.stop = function(scope, sourceItem, elements) {
 
             };
 

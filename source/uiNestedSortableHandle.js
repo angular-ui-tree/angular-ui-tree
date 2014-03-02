@@ -16,6 +16,8 @@
                 dragItem, firstMoving, targetItem, targetBefore,
                 clickedElm, clickedElmDragged, sourceItem;
 
+            var elements; // As a parameter for callbacks
+
             angular.extend(config, nestedSortableConfig);
             scope.initHandle(element);
 
@@ -133,6 +135,13 @@
                 'left' : moveObj.pageX - pos.offsetX + 'px',
                 'top'  : moveObj.pageY - pos.offsetY + 'px'
               });
+
+              elements = {
+                placeholder: placeElm,
+                dragging: dragElm,
+              };
+
+              scope.callbacks.start(scope, sourceItem, elements);
 
               if (hasTouch) {
                 angular.element($document).bind('touchend', dragEndEvent); // Mobile
@@ -290,6 +299,8 @@
                     }
                   }
                 }
+
+                scope.callbacks.move(scope, sourceItem, elements);
               }
             };
 
@@ -306,6 +317,7 @@
                 dragElm = null;
 
                 scope.callbacks.itemClicked(sourceItem, clickedElmDragged);
+                scope.callbacks.stop(scope, sourceItem, elements);
 
                 // update model data
                 if (targetScope && !(sameParent && sourceIndex == destIndex)) {

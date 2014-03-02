@@ -33,7 +33,7 @@ pre {
 	padding: 0px;
 	list-style: none;
 }
-.nestedSortable-list .nestedSortable-list {
+.nestedSortable-sublist {
     padding-left: 30px;
 }
 .nestedSortable-item, .nestedSortable-placeholder {
@@ -87,7 +87,7 @@ pre {
     width: 100%;
 } 
 
-.nestedSortable-table .nestedSortable-table {
+.nestedSortable-table-sublist {
     margin-left: 30px;
 }
 
