@@ -36,7 +36,7 @@
               };
             }
 
-            callbacks.accept = function(modelData, sourceItemScope, targetScope) {
+            callbacks.accept = function(modelData, sourceItemScope, targetScope, destIndex) {
               return true;
             };
 

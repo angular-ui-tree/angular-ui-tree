@@ -82,3 +82,50 @@ pre {
     opacity: .8;
 }
 
+
+.nestedSortable-table {
+    width: 100%;
+} 
+
+.nestedSortable-table .nestedSortable-table {
+    margin-left: 30px;
+}
+
+.nestedSortable-table-item, .nestedSortable-table-placeholder {
+}
+
+.nestedSortable-table-handle {
+    cursor: move;
+    background: #f8faff;
+    border: 1px solid #dae2ea;
+    color: #7c9eb2;
+    text-decoration: none;
+    font-weight: bold;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    min-height: 20px;
+    line-height: 20px;
+    padding: 10px 10px;
+}
+
+.nestedSortable-table-handle:hover {
+    color: #438eb9;
+    background: #f4f6f7;
+    border-color: #dce2e8;
+}
+
+.nestedSortable-table-placeholder {
+    background: #f0f9ff;
+    border: 2px dashed #bed2db;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.nestedSortable-table-drag {
+    position: absolute;
+    pointer-events: none;
+    z-index: 999;
+    opacity: .8;
+}

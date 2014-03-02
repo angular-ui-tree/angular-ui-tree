@@ -8,7 +8,7 @@
   <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="demo.css">
 </head>
-<body ng-app="demo" id="ng-app">
+<body ng-app="sample3App" id="ng-app">
 
   <div class="container" ng-controller="sample3Ctrl">
     <h1 class="page-header">NestedSortable - demo 3</h1>
@@ -17,27 +17,27 @@
     <div class="row">
       <div class="col-lg-6">
         <h3>Tree view</h3>
-        <ol ui-nested-sortable="options" ng-model="list">
-            <li ng-repeat="item in list" ui-nested-sortable-item="">
-              <div ui-nested-sortable-handle>
-                {{item.title}}
-              </div>
-              <ol ui-nested-sortable="options" ng-model="item.items">
-                <li ng-repeat="subItem in item.items" ui-nested-sortable-item="">
-                  <div ui-nested-sortable-handle>
-                    {{subItem.title}}
-                  </div>
-                  <ol ui-nested-sortable="options" ng-model="subItem.items">
-                    <li ng-repeat="subItem1 in subItem.items" ui-nested-sortable-item="">
-                      <div ui-nested-sortable-handle>
-                        {{subItem1.title}}
-                      </div>
-                    </li>
-                  </ol>
-                </li>
-              </ol>
-            </li>
-          </ol>         
+        <table ui-nested-sortable="options" ng-model="list">
+          <tr ng-repeat="item in list" ui-nested-sortable-item="">
+            <td>
+              <div ui-nested-sortable-handle ng-bind="item.title"></div>
+              <table ui-nested-sortable="options" ng-model="item.items">
+                <tr ng-repeat="subItem in item.items" ui-nested-sortable-item="">
+                  <td>
+                    <div ui-nested-sortable-handle ng-bind="subItem.title"></div>
+                    <table ui-nested-sortable="options" ng-model="subItem.items">
+                      <tr ng-repeat="subItem1 in subItem.items" ui-nested-sortable-item="">
+                        <td>
+                          <div ui-nested-sortable-handle ng-bind="subItem1.title"></div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>         
       </div>
 
       <div class="col-lg-6">
@@ -60,6 +60,6 @@
   <script src="bower_components/angular/angular.min.js"></script>
 
   <script type="text/javascript" src="dist/angular-nested-sortable.js"></script>
-  <script type="text/javascript" src="demo.js"></script>
+  <script type="text/javascript" src="sample3.js"></script>
 </body>
 </html>

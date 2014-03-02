@@ -84,7 +84,8 @@
             return $scope.callbacks.accept(sourceItemScope.itemData(), sourceItemScope, destScope, destIndex);
           };
 
-          $scope.childAccept = function(sourceItemScope, destScope, destIndex) {
+          $scope.childAccept = function(sourceItemScope, destScope) {
+            var destIndex = destScope ? destScope.items.length : 0;
             return $scope.subScope() && $scope.subScope().callbacks.accept(sourceItemScope.itemData(), sourceItemScope, destScope, destIndex);
           };
 
