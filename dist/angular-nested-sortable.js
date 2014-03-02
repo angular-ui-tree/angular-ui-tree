@@ -1,5 +1,5 @@
 /**
- * @license Angular NestedSortable v1.3.0
+ * @license Angular NestedSortable v1.3.1
  * (c) 2010-2014. https://github.com/JimLiu/Angular-NestedSortable
  * License: MIT
  */
@@ -367,7 +367,7 @@
             var placeElm, hiddenPlaceElm, targetScope, sourceIndex,
                 destIndex, sameParent, pos, dragElm, dragItemElm,
                 dragItem, firstMoving, targetItem, targetBefore,
-                clickedElm, clickedElmDragged;
+                clickedElm, clickedElmDragged, sourceItem;
 
             angular.extend(config, nestedSortableConfig);
             scope.initHandle(element);
@@ -393,10 +393,7 @@
               
               clickedElm = angular.element(e.target);
               clickedElmDragged = false;
-              var sourceItem = clickedElm.scope().itemData();
-              clickedElm.bind('mouseup', function(){
-                scope.callbacks.itemClicked(sourceItem, clickedElmDragged);
-              });
+              sourceItem = clickedElm.scope().itemData();
 
               var target = angular.element(e.target);
               var nodrag = function (targetElm) {
@@ -653,6 +650,8 @@
 
                 dragElm.remove();
                 dragElm = null;
+
+                scope.callbacks.itemClicked(sourceItem, clickedElmDragged);
 
                 // update model data
                 if (targetScope && !(sameParent && sourceIndex == destIndex)) {
