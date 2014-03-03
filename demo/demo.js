@@ -2,7 +2,7 @@
   'use strict';
 
   angular.module('demo', ['ui.nestedSortable'])
-  .controller('MainCtrl', function($scope, $log) {
+  .controller('MainCtrl', function($scope) {
     $scope.list = [{
       "id": 1,
       "title": "1. dragon-breath",
