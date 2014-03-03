@@ -116,20 +116,20 @@
 
               var tagName = scope.sortableItemElement.prop('tagName');
               if (tagName == 'TR') {
-                placeElm = angular.element(document.createElement(tagName));
-                var tdElm = angular.element(document.createElement('td'))
+                placeElm = angular.element($window.document.createElement(tagName));
+                var tdElm = angular.element($window.document.createElement('td'))
                               .addClass(config.placeHolderClass);
                 placeElm.append(tdElm);
               } else {
-                placeElm = angular.element(document.createElement(tagName))
+                placeElm = angular.element($window.document.createElement(tagName))
                               .addClass(config.placeHolderClass);
               }
-              hiddenPlaceElm = angular.element(document.createElement(tagName));
+              hiddenPlaceElm = angular.element($window.document.createElement(tagName));
 
               dragItemElm = scope.sortableItemElement;
               pos = $helper.positionStarted(moveObj, dragItemElm);
               placeElm.css('height', $helper.height(dragItemElm) + 'px');
-              dragElm = angular.element(document.createElement(scope.sortableElement.prop('tagName')))
+              dragElm = angular.element($window.document.createElement(scope.sortableElement.prop('tagName')))
                         .addClass(scope.sortableElement.attr('class')).addClass(config.dragClass);
               dragElm.css('width', $helper.width(dragItemElm) + 'px');
 
@@ -231,8 +231,8 @@
 
                 var moveRight = ($helper.offset(dragElm).left - $helper.offset(placeElm).left) >= config.threshold;
 
-                var targetX = moveObj.pageX - document.body.scrollLeft;
-                var targetY = moveObj.pageY - (window.pageYOffset || document.documentElement.scrollTop);
+                var targetX = moveObj.pageX - $window.document.body.scrollLeft;
+                var targetY = moveObj.pageY - (window.pageYOffset || $window.document.documentElement.scrollTop);
 
                 // Select the drag target. Because IE does not support CSS 'pointer-events: none', it will always
                 // pick the drag element itself as the target. To prevent this, we hide the drag element while
@@ -243,9 +243,9 @@
 
                 // when using elementFromPoint() inside an iframe, you have to call
                 // elementFromPoint() twice to make sure IE8 returns the correct value
-                document.elementFromPoint(targetX, targetY);
+                $window.document.elementFromPoint(targetX, targetY);
 
-                var targetElm = angular.element(document.elementFromPoint(targetX, targetY));
+                var targetElm = angular.element($window.document.elementFromPoint(targetX, targetY));
                 if (angular.isFunction(dragElm.show)) {
                   dragElm.show();
                 }
