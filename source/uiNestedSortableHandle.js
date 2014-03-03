@@ -39,6 +39,14 @@
                 // disable right click
                 return;
               }
+
+              // stop move when the menu item is dragged ouside the body element
+              angular.element($document).on('mouseout', function (event) {
+                if (event.target.tagName.toLowerCase() === 'body') {
+                  // cancel event
+                  dragEndEvent();
+                }
+              });
               
               clickedElm = angular.element(e.target);
               clickedElmDragged = false;
@@ -306,7 +314,9 @@
 
             var dragEndEvent = function(e) {
               if (dragElm) {
-                e.preventDefault();
+                if (e) {
+                  e.preventDefault();
+                }
 
                 // roll back elements changed
                 dragItemElm[0].parentNode.removeChild(dragItemElm[0]);
@@ -342,6 +352,7 @@
               else {
                 angular.element($document).unbind('mouseup', dragEndEvent);
                 angular.element($document).unbind('mousemove', dragMoveEvent);
+                angular.element($document).off('mouseout');
               }
             };
 
