@@ -3,8 +3,8 @@
 
   angular.module('ui.nestedSortable')
 
-    .directive('uiNestedSortableItem', ['nestedSortableConfig', '$window',
-      function (nestedSortableConfig, $window) {
+    .directive('uiNestedSortableItem', ['nestedSortableConfig',
+      function (nestedSortableConfig) {
         return {
           require: '^uiNestedSortable',
           restrict: 'A',
