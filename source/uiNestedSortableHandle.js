@@ -115,7 +115,7 @@
               };
 
               var tagName = scope.sortableItemElement.prop('tagName');
-              if (tagName == 'TR') {
+              if (tagName.toLowerCase() === 'tr') {
                 placeElm = angular.element($window.document.createElement(tagName));
                 var tdElm = angular.element($window.document.createElement('td'))
                               .addClass(config.placeHolderClass);
@@ -139,6 +139,7 @@
               dragElm.append(dragItemElm);
 
               $document.find('body').append(dragElm);
+
               dragElm.css({
                 'left' : moveObj.pageX - pos.offsetX + 'px',
                 'top'  : moveObj.pageY - pos.offsetY + 'px'
@@ -146,7 +147,7 @@
 
               elements = {
                 placeholder: placeElm,
-                dragging: dragElm,
+                dragging: dragElm
               };
 
               scope.callbacks.start(scope, sourceItem, elements);
