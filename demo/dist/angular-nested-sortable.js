@@ -409,6 +409,14 @@
                 // disable right click
                 return;
               }
+
+              // stop move when the menu item is dragged ouside the body element
+              angular.element($document).on('mouseout', function (event) {
+                if (event.target.tagName.toLowerCase() === 'body') {
+                  // cancel event
+                  dragEndEvent();
+                }
+              });
               
               clickedElm = angular.element(e.target);
               clickedElmDragged = false;
@@ -477,21 +485,21 @@
               };
 
               var tagName = scope.sortableItemElement.prop('tagName');
-              if (tagName == 'TR') {
-                placeElm = angular.element(document.createElement(tagName));
-                var tdElm = angular.element(document.createElement('td'))
+              if (tagName.toLowerCase() === 'tr') {
+                placeElm = angular.element($window.document.createElement(tagName));
+                var tdElm = angular.element($window.document.createElement('td'))
                               .addClass(config.placeHolderClass);
                 placeElm.append(tdElm);
               } else {
-                placeElm = angular.element(document.createElement(tagName))
+                placeElm = angular.element($window.document.createElement(tagName))
                               .addClass(config.placeHolderClass);
               }
-              hiddenPlaceElm = angular.element(document.createElement(tagName));
+              hiddenPlaceElm = angular.element($window.document.createElement(tagName));
 
               dragItemElm = scope.sortableItemElement;
               pos = $helper.positionStarted(moveObj, dragItemElm);
               placeElm.css('height', $helper.height(dragItemElm) + 'px');
-              dragElm = angular.element(document.createElement(scope.sortableElement.prop('tagName')))
+              dragElm = angular.element($window.document.createElement(scope.sortableElement.prop('tagName')))
                         .addClass(scope.sortableElement.attr('class')).addClass(config.dragClass);
               dragElm.css('width', $helper.width(dragItemElm) + 'px');
 
@@ -501,6 +509,7 @@
               dragElm.append(dragItemElm);
 
               $document.find('body').append(dragElm);
+
               dragElm.css({
                 'left' : moveObj.pageX - pos.offsetX + 'px',
                 'top'  : moveObj.pageY - pos.offsetY + 'px'
@@ -508,7 +517,7 @@
 
               elements = {
                 placeholder: placeElm,
-                dragging: dragElm,
+                dragging: dragElm
               };
 
               scope.callbacks.start(scope, sourceItem, elements);
@@ -593,8 +602,8 @@
 
                 var moveRight = ($helper.offset(dragElm).left - $helper.offset(placeElm).left) >= config.threshold;
 
-                var targetX = moveObj.pageX - document.body.scrollLeft;
-                var targetY = moveObj.pageY - (window.pageYOffset || document.documentElement.scrollTop);
+                var targetX = moveObj.pageX - $window.document.body.scrollLeft;
+                var targetY = moveObj.pageY - (window.pageYOffset || $window.document.documentElement.scrollTop);
 
                 // Select the drag target. Because IE does not support CSS 'pointer-events: none', it will always
                 // pick the drag element itself as the target. To prevent this, we hide the drag element while
@@ -605,9 +614,9 @@
 
                 // when using elementFromPoint() inside an iframe, you have to call
                 // elementFromPoint() twice to make sure IE8 returns the correct value
-                document.elementFromPoint(targetX, targetY);
+                $window.document.elementFromPoint(targetX, targetY);
 
-                var targetElm = angular.element(document.elementFromPoint(targetX, targetY));
+                var targetElm = angular.element($window.document.elementFromPoint(targetX, targetY));
                 if (angular.isFunction(dragElm.show)) {
                   dragElm.show();
                 }
@@ -676,7 +685,9 @@
 
             var dragEndEvent = function(e) {
               if (dragElm) {
-                e.preventDefault();
+                if (e) {
+                  e.preventDefault();
+                }
 
                 // roll back elements changed
                 dragItemElm[0].parentNode.removeChild(dragItemElm[0]);
@@ -712,6 +723,7 @@
               else {
                 angular.element($document).unbind('mouseup', dragEndEvent);
                 angular.element($document).unbind('mousemove', dragMoveEvent);
+                angular.element($document).off('mouseout');
               }
             };
 
@@ -733,8 +745,8 @@
 
   angular.module('ui.nestedSortable')
 
-    .directive('uiNestedSortableItem', ['nestedSortableConfig', '$window',
-      function (nestedSortableConfig, $window) {
+    .directive('uiNestedSortableItem', ['nestedSortableConfig',
+      function (nestedSortableConfig) {
         return {
           require: '^uiNestedSortable',
           restrict: 'A',
