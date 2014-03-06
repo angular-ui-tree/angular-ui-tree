@@ -162,6 +162,24 @@
         items: []
       });
     };
+
+    var toggleScope = function(scope, collapsed) {
+      for (var i = 0; i < scope.items.length; i++) {
+        var subScope = scope.items[i].subScope();
+        toggleScope(subScope, collapsed);
+      }
+      scope.collapsed = collapsed;
+    };
+
+    $scope.collapseAll = function() {
+      var scope = angular.element(document.getElementById("nested-sortable-root")).scope();
+      toggleScope(scope, true);
+    };
+
+    $scope.expandAll = function() {
+      var scope = angular.element(document.getElementById("nested-sortable-root")).scope();
+      toggleScope(scope, false);
+    };
   })
 
   .controller('sample2Ctrl', function($scope, $log) {
