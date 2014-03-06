@@ -34,12 +34,18 @@ Watch the NestedSortable component in action on the [demo page](http://jimliu.gi
 
 ## Usage
 
+### Download
+- Using [bower](http://bower.io/) to install it. `bower install angular-nestedsortable`
+- [Download](https://github.com/JimLiu/Angular-NestedSortable/archive/master.zip) from github.
+
+### Load Script
 Load the script file: `angular-nested-sortable.js` in your application:
 
 ```html
 <script type="text/javascript" src="bower_components/angular-nested-sortable/angular-nested-sortable.js"></script>
 ```
 
+### Code
 Add the sortable module as a dependency to your application module:
 
 ```js
@@ -73,6 +79,8 @@ HTML View or Templates
 - All `ui-nested-sortable`, `ng-model`, `ui-nested-sortable-item` and `ui-nested-sortable-handle` are necessary. And they can be nested.
 - If you add a `data-nodrag` attribute to an element, the element won't response for the drag action.
 - If you changed the datasource bound, sometimes you have to call [`$scope.$apply()`](http://docs.angularjs.org/api/ng/type/$rootScope.Scope#$apply) to refresh the view, otherwise you will get an error `Cannot read property '0' of undefined` ([Issue #32](https://github.com/JimLiu/Angular-NestedSortable/issues/32)).
+
+## API
 
 ### Scope of Sortable
 The `scope` of a `ui-nested-sortable` element.
