@@ -37,12 +37,12 @@
 
         var collapseOrExpand = function(scope, collapsed) {
           for (var i = 0; i < scope.items.length; i++) {
+            collapsed ? scope.items[i].collapse() : scope.items[i].expand();
             var subScope = scope.items[i].subScope();
             if (subScope) {
               collapseOrExpand(subScope, collapsed);
             }
           }
-          collapsed ? scope.collapse() : scope.expand();
         };
 
         $scope.collapseAll = function() {
