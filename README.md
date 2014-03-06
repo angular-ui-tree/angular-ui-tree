@@ -35,7 +35,7 @@ Watch the NestedSortable component in action on the [demo page](http://jimliu.gi
 ## Usage
 
 ### Download
-- Using [bower](http://bower.io/) to install it. `bower install angular-nestedsortable`
+- Using [bower](http://bower.io/) to install it. `bower install Angular-NestedSortable`
 - [Download](https://github.com/JimLiu/Angular-NestedSortable/archive/master.zip) from github.
 
 ### Load Script
