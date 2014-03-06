@@ -158,9 +158,10 @@ myAppModule.controller('MyController', function($scope) {
 - `destScope` is the `scope` object which the dragged item dropped.
 - `sourceIndex` is the index of item before it dragged.
 - `destIndex` is the index of item after it dropped.
-- `elements` is a collection of dragging elements.
-> - `placeholder`: the placeholder element
-> - `dragging`: the current dragging element.
+- `elements` is a collection of dragging elements.  
+
+  - `placeholder`: the placeholder element.  
+  - `dragging`: the current dragging element.
 
 
 ### Scope of Item
