@@ -30,9 +30,13 @@
 
     <div class="row">
       <div class="col-lg-6">
-        <h3>Tree view</h3>
+        <h3>Tree view
+          <a href="" class="btn btn-default pull-right" ng-click="collapseAll()">Collapse all</a>
+          <a href="" class="btn btn-default pull-right" ng-click="expandAll()">Expand all</a>
+
+        </h3>
         
-        <ol ui-nested-sortable="options" ng-model="list" >
+        <ol ui-nested-sortable="options" ng-model="list" id="nested-sortable-root">
           <li ng-repeat="item in list" ui-nested-sortable-item="" ng-include="'items_renderer.html'"></li>
         </ol>
       </div>

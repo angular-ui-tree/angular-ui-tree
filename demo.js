@@ -2,7 +2,7 @@
   'use strict';
 
   angular.module('demo', ['ui.nestedSortable'])
-  .controller('MainCtrl', function($scope, $log) {
+  .controller('MainCtrl', function($scope) {
     $scope.list = [{
       "id": 1,
       "title": "1. dragon-breath",
@@ -161,6 +161,24 @@
         title: itemData.title + '.' + (itemData.items.length + 1),
         items: []
       });
+    };
+
+    var toggleScope = function(scope, collapsed) {
+      for (var i = 0; i < scope.items.length; i++) {
+        var subScope = scope.items[i].subScope();
+        toggleScope(subScope, collapsed);
+      }
+      scope.collapsed = collapsed;
+    };
+
+    $scope.collapseAll = function() {
+      var scope = angular.element(document.getElementById("nested-sortable-root")).scope();
+      toggleScope(scope, true);
+    };
+
+    $scope.expandAll = function() {
+      var scope = angular.element(document.getElementById("nested-sortable-root")).scope();
+      toggleScope(scope, false);
     };
   })
 

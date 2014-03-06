@@ -2,7 +2,7 @@
   'use strict';
 
   angular.module('sample4App', ['ui.nestedSortable'])
-  .controller('sample4Ctrl', function($scope, $log) {
+  .controller('sample4Ctrl', function($scope) {
     $scope.list1 = [{
       "id": 1,
       "title": "list1 - item1",
