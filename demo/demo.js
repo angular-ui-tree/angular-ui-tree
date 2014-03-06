@@ -163,27 +163,14 @@
       });
     };
 
-    var collapseOrExpand = function(scope, collapsed) {
-      for (var i = 0; i < scope.items.length; i++) {
-        var subScope = scope.items[i].subScope();
-        collapseOrExpand(subScope, collapsed);
-      }
-      if (collapsed) {
-        scope.collapse();
-      }
-      else {
-        scope.expand();
-      }
-    };
-
     $scope.collapseAll = function() {
       var scope = angular.element(document.getElementById("nested-sortable-root")).scope();
-      collapseOrExpand(scope, true);
+      scope.collapseAll();
     };
 
     $scope.expandAll = function() {
       var scope = angular.element(document.getElementById("nested-sortable-root")).scope();
-      collapseOrExpand(scope, false);
+      scope.expandAll();
     };
   })
 

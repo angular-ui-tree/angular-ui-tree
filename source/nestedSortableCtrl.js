@@ -34,6 +34,26 @@
           }
           return 1;
         };
+
+        var collapseOrExpand = function(scope, collapsed) {
+          for (var i = 0; i < scope.items.length; i++) {
+            var subScope = scope.items[i].subScope();
+            if (subScope) {
+              collapseOrExpand(subScope, collapsed);
+            }
+          }
+          collapsed ? scope.collapse() : scope.expand();
+        };
+
+        $scope.collapseAll = function() {
+          collapseOrExpand($scope, true);
+        };
+
+        $scope.expandAll = function() {
+          collapseOrExpand($scope, false);
+        };
+
+
       }
     ]);
 })();

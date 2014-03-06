@@ -1,5 +1,5 @@
 /**
- * @license Angular NestedSortable v1.3.6
+ * @license Angular NestedSortable v1.3.7
  * (c) 2010-2014. https://github.com/JimLiu/Angular-NestedSortable
  * License: MIT
  */
@@ -148,6 +148,26 @@
           }
           return 1;
         };
+
+        var collapseOrExpand = function(scope, collapsed) {
+          for (var i = 0; i < scope.items.length; i++) {
+            var subScope = scope.items[i].subScope();
+            if (subScope) {
+              collapseOrExpand(subScope, collapsed);
+            }
+          }
+          collapsed ? scope.collapse() : scope.expand();
+        };
+
+        $scope.collapseAll = function() {
+          collapseOrExpand($scope, true);
+        };
+
+        $scope.expandAll = function() {
+          collapseOrExpand($scope, false);
+        };
+
+
       }
     ]);
 })();
