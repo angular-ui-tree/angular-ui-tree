@@ -96,6 +96,18 @@
 
             return null;
           };
+
+          $scope.toggle = function() {
+            $scope.collapsed = !$scope.collapsed;
+          };
+
+          $scope.collapse = function() {
+            $scope.collapsed = true;
+          };
+
+          $scope.expand = function() {
+            $scope.collapsed = false;
+          };
         }
     ]);
 })();

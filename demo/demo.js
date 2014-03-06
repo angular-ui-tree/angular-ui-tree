@@ -145,7 +145,7 @@
       },
     };
     $scope.toggle = function(scope) {
-      scope.collapsed = !scope.collapsed;
+      scope.toggle();
     };
     $scope.remove = function(scope) {
       //scope.removeItem();
@@ -163,22 +163,27 @@
       });
     };
 
-    var toggleScope = function(scope, collapsed) {
+    var collapseOrExpand = function(scope, collapsed) {
       for (var i = 0; i < scope.items.length; i++) {
         var subScope = scope.items[i].subScope();
-        toggleScope(subScope, collapsed);
+        collapseOrExpand(subScope, collapsed);
       }
-      scope.collapsed = collapsed;
+      if (collapsed) {
+        scope.collapse();
+      }
+      else {
+        scope.expand();
+      }
     };
 
     $scope.collapseAll = function() {
       var scope = angular.element(document.getElementById("nested-sortable-root")).scope();
-      toggleScope(scope, true);
+      collapseOrExpand(scope, true);
     };
 
     $scope.expandAll = function() {
       var scope = angular.element(document.getElementById("nested-sortable-root")).scope();
-      toggleScope(scope, false);
+      collapseOrExpand(scope, false);
     };
   })
 
