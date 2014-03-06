@@ -184,7 +184,7 @@ Get the scope of the parent `ui-nested-sortable` element.
 Get the scope of the child `ui-nested-sortable` element.
 ##### collapse()
 Collapse current node.
-##### expandAll()
+##### expand()
 Expand current node.
 
 ## NgModules Link
