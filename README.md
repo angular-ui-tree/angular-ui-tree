@@ -74,8 +74,25 @@ HTML View or Templates
 - If you add a `data-nodrag` attribute to an element, the element won't response for the drag action.
 - If you changed the datasource bound, sometimes you have to call [`$scope.$apply()`](http://docs.angularjs.org/api/ng/type/$rootScope.Scope#$apply) to refresh the view, otherwise you will get an error `Cannot read property '0' of undefined` ([Issue #32](https://github.com/JimLiu/Angular-NestedSortable/issues/32)).
 
+### Scope of Sortable
+The `scope` of a `ui-nested-sortable` element.
 
-### Callbacks
+#### Properties
+##### sortableModelValue
+Data type: `Array`  
+The data bound with current scope.
+
+#### Methods
+##### parentItemScope()
+if a `ui-nested-sortable` element belongs to another `ui-nested-sortable-item` element, using `parentItemScope()` to get the scope of it's parent item.
+##### level()
+Calculate it's level in the tree. The level of a root element is 1.
+##### collapseAll()
+Collapse all sub-nodes.
+##### expandAll()
+Expand all sub-nodes.
+
+#### Callbacks
 
 The Callbacks can be passed through the directive.
 
@@ -100,7 +117,16 @@ myAppModule.controller('MyController', function($scope) {
     },
     itemClicked: function(modelData) {
       
-    };
+    },
+    start: function(scope, modelData, elements) {
+
+    },
+    move: function(scope, modelData, elements) {
+
+    },
+    stop: function(scope, modelData, elements) {
+
+    }
   };
 });
 ```
@@ -121,28 +147,21 @@ myAppModule.controller('MyController', function($scope) {
 - `itemMoved` callback: When a sub-item is moved from a node to another node.
 - `orderChanged` callback: Is only fired if the dragged item gets dropped at the same parent node.
 - `itemClicked` callback: When an item is clicked.
+- `start` callback: When an item starts to drag.
+- `move` callback: When an item is moving.
+- `stop` callback: When an item stops dragging.
 
-#### Parameters
+##### Parameters
 - `scope`, `sourceScope` or `sourceItemScope` is the `scope` object of the dragging item
 - `targetScope` is the `scope` object which the dragging item is dragging over.
 - `modelData` is the data bint with the dragging item
 - `destScope` is the `scope` object which the dragged item dropped.
 - `sourceIndex` is the index of item before it dragged.
 - `destIndex` is the index of item after it dropped.
+- `elements` is a collection of dragging elements.
+> - `placeholder`: the placeholder element
+> - `dragging`: the current dragging element.
 
-### Scope of Sortable
-The `scope` of a `ui-nested-sortable` element.
-
-#### Properties
-##### sortableModelValue
-Data type: `Array`  
-The data bound with current scope.
-
-#### Methods
-##### parentItemScope()
-if a `ui-nested-sortable` element belongs to another `ui-nested-sortable-item` element, using `parentItemScope()` to get the scope of it's parent item.
-##### level()
-Calculate it's level in the tree. The level of a root element is 1.
 
 ### Scope of Item
 The `scope` of a `ui-nested-sortable-item` element.
@@ -162,6 +181,10 @@ Get the max level of all the sub-items of the scope. If there is no sub-items, r
 Get the scope of the parent `ui-nested-sortable` element.
 ##### subScope()
 Get the scope of the child `ui-nested-sortable` element.
+##### collapse()
+Collapse current node.
+##### expandAll()
+Expand current node.
 
 ## NgModules Link
 
