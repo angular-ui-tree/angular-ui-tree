@@ -186,7 +186,7 @@ module.exports = function(grunt) {
             startPage: '/guide',
             title: 'Angular-NestedSortable',
             analytics: {
-              account: '',
+              account: 'UA-48778560-1',
               domainName: 'github.io'
             }
           },
