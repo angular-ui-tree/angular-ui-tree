@@ -1,0 +1,58 @@
+@ngdoc overview
+@name Development setup
+@description
+
+# Development environment setup
+
+## Prerequisites
+
+* [Node Package Manager](https://npmjs.org/) (NPM)
+* [Git](http://git-scm.com/)
+
+## Dependencies
+
+* [Grunt](http://gruntjs.com/) (task automation)
+* [Bower](http://bower.io/) (package management)
+
+## Installation
+
+Run the commands below in the project root directory.
+
+###1. Install Grunt and Bower
+
+    $ sudo npm install -g grunt-cli bower
+
+###2. Install project dependencies
+
+    $ npm install
+    $ bower install
+
+## Useful commands
+
+### Running a local webserver
+To debug code and run end-to-end tests, it is often useful to have a local HTTP server. For this purpose, we have made available a local web server based on Node.js.
+
+To start the web server, run:
+
+    $ grunt webserver
+
+To access the local server, enter the following URL into your web browser:
+
+    http://localhost:8080/demo/
+
+By default, it serves the contents of the demo project.
+
+
+### Build source
+
+To build Angular-NestedSortable, use the following command.
+
+    $ grunt build
+
+This will generate a concatenated- and minified JavaScript file in the `dist` directory.
+
+### Run tests
+You can run the tests once or choose to run them continuously.
+
+    $ grunt test
+    $ grunt test:continuous
