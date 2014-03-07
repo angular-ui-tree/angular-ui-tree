@@ -1,0 +1,18 @@
+@ngdoc overview
+@name Guide
+@description
+
+# Angular NestedSortable
+
+<br>
+Angular NestedSortable is an AngularJS UI component that can sort nested lists,
+provides drag &amp; drop support and doesn't depend on jQuery.
+
+## Features
+
+- Uses the native AngularJS scope for data binding
+- Sorted and move items through the entire tree
+- Prevent elements from accepting child nodes
+
+If you like the module and use it in your projects, make it public on
+[ngmodules](http://ngmodules.org/modules/Angular-NestedSortable) and click the "_I use it_" button!
