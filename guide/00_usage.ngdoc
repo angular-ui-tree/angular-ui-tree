@@ -71,4 +71,8 @@ Support unlimited nesting using a template for the menu items.
       <li ng-repeat="item in item.items" ui-nested-sortable-item="" ng-include="'items_renderer.html'"></li>
     </ol>
 </script>
+
+<ol ui-nested-sortable="options" ng-model="list" id="nested-sortable-root">
+    <li ng-repeat="item in list" ui-nested-sortable-item="" ng-include="'items_renderer.html'"></li>
+</ol>
 ````
