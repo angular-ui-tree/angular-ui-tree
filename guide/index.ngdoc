@@ -16,3 +16,18 @@ provides drag &amp; drop support and doesn't depend on jQuery.
 
 If you like the module and use it in your projects, make it public on
 [ngmodules](http://ngmodules.org/modules/Angular-NestedSortable) and click the "_I use it_" button!
+
+## Browser support
+
+The Angular NestedSortable is tested with the following browsers:
+
+- Chrome (stable)
+- Firefox
+- IE 8, 9 and 10
+
+For IE8 support, make sure you do the following:
+
+- include an [ES5 shim](https://github.com/es-shims/es5-shim)
+- make your [AngularJS application compatible with Internet Explorer](http://docs.angularjs.org/guide/ie)
+- use [jQuery 1.x](http://jquery.com/browser-support/)
+
