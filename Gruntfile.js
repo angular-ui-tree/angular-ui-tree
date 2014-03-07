@@ -176,7 +176,29 @@ module.exports = function(grunt) {
           }]
         }
       }
-    }
+    },
+
+    ngdocs: {
+       options: {
+          dest: 'demo/docs',
+          scripts: ['angular.js'],
+            html5Mode: true,
+            startPage: '/guide',
+            title: 'Angular-NestedSortable',
+            analytics: {
+              account: '',
+              domainName: 'github.io'
+            }
+          },
+          guide: {
+            src: ['guide/*.ngdoc'],
+            title: 'Guide'
+          },
+          api: {
+            src: ['source/**/*.js', '!src/**/*.spec.js'],
+            title: 'API Documentation'
+          }
+      }
   });
 
   // default

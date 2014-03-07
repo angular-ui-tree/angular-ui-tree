@@ -29,7 +29,8 @@
     "requirejs": "~2.1.10",
     "karma-requirejs": "~0.2.1",
     "karma": "~0.10.9",
-    "grunt-tasks-list": "~0.1.1"
+    "grunt-tasks-list": "~0.1.1",
+    "grunt-ngdocs": "~0.2.1"
   },
   "engines": {
     "node": ">=0.8.0"
