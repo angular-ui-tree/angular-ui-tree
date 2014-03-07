@@ -124,6 +124,7 @@
               dragElm = angular.element($window.document.createElement(scope.sortableElement.prop('tagName')))
                         .addClass(scope.sortableElement.attr('class')).addClass(config.dragClass);
               dragElm.css('width', $helper.width(dragItemElm) + 'px');
+              dragElm.css('z-index', 9999);
 
               dragItemElm.after(placeElm);
               dragItemElm.after(hiddenPlaceElm);
