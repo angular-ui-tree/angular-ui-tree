@@ -7,7 +7,6 @@
   'use strict';
 
   angular.module('ui.nestedSortable', [])
-
     .constant('nestedSortableConfig', {
       listClass: 'nestedSortable-list',
       itemClass: 'nestedSortable-item',
