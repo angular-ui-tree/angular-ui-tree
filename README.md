@@ -26,7 +26,7 @@ For IE8 support, make sure you do the following:
 - use [jQuery 1.x](http://jquery.com/browser-support/)
 
 ## Demo
-Watch the NestedSortable component in action on the [demo page](http://jimliu.github.io/Angular-NestedSortable/).
+Watch the NestedSortable component in action on the [demo page](http://jimliu.github.io/angular-ui-tree/).
 
 ## Requirements
 
