@@ -61,7 +61,7 @@ var myAppModule = angular.module('MyApp', ['ui.tree'])
 
 Injecting `ui.tree`, `ui-tree-nodes` and `ui-tree-node` to your html.
 
-HTML View or Templates
+#### HTML View or Templates
 ```html
 <div ui-tree>
   <ol ui-tree-nodes="" ng-model="list">
@@ -87,7 +87,25 @@ HTML View or Templates
 - All `ui-tree-nodes`, `ng-model`, `ui-tree-node` are necessary. And they can be nested.
 - If you changed the datasource bound, sometimes you have to call [`$scope.$apply()`](http://docs.angularjs.org/api/ng/type/$rootScope.Scope#$apply) to refresh the view, otherwise you will get an error `Cannot read property '0' of undefined` ([Issue #32](https://github.com/JimLiu/angular-ui-tree/issues/32)).
 
-## Structure
+#### Unlimited nesting HTML View or Templates Example
+
+```html
+<!-- Nested node template -->
+<script type="text/ng-template" id="nodes_renderer.html">
+  <div class="angular-ui-tree-handle">
+    {{node.title}}
+  </div>
+  <ol ui-tree-nodes="" ng-model="node.nodes">
+    <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">
+    </li>
+  </ol>
+</script>
+<ol ui-tree-nodes="" ng-model="data" id="tree-root">
+  <li ng-repeat="node in data" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+</ol>
+```
+
+## Structure of angular-ui-tree
 
     ui-tree                             --> Root of tree
         ui-tree-nodes                   --> Container of nodes
@@ -265,6 +283,12 @@ Collapse current node.
 
 ##### expand()
 Expand current node.
+
+##### toggle()
+Toggle current node.
+
+##### remove()
+Remove current node.
 
 ## NgModules Link
 

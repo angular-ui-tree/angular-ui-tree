@@ -11,17 +11,6 @@
 </head>
 <body ng-app="treeApp">
 
-  <!-- Nested node template -->
-  <script type="text/ng-template" id="nodes_renderer.html">
-    <div class="angular-ui-tree-handle">
-      {{node.title}}
-    </div>
-    <ol ui-tree-nodes="" ng-model="node.nodes">
-      <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">
-      </li>
-    </ol>
-  </script>
-
   <div class="container" ng-controller="treeCtrl">
     <h1 class="page-header">Tree - demo</h1>
     <a href="index.html"><i class="glyphicon glyphicon-chevron-left"></i> Back to overview page</a>
@@ -33,7 +22,17 @@
           <a href="" class="btn btn-default pull-right" ng-click="expandAll()">Expand all</a>
 
         </h3>
-        
+
+        <!-- Nested node template -->
+        <script type="text/ng-template" id="nodes_renderer.html">
+          <div class="angular-ui-tree-handle">
+            {{node.title}}
+          </div>
+          <ol ui-tree-nodes="" ng-model="node.nodes">
+            <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">
+            </li>
+          </ol>
+        </script>        
         <ol ui-tree-nodes="" ng-model="data" id="tree-root">
           <li ng-repeat="node in data" ui-tree-node ng-include="'nodes_renderer.html'"></li>
         </ol>

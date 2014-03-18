@@ -149,7 +149,7 @@ module.exports = function(grunt) {
     // open
     open: {
       server: {
-        path: 'http://localhost:<%= connect.options.port %>/<%= cfg.demoDir %>/tree.html'
+        path: 'http://localhost:<%= connect.options.port %>/<%= cfg.demoDir %>/'
       }
     },
 
