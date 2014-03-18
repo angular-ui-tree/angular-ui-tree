@@ -290,6 +290,24 @@
           $scope.apply();
         };
 
+        var collapseOrExpand = function(scope, collapsed) {
+          for (var i = 0; i < scope.nodes.length; i++) {
+            collapsed ? scope.nodes[i].collapse() : scope.nodes[i].expand();
+            var subScope = scope.nodes[i].$childNodesScope;
+            if (subScope) {
+              collapseOrExpand(subScope, collapsed);
+            }
+          }
+        };
+
+        $scope.collapseAll = function() {
+          collapseOrExpand($scope, true);
+        };
+
+        $scope.expandAll = function() {
+          collapseOrExpand($scope, false);
+        };
+
       }
     ]);
 })();
@@ -351,6 +369,17 @@
           $scope.$childNodesScope.insertNode(index, node);
         };
 
+        $scope.toggle = function() {
+          $scope.collapsed = !$scope.collapsed;
+        };
+
+        $scope.collapse = function() {
+          $scope.collapsed = true;
+        };
+
+        $scope.expand = function() {
+          $scope.collapsed = false;
+        };
       }
     ]);
 })();
