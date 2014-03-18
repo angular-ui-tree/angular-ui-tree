@@ -40,11 +40,6 @@
     $scope.selectedItem = {};
 
     $scope.options = {
-      itemClicked: function(sourceItem, clickedElmDragged) {
-        $scope.$apply(function() {
-          $scope.selectedItem = sourceItem;
-        });
-      }
 
     };
 
