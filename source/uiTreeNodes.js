@@ -5,7 +5,7 @@
   .directive('uiTreeNodes', [ 'treeConfig', '$window',
     function(treeConfig) {
       return {
-        require: ['ngModel', '?^uiTreeNode'],
+        require: ['ngModel', '?^uiTreeNode', '?^uiTree'],
         restrict: 'A',
         scope: true,
         controller: 'TreeNodesController',
@@ -22,9 +22,16 @@
 
           var ngModel = controllersArr[0];
           var treeNodeCtrl = controllersArr[1];
+          var treeCtrl = controllersArr[2];
           if (treeNodeCtrl) {
             treeNodeCtrl.scope.$childNodesScope = scope;
             scope.$nodeScope = treeNodeCtrl.scope;
+          }
+          else if (treeCtrl) { // find the root nodes if there is no parent node and have a parent ui-tree
+            treeCtrl.scope.$nodesScope = scope;
+            scope.$watch('$modelValue', function() {
+              //console.log("nodes", scope, treeCtrl.scope.$nodesScope);
+            }, true);
           }
 
           if (ngModel) {

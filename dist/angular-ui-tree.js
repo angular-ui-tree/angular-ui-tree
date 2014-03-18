@@ -9,6 +9,7 @@
   angular.module('ui.tree', [])
     .constant('treeConfig', {
       treeClass: 'angular-ui-tree',
+      emptyTreeClass: 'angular-ui-tree-empty',
       hiddenClass: 'angular-ui-tree-hidden',
       nodesClass: 'angular-ui-tree-nodes',
       nodeClass: 'angular-ui-tree-node',
@@ -246,6 +247,44 @@
 })();
 (function () {
   'use strict';
+
+  angular.module('ui.tree')
+
+    .controller('TreeController', ['$scope', '$element', '$attrs', 'treeConfig',
+      function ($scope, $element, $attrs, treeConfig) {
+        this.scope = $scope;
+
+        $scope.$element = $element;
+        $scope.$nodesScope = null;
+        $scope.$type = 'uiTree';
+        $scope.$emptyElm = null;
+
+        // Check if it's a empty tree
+        $scope.isEmpty = function() {
+          return ($scope.$nodesScope && $scope.$nodesScope.$modelValue
+            && $scope.$nodesScope.$modelValue.length === 0);
+        };
+
+        // add placeholder to empty tree
+        $scope.place = function(placeElm) {
+          $scope.$nodesScope.$element.append(placeElm);
+          $scope.$emptyElm.remove();
+        };
+
+        $scope.resetEmptyElement = function() {
+          if ($scope.$nodesScope.$modelValue.length === 0) {
+            $element.append($scope.$emptyElm);
+          } else {
+            $scope.$emptyElm.remove();
+          }
+        };
+
+      }
+    ]);
+})();
+
+(function () {
+  'use strict';
   
   angular.module('ui.tree')
 
@@ -388,10 +427,45 @@
   'use strict';
 
   angular.module('ui.tree')
+  .directive('uiTree', [ 'treeConfig', '$window',
+    function(treeConfig, $window) {
+      return {
+        restrict: 'A',
+        scope: true,
+        controller: 'TreeController',
+        link: function(scope, element, attrs) {
+
+          var config = {};
+          angular.extend(config, treeConfig);
+          if (config.treeClass) {
+            element.addClass(config.treeClass);
+          }
+          
+          scope.$emptyElm = angular.element($window.document.createElement('div'));
+          if (config.emptyTreeClass) {
+            scope.$emptyElm.addClass(config.emptyTreeClass);
+          }
+
+          scope.$watch('$nodesScope.$modelValue', function() {
+            if (scope.$nodesScope.$modelValue) {
+              scope.resetEmptyElement();
+            }
+          }, true);
+
+        }
+      };
+    }
+  ]);
+})();
+
+(function () {
+  'use strict';
+
+  angular.module('ui.tree')
   .directive('uiTreeNodes', [ 'treeConfig', '$window',
     function(treeConfig) {
       return {
-        require: ['ngModel', '?^uiTreeNode'],
+        require: ['ngModel', '?^uiTreeNode', '?^uiTree'],
         restrict: 'A',
         scope: true,
         controller: 'TreeNodesController',
@@ -408,9 +482,16 @@
 
           var ngModel = controllersArr[0];
           var treeNodeCtrl = controllersArr[1];
+          var treeCtrl = controllersArr[2];
           if (treeNodeCtrl) {
             treeNodeCtrl.scope.$childNodesScope = scope;
             scope.$nodeScope = treeNodeCtrl.scope;
+          }
+          else if (treeCtrl) { // find the root nodes if there is no parent node and have a parent ui-tree
+            treeCtrl.scope.$nodesScope = scope;
+            scope.$watch('$modelValue', function() {
+              //console.log("nodes", scope, treeCtrl.scope.$nodesScope);
+            }, true);
           }
 
           if (ngModel) {
@@ -477,6 +558,7 @@
             var hasTouch = 'ontouchstart' in window;
             var startPos, firstMoving, dragInfo, pos;
             var placeElm, hiddenPlaceElm, dragElm;
+            var treeScope = null;
 
             var dragStartEvent = function(e) {
               if (!hasTouch && (e.button == 2 || e.which == 3)) {
@@ -617,23 +699,43 @@
                   var targetBefore, targetNode;
                   // check it's new position
                   targetNode = targetElm.scope();
-                  if (targetNode.$type != 'uiTreeNode') { // Check if it is a uiTreeNode
+                  var isEmpty = false;
+                  if (targetNode.$type == 'uiTree') {
+                    isEmpty = targetNode.isEmpty(); // Check if it's empty tree
+                  }
+                  if (targetNode.$type != 'uiTreeNode'
+                    && !isEmpty) { // Check if it is a uiTreeNode or it's empty tree
                     return;
                   }
-                  targetElm = targetNode.$element; // Get the element of ui-tree-node
                   
-                  var targetOffset = $helper.offset(targetElm);
-                  targetBefore = eventObj.pageY < (targetOffset.top + $helper.height(targetElm) / 2);
-        
-                  if (targetNode.$parentNodesScope.accept(scope, targetNode.$index)) {
-                    if (targetBefore) {
-                      targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
-                      dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.$index);
-                    } else {
-                      targetElm.after(placeElm);
-                      dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.$index + 1);
+                  // if placeholder move from empty tree, reset it.
+                  if (treeScope && placeElm.parent()[0] != treeScope.$element[0]) {
+                    treeScope.resetEmptyElement();
+                    treeScope = null;
+                  }
+
+                  if (isEmpty) { // it's an empty tree
+                    treeScope = targetNode;
+                    if (targetNode.$nodesScope.accept(scope, 0)) {
+                      targetNode.place(placeElm);
+                      dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.$nodes, 0);
+                    }
+                  } else {
+                    targetElm = targetNode.$element; // Get the element of ui-tree-node
+                    var targetOffset = $helper.offset(targetElm);
+                    targetBefore = eventObj.pageY < (targetOffset.top + $helper.height(targetElm) / 2);
+          
+                    if (targetNode.$parentNodesScope.accept(scope, targetNode.$index)) {
+                      if (targetBefore) {
+                        targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
+                        dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.$index);
+                      } else {
+                        targetElm.after(placeElm);
+                        dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.$index + 1);
+                      }
                     }
                   }
+                  
                 }
               }
             };
@@ -649,8 +751,6 @@
 
                 dragElm.remove();
                 dragElm = null;
-                
-                console.log(dragInfo);
 
                 dragInfo.apply();
                 dragInfo = null;

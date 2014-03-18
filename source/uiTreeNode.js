@@ -31,6 +31,7 @@
             var hasTouch = 'ontouchstart' in window;
             var startPos, firstMoving, dragInfo, pos;
             var placeElm, hiddenPlaceElm, dragElm;
+            var treeScope = null;
 
             var dragStartEvent = function(e) {
               if (!hasTouch && (e.button == 2 || e.which == 3)) {
@@ -171,23 +172,43 @@
                   var targetBefore, targetNode;
                   // check it's new position
                   targetNode = targetElm.scope();
-                  if (targetNode.$type != 'uiTreeNode') { // Check if it is a uiTreeNode
+                  var isEmpty = false;
+                  if (targetNode.$type == 'uiTree') {
+                    isEmpty = targetNode.isEmpty(); // Check if it's empty tree
+                  }
+                  if (targetNode.$type != 'uiTreeNode'
+                    && !isEmpty) { // Check if it is a uiTreeNode or it's empty tree
                     return;
                   }
-                  targetElm = targetNode.$element; // Get the element of ui-tree-node
                   
-                  var targetOffset = $helper.offset(targetElm);
-                  targetBefore = eventObj.pageY < (targetOffset.top + $helper.height(targetElm) / 2);
-        
-                  if (targetNode.$parentNodesScope.accept(scope, targetNode.$index)) {
-                    if (targetBefore) {
-                      targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
-                      dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.$index);
-                    } else {
-                      targetElm.after(placeElm);
-                      dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.$index + 1);
+                  // if placeholder move from empty tree, reset it.
+                  if (treeScope && placeElm.parent()[0] != treeScope.$element[0]) {
+                    treeScope.resetEmptyElement();
+                    treeScope = null;
+                  }
+
+                  if (isEmpty) { // it's an empty tree
+                    treeScope = targetNode;
+                    if (targetNode.$nodesScope.accept(scope, 0)) {
+                      targetNode.place(placeElm);
+                      dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.$nodes, 0);
+                    }
+                  } else {
+                    targetElm = targetNode.$element; // Get the element of ui-tree-node
+                    var targetOffset = $helper.offset(targetElm);
+                    targetBefore = eventObj.pageY < (targetOffset.top + $helper.height(targetElm) / 2);
+          
+                    if (targetNode.$parentNodesScope.accept(scope, targetNode.$index)) {
+                      if (targetBefore) {
+                        targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
+                        dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.$index);
+                      } else {
+                        targetElm.after(placeElm);
+                        dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.$index + 1);
+                      }
                     }
                   }
+                  
                 }
               }
             };
@@ -203,8 +224,6 @@
 
                 dragElm.remove();
                 dragElm = null;
-                
-                console.log(dragInfo);
 
                 dragInfo.apply();
                 dragInfo = null;

@@ -95,8 +95,10 @@ module.exports = function(grunt) {
         src: [
           '<%= cfg.srcDir %>/main.js',
           '<%= cfg.srcDir %>/helper.js',
+          '<%= cfg.srcDir %>/treeCtrl.js',
           '<%= cfg.srcDir %>/treeNodesCtrl.js',
           '<%= cfg.srcDir %>/treeNodeCtrl.js',
+          '<%= cfg.srcDir %>/uiTree.js',
           '<%= cfg.srcDir %>/uiTreeNodes.js',
           '<%= cfg.srcDir %>/uiTreeNode.js',
         ],
