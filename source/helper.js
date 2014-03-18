@@ -1,62 +1,138 @@
 (function () {
   'use strict';
 
-  angular.module('ui.nestedSortable')
+  angular.module('ui.tree')
 
    /**
     * @ngdoc service
-    * @name ui.nestedSortable.service:$helper
+    * @name ui.tree.service:$helper
     * @requires ng.$document
     * @requires ng.$window
     *
     * @description
-    * Angular-NestedSortable.
+    * angular-ui-tree.
     */
     .factory('$helper', ['$document', '$window',
       function ($document, $window) {
         return {
 
-        /**
-         * @ngdoc method
-         * @name hippo.theme#height
-         * @methodOf ui.nestedSortable.service:$helper
-         *
-         * @description
-         * Get the height of an element.
-         *
-         * @param {Object} element Angular element.
-         * @returns {String} Height
-         */
+          /**
+           * @ngdoc method
+           * @methodOf ui.tree.service:$nodrag
+           * @param  {Object} angular element
+           * @return {Bool} check if the node can be dragged.
+           */
+          nodrag: function (targetElm) {
+            return (typeof targetElm.attr('data-nodrag')) != "undefined";
+          },
+
+          /**
+           * get the event object for touchs
+           * @param  {[type]} e [description]
+           * @return {[type]}   [description]
+           */
+          eventObj: function(e) {
+            var obj = e;
+            if (e.targetTouches !== undefined) {
+              obj = e.targetTouches.item(0);
+            } else if (e.originalEvent !== undefined && e.originalEvent.targetTouches !== undefined) {
+              obj = e.originalEvent.targetTouches.item(0);
+            }
+            return obj;
+          },
+
+          dragInfo: function(node) {
+            return {
+              source: node,
+              index: node.$index,
+              siblings: node.$parentNodesScope.$nodes.slice(0),
+              parent: node.$parentNodesScope,
+              
+              moveTo: function(parent, siblings, index) { // Move the node to a new position
+                this.parent = parent;
+                this.siblings = siblings.slice(0);
+                var i = this.siblings.indexOf(this.source); // If source node is in the target nodes
+                if (i > -1) {
+                  this.siblings.splice(i, 1);
+                  if (this.source.$index < index) {
+                    index--;
+                  }
+                }
+                this.siblings.splice(index, 0, this.source);
+                this.index = index;
+              },
+
+              parentNode: function() {
+                return this.parent.$nodeScope;
+              },
+
+              prev: function() {
+                if (this.index > 0) {
+                  return this.siblings[this.index - 1];
+                }
+                return null;
+              },
+
+              next: function() {
+                if (this.index < this.siblings.length - 1) {
+                  return this.siblings[this.index + 1];
+                }
+                return null;
+              },
+
+              isDirty: function() {
+                return this.source.$parentNodesScope != this.parent ||
+                        this.source.$index != this.index;
+              },
+
+              apply: function() {
+                this.source.remove();
+                this.parent.insertNode(this.index, this.source);
+              },
+            };
+          },
+
+          /**
+          * @ngdoc method
+          * @name hippo.theme#height
+          * @methodOf ui.tree.service:$helper
+          *
+          * @description
+          * Get the height of an element.
+          *
+          * @param {Object} element Angular element.
+          * @returns {String} Height
+          */
           height: function (element) {
             return element.prop('scrollHeight');
           },
 
-        /**
-         * @ngdoc method
-         * @name hippo.theme#width
-         * @methodOf ui.nestedSortable.service:$helper
-         *
-         * @description
-         * Get the width of an element.
-         *
-         * @param {Object} element Angular element.
-         * @returns {String} Width
-         */
+          /**
+          * @ngdoc method
+          * @name hippo.theme#width
+          * @methodOf ui.tree.service:$helper
+          *
+          * @description
+          * Get the width of an element.
+          *
+          * @param {Object} element Angular element.
+          * @returns {String} Width
+          */
           width: function (element) {
             return element.prop('scrollWidth');
           },
 
-        /**
-         * @ngdoc method
-         * @name hippo.theme#offset
-         * @methodOf ui.nestedSortable.service:$helper
-         *
-         * @description
-         * Get the offset values of an element.
-         *
-         * @param {Object} element Angular element.
-         * @returns {Object} Object with properties width, height, top and left
-         */
+          /**
+          * @ngdoc method
+          * @name hippo.theme#offset
+          * @methodOf ui.nestedSortable.service:$helper
+          *
+          * @description
+          * Get the offset values of an element.
+          *
+          * @param {Object} element Angular element.
+          * @returns {Object} Object with properties width, height, top and left
+          */
           offset: function (element) {
             var boundingClientRect = element[0].getBoundingClientRect();
 
@@ -68,18 +144,18 @@
               };
           },
 
-        /**
-         * @ngdoc method
-         * @name hippo.theme#positionStarted
-         * @methodOf ui.nestedSortable.service:$helper
-         *
-         * @description
-         * Get the start position of the target element according to the provided event properties.
-         *
-         * @param {Object} e Event
-         * @param {Object} target Target element
-         * @returns {Object} Object with properties offsetX, offsetY, startX, startY, nowX and dirX.
-         */
+          /**
+          * @ngdoc method
+          * @name hippo.theme#positionStarted
+          * @methodOf ui.tree.service:$helper
+          *
+          * @description
+          * Get the start position of the target element according to the provided event properties.
+          *
+          * @param {Object} e Event
+          * @param {Object} target Target element
+          * @returns {Object} Object with properties offsetX, offsetY, startX, startY, nowX and dirX.
+          */
           positionStarted: function (e, target) {
             var pos = {};
             pos.offsetX = e.pageX - this.offset(target).left;

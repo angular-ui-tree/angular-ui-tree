@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>AngularJS UI Tree demo</title>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="dist/angular-ui-tree.min.css">
+  <link rel="stylesheet" href="tree.css">
+</head>
+<body ng-app="treeApp">
+
+  <!-- Nested node template -->
+  <script type="text/ng-template" id="nodes_renderer.html">
+    <div class="angular-ui-tree-handle">
+      {{node.title}}
+    </div>
+    <ol ui-tree-nodes="" ng-model="node.nodes">
+      <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">
+      </li>
+    </ol>
+  </script>
+
+  <div class="container" ng-controller="treeCtrl">
+    <h1 class="page-header">Tree - demo</h1>
+    <a href="index.html"><i class="glyphicon glyphicon-chevron-left"></i> Back to overview page</a>
+
+    <div class="row">
+      <div class="col-lg-6">
+        <h3>Tree view
+          <a href="" class="btn btn-default pull-right" ng-click="collapseAll()">Collapse all</a>
+          <a href="" class="btn btn-default pull-right" ng-click="expandAll()">Expand all</a>
+
+        </h3>
+        
+        <ol ui-tree-nodes="" ng-model="data" id="tree-root">
+          <li ng-repeat="node in data" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+        </ol>
+      </div>
+
+      <div class="col-lg-6">
+        <h3>Data binding</h3>
+        <div class="info">
+            {{info}}
+        </div>
+        <pre class="code">{{ data | json }}</pre>
+      </div>
+    </div>
+
+  </div>
+  
+  <script src="bower_components/angular/angular.min.js"></script>
+  <script type="text/javascript" src="dist/angular-ui-tree.js"></script>
+  <script type="text/javascript" src="tree.js"></script>
+</body>
+</html>
