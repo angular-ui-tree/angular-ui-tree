@@ -24,7 +24,7 @@
   'use strict';
 
   angular.module('ui.nestedSortable')
-  
+
     .factory('$helper', ['$document', '$window',
       function ($document, $window) {
         return {
@@ -673,7 +673,7 @@
                   }
                   if (targetBefore) {
                     prev = targetItem.prev();
-                    childAccept = prev && prev.childAccept(scope, targetItem.subScope());
+                    childAccept = prev && prev.childAccept(scope, prev.subScope());
                     currentAccept = targetItem.accept(scope, targetItem.parentScope(), targetItem.$index);
 
                     if (childAccept && (moveRight || !currentAccept) && !prev.collapsed) {
