@@ -25,7 +25,7 @@
               {{group.title}}
             </div>
             <ol ui-tree-nodes="categoriesOptions" ng-model="group.categories">
-              <li ng-repeat="category in group.categories" ui-nested-sortable-item>
+              <li ng-repeat="category in group.categories" ui-tree-node>
                 <div class="category-title angular-ui-tree-handle">
                   {{category.title}}
                 </div>
