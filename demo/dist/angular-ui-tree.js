@@ -577,6 +577,7 @@
                 }
                 eventElm = eventElm.parent();
               }
+
               e.uiTreeDragging = scope; // stop event bubbling
               e.preventDefault();
               var eventObj = $helper.eventObj(e);

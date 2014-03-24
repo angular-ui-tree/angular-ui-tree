@@ -94,13 +94,13 @@ module.exports = function(grunt) {
       build: {
         src: [
           '<%= cfg.srcDir %>/main.js',
-          '<%= cfg.srcDir %>/helper.js',
-          '<%= cfg.srcDir %>/treeCtrl.js',
-          '<%= cfg.srcDir %>/treeNodesCtrl.js',
-          '<%= cfg.srcDir %>/treeNodeCtrl.js',
-          '<%= cfg.srcDir %>/uiTree.js',
-          '<%= cfg.srcDir %>/uiTreeNodes.js',
-          '<%= cfg.srcDir %>/uiTreeNode.js',
+          '<%= cfg.srcDir %>/services/helper.js',
+          '<%= cfg.srcDir %>/controllers/treeCtrl.js',
+          '<%= cfg.srcDir %>/controllers/nodesCtrl.js',
+          '<%= cfg.srcDir %>/controllers/nodeCtrl.js',
+          '<%= cfg.srcDir %>/directives/uiTree.js',
+          '<%= cfg.srcDir %>/directives/uiTreeNodes.js',
+          '<%= cfg.srcDir %>/directives/uiTreeNode.js',
         ],
         dest: '<%= cfg.buildDir %>/angular-ui-tree.js'
       }

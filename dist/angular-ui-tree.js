@@ -71,7 +71,7 @@
               index: node.$index,
               siblings: node.$parentNodesScope.$nodes.slice(0),
               parent: node.$parentNodesScope,
-
+              
               moveTo: function(parent, siblings, index) { // Move the node to a new position
                 this.parent = parent;
                 this.siblings = siblings.slice(0);
@@ -285,7 +285,7 @@
 
 (function () {
   'use strict';
-
+  
   angular.module('ui.tree')
 
     .controller('TreeNodesController', ['$scope', '$element', 'treeConfig',
@@ -295,7 +295,7 @@
         $scope.$element = $element;
         $scope.$modelValue = null;
         $scope.$nodes = []; // sub nodes
-        $scope.$nodeScope = null; // the scope of node which the nodes belongs to
+        $scope.$nodeScope = null; // the scope of node which the nodes belongs to 
         $scope.$callbacks = null;
         $scope.$type = 'uiTreeNodes';
 
@@ -440,7 +440,7 @@
           if (config.treeClass) {
             element.addClass(config.treeClass);
           }
-
+          
           scope.$emptyElm = angular.element($window.document.createElement('div'));
           if (config.emptyTreeClass) {
             scope.$emptyElm.addClass(config.emptyTreeClass);
@@ -551,7 +551,7 @@
             treeNodesCtrl.scope.initSubNode(scope); // init sub nodes
 
             element.on('$destroy', function() {
-
+              
             });
 
 
@@ -677,7 +677,7 @@
                 var targetX = eventObj.pageX - $window.document.body.scrollLeft;
                 var targetY = eventObj.pageY - (window.pageYOffset || $window.document.documentElement.scrollTop);
                 //var dirUp = $helper.offset(placeElm).top > $helper.offset(dragElm).top; // If the movement direction is up?
-
+                
                 // Select the drag target. Because IE does not support CSS 'pointer-events: none', it will always
                 // pick the drag element itself as the target. To prevent this, we hide the drag element while
                 // selecting the target.
@@ -707,7 +707,7 @@
                     && !isEmpty) { // Check if it is a uiTreeNode or it's empty tree
                     return;
                   }
-
+                  
                   // if placeholder move from empty tree, reset it.
                   if (treeScope && placeElm.parent()[0] != treeScope.$element[0]) {
                     treeScope.resetEmptyElement();
@@ -724,7 +724,7 @@
                     targetElm = targetNode.$element; // Get the element of ui-tree-node
                     var targetOffset = $helper.offset(targetElm);
                     targetBefore = eventObj.pageY < (targetOffset.top + $helper.height(targetElm) / 2);
-
+          
                     if (targetNode.$parentNodesScope.accept(scope, targetNode.$index)) {
                       if (targetBefore) {
                         targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
@@ -735,7 +735,7 @@
                       }
                     }
                   }
-
+                  
                 }
               }
             };
