@@ -34,7 +34,16 @@
               return arrayCopy;
             };
 
-            var dragStartEvent = function(e) {
+            var handler = function(f) {
+              return function() {
+                var args = Array.prototype.splice.call(arguments, 0), context = this;
+                scope.$apply(function() {
+                  f.apply(context, args);
+                });
+              };
+            };
+
+            var dragStartEvent = handler(function(e) {
               if (!hasTouch && (e.button == 2 || e.which == 3)) {
                 // disable right click
                 return;
@@ -156,13 +165,13 @@
                 angular.element($document).bind('mouseup', dragEndEvent);
                 angular.element($document).bind('mousemove', dragMoveEvent);
               }
-            };
+            });
 
 
-            var dragMoveEvent = function(e) {
+            var dragMoveEvent = handler(function(e) {
               var currentAccept, prev, childAccept;
               var moveObj = e;
-              
+
               clickedElmDragged = true;
               
               if (hasTouch) {
@@ -307,9 +316,9 @@
 
                 scope.callbacks.move(scope, sourceItem, elements);
               }
-            };
+            });
 
-            var dragEndEvent = function(e) {
+            var dragEndEvent = handler(function(e) {
               if (dragElm) {
                 if (e) {
                   e.preventDefault();
@@ -351,7 +360,7 @@
                 angular.element($document).unbind('mousemove', dragMoveEvent);
                 angular.element($window.document.body).unbind('mouseleave', dragEndEvent);
               }
-            };
+            });
 
             if (hasTouch) {
               // Mobile
