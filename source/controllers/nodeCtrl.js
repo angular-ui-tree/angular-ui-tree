@@ -12,9 +12,14 @@
         $scope.$parentNodeScope = null; // uiTreeNode Scope of parent node;
         $scope.$childNodesScope = null; // uiTreeNodes Scope of child nodes.
         $scope.$parentNodesScope = null; // uiTreeNodes Scope of parent nodes.
+        $scope.$treeScope = null; // uiTree scope
         $scope.$type = 'uiTreeNode';
 
         $scope.collapsed = false;
+
+        $scope.dragEnabled = function() {
+          return !($scope.$treeScope && !$scope.$treeScope.dragEnabled);
+        };
 
         $scope.isSibling = function(targetNode) {
           return $scope.$parentNodeScope == targetNode.$parentNodeScope;

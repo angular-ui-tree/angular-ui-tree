@@ -27,6 +27,14 @@
             }
           }, true);
 
+          scope.$watch(function (){
+            return scope.$eval(attrs.dragEnabled);
+          }, function (newVal){
+            if((typeof newVal) == "boolean") {
+              scope.dragEnabled = newVal;
+            }
+          }, true);
+
         }
       };
     }

@@ -259,6 +259,8 @@
         $scope.$type = 'uiTree';
         $scope.$emptyElm = null;
 
+        $scope.dragEnabled = true;
+
         // Check if it's a empty tree
         $scope.isEmpty = function() {
           return ($scope.$nodesScope && $scope.$nodesScope.$modelValue
@@ -368,9 +370,14 @@
         $scope.$parentNodeScope = null; // uiTreeNode Scope of parent node;
         $scope.$childNodesScope = null; // uiTreeNodes Scope of child nodes.
         $scope.$parentNodesScope = null; // uiTreeNodes Scope of parent nodes.
+        $scope.$treeScope = null; // uiTree scope
         $scope.$type = 'uiTreeNode';
 
         $scope.collapsed = false;
+
+        $scope.dragEnabled = function() {
+          return !($scope.$treeScope && !$scope.$treeScope.dragEnabled);
+        };
 
         $scope.isSibling = function(targetNode) {
           return $scope.$parentNodeScope == targetNode.$parentNodeScope;
@@ -460,6 +467,14 @@
             }
           }, true);
 
+          scope.$watch(function (){
+            return scope.$eval(attrs.dragEnabled);
+          }, function (newVal){
+            if((typeof newVal) == "boolean") {
+              scope.dragEnabled = newVal;
+            }
+          }, true);
+
         }
       };
     }
@@ -541,15 +556,18 @@
     .directive('uiTreeNode', ['treeConfig', '$helper', '$window', '$document',
       function (treeConfig, $helper, $window, $document) {
         return {
-          require: '^uiTreeNodes',
+          require: ['^uiTreeNodes', '?^uiTree'],
           restrict: 'A',
           controller: 'TreeNodeController',
-          link: function(scope, element, attrs, treeNodesCtrl) {
+          link: function(scope, element, attrs, controllersArr) {
             var config = {};
             angular.extend(config, treeConfig);
             if (config.nodeClass) {
               element.addClass(config.nodeClass);
             }
+
+            var treeNodesCtrl = controllersArr[0];
+            scope.$treeScope = controllersArr[1].scope;
 
             // find the scope of it's parent node
             scope.$parentNodeScope = treeNodesCtrl.scope.$nodeScope;
@@ -709,7 +727,7 @@
                   // check it's new position
                   targetNode = targetElm.scope();
                   var isEmpty = false;
-                  if (targetNode.$type == 'uiTree') {
+                  if (targetNode.$type == 'uiTree' && targetNode.dragEnabled) {
                     isEmpty = targetNode.isEmpty(); // Check if it's empty tree
                   }
                   if (targetNode.$type != 'uiTreeNode'
@@ -729,7 +747,7 @@
                       targetNode.place(placeElm);
                       dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.$nodes, 0);
                     }
-                  } else {
+                  } else if (targetNode.dragEnabled()){ // drag enabled
                     targetElm = targetNode.$element; // Get the element of ui-tree-node
                     var targetOffset = $helper.offset(targetElm);
                     targetBefore = eventObj.pageY < (targetOffset.top + $helper.height(targetElm) / 2);
@@ -791,7 +809,9 @@
             };
 
             var dragStartEvent = function(e) {
-              dragStart(e);
+              if (scope.dragEnabled()) {
+                dragStart(e);
+              }
             };
 
             var dragMoveEvent = function(e) {

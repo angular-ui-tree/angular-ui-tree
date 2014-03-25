@@ -12,6 +12,8 @@
         $scope.$type = 'uiTree';
         $scope.$emptyElm = null;
 
+        $scope.dragEnabled = true;
+
         // Check if it's a empty tree
         $scope.isEmpty = function() {
           return ($scope.$nodesScope && $scope.$nodesScope.$modelValue
