@@ -7,24 +7,42 @@
   <!-- Stylesheets -->
   <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="dist/angular-ui-tree.min.css">
-  <link rel="stylesheet" href="css/demo.css">
+  <link rel="stylesheet" href="css/tree.css">
 </head>
 <body ng-app="treesApp">
 
   <!-- Nested node template -->
-  <script type="text/ng-template" id="nodes_renderer.html">
-    <div class="angular-ui-tree-handle">
-      <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle(this)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
-      {{node.title}}
-      <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
-      <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
+  <script type="text/ng-template" id="nodes_renderer1.html">
+    <div ui-tree-handle class="tree-node">
+      <div class="tree-node-content">
+        <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle(this)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
+        {{node.title}}
+        <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
+        <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
+      </div>
     </div>
     <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
       <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">
       </li>
     </ol>
   </script>        
-
+  <script type="text/ng-template" id="nodes_renderer2.html">
+    <div class="tree-node">
+      <div class="pull-left tree-handle" ui-tree-handle>
+        <span class="glyphicon glyphicon-list"></span>
+      </div>
+      <div class="tree-node-content">
+        <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle(this)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
+        {{node.title}}
+        <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
+        <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
+      </div>
+    </div>
+    <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
+      <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">
+      </li>
+    </ol>
+  </script>  
   <div class="container" ng-controller="treesCtrl">
     <h1 class="page-header">NestedSortable - Connected lists</h1>
     <a href="index.html"><i class="glyphicon glyphicon-chevron-left"></i> Back to overview page</a>
@@ -35,7 +53,7 @@
         <h3>Tree 1</h3>
         <div ui-tree id="tree1-root">
           <ol ui-tree-nodes="" ng-model="tree1">
-            <li ng-repeat="node in tree1" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+            <li ng-repeat="node in tree1" ui-tree-node ng-include="'nodes_renderer1.html'"></li>
           </ol>
         </div>
       </div>
@@ -44,7 +62,7 @@
         <h3>Tree 2</h3>
         <div ui-tree id="tree2-root">
           <ol ui-tree-nodes="" ng-model="tree2">
-            <li ng-repeat="node in tree2" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+            <li ng-repeat="node in tree2" ui-tree-node ng-include="'nodes_renderer2.html'"></li>
           </ol>
         </div>
       </div>

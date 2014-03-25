@@ -371,6 +371,7 @@
         $scope.$childNodesScope = null; // uiTreeNodes Scope of child nodes.
         $scope.$parentNodesScope = null; // uiTreeNodes Scope of parent nodes.
         $scope.$treeScope = null; // uiTree scope
+        $scope.$handleScope = null; // it's handle scope
         $scope.$type = 'uiTreeNode';
 
         $scope.collapsed = false;
@@ -434,6 +435,23 @@
         $scope.expand = function() {
           $scope.collapsed = false;
         };
+      }
+    ]);
+})();
+
+(function () {
+  'use strict';
+
+  angular.module('ui.tree')
+
+    .controller('TreeHandleController', ['$scope', '$element', '$attrs', 'treeConfig',
+      function ($scope, $element, $attrs, treeConfig) {
+        this.scope = $scope;
+
+        $scope.$element = $element;
+        $scope.$nodeScope = null;
+        $scope.$type = 'uiTreeHandle';
+
       }
     ]);
 })();
@@ -567,7 +585,7 @@
             }
 
             var treeNodesCtrl = controllersArr[0];
-            scope.$treeScope = controllersArr[1].scope;
+            scope.$treeScope = controllersArr[1] ? controllersArr[1].scope : null;
 
             // find the scope of it's parent node
             scope.$parentNodeScope = treeNodesCtrl.scope.$nodeScope;
@@ -597,6 +615,16 @@
               }
               // the element which is clicked.
               var eventElm = angular.element(e.target);
+              var eventScope = eventElm.scope();
+              if (eventScope.$type != 'uiTreeNode'
+                && eventScope.$type != 'uiTreeHandle') { // Check if it is a node or a handle
+                return;
+              }
+              if (eventScope.$type == 'uiTreeNode'
+                && eventScope.$handleScope) { // If the node has a handle, then it should be clicked by the handle
+                return;
+              }
+
               // check if it or it's parents has a 'data-nodrag' attribute
               while (eventElm && eventElm[0] && eventElm[0] != element) {
                 if ($uiTreeHelper.nodrag(eventElm)) { // if the node mark as `nodrag`, DONOT drag it.
@@ -730,6 +758,9 @@
                   if (targetNode.$type == 'uiTree' && targetNode.dragEnabled) {
                     isEmpty = targetNode.isEmpty(); // Check if it's empty tree
                   }
+                  if (targetNode.$type == 'uiTreeHandle') {
+                    targetNode = targetNode.$nodeScope;
+                  }
                   if (targetNode.$type != 'uiTreeNode'
                     && !isEmpty) { // Check if it is a uiTreeNode or it's empty tree
                     return;
@@ -847,4 +878,36 @@
       }
     ]);
 
+})();
+(function () {
+  'use strict';
+
+  angular.module('ui.tree')
+  .directive('uiTreeHandle', [ 'treeConfig', '$window',
+    function(treeConfig) {
+      return {
+        require: '^uiTreeNode',
+        restrict: 'A',
+        scope: true,
+        controller: 'TreeHandleController',
+        link: function(scope, element, attrs, treeNodeCtrl) {
+          var callbacks = {
+            accept: null
+          };
+
+          var config = {};
+          angular.extend(config, treeConfig);
+          if (config.handleClass) {
+            element.addClass(config.handleClass);
+          }
+          // connect with the tree node.
+          if (scope != treeNodeCtrl.scope) {
+            scope.$nodeScope = treeNodeCtrl.scope;
+            treeNodeCtrl.scope.$handleScope = scope;
+          }
+          
+        }
+      };
+    }
+  ]);
 })();

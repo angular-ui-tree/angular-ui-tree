@@ -13,6 +13,7 @@
         $scope.$childNodesScope = null; // uiTreeNodes Scope of child nodes.
         $scope.$parentNodesScope = null; // uiTreeNodes Scope of parent nodes.
         $scope.$treeScope = null; // uiTree scope
+        $scope.$handleScope = null; // it's handle scope
         $scope.$type = 'uiTreeNode';
 
         $scope.collapsed = false;
