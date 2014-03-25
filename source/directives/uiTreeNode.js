@@ -27,13 +27,14 @@
               
             });
 
+            scope.$$apply = false; // 
 
             var hasTouch = 'ontouchstart' in window;
             var startPos, firstMoving, dragInfo, pos;
             var placeElm, hiddenPlaceElm, dragElm;
             var treeScope = null;
 
-            var dragStartEvent = function(e) {
+            var dragStart = function(e) {
               if (!hasTouch && (e.button == 2 || e.which == 3)) {
                 // disable right click
                 return;
@@ -95,11 +96,11 @@
               } else {
                 angular.element($document).bind('mouseup', dragEndEvent);
                 angular.element($document).bind('mousemove', dragMoveEvent);
-                angular.element($window.document.body).bind('mouseleave', dragEndEvent);
+                angular.element($window.document.body).bind('mouseleave', dragCancelEvent);
               }
             };
 
-            var dragMoveEvent = function(e) {
+            var dragMove = function(e) {
               var eventObj = $helper.eventObj(e);
               var prev, currentAccept, childAccept;
               if (dragElm) {
@@ -219,7 +220,7 @@
               }
             };
 
-            var dragEndEvent = function(e) {
+            var dragEnd = function(e) {
               e.preventDefault();
 
               if (dragElm) {
@@ -231,7 +232,12 @@
                 dragElm.remove();
                 dragElm = null;
 
-                dragInfo.apply();
+                if (scope.$$apply) {
+                  dragInfo.apply();
+                } else {
+                  bindDrag();
+                }
+                scope.$$apply = false;
                 dragInfo = null;
 
               }
@@ -245,18 +251,42 @@
               else {
                 angular.element($document).unbind('mouseup', dragEndEvent);
                 angular.element($document).unbind('mousemove', dragMoveEvent);
-                angular.element($window.document.body).unbind('mouseleave', dragEndEvent);
+                angular.element($window.document.body).unbind('mouseleave', dragCancelEvent);
               }
             };
 
-            if (hasTouch) { // Mobile
-              element.bind('touchstart', dragStartEvent);
-            } else {
-              element.bind('mousedown', dragStartEvent);
-            }
+            var dragStartEvent = function(e) {
+              dragStart(e);
+            };
 
+            var dragMoveEvent = function(e) {
+              dragMove(e);
+            };
 
+            var dragEndEvent = function(e) {
+              scope.$$apply = true;
+              dragEnd(e);
+            };
 
+            var dragCancelEvent = function(e) {
+              dragEnd(e);
+            };
+
+            var bindDrag = function() {
+              if (hasTouch) { // Mobile
+                element.bind('touchstart', dragStartEvent);
+              } else {
+                element.bind('mousedown', dragStartEvent);
+              }
+            };
+            bindDrag();
+
+            angular.element($window.document.body).bind("keydown", function(e) {
+              if (e.keyCode == 27) {
+                scope.$$apply = false;
+                dragEnd(e);
+              }
+            });
           }
         };
       }
