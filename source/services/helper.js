@@ -12,7 +12,7 @@
     * @description
     * angular-ui-tree.
     */
-    .factory('$helper', ['$document', '$window',
+    .factory('$uiTreeHelper', ['$document', '$window',
       function ($document, $window) {
         return {
 
