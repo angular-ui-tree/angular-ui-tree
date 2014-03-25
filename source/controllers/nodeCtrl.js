@@ -37,15 +37,19 @@
         };
 
         $scope.childNodesCount = function() {
-          return $scope.childNodes().length;
+          return $scope.childNodes() ? $scope.childNodes().length : 0;
+        };
+
+        $scope.hasChild = function() {
+          return $scope.childNodesCount() > 0;
         };
 
         $scope.childNodes = function() {
-          return $scope.$childNodesScope.$nodes;
+          return $scope.$childNodesScope ? $scope.$childNodesScope.$nodes : null;
         };
 
         $scope.accept = function(sourceNode, destIndex) {
-          return $scope.$childNodesScope.accept(sourceNode, destIndex);
+          return $scope.$childNodesScope && $scope.$childNodesScope.accept(sourceNode, destIndex);
         };
 
         $scope.remove = function() {
@@ -53,7 +57,7 @@
         };
 
         $scope.insertNode = function(index, node) {
-          $scope.$childNodesScope.insertNode(index, node);
+          $scope.$childNodesScope && $scope.$childNodesScope.insertNode(index, node);
         };
 
         $scope.toggle = function() {

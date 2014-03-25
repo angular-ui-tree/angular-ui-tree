@@ -28,6 +28,10 @@
           }
         };
 
+        $scope.hasChild = function() {
+          return $scope.$nodes.length > 0;
+        };
+
         $scope.removeNode = function(node) {
           var index = $scope.$nodes.indexOf(node);
           if (index > -1) {

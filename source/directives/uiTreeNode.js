@@ -207,6 +207,12 @@
                         dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.$index + 1);
                       }
                     }
+                    else if (!targetNode.hasChild()) { // if there is no child for the target node
+                      if (!targetBefore && targetNode.accept(scope, 0)) { // we have to check if it can add the dragging node as a child
+                        targetNode.$childNodesScope.$element.append(placeElm);
+                        dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), targetNode.childNodesCount());
+                      }
+                    }
                   }
                   
                 }
