@@ -6,7 +6,7 @@
     .directive('uiTreeNode', ['treeConfig', '$uiTreeHelper', '$window', '$document',
       function (treeConfig, $uiTreeHelper, $window, $document) {
         return {
-          require: ['^uiTreeNodes', '?^uiTree'],
+          require: ['^uiTreeNodes', '^uiTree'],
           restrict: 'A',
           controller: 'TreeNodeController',
           link: function(scope, element, attrs, controllersArr) {
@@ -36,6 +36,7 @@
             var startPos, firstMoving, dragInfo, pos;
             var placeElm, hiddenPlaceElm, dragElm;
             var treeScope = null;
+            var elements; // As a parameter for callbacks
 
             var dragStart = function(e) {
               if (!hasTouch && (e.button == 2 || e.which == 3)) {
@@ -100,6 +101,13 @@
               dragElm.css({
                 'left' : eventObj.pageX - pos.offsetX + 'px',
                 'top'  : eventObj.pageY - pos.offsetY + 'px'
+              });
+              elements = {
+                placeholder: placeElm,
+                dragging: dragElm
+              };
+              scope.$apply(function() {
+                scope.$callbacks.dragStart(scope, elements, pos);
               });
 
               if (hasTouch) { // Mobile
@@ -233,6 +241,10 @@
                   }
                   
                 }
+
+                scope.$apply(function() {
+                  scope.$callbacks.dragMove(scope, elements, pos);
+                });
               }
             };
 
@@ -254,6 +266,10 @@
                 }
                 scope.$$apply = false;
                 dragInfo = null;
+
+                scope.$apply(function() {
+                  scope.$callbacks.dragStop(scope, elements, pos);
+                });
               }
 
 

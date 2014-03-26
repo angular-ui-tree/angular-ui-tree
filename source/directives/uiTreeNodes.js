@@ -5,14 +5,11 @@
   .directive('uiTreeNodes', [ 'treeConfig', '$window',
     function(treeConfig) {
       return {
-        require: ['ngModel', '?^uiTreeNode', '?^uiTree'],
+        require: ['ngModel', '?^uiTreeNode', '^uiTree'],
         restrict: 'A',
         scope: true,
         controller: 'TreeNodesController',
         link: function(scope, element, attrs, controllersArr) {
-          var callbacks = {
-            accept: null
-          };
 
           var config = {};
           angular.extend(config, treeConfig);
@@ -27,37 +24,19 @@
             treeNodeCtrl.scope.$childNodesScope = scope;
             scope.$nodeScope = treeNodeCtrl.scope;
           }
-          else if (treeCtrl) { // find the root nodes if there is no parent node and have a parent ui-tree
+          else { // find the root nodes if there is no parent node and have a parent ui-tree
             treeCtrl.scope.$nodesScope = scope;
             scope.$watch('$modelValue', function() {
               //console.log("nodes", scope, treeCtrl.scope.$nodesScope);
             }, true);
           }
+          scope.$treeScope = treeCtrl.scope;
 
           if (ngModel) {
             ngModel.$render = function() {
               scope.$modelValue = ngModel.$modelValue;
             };
           }
-
-          // check if the dest node can accept the dragging node
-          // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`.
-          // the method can be overrided
-          callbacks.accept = function(sourceNode, destNodes, destIndex) {
-            return (typeof destNodes.$element.attr('data-nodrop')) == "undefined";
-          };
-
-          scope.$watch(attrs.uiTreeNodes, function(newVal, oldVal){
-            angular.forEach(newVal, function(value, key){
-              if (callbacks[key]) {
-                if (typeof value === "function") {
-                  callbacks[key] = value;
-                }
-              }
-            });
-
-            scope.$callbacks = callbacks;
-          }, true);
 
         }
       };

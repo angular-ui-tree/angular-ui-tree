@@ -11,7 +11,7 @@
         $scope.$modelValue = null;
         $scope.$nodes = []; // sub nodes
         $scope.$nodeScope = null; // the scope of node which the nodes belongs to 
-        $scope.$callbacks = null;
+        $scope.$treeScope = null;
         $scope.$type = 'uiTreeNodes';
 
         $scope.initSubNode = function(subNode) {

@@ -10,10 +10,6 @@
         scope: true,
         controller: 'TreeHandleController',
         link: function(scope, element, attrs, treeNodeCtrl) {
-          var callbacks = {
-            accept: null
-          };
-
           var config = {};
           angular.extend(config, treeConfig);
           if (config.handleClass) {

@@ -11,6 +11,7 @@
         $scope.$nodesScope = null;
         $scope.$type = 'uiTree';
         $scope.$emptyElm = null;
+        $scope.$callbacks = null;
 
         $scope.dragEnabled = true;
 

@@ -70,10 +70,11 @@
                   </li>
                 </ol>
               </script>
-
-              <ol ui-tree-nodes="options" ng-model="list" >
-                <li ng-repeat="item in list" ui-tree-node ng-include="'items_renderer.html'"></li>
-              </ol>
+              <div ui-tree="options">
+                <ol ui-tree-nodes ng-model="list" >
+                  <li ng-repeat="item in list" ui-tree-node ng-include="'items_renderer.html'"></li>
+                </ol>
+              </div>
             </div>
 
             <div class="col-lg-6">

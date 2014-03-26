@@ -9,6 +9,9 @@
         scope: true,
         controller: 'TreeController',
         link: function(scope, element, attrs) {
+          var callbacks = {
+            accept: null
+          };
 
           var config = {};
           angular.extend(config, treeConfig);
@@ -34,6 +37,39 @@
               scope.dragEnabled = newVal;
             }
           }, true);
+
+          // check if the dest node can accept the dragging node
+          // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`.
+          // the method can be overrided
+          callbacks.accept = function(sourceNodeScope, destNodesScope, destIndex) {
+            return (typeof destNodesScope.$element.attr('data-nodrop')) == "undefined";
+          };
+
+          //
+          callbacks.dragStart = function(sourceNodeScope, elements, pos) {
+
+          };
+
+          callbacks.dragMove = function(sourceNodeScope, elements, pos) {
+
+          };
+
+          callbacks.dragStop = function(sourceNodeScope, elements, pos) {
+
+          };
+
+          scope.$watch(attrs.uiTree, function(newVal, oldVal){
+            angular.forEach(newVal, function(value, key){
+              if (callbacks[key]) {
+                if (typeof value === "function") {
+                  callbacks[key] = value;
+                }
+              }
+            });
+
+            scope.$callbacks = callbacks;
+          }, true);
+
 
         }
       };

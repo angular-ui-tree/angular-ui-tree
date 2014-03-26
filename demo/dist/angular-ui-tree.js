@@ -258,6 +258,7 @@
         $scope.$nodesScope = null;
         $scope.$type = 'uiTree';
         $scope.$emptyElm = null;
+        $scope.$callbacks = null;
 
         $scope.dragEnabled = true;
 
@@ -298,7 +299,7 @@
         $scope.$modelValue = null;
         $scope.$nodes = []; // sub nodes
         $scope.$nodeScope = null; // the scope of node which the nodes belongs to 
-        $scope.$callbacks = null;
+        $scope.$treeScope = null;
         $scope.$type = 'uiTreeNodes';
 
         $scope.initSubNode = function(subNode) {
@@ -463,6 +464,9 @@
         scope: true,
         controller: 'TreeController',
         link: function(scope, element, attrs) {
+          var callbacks = {
+            accept: null
+          };
 
           var config = {};
           angular.extend(config, treeConfig);
@@ -489,6 +493,39 @@
             }
           }, true);
 
+          // check if the dest node can accept the dragging node
+          // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`.
+          // the method can be overrided
+          callbacks.accept = function(sourceNodeScope, destNodesScope, destIndex) {
+            return (typeof destNodesScope.$element.attr('data-nodrop')) == "undefined";
+          };
+
+          //
+          callbacks.dragStart = function(sourceNodeScope, elements, pos) {
+
+          };
+
+          callbacks.dragMove = function(sourceNodeScope, elements, pos) {
+
+          };
+
+          callbacks.dragStop = function(sourceNodeScope, elements, pos) {
+
+          };
+
+          scope.$watch(attrs.uiTree, function(newVal, oldVal){
+            angular.forEach(newVal, function(value, key){
+              if (callbacks[key]) {
+                if (typeof value === "function") {
+                  callbacks[key] = value;
+                }
+              }
+            });
+
+            scope.$callbacks = callbacks;
+          }, true);
+
+
         }
       };
     }
@@ -502,14 +539,11 @@
   .directive('uiTreeNodes', [ 'treeConfig', '$window',
     function(treeConfig) {
       return {
-        require: ['ngModel', '?^uiTreeNode', '?^uiTree'],
+        require: ['ngModel', '?^uiTreeNode', '^uiTree'],
         restrict: 'A',
         scope: true,
         controller: 'TreeNodesController',
         link: function(scope, element, attrs, controllersArr) {
-          var callbacks = {
-            accept: null
-          };
 
           var config = {};
           angular.extend(config, treeConfig);
@@ -524,37 +558,19 @@
             treeNodeCtrl.scope.$childNodesScope = scope;
             scope.$nodeScope = treeNodeCtrl.scope;
           }
-          else if (treeCtrl) { // find the root nodes if there is no parent node and have a parent ui-tree
+          else { // find the root nodes if there is no parent node and have a parent ui-tree
             treeCtrl.scope.$nodesScope = scope;
             scope.$watch('$modelValue', function() {
               //console.log("nodes", scope, treeCtrl.scope.$nodesScope);
             }, true);
           }
+          scope.$treeScope = treeCtrl.scope;
 
           if (ngModel) {
             ngModel.$render = function() {
               scope.$modelValue = ngModel.$modelValue;
             };
           }
-
-          // check if the dest node can accept the dragging node
-          // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`.
-          // the method can be overrided
-          callbacks.accept = function(sourceNode, destNodes, destIndex) {
-            return (typeof destNodes.$element.attr('data-nodrop')) == "undefined";
-          };
-
-          scope.$watch(attrs.uiTreeNodes, function(newVal, oldVal){
-            angular.forEach(newVal, function(value, key){
-              if (callbacks[key]) {
-                if (typeof value === "function") {
-                  callbacks[key] = value;
-                }
-              }
-            });
-
-            scope.$callbacks = callbacks;
-          }, true);
 
         }
       };
@@ -570,7 +586,7 @@
     .directive('uiTreeNode', ['treeConfig', '$uiTreeHelper', '$window', '$document',
       function (treeConfig, $uiTreeHelper, $window, $document) {
         return {
-          require: ['^uiTreeNodes', '?^uiTree'],
+          require: ['^uiTreeNodes', '^uiTree'],
           restrict: 'A',
           controller: 'TreeNodeController',
           link: function(scope, element, attrs, controllersArr) {
@@ -600,6 +616,7 @@
             var startPos, firstMoving, dragInfo, pos;
             var placeElm, hiddenPlaceElm, dragElm;
             var treeScope = null;
+            var elements; // As a parameter for callbacks
 
             var dragStart = function(e) {
               if (!hasTouch && (e.button == 2 || e.which == 3)) {
@@ -664,6 +681,13 @@
               dragElm.css({
                 'left' : eventObj.pageX - pos.offsetX + 'px',
                 'top'  : eventObj.pageY - pos.offsetY + 'px'
+              });
+              elements = {
+                placeholder: placeElm,
+                dragging: dragElm
+              };
+              scope.$apply(function() {
+                scope.$callbacks.dragStart(scope, elements, pos);
               });
 
               if (hasTouch) { // Mobile
@@ -797,6 +821,10 @@
                   }
                   
                 }
+
+                scope.$apply(function() {
+                  scope.$callbacks.dragMove(scope, elements, pos);
+                });
               }
             };
 
@@ -818,6 +846,10 @@
                 }
                 scope.$$apply = false;
                 dragInfo = null;
+
+                scope.$apply(function() {
+                  scope.$callbacks.dragStop(scope, elements, pos);
+                });
               }
 
 
@@ -885,10 +917,6 @@
         scope: true,
         controller: 'TreeHandleController',
         link: function(scope, element, attrs, treeNodeCtrl) {
-          var callbacks = {
-            accept: null
-          };
-
           var config = {};
           angular.extend(config, treeConfig);
           if (config.handleClass) {

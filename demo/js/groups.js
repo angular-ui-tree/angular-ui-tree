@@ -48,19 +48,14 @@
     }];
 
 
-    $scope.groupsOptions = {
+    $scope.options = {
       accept: function(sourceNode, destNodes, destIndex) {
         var data = sourceNode.$modelValue;
-        return (data.type == 'group'); // only accept group
+        var destType = destNodes.$element.attr('data-type');
+        return (data.type == destType); // only accept the same type
       }
     };
 
-    $scope.categoriesOptions = {
-      accept: function(sourceNode, destNodes, destIndex) {
-        var data = sourceNode.$modelValue;
-        return (data.type == 'category'); // only accept category
-      },
-    };
 
   });
 

@@ -17,14 +17,14 @@
     <a href="index.html"><i class="glyphicon glyphicon-chevron-left"></i> Back to overview page</a>
 
     <div class="row">
-      <div class="col-lg-6">
+      <div class="col-lg-6" ui-tree="options">
         <h3>Groups &amp; Categories</h3>
-        <ol ui-tree-nodes="groupsOptions" ng-model="groups">
+        <ol ui-tree-nodes ng-model="groups" data-type="group">
           <li ng-repeat="group in groups" ui-tree-node>
             <div class="group-title angular-ui-tree-handle">
               {{group.title}}
             </div>
-            <ol ui-tree-nodes="categoriesOptions" ng-model="group.categories">
+            <ol ui-tree-nodes ng-model="group.categories" data-type="category">
               <li ng-repeat="category in group.categories" ui-tree-node>
                 <div class="category-title angular-ui-tree-handle">
                   {{category.title}}

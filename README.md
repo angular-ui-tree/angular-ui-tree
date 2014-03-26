@@ -85,8 +85,7 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
 - Adding `ui-tree-nodes` to the elements which contain the nodes. `ng-model` is required, and it should be an array, so that the directive knows which model to bind and update.
 - Adding `ui-tree-node` to your node element, it always follows the `ng-repeat` attribute.
 - Adding `ui-tree-handle` to the element used to drag the object.
-- All `ui-tree-nodes`, `ng-model`, `ui-tree-node` are necessary. And they can be nested.
-- The `ui-tree` is option, but if you want to drag between trees or disable dragging for a tree, you have to add it.
+- All `ui-tree`, `ui-tree-nodes`, `ng-model`, `ui-tree-node` are necessary. And they can be nested.
 - If you don't add a `ui-tree-handle` for a node, the entire node can be dragged.
 - If you changed the datasource bound, sometimes you have to call [`$scope.$apply()`](http://docs.angularjs.org/api/ng/type/$rootScope.Scope#$apply) to refresh the view, otherwise you will get an error `Cannot read property '0' of undefined` ([Issue #32](https://github.com/JimLiu/angular-ui-tree/issues/32)).
 
@@ -137,6 +136,42 @@ Example: turn on/off drag and drop.
     
 </div>
 ```
+
+
+#### Methods in $callbacks
+##### <a name="accept"></a>accept
+Check if the current dragging node can be dropped in the `ui-tree-nodes`.
+
+**Parameters:**
+- `sourceNodeScope`: The scope of source node which is dragging.
+- `destNodesScope`: The scope of `ui-tree-nodes` which you want to drop in.
+- `destIndex`: The position you want to drop in.
+
+**Return**
+If the nodes accept the current dragging node.
+- `true` Allow it to drop.
+- `false` Not allow.
+
+##### <a name="dragStart"></a>dragStart
+The `dragStart` function is called when the user starts to drag the node.
+**<a name="dragStartParams"></a>Parameters:**
+- `sourceNodeScope`: The current dragging node.
+- `elements`: The dragging relative elements.
+    + `placeholder`: The placeholder element.
+    + `drag`: The dragging element.
+- `pos`: Position object.
+
+##### dragMove
+The `dragMove` function is called when the user moves the node.
+
+**Parameters:**
+Same as [Parameters](#dragStartParams) of dragStart.
+
+##### dragStop
+The `dragStop` function is called when the user stop dragging the node.
+
+**Parameters:**
+Same as [Parameters](#dragStartParams) of dragStart.
 
 ### ui-tree-nodes
 `ui-tree-nodes` is the container of nodes. Every `ui-tree-node` should have a `ui-tree-nodes` as it's container, a `ui-tree-nodes` can have multiple child nodes.
@@ -198,42 +233,6 @@ Collapse all it's child nodes.
 
 ##### expandAll()
 Expand all it's child nodes.
-
-#### Methods in $callbacks
-##### <a name="accept"></a>accept
-Check if the current dragging node can be dropped in the `ui-tree-nodes`.
-
-**Parameters:**
-- `sourceNodeScope`: The scope of source node which is dragging.
-- `destNodesScope`: The scope of `ui-tree-nodes` which you want to drop in.
-- `destIndex`: The position you want to drop in.
-
-**Return**
-If the nodes accept the current dragging node.
-- `true` Allow it to drop.
-- `false` Not allow.
-
-##### <a name="dragStart"></a>dragStart
-The `dragStart` function is called when the user starts to drag the node.
-**<a name="dragStartParams"></a>Parameters:**
-- `sourceNodeScope`: The current dragging node.
-- `elements`: The dragging relative elements.
-    + `placeholder`: The placeholder element.
-    + `drag`: The dragging element.
-- `pos`: Position object.
-
-##### dragMove
-The `dragMove` function is called when the user moves the node.
-
-**Parameters:**
-Same as [Parameters](#dragStartParams) of dragStart.
-
-##### dragStop
-The `dragStop` function is called when the user stop dragging the node.
-
-**Parameters:**
-Same as [Parameters](#dragStartParams) of dragStart.
-
 
 ### ui-tree-node
 A node of a tree. Every `ui-tree-node` should have a `ui-tree-nodes` as it's container.
