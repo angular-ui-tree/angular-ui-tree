@@ -241,7 +241,6 @@
 
               if (dragElm) {
                 // roll back elements changed
-                scope.$element.remove();
                 hiddenPlaceElm.replaceWith(scope.$element);
                 placeElm.remove();
 
@@ -255,7 +254,6 @@
                 }
                 scope.$$apply = false;
                 dragInfo = null;
-
               }
 
 

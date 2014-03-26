@@ -22,12 +22,6 @@
           return $scope.$callbacks.accept(sourceNode, $scope, destIndex);
         };
 
-        $scope.apply = function() {
-          if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
-            $scope.$apply();
-          }
-        };
-
         $scope.hasChild = function() {
           return $scope.$nodes.length > 0;
         };
@@ -35,17 +29,19 @@
         $scope.removeNode = function(node) {
           var index = $scope.$nodes.indexOf(node);
           if (index > -1) {
-            $scope.$modelValue.splice(index, 1)[0];
-            $scope.$nodes.splice(index, 1)[0];
-            $scope.apply();
+            $scope.$apply(function () {
+              $scope.$modelValue.splice(index, 1)[0];
+              $scope.$nodes.splice(index, 1)[0];
+            });
             return node;
           }
           return null;
         };
 
         $scope.insertNode = function(index, node) {
-          $scope.$modelValue.splice(index, 0, node.$modelValue);
-          $scope.apply();
+          $scope.$apply(function () {
+            $scope.$modelValue.splice(index, 0, node.$modelValue);
+          });
         };
 
         var collapseOrExpand = function(scope, collapsed) {
