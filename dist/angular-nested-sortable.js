@@ -566,7 +566,7 @@
             });
 
 
-            var dragMoveEvent = handler(function(e) {
+            var dragMoveEvent = function(e) {
               var currentAccept, prev, childAccept;
               var moveObj = e;
 
@@ -658,63 +658,64 @@
                   return;
                 }
 
-                targetItem = targetElm.scope();
-                targetElm = targetItem.sortableItemElement;
+                scope.$apply(function() {
+                  targetItem = targetElm.scope();
+                  targetElm = targetItem.sortableItemElement;
 
-                var targetItemData = null;
-                if (targetItem) {
-                  targetItemData = targetItem.itemData();
-                }
-
-                // move vertical
-                if (!pos.dirAx) {
-                  sameParent = false;
-                  // check it's new position
-                  var targetOffset = $helper.offset(targetElm);
-                  if ($helper.offset(placeElm).top > targetOffset.top) { // the move direction is up?
-                    targetBefore = $helper.offset(dragElm).top < targetOffset.top + $helper.height(targetElm) / 2;
-                  } else {
-                    targetBefore = moveObj.pageY < targetOffset.top;
+                  var targetItemData = null;
+                  if (targetItem) {
+                    targetItemData = targetItem.itemData();
                   }
-                  if (targetBefore) {
-                    prev = targetItem.prev();
-                    childAccept = prev && prev.childAccept(scope, targetItem.subScope());
-                    currentAccept = targetItem.accept(scope, targetItem.parentScope(), targetItem.$index);
 
-                    if (childAccept && (moveRight || !currentAccept) && !prev.collapsed) {
-                      // move to it's prev node
-                      targetItem = prev;
-                      targetItem.subSortableElement.append(placeElm);
-                      destIndex = targetItem.subScope().items.length;
-                      targetScope = targetItem.subScope();
-                      dragItem.reset(destIndex, targetScope, scope);
-                    } else if (currentAccept) {
-                      targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
-                      destIndex = targetItem.$index;
-                      targetScope = targetItem.parentScope();
-                      dragItem.reset(destIndex, targetScope, scope);
+                  // move vertical
+                  if (!pos.dirAx) {
+                    sameParent = false;
+                    // check it's new position
+                    var targetOffset = $helper.offset(targetElm);
+                    if ($helper.offset(placeElm).top > targetOffset.top) { // the move direction is up?
+                      targetBefore = $helper.offset(dragElm).top < targetOffset.top + $helper.height(targetElm) / 2;
+                    } else {
+                      targetBefore = moveObj.pageY < targetOffset.top;
                     }
-                  } else {
-                    childAccept = targetItem.childAccept(scope, targetItem.subScope());
-                    currentAccept = targetItem.accept(scope, targetItem.parentScope(), targetItem.$index + 1);
+                    if (targetBefore) {
+                      prev = targetItem.prev();
+                      childAccept = prev && prev.childAccept(scope, targetItem.subScope());
+                      currentAccept = targetItem.accept(scope, targetItem.parentScope(), targetItem.$index);
 
-                    if (childAccept && (moveRight || !currentAccept) && !targetItem.collapsed) {
-                      targetItem.subSortableElement.append(placeElm);
-                      destIndex = targetItem.subScope().items.length;
-                      targetScope = targetItem.subScope();
-                      dragItem.reset(destIndex, targetScope, scope);
-                    } else if (currentAccept) {
-                      targetElm.after(placeElm);
-                      destIndex = targetItem.$index + 1;
-                      targetScope = targetItem.parentScope();
-                      dragItem.reset(destIndex, targetScope, scope);
+                      if (childAccept && (moveRight || !currentAccept) && !prev.collapsed) {
+                        // move to it's prev node
+                        targetItem = prev;
+                        targetItem.subSortableElement.append(placeElm);
+                        destIndex = targetItem.subScope().items.length;
+                        targetScope = targetItem.subScope();
+                        dragItem.reset(destIndex, targetScope, scope);
+                      } else if (currentAccept) {
+                        targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
+                        destIndex = targetItem.$index;
+                        targetScope = targetItem.parentScope();
+                        dragItem.reset(destIndex, targetScope, scope);
+                      }
+                    } else {
+                      childAccept = targetItem.childAccept(scope, targetItem.subScope());
+                      currentAccept = targetItem.accept(scope, targetItem.parentScope(), targetItem.$index + 1);
+
+                      if (childAccept && (moveRight || !currentAccept) && !targetItem.collapsed) {
+                        targetItem.subSortableElement.append(placeElm);
+                        destIndex = targetItem.subScope().items.length;
+                        targetScope = targetItem.subScope();
+                        dragItem.reset(destIndex, targetScope, scope);
+                      } else if (currentAccept) {
+                        targetElm.after(placeElm);
+                        destIndex = targetItem.$index + 1;
+                        targetScope = targetItem.parentScope();
+                        dragItem.reset(destIndex, targetScope, scope);
+                      }
                     }
                   }
-                }
-
-                scope.callbacks.move(scope, sourceItem, elements);
+                  scope.callbacks.move(scope, sourceItem, elements);
+                });
               }
-            });
+            };
 
             var dragEndEvent = handler(function(e) {
               if (dragElm) {
