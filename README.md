@@ -59,19 +59,19 @@ Add the sortable module as a dependency to your application module:
 var myAppModule = angular.module('MyApp', ['ui.tree'])
 ```
 
-Injecting `ui.tree`, `ui-tree-nodes` and `ui-tree-node` to your html.
+Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your html.
 
 #### HTML View or Templates
 ```html
 <div ui-tree>
   <ol ui-tree-nodes="" ng-model="list">
     <li ng-repeat="item in list" ui-tree-node>
-      <div class="angular-ui-tree-handle">
+      <div ui-tree-handle>
         {{item.title}}
       </div>
       <ol ui-tree-nodes="" ng-model="item.items">
         <li ng-repeat="subItem in item.items" ui-tree-node>
-          <div class="angular-ui-tree-handle">
+          <div ui-tree-handle>
             {{subItem.title}}
           </div>
         </li>
@@ -84,7 +84,10 @@ Injecting `ui.tree`, `ui-tree-nodes` and `ui-tree-node` to your html.
 - Adding `ui-tree` to your root element of the tree.
 - Adding `ui-tree-nodes` to the elements which contain the nodes. `ng-model` is required, and it should be an array, so that the directive knows which model to bind and update.
 - Adding `ui-tree-node` to your node element, it always follows the `ng-repeat` attribute.
+- Adding `ui-tree-handle` to the element used to drag the object.
 - All `ui-tree-nodes`, `ng-model`, `ui-tree-node` are necessary. And they can be nested.
+- The `ui-tree` is option, but if you want to drag between trees or disable dragging for a tree, you have to add it.
+- If you don't add a `ui-tree-handle` for a node, the entire node can be dragged.
 - If you changed the datasource bound, sometimes you have to call [`$scope.$apply()`](http://docs.angularjs.org/api/ng/type/$rootScope.Scope#$apply) to refresh the view, otherwise you will get an error `Cannot read property '0' of undefined` ([Issue #32](https://github.com/JimLiu/angular-ui-tree/issues/32)).
 
 #### Unlimited nesting HTML View or Templates Example
@@ -92,7 +95,7 @@ Injecting `ui.tree`, `ui-tree-nodes` and `ui-tree-node` to your html.
 ```html
 <!-- Nested node template -->
 <script type="text/ng-template" id="nodes_renderer.html">
-  <div class="angular-ui-tree-handle">
+  <div ui-tree-handle>
     {{node.title}}
   </div>
   <ol ui-tree-nodes="" ng-model="node.nodes">
@@ -108,12 +111,15 @@ Injecting `ui.tree`, `ui-tree-nodes` and `ui-tree-node` to your html.
 ## Structure of angular-ui-tree
 
     ui-tree                             --> Root of tree
-        ui-tree-nodes                   --> Container of nodes
-            ui-tree-node                --> One of the node of a tree
-                ui-tree-nodes           --> Container of child-nodes
-                    ui-tree-node        --> Child node
-                    ui-tree-node        --> Child node
-            ui-tree-node                --> Another node
+      ui-tree-nodes                     --> Container of nodes
+        ui-tree-node                    --> One of the node of a tree
+          ui-tree-handle                --> Handle
+          ui-tree-nodes                 --> Container of child-nodes
+            ui-tree-node                --> Child node
+              ui-tree-handle            --> Handle
+            ui-tree-node                --> Child node
+        ui-tree-node                    --> Another node
+          ui-tree-handle                --> Handle
 
 ## API
 
@@ -267,11 +273,11 @@ The scope of it's parent `ui-tree-nodes`.
 For example:
 
     ui-tree-nodes                       --> nodes 1
-            ui-tree-node                --> node 1.1
-                ui-tree-nodes           --> nodes 1.1
-                    ui-tree-node        --> node 1.1.1
-                    ui-tree-node        --> node 1.1.2
-            ui-tree-node                --> node 1.2
+      ui-tree-node                      --> node 1.1
+        ui-tree-nodes                   --> nodes 1.1
+          ui-tree-node                  --> node 1.1.1
+          ui-tree-node                  --> node 1.1.2
+      ui-tree-node                      --> node 1.2
 
 - `node 1.1.1`.`$parentNodeScope` is `node 1.1`.
 - `node 1.1`.`$childNodesScope` is `nodes 1.1`.
@@ -290,9 +296,12 @@ Toggle current node.
 ##### remove()
 Remove current node.
 
+### ui-tree-handle
+Use the `ui-tree-handle` to specify an element used to drag the object. If you don't add a `ui-tree-handle` for a node, the entire node can be dragged.
+
 ## NgModules Link
 
-[Give us a like on ngmodules](http://ngmodules.org/modules/Angular-NestedSortable)
+[Give us a like on ngmodules](http://ngmodules.org/modules/angular-ui-tree)
 
 ## Development environment setup
 #### Prerequisites
