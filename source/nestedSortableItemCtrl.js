@@ -12,12 +12,19 @@
           $scope.initItem = function(element) {
             $scope.sortableItemElement = element;
             $scope.initSubItemElement(element);
-            $scope.items.splice($scope.$index, 0, $scope);
             element.attr('sortable-elment-type', 'item');
           };
 
+          // keep reference to data, as the $index may no longer be valid after a move
+          $scope.items.splice($scope.$index, 0, $scope);
+          $scope.data = $scope.sortableModelValue[$scope.$index];
+
+          $scope.index = function() {
+            return $scope.sortableModelValue.indexOf($scope.data);
+          };
+
           $scope.removeItem = function() {
-            var index = $scope.$index;
+            var index = $scope.index();
             if (index > -1) {
               var item = $scope.sortableModelValue.splice(index, 1)[0];
               $scope.items.splice(index, 1)[0];
@@ -49,7 +56,7 @@
           };
 
           $scope.itemData = function() {
-            return $scope.sortableModelValue[$scope.$index];
+            return $scope.data;
           };
 
           $scope.setSubSortableElement = function(subElement){
@@ -87,8 +94,9 @@
           };
 
           $scope.prev = function() {
-            if ($scope.$index > 0) {
-              return $scope.items[$scope.$index - 1];
+            var index = $scope.index();
+            if (index > 0) {
+              return $scope.items[index - 1];
             }
 
             return null;
