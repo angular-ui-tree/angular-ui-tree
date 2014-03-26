@@ -87,7 +87,6 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
 - Adding `ui-tree-handle` to the element used to drag the object.
 - All `ui-tree`, `ui-tree-nodes`, `ng-model`, `ui-tree-node` are necessary. And they can be nested.
 - If you don't add a `ui-tree-handle` for a node, the entire node can be dragged.
-- If you changed the datasource bound, sometimes you have to call [`$scope.$apply()`](http://docs.angularjs.org/api/ng/type/$rootScope.Scope#$apply) to refresh the view, otherwise you will get an error `Cannot read property '0' of undefined` ([Issue #32](https://github.com/JimLiu/angular-ui-tree/issues/32)).
 
 #### Unlimited nesting HTML View or Templates Example
 
@@ -201,11 +200,11 @@ The scope of node which current `ui-tree-nodes` belongs to.
 For example:
 
     ui-tree-nodes                       --> nodes 1
-            ui-tree-node                --> node 1.1
-                ui-tree-nodes           --> nodes 1.1
-                    ui-tree-node        --> node 1.1.1
-                    ui-tree-node        --> node 1.1.2
-            ui-tree-node                --> node 1.2
+      ui-tree-node                --> node 1.1
+        ui-tree-nodes           --> nodes 1.1
+          ui-tree-node        --> node 1.1.1
+          ui-tree-node        --> node 1.1.2
+      ui-tree-node                --> node 1.2
 
 The property `$nodeScope of` `nodes 1.1` is `node 1.1`. The property `$nodes` of `nodes 1.1` is [`node 1.1.1`, `node 1.1.2`]
 
