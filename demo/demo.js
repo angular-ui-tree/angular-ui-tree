@@ -41,9 +41,7 @@
 
     $scope.options = {
       itemClicked: function(sourceItem, clickedElmDragged) {
-        $scope.$apply(function() {
-          $scope.selectedItem = sourceItem;
-        });
+        $scope.selectedItem = sourceItem;
       }
 
     };
@@ -227,8 +225,7 @@
       },
       orderChanged: function(scope, sourceItem, sourceIndex, destIndex) {
         $scope.info = "Chapter [" + sourceItem.title + "] changed order from " + sourceIndex + " to " + destIndex;
-        $scope.$apply();
-      },
+      }
 
     };
 
@@ -239,7 +236,6 @@
       },
       orderChanged: function(scope, sourceItem, sourceIndex, destIndex) {
         $scope.info = "Lecture [" + sourceItem.title + "] changed order from " + sourceIndex + " to " + destIndex;
-        $scope.$apply();
       },
       itemRemoved: function(scope, sourceItem, sourceIndex) {
         var info = "Chapter [" + scope.chapter.title + "] removed a lecture [" + sourceItem.title + "] from " + sourceIndex + ".";
@@ -251,8 +247,7 @@
       },
       itemMoved: function(sourceScope, sourceItem, sourceIndex, destScope, destIndex) {
         $scope.info = "Lecture [" + sourceItem.title + "] moved from [" + sourceScope.chapter.title + "][" + sourceIndex + "] to [" + destScope.chapter.title + "][" + destIndex + "]";
-        $scope.$apply();
-      },
+      }
     };
   });
 

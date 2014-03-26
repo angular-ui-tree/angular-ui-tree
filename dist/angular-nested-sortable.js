@@ -7,7 +7,6 @@
   'use strict';
 
   angular.module('ui.nestedSortable', [])
-
     .constant('nestedSortableConfig', {
       listClass: 'nestedSortable-list',
       itemClass: 'nestedSortable-item',
@@ -24,10 +23,11 @@
   'use strict';
 
   angular.module('ui.nestedSortable')
-  
+
     .factory('$helper', ['$document', '$window',
       function ($document, $window) {
         return {
+
           height: function (element) {
             return element.prop('scrollHeight');
           },
@@ -130,7 +130,6 @@
 
         $scope.insertSortableItem = function(index, itemModelData) {
           $scope.sortableModelValue.splice(index, 0, itemModelData);
-          $scope.$apply();
         };
 
         $scope.initSubItemElement = function(subElement) {
@@ -208,9 +207,6 @@
             if (index > -1) {
               var item = $scope.sortableModelValue.splice(index, 1)[0];
               $scope.items.splice(index, 1)[0];
-              if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
-                $scope.$apply();
-              }
               return item;
             }
 
@@ -548,7 +544,9 @@
                 dragging: dragElm
               };
 
-              scope.callbacks.start(scope, sourceItem, elements);
+              scope.$apply(function() {
+                scope.callbacks.start(scope, sourceItem, elements);
+              });
 
               if (hasTouch) {
                 angular.element($document).bind('touchend', dragEndEvent); // Mobile
@@ -564,7 +562,7 @@
             var dragMoveEvent = function(e) {
               var currentAccept, prev, childAccept;
               var moveObj = e;
-              
+
               clickedElmDragged = true;
               
               if (hasTouch) {
@@ -707,7 +705,9 @@
                   }
                 }
 
-                scope.callbacks.move(scope, sourceItem, elements);
+                scope.$apply(function() {
+                  scope.callbacks.move(scope, sourceItem, elements);
+                });
               }
             };
 
@@ -725,22 +725,24 @@
                 dragElm.remove();
                 dragElm = null;
 
-                scope.callbacks.itemClicked(sourceItem, clickedElmDragged);
-                scope.callbacks.stop(scope, sourceItem, elements);
+                scope.$apply(function() {
+                  scope.callbacks.itemClicked(sourceItem, clickedElmDragged);
+                  scope.callbacks.stop(scope, sourceItem, elements);
 
-                // update model data
-                if (targetScope && !(sameParent && sourceIndex == destIndex)) {
-                  var source = scope.removeItem();
-                  targetScope.insertSortableItem(destIndex, source, scope);
+                  // update model data
+                  if (targetScope && !(sameParent && sourceIndex == destIndex)) {
+                    var source = scope.removeItem();
+                    targetScope.insertSortableItem(destIndex, source, scope);
 
-                  if (sameParent) {
-                    scope.callbacks.orderChanged(scope.sortableElement.scope(), source, sourceIndex, destIndex);
-                  } else {
-                    scope.callbacks.itemRemoved(scope.sortableElement.scope(), source, sourceIndex);
-                    targetScope.callbacks.itemAdded(targetScope, source, destIndex);
-                    scope.callbacks.itemMoved(scope.sortableElement.scope(), source, sourceIndex, targetScope, destIndex);
+                    if (sameParent) {
+                      scope.callbacks.orderChanged(scope.sortableElement.scope(), source, sourceIndex, destIndex);
+                    } else {
+                      scope.callbacks.itemRemoved(scope.sortableElement.scope(), source, sourceIndex);
+                      targetScope.callbacks.itemAdded(targetScope, source, destIndex);
+                      scope.callbacks.itemMoved(scope.sortableElement.scope(), source, sourceIndex, targetScope, destIndex);
+                    }
                   }
-                }
+                });
               }
 
               if (hasTouch) {
