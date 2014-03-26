@@ -34,16 +34,7 @@
               return arrayCopy;
             };
 
-            var handler = function(f) {
-              return function() {
-                var args = Array.prototype.splice.call(arguments, 0), context = this;
-                scope.$apply(function() {
-                  f.apply(context, args);
-                });
-              };
-            };
-
-            var dragStartEvent = handler(function(e) {
+            var dragStartEvent = function(e) {
               if (!hasTouch && (e.button == 2 || e.which == 3)) {
                 // disable right click
                 return;
@@ -155,7 +146,9 @@
                 dragging: dragElm
               };
 
-              scope.callbacks.start(scope, sourceItem, elements);
+              scope.$apply(function() {
+                scope.callbacks.start(scope, sourceItem, elements);
+              });
 
               if (hasTouch) {
                 angular.element($document).bind('touchend', dragEndEvent); // Mobile
@@ -165,7 +158,7 @@
                 angular.element($document).bind('mouseup', dragEndEvent);
                 angular.element($document).bind('mousemove', dragMoveEvent);
               }
-            });
+            };
 
 
             var dragMoveEvent = function(e) {
@@ -260,66 +253,67 @@
                   return;
                 }
 
+                targetItem = targetElm.scope();
+                targetElm = targetItem.sortableItemElement;
+
+                var targetItemData = null;
+                if (targetItem) {
+                  targetItemData = targetItem.itemData();
+                }
+
+                // move vertical
+                if (!pos.dirAx) {
+                  sameParent = false;
+                  // check it's new position
+                  var targetOffset = $helper.offset(targetElm);
+                  if ($helper.offset(placeElm).top > targetOffset.top) { // the move direction is up?
+                    targetBefore = $helper.offset(dragElm).top < targetOffset.top + $helper.height(targetElm) / 2;
+                  } else {
+                    targetBefore = moveObj.pageY < targetOffset.top;
+                  }
+                  if (targetBefore) {
+                    prev = targetItem.prev();
+                    childAccept = prev && prev.childAccept(scope, targetItem.subScope());
+                    currentAccept = targetItem.accept(scope, targetItem.parentScope(), targetItem.$index);
+
+                    if (childAccept && (moveRight || !currentAccept) && !prev.collapsed) {
+                      // move to it's prev node
+                      targetItem = prev;
+                      targetItem.subSortableElement.append(placeElm);
+                      destIndex = targetItem.subScope().items.length;
+                      targetScope = targetItem.subScope();
+                      dragItem.reset(destIndex, targetScope, scope);
+                    } else if (currentAccept) {
+                      targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
+                      destIndex = targetItem.$index;
+                      targetScope = targetItem.parentScope();
+                      dragItem.reset(destIndex, targetScope, scope);
+                    }
+                  } else {
+                    childAccept = targetItem.childAccept(scope, targetItem.subScope());
+                    currentAccept = targetItem.accept(scope, targetItem.parentScope(), targetItem.$index + 1);
+
+                    if (childAccept && (moveRight || !currentAccept) && !targetItem.collapsed) {
+                      targetItem.subSortableElement.append(placeElm);
+                      destIndex = targetItem.subScope().items.length;
+                      targetScope = targetItem.subScope();
+                      dragItem.reset(destIndex, targetScope, scope);
+                    } else if (currentAccept) {
+                      targetElm.after(placeElm);
+                      destIndex = targetItem.$index + 1;
+                      targetScope = targetItem.parentScope();
+                      dragItem.reset(destIndex, targetScope, scope);
+                    }
+                  }
+                }
+
                 scope.$apply(function() {
-                  targetItem = targetElm.scope();
-                  targetElm = targetItem.sortableItemElement;
-
-                  var targetItemData = null;
-                  if (targetItem) {
-                    targetItemData = targetItem.itemData();
-                  }
-
-                  // move vertical
-                  if (!pos.dirAx) {
-                    sameParent = false;
-                    // check it's new position
-                    var targetOffset = $helper.offset(targetElm);
-                    if ($helper.offset(placeElm).top > targetOffset.top) { // the move direction is up?
-                      targetBefore = $helper.offset(dragElm).top < targetOffset.top + $helper.height(targetElm) / 2;
-                    } else {
-                      targetBefore = moveObj.pageY < targetOffset.top;
-                    }
-                    if (targetBefore) {
-                      prev = targetItem.prev();
-                      childAccept = prev && prev.childAccept(scope, targetItem.subScope());
-                      currentAccept = targetItem.accept(scope, targetItem.parentScope(), targetItem.$index);
-
-                      if (childAccept && (moveRight || !currentAccept) && !prev.collapsed) {
-                        // move to it's prev node
-                        targetItem = prev;
-                        targetItem.subSortableElement.append(placeElm);
-                        destIndex = targetItem.subScope().items.length;
-                        targetScope = targetItem.subScope();
-                        dragItem.reset(destIndex, targetScope, scope);
-                      } else if (currentAccept) {
-                        targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
-                        destIndex = targetItem.$index;
-                        targetScope = targetItem.parentScope();
-                        dragItem.reset(destIndex, targetScope, scope);
-                      }
-                    } else {
-                      childAccept = targetItem.childAccept(scope, targetItem.subScope());
-                      currentAccept = targetItem.accept(scope, targetItem.parentScope(), targetItem.$index + 1);
-
-                      if (childAccept && (moveRight || !currentAccept) && !targetItem.collapsed) {
-                        targetItem.subSortableElement.append(placeElm);
-                        destIndex = targetItem.subScope().items.length;
-                        targetScope = targetItem.subScope();
-                        dragItem.reset(destIndex, targetScope, scope);
-                      } else if (currentAccept) {
-                        targetElm.after(placeElm);
-                        destIndex = targetItem.$index + 1;
-                        targetScope = targetItem.parentScope();
-                        dragItem.reset(destIndex, targetScope, scope);
-                      }
-                    }
-                  }
                   scope.callbacks.move(scope, sourceItem, elements);
                 });
               }
             };
 
-            var dragEndEvent = handler(function(e) {
+            var dragEndEvent = function(e) {
               if (dragElm) {
                 if (e) {
                   e.preventDefault();
@@ -333,22 +327,24 @@
                 dragElm.remove();
                 dragElm = null;
 
-                scope.callbacks.itemClicked(sourceItem, clickedElmDragged);
-                scope.callbacks.stop(scope, sourceItem, elements);
+                scope.$apply(function() {
+                  scope.callbacks.itemClicked(sourceItem, clickedElmDragged);
+                  scope.callbacks.stop(scope, sourceItem, elements);
 
-                // update model data
-                if (targetScope && !(sameParent && sourceIndex == destIndex)) {
-                  var source = scope.removeItem();
-                  targetScope.insertSortableItem(destIndex, source, scope);
+                  // update model data
+                  if (targetScope && !(sameParent && sourceIndex == destIndex)) {
+                    var source = scope.removeItem();
+                    targetScope.insertSortableItem(destIndex, source, scope);
 
-                  if (sameParent) {
-                    scope.callbacks.orderChanged(scope.sortableElement.scope(), source, sourceIndex, destIndex);
-                  } else {
-                    scope.callbacks.itemRemoved(scope.sortableElement.scope(), source, sourceIndex);
-                    targetScope.callbacks.itemAdded(targetScope, source, destIndex);
-                    scope.callbacks.itemMoved(scope.sortableElement.scope(), source, sourceIndex, targetScope, destIndex);
+                    if (sameParent) {
+                      scope.callbacks.orderChanged(scope.sortableElement.scope(), source, sourceIndex, destIndex);
+                    } else {
+                      scope.callbacks.itemRemoved(scope.sortableElement.scope(), source, sourceIndex);
+                      targetScope.callbacks.itemAdded(targetScope, source, destIndex);
+                      scope.callbacks.itemMoved(scope.sortableElement.scope(), source, sourceIndex, targetScope, destIndex);
+                    }
                   }
-                }
+                });
               }
 
               if (hasTouch) {
@@ -361,7 +357,7 @@
                 angular.element($document).unbind('mousemove', dragMoveEvent);
                 angular.element($window.document.body).unbind('mouseleave', dragEndEvent);
               }
-            });
+            };
 
             if (hasTouch) {
               // Mobile
