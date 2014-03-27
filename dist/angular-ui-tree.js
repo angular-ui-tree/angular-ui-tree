@@ -68,7 +68,7 @@
           dragInfo: function(node) {
             return {
               source: node,
-              index: node.$index,
+              index: node.index(),
               siblings: node.$parentNodesScope.$nodes.slice(0),
               parent: node.$parentNodesScope,
               
@@ -78,7 +78,7 @@
                 var i = this.siblings.indexOf(this.source); // If source node is in the target nodes
                 if (i > -1) {
                   this.siblings.splice(i, 1);
-                  if (this.source.$index < index) {
+                  if (this.source.index() < index) {
                     index--;
                   }
                 }
@@ -106,7 +106,7 @@
 
               isDirty: function() {
                 return this.source.$parentNodesScope != this.parent ||
-                        this.source.$index != this.index;
+                        this.source.index() != this.index;
               },
 
               apply: function() {
@@ -303,7 +303,7 @@
         $scope.$type = 'uiTreeNodes';
 
         $scope.initSubNode = function(subNode) {
-          $scope.$nodes.splice(subNode.$index, 0, subNode);
+          $scope.$nodes.splice(subNode.index(), 0, subNode);
         };
 
         $scope.accept = function(sourceNode, destIndex) {
@@ -370,8 +370,29 @@
         $scope.$treeScope = null; // uiTree scope
         $scope.$handleScope = null; // it's handle scope
         $scope.$type = 'uiTreeNode';
+        $scope.$$apply = false; // 
 
         $scope.collapsed = false;
+
+        $scope.init = function(controllersArr) {
+          var treeNodesCtrl = controllersArr[0];
+          $scope.$treeScope = controllersArr[1] ? controllersArr[1].scope : null;
+
+          // find the scope of it's parent node
+          $scope.$parentNodeScope = treeNodesCtrl.scope.$nodeScope;
+          // modelValue for current node
+          $scope.$modelValue = treeNodesCtrl.scope.$modelValue[$scope.$index];
+          $scope.$parentNodesScope = treeNodesCtrl.scope;
+          treeNodesCtrl.scope.initSubNode($scope); // init sub nodes
+
+          $element.on('$destroy', function() {
+            
+          });
+        };
+
+        $scope.index = function() {
+          return $scope.$parentNodesScope.$modelValue.indexOf($scope.$modelValue);
+        };
 
         $scope.dragEnabled = function() {
           return !($scope.$treeScope && !$scope.$treeScope.dragEnabled);
@@ -387,8 +408,9 @@
         };
 
         $scope.prev = function() {
-          if ($scope.$index > 0) {
-            return $scope.siblings()[$scope.$index - 1];
+          var index = $scope.index();
+          if (index > 0) {
+            return $scope.siblings()[index - 1];
           }
           return null;
         };
@@ -595,22 +617,7 @@
             if (config.nodeClass) {
               element.addClass(config.nodeClass);
             }
-
-            var treeNodesCtrl = controllersArr[0];
-            scope.$treeScope = controllersArr[1] ? controllersArr[1].scope : null;
-
-            // find the scope of it's parent node
-            scope.$parentNodeScope = treeNodesCtrl.scope.$nodeScope;
-            // modelValue for current node
-            scope.$modelValue = treeNodesCtrl.scope.$modelValue[scope.$index];
-            scope.$parentNodesScope = treeNodesCtrl.scope;
-            treeNodesCtrl.scope.initSubNode(scope); // init sub nodes
-
-            element.on('$destroy', function() {
-              
-            });
-
-            scope.$$apply = false; // 
+            scope.init(controllersArr);
 
             var hasTouch = 'ontouchstart' in window;
             var startPos, firstMoving, dragInfo, pos;
@@ -739,9 +746,9 @@
                     if (!next) {
                       var target = dragInfo.parentNode(); // As a sibling of it's parent node
                       if (target
-                        && target.$parentNodesScope.accept(scope, target.$index + 1)) {
+                        && target.$parentNodesScope.accept(scope, target.index() + 1)) {
                         target.$element.after(placeElm);
-                        dragInfo.moveTo(target.$parentNodesScope, target.siblings(), target.$index + 1);
+                        dragInfo.moveTo(target.$parentNodesScope, target.siblings(), target.index() + 1);
                       }
                     }
                   }
@@ -803,13 +810,13 @@
                     var targetOffset = $uiTreeHelper.offset(targetElm);
                     targetBefore = eventObj.pageY < (targetOffset.top + $uiTreeHelper.height(targetElm) / 2);
           
-                    if (targetNode.$parentNodesScope.accept(scope, targetNode.$index)) {
+                    if (targetNode.$parentNodesScope.accept(scope, targetNode.index())) {
                       if (targetBefore) {
                         targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
-                        dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.$index);
+                        dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index());
                       } else {
                         targetElm.after(placeElm);
-                        dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.$index + 1);
+                        dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index() + 1);
                       }
                     }
                     else if (!targetBefore && targetNode.accept(scope, targetNode.childNodesCount())) { // we have to check if it can add the dragging node as a child

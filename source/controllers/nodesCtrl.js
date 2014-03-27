@@ -15,7 +15,7 @@
         $scope.$type = 'uiTreeNodes';
 
         $scope.initSubNode = function(subNode) {
-          $scope.$nodes.splice(subNode.$index, 0, subNode);
+          $scope.$nodes.splice(subNode.index(), 0, subNode);
         };
 
         $scope.accept = function(sourceNode, destIndex) {

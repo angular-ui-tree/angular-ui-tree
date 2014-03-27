@@ -15,8 +15,29 @@
         $scope.$treeScope = null; // uiTree scope
         $scope.$handleScope = null; // it's handle scope
         $scope.$type = 'uiTreeNode';
+        $scope.$$apply = false; // 
 
         $scope.collapsed = false;
+
+        $scope.init = function(controllersArr) {
+          var treeNodesCtrl = controllersArr[0];
+          $scope.$treeScope = controllersArr[1] ? controllersArr[1].scope : null;
+
+          // find the scope of it's parent node
+          $scope.$parentNodeScope = treeNodesCtrl.scope.$nodeScope;
+          // modelValue for current node
+          $scope.$modelValue = treeNodesCtrl.scope.$modelValue[$scope.$index];
+          $scope.$parentNodesScope = treeNodesCtrl.scope;
+          treeNodesCtrl.scope.initSubNode($scope); // init sub nodes
+
+          $element.on('$destroy', function() {
+            
+          });
+        };
+
+        $scope.index = function() {
+          return $scope.$parentNodesScope.$modelValue.indexOf($scope.$modelValue);
+        };
 
         $scope.dragEnabled = function() {
           return !($scope.$treeScope && !$scope.$treeScope.dragEnabled);
@@ -32,8 +53,9 @@
         };
 
         $scope.prev = function() {
-          if ($scope.$index > 0) {
-            return $scope.siblings()[$scope.$index - 1];
+          var index = $scope.index();
+          if (index > 0) {
+            return $scope.siblings()[index - 1];
           }
           return null;
         };

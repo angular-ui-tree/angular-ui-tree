@@ -44,7 +44,7 @@
           dragInfo: function(node) {
             return {
               source: node,
-              index: node.$index,
+              index: node.index(),
               siblings: node.$parentNodesScope.$nodes.slice(0),
               parent: node.$parentNodesScope,
               
@@ -54,7 +54,7 @@
                 var i = this.siblings.indexOf(this.source); // If source node is in the target nodes
                 if (i > -1) {
                   this.siblings.splice(i, 1);
-                  if (this.source.$index < index) {
+                  if (this.source.index() < index) {
                     index--;
                   }
                 }
@@ -82,7 +82,7 @@
 
               isDirty: function() {
                 return this.source.$parentNodesScope != this.parent ||
-                        this.source.$index != this.index;
+                        this.source.index() != this.index;
               },
 
               apply: function() {
