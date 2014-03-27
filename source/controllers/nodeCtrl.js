@@ -99,6 +99,36 @@
         $scope.expand = function() {
           $scope.collapsed = false;
         };
+
+        $scope.depth = function() {
+          var parentNode = $scope.$parentNodeScope;
+          if (parentNode) {
+            return parentNode.depth() + 1;
+          }
+          return 1;
+        };
+
+        var subDepth = 0;
+        var countSubDepth = function(scope) {
+          var count = 0;
+          for (var i = 0; i < scope.$nodes.length; i++) {
+            var childNodes = scope.$nodes[i].$childNodesScope;
+            if (childNodes) {
+              count = 1;
+              countSubDepth(childNodes);
+            }
+          }
+          subDepth += count;
+        };
+
+        $scope.maxSubDepth = function() {
+          subDepth = 0;
+          if ($scope.$childNodesScope) {
+            countSubDepth($scope.$childNodesScope);
+          }
+          return subDepth;
+        };
+
       }
     ]);
 })();

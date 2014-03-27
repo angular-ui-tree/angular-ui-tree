@@ -30,19 +30,31 @@
             }
           }, true);
 
-          scope.$watch(function (){
+          scope.$watch(function () {
             return scope.$eval(attrs.dragEnabled);
-          }, function (newVal){
+          }, function (newVal) {
             if((typeof newVal) == "boolean") {
               scope.dragEnabled = newVal;
             }
           }, true);
 
+          scope.$watch(function() {
+            return scope.$eval(attrs.maxDepth);
+          }, function(newVal) {
+            if((typeof newVal) == "number") {
+              scope.maxDepth = newVal;
+            }
+          }, true);
+
           // check if the dest node can accept the dragging node
-          // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`.
+          // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes` 
+          // and the 'max-depth' attribute in `ui-tree` or `ui-tree-nodes`.
           // the method can be overrided
           callbacks.accept = function(sourceNodeScope, destNodesScope, destIndex) {
-            return (typeof destNodesScope.$element.attr('data-nodrop')) == "undefined";
+            if (destNodesScope.nodrop || destNodesScope.outOfDepth(sourceNodeScope)) {
+              return false;
+            }
+            return true;
           };
 
           //

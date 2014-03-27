@@ -26,9 +26,6 @@
           }
           else { // find the root nodes if there is no parent node and have a parent ui-tree
             treeCtrl.scope.$nodesScope = scope;
-            scope.$watch('$modelValue', function() {
-              //console.log("nodes", scope, treeCtrl.scope.$nodesScope);
-            }, true);
           }
           scope.$treeScope = treeCtrl.scope;
 
@@ -38,6 +35,23 @@
             };
           }
 
+          scope.$watch(function() {
+            return scope.$eval(attrs.maxDepth);
+          }, function(newVal) {
+            if((typeof newVal) == "number") {
+              scope.maxDepth = newVal;
+            }
+          }, true);
+
+          scope.$watch(function () {
+            return scope.$eval(attrs.nodrop);
+          }, function (newVal) {
+            if((typeof newVal) == "boolean") {
+              scope.nodrop = newVal;
+            }
+          }, true);
+
+          
         }
       };
     }

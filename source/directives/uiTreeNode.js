@@ -187,7 +187,7 @@
                     targetNode = targetNode.$nodeScope;
                   }
                   if (targetNode.$type != 'uiTreeNode'
-                    && !isEmpty) { // Check if it is a uiTreeNode or it's empty tree
+                    && !isEmpty) { // Check if it is a uiTreeNode or it's an empty tree
                     return;
                   }
                   

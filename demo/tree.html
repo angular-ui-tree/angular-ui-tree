@@ -36,8 +36,8 @@
             </li>
           </ol>
         </script>
-        <div ui-tree>
-          <ol ui-tree-nodes="" ng-model="data" id="tree-root">
+        <div ui-tree id="tree-root">
+          <ol ui-tree-nodes="" ng-model="data">
             <li ng-repeat="node in data" ui-tree-node ng-include="'nodes_renderer.html'"></li>
           </ol>
         </div>

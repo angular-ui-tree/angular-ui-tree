@@ -14,12 +14,15 @@
         $scope.$treeScope = null;
         $scope.$type = 'uiTreeNodes';
 
+        $scope.nodrop = false;
+        $scope.maxDepth = 0;
+
         $scope.initSubNode = function(subNode) {
           $scope.$nodes.splice(subNode.index(), 0, subNode);
         };
 
         $scope.accept = function(sourceNode, destIndex) {
-          return $scope.$callbacks.accept(sourceNode, $scope, destIndex);
+          return $scope.$treeScope.$callbacks.accept(sourceNode, $scope, destIndex);
         };
 
         $scope.hasChild = function() {
@@ -44,22 +47,21 @@
           });
         };
 
-        var collapseOrExpand = function(scope, collapsed) {
-          for (var i = 0; i < scope.$nodes.length; i++) {
-            collapsed ? scope.$nodes[i].collapse() : scope.$nodes[i].expand();
-            var subScope = scope.$nodes[i].$childNodesScope;
-            if (subScope) {
-              collapseOrExpand(subScope, collapsed);
-            }
+
+        $scope.depth = function() {
+          if ($scope.$nodeScope) {
+            return $scope.$nodeScope.depth();
           }
+          return 0; // if it has no $nodeScope, it's root
         };
-
-        $scope.collapseAll = function() {
-          collapseOrExpand($scope, true);
-        };
-
-        $scope.expandAll = function() {
-          collapseOrExpand($scope, false);
+        
+        // check if depth limit has reached 
+        $scope.outOfDepth = function(sourceNode) {
+          var maxDepth = $scope.maxDepth || $scope.$treeScope.maxDepth;
+          if (maxDepth > 0) {
+            return $scope.depth() + sourceNode.maxSubDepth() + 1 > maxDepth;
+          }
+          return false;
         };
 
       }

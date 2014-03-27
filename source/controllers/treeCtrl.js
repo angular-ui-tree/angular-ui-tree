@@ -8,12 +8,13 @@
         this.scope = $scope;
 
         $scope.$element = $element;
-        $scope.$nodesScope = null;
+        $scope.$nodesScope = null; // root nodes
         $scope.$type = 'uiTree';
         $scope.$emptyElm = null;
         $scope.$callbacks = null;
 
         $scope.dragEnabled = true;
+        $scope.maxDepth = 0;
 
         // Check if it's a empty tree
         $scope.isEmpty = function() {
@@ -33,6 +34,24 @@
           } else {
             $scope.$emptyElm.remove();
           }
+        };
+
+        var collapseOrExpand = function(scope, collapsed) {
+          for (var i = 0; i < scope.$nodes.length; i++) {
+            collapsed ? scope.$nodes[i].collapse() : scope.$nodes[i].expand();
+            var subScope = scope.$nodes[i].$childNodesScope;
+            if (subScope) {
+              collapseOrExpand(subScope, collapsed);
+            }
+          }
+        };
+
+        $scope.collapseAll = function() {
+          collapseOrExpand($scope.$nodesScope, true);
+        };
+
+        $scope.expandAll = function() {
+          collapseOrExpand($scope.$nodesScope, false);
         };
 
       }

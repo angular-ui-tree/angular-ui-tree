@@ -255,12 +255,13 @@
         this.scope = $scope;
 
         $scope.$element = $element;
-        $scope.$nodesScope = null;
+        $scope.$nodesScope = null; // root nodes
         $scope.$type = 'uiTree';
         $scope.$emptyElm = null;
         $scope.$callbacks = null;
 
         $scope.dragEnabled = true;
+        $scope.maxDepth = 0;
 
         // Check if it's a empty tree
         $scope.isEmpty = function() {
@@ -280,6 +281,24 @@
           } else {
             $scope.$emptyElm.remove();
           }
+        };
+
+        var collapseOrExpand = function(scope, collapsed) {
+          for (var i = 0; i < scope.$nodes.length; i++) {
+            collapsed ? scope.$nodes[i].collapse() : scope.$nodes[i].expand();
+            var subScope = scope.$nodes[i].$childNodesScope;
+            if (subScope) {
+              collapseOrExpand(subScope, collapsed);
+            }
+          }
+        };
+
+        $scope.collapseAll = function() {
+          collapseOrExpand($scope.$nodesScope, true);
+        };
+
+        $scope.expandAll = function() {
+          collapseOrExpand($scope.$nodesScope, false);
         };
 
       }
@@ -302,12 +321,15 @@
         $scope.$treeScope = null;
         $scope.$type = 'uiTreeNodes';
 
+        $scope.nodrop = false;
+        $scope.maxDepth = 0;
+
         $scope.initSubNode = function(subNode) {
           $scope.$nodes.splice(subNode.index(), 0, subNode);
         };
 
         $scope.accept = function(sourceNode, destIndex) {
-          return $scope.$callbacks.accept(sourceNode, $scope, destIndex);
+          return $scope.$treeScope.$callbacks.accept(sourceNode, $scope, destIndex);
         };
 
         $scope.hasChild = function() {
@@ -332,22 +354,21 @@
           });
         };
 
-        var collapseOrExpand = function(scope, collapsed) {
-          for (var i = 0; i < scope.$nodes.length; i++) {
-            collapsed ? scope.$nodes[i].collapse() : scope.$nodes[i].expand();
-            var subScope = scope.$nodes[i].$childNodesScope;
-            if (subScope) {
-              collapseOrExpand(subScope, collapsed);
-            }
+
+        $scope.depth = function() {
+          if ($scope.$nodeScope) {
+            return $scope.$nodeScope.depth();
           }
+          return 0; // if it has no $nodeScope, it's root
         };
-
-        $scope.collapseAll = function() {
-          collapseOrExpand($scope, true);
-        };
-
-        $scope.expandAll = function() {
-          collapseOrExpand($scope, false);
+        
+        // check if depth limit has reached 
+        $scope.outOfDepth = function(sourceNode) {
+          var maxDepth = $scope.maxDepth || $scope.$treeScope.maxDepth;
+          if (maxDepth > 0) {
+            return $scope.depth() + sourceNode.maxSubDepth() + 1 > maxDepth;
+          }
+          return false;
         };
 
       }
@@ -454,6 +475,36 @@
         $scope.expand = function() {
           $scope.collapsed = false;
         };
+
+        $scope.depth = function() {
+          var parentNode = $scope.$parentNodeScope;
+          if (parentNode) {
+            return parentNode.depth() + 1;
+          }
+          return 1;
+        };
+
+        var subDepth = 0;
+        var countSubDepth = function(scope) {
+          var count = 0;
+          for (var i = 0; i < scope.$nodes.length; i++) {
+            var childNodes = scope.$nodes[i].$childNodesScope;
+            if (childNodes) {
+              count = 1;
+              countSubDepth(childNodes);
+            }
+          }
+          subDepth += count;
+        };
+
+        $scope.maxSubDepth = function() {
+          subDepth = 0;
+          if ($scope.$childNodesScope) {
+            countSubDepth($scope.$childNodesScope);
+          }
+          return subDepth;
+        };
+
       }
     ]);
 })();
@@ -507,19 +558,31 @@
             }
           }, true);
 
-          scope.$watch(function (){
+          scope.$watch(function () {
             return scope.$eval(attrs.dragEnabled);
-          }, function (newVal){
+          }, function (newVal) {
             if((typeof newVal) == "boolean") {
               scope.dragEnabled = newVal;
             }
           }, true);
 
+          scope.$watch(function() {
+            return scope.$eval(attrs.maxDepth);
+          }, function(newVal) {
+            if((typeof newVal) == "number") {
+              scope.maxDepth = newVal;
+            }
+          }, true);
+
           // check if the dest node can accept the dragging node
-          // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`.
+          // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes` 
+          // and the 'max-depth' attribute in `ui-tree` or `ui-tree-nodes`.
           // the method can be overrided
           callbacks.accept = function(sourceNodeScope, destNodesScope, destIndex) {
-            return (typeof destNodesScope.$element.attr('data-nodrop')) == "undefined";
+            if (destNodesScope.nodrop || destNodesScope.outOfDepth(sourceNodeScope)) {
+              return false;
+            }
+            return true;
           };
 
           //
@@ -582,9 +645,6 @@
           }
           else { // find the root nodes if there is no parent node and have a parent ui-tree
             treeCtrl.scope.$nodesScope = scope;
-            scope.$watch('$modelValue', function() {
-              //console.log("nodes", scope, treeCtrl.scope.$nodesScope);
-            }, true);
           }
           scope.$treeScope = treeCtrl.scope;
 
@@ -594,6 +654,23 @@
             };
           }
 
+          scope.$watch(function() {
+            return scope.$eval(attrs.maxDepth);
+          }, function(newVal) {
+            if((typeof newVal) == "number") {
+              scope.maxDepth = newVal;
+            }
+          }, true);
+
+          scope.$watch(function () {
+            return scope.$eval(attrs.nodrop);
+          }, function (newVal) {
+            if((typeof newVal) == "boolean") {
+              scope.nodrop = newVal;
+            }
+          }, true);
+
+          
         }
       };
     }
@@ -789,7 +866,7 @@
                     targetNode = targetNode.$nodeScope;
                   }
                   if (targetNode.$type != 'uiTreeNode'
-                    && !isEmpty) { // Check if it is a uiTreeNode or it's empty tree
+                    && !isEmpty) { // Check if it is a uiTreeNode or it's an empty tree
                     return;
                   }
                   

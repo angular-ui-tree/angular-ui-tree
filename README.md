@@ -129,13 +129,25 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
 Turn on dragging and dropping of nodes.
 - `true` (default): allow drag and drop
 - `false`: turn off drag and drop
-Example: turn on/off drag and drop.
+##### data-max-depth
+Number of levels a nodes can be nested (default 0). 0 means no limit.
+**Note**
+If you write your own [$callbacks.accept](#accept) method, you have to check `data-max-depth` by yourself.
+##### Example 
+- turn on/off drag and drop.
+- Limit depth to 5
 ```html
-<div ui-tree data-drag-enabled="tree.enabled">
+<div ui-tree data-drag-enabled="tree.enabled" data-max-depth="5">
     
 </div>
 ```
 
+#### Methods of scope
+##### collapseAll()
+Collapse all it's child nodes.
+
+##### expandAll()
+Expand all it's child nodes.
 
 #### Methods in $callbacks
 ##### <a name="accept"></a>accept
@@ -176,8 +188,13 @@ Same as [Parameters](#dragStartParams) of dragStart.
 `ui-tree-nodes` is the container of nodes. Every `ui-tree-node` should have a `ui-tree-nodes` as it's container, a `ui-tree-nodes` can have multiple child nodes.
 
 #### Attributes
-##### data-nodrop
-Turn off drop of nodes. It can be overwritten by [$callbacks.accept](#accept).
+##### data-nodrop<a name="nodes_attrs_nodrop"></a>
+Turn off drop of nodes.
+##### data-max-depth<a name="nodes_attrs_maxDepth"></a>
+Number of levels a nodes can be nested (default 0). 0 means no limit. It can override the `data-max-depth` in `ui-tree`. 
+**Note**
+If you write your own [$callbacks.accept](#accept) method, you have to check `data-nodrop` and `data-max-depth` by yourself.
+
 Example: turn off drop.
 ```html
 <ol ui-tree-nodes ng-model="nodes" data-nodrop>
@@ -200,13 +217,19 @@ The scope of node which current `ui-tree-nodes` belongs to.
 For example:
 
     ui-tree-nodes                       --> nodes 1
-      ui-tree-node                --> node 1.1
-        ui-tree-nodes           --> nodes 1.1
-          ui-tree-node        --> node 1.1.1
-          ui-tree-node        --> node 1.1.2
-      ui-tree-node                --> node 1.2
+      ui-tree-node                      --> node 1.1
+        ui-tree-nodes                   --> nodes 1.1
+          ui-tree-node                  --> node 1.1.1
+          ui-tree-node                  --> node 1.1.2
+      ui-tree-node                      --> node 1.2
 
 The property `$nodeScope of` `nodes 1.1` is `node 1.1`. The property `$nodes` of `nodes 1.1` is [`node 1.1.1`, `node 1.1.2`]
+
+##### maxDepth
+Number of levels a node can be nested. It bases on the attribute [data-max-depth](#nodes_attrs_maxDepth).
+
+##### nodrop
+Turn off drop on nodes. It bases on the attribute [data-nodrag](#nodes_attrs_nodrop).
 
 ##### $callbacks (type: Object)
 `$callbacks` is a very important property for `angular-ui-tree`. When some special events trigger, the functions in `$callbacks` are called. The Callbacks can be passed through the directive. 
@@ -227,11 +250,11 @@ myAppModule.controller('MyController', function($scope) {
 ```
 
 #### Methods of scope
-##### collapseAll()
-Collapse all it's child nodes.
+##### depth()
+Get the depth.
 
-##### expandAll()
-Expand all it's child nodes.
+##### outOfDepth(sourceNode)
+Check if depth limit has reached
 
 ### ui-tree-node
 A node of a tree. Every `ui-tree-node` should have a `ui-tree-nodes` as it's container.
@@ -293,6 +316,12 @@ Toggle current node.
 
 ##### remove()
 Remove current node.
+
+##### depth()
+Get the depth of the node.
+
+##### maxSubDepth()
+Get the max depth of all the child nodes. If there is no child nodes, return 0.
 
 ### ui-tree-handle
 Use the `ui-tree-handle` to specify an element used to drag the object. If you don't add a `ui-tree-handle` for a node, the entire node can be dragged.
