@@ -198,12 +198,19 @@
           $scope.initItem = function(element) {
             $scope.sortableItemElement = element;
             $scope.initSubItemElement(element);
-            $scope.items.splice($scope.$index, 0, $scope);
             element.attr('sortable-elment-type', 'item');
           };
 
+          // keep reference to data, as the $index may no longer be valid after a move
+          $scope.items.splice($scope.$index, 0, $scope);
+          $scope.data = $scope.sortableModelValue[$scope.$index];
+
+          $scope.index = function() {
+            return $scope.sortableModelValue.indexOf($scope.data);
+          };
+
           $scope.removeItem = function() {
-            var index = $scope.$index;
+            var index = $scope.index();
             if (index > -1) {
               var item = $scope.sortableModelValue.splice(index, 1)[0];
               $scope.items.splice(index, 1)[0];
@@ -235,7 +242,7 @@
           };
 
           $scope.itemData = function() {
-            return $scope.sortableModelValue[$scope.$index];
+            return $scope.data;
           };
 
           $scope.setSubSortableElement = function(subElement){
@@ -273,8 +280,9 @@
           };
 
           $scope.prev = function() {
-            if ($scope.$index > 0) {
-              return $scope.items[$scope.$index - 1];
+            var index = $scope.index();
+            if (index > 0) {
+              return $scope.items[index - 1];
             }
 
             return null;
@@ -467,9 +475,9 @@
 
               firstMoving = true;
               targetScope = null;
-              sourceIndex = scope.$index;
+              sourceIndex = scope.index();
               dragItem = {
-                index: scope.$index,
+                index: scope.index(),
                 items: copyArray(scope.items),
                 scope: scope,
                 reset: function(index, scope, dragItemScope) {
@@ -609,15 +617,15 @@
 
                   // decrease horizontal level
                   if (pos.distX < 0) {
-                    // we can't decrease a level if an item preceeds the current one
+                    // we can't decrease a level if an item succeeds the current one
                     var next = dragItem.next();
                     if (!next) {
                       targetItem = dragItem.scope.parentItemScope();
                       if (targetItem) {
-                        currentAccept = targetItem.accept(scope, targetItem, targetItem.$index + 1);
+                        currentAccept = targetItem.accept(scope, targetItem, targetItem.index() + 1);
                         if (currentAccept) {
                           targetItem.sortableItemElement.after(placeElm);
-                          destIndex = targetItem.$index + 1;
+                          destIndex = targetItem.index() + 1;
                           targetScope = targetItem;
                           dragItem.reset(destIndex, targetItem.parentScope(), scope);
                         }
@@ -654,11 +662,6 @@
                 targetItem = targetElm.scope();
                 targetElm = targetItem.sortableItemElement;
 
-                var targetItemData = null;
-                if (targetItem) {
-                  targetItemData = targetItem.itemData();
-                }
-
                 // move vertical
                 if (!pos.dirAx) {
                   sameParent = false;
@@ -683,7 +686,7 @@
                       dragItem.reset(destIndex, targetScope, scope);
                     } else if (currentAccept) {
                       targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
-                      destIndex = targetItem.$index;
+                      destIndex = targetItem.index();
                       targetScope = targetItem.parentScope();
                       dragItem.reset(destIndex, targetScope, scope);
                     }
@@ -698,7 +701,7 @@
                       dragItem.reset(destIndex, targetScope, scope);
                     } else if (currentAccept) {
                       targetElm.after(placeElm);
-                      destIndex = targetItem.$index + 1;
+                      destIndex = targetItem.index() + 1;
                       targetScope = targetItem.parentScope();
                       dragItem.reset(destIndex, targetScope, scope);
                     }
