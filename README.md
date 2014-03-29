@@ -76,10 +76,10 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
           </div>
         </li>
       </ol>
-    </li>      
-  </ol> 
+    </li>
+  </ol>
 </div>
-```  
+```
 **Developing Notes:**
 - Adding `ui-tree` to your root element of the tree.
 - Adding `ui-tree-nodes` to the elements which contain the nodes. `ng-model` is required, and it should be an array, so that the directive knows which model to bind and update.
@@ -138,7 +138,7 @@ If you write your own [$callbacks.accept](#accept) method, you have to check `da
 - Limit depth to 5
 ```html
 <div ui-tree data-drag-enabled="tree.enabled" data-max-depth="5">
-    
+
 </div>
 ```
 
@@ -162,6 +162,14 @@ Check if the current dragging node can be dropped in the `ui-tree-nodes`.
 If the nodes accept the current dragging node.
 - `true` Allow it to drop.
 - `false` Not allow.
+
+##### nodeMoved
+If a node moves it's position after dropped, the `nodeMoved` callback will be called.
+
+**Parameters:**
+- `sourceNodeScope`: The scope of source node which is dragged.
+- `destNodesScope`: The scope of `ui-tree-nodes` which you just dropped in.
+- `destIndex`: The position you dropped in.
 
 ##### <a name="dragStart"></a>dragStart
 The `dragStart` function is called when the user starts to drag the node.
@@ -191,15 +199,15 @@ Same as [Parameters](#dragStartParams) of dragStart.
 ##### data-nodrop<a name="nodes_attrs_nodrop"></a>
 Turn off drop of nodes.
 ##### data-max-depth<a name="nodes_attrs_maxDepth"></a>
-Number of levels a nodes can be nested (default 0). 0 means no limit. It can override the `data-max-depth` in `ui-tree`. 
+Number of levels a nodes can be nested (default 0). 0 means no limit. It can override the `data-max-depth` in `ui-tree`.
 **Note**
 If you write your own [$callbacks.accept](#accept) method, you have to check `data-nodrop` and `data-max-depth` by yourself.
 
 Example: turn off drop.
 ```html
 <ol ui-tree-nodes ng-model="nodes" data-nodrop>
-  <li ng-repeat="node in nodes" ui-tree-node>{{node.title}}</li>      
-</ol> 
+  <li ng-repeat="node in nodes" ui-tree-node>{{node.title}}</li>
+</ol>
 ```
 
 #### Properties of scope
@@ -232,8 +240,8 @@ Number of levels a node can be nested. It bases on the attribute [data-max-depth
 Turn off drop on nodes. It bases on the attribute [data-nodrag](#nodes_attrs_nodrop).
 
 ##### $callbacks (type: Object)
-`$callbacks` is a very important property for `angular-ui-tree`. When some special events trigger, the functions in `$callbacks` are called. The Callbacks can be passed through the directive. 
-Example: 
+`$callbacks` is a very important property for `angular-ui-tree`. When some special events trigger, the functions in `$callbacks` are called. The callbacks can be passed through the directive.
+Example:
 ```js
 myAppModule.controller('MyController', function($scope) {
   $scope.treeNodesOptions = {
@@ -245,8 +253,8 @@ myAppModule.controller('MyController', function($scope) {
 ```
 ```html
 <ol ui-tree-nodes="treeNodesOptions" ng-model="nodes">
-  <li ng-repeat="node in nodes" ui-tree-node>{{node.title}}</li>      
-</ol> 
+  <li ng-repeat="node in nodes" ui-tree-node>{{node.title}}</li>
+</ol>
 ```
 
 #### Methods of scope
@@ -255,6 +263,12 @@ Get the depth.
 
 ##### outOfDepth(sourceNode)
 Check if depth limit has reached
+
+##### isParent(nodeScope)
+Check if the nodes is the parent of the target node.
+**Parameters:**
+- `nodeScope`: The target node which is used to check with the current nodes.
+
 
 ### ui-tree-node
 A node of a tree. Every `ui-tree-node` should have a `ui-tree-nodes` as it's container.
@@ -323,6 +337,17 @@ Get the depth of the node.
 ##### maxSubDepth()
 Get the max depth of all the child nodes. If there is no child nodes, return 0.
 
+##### isSibling(targetNodeScope)
+Check if the current node is sibling with the target node.
+**Parameters:**
+- `targetNodeScope`: The target node which is used to check with the current node.
+
+##### isChild(targetNodeScope)
+Check if the current node is a child of the target node.
+**Parameters:**
+- `targetNodeScope`: The target node which is used to check with the current node.
+
+
 ### ui-tree-handle
 Use the `ui-tree-handle` to specify an element used to drag the object. If you don't add a `ui-tree-handle` for a node, the entire node can be dragged.
 
@@ -347,7 +372,7 @@ Run the commands below in the project root directory.
 #####1. Install Grunt and Bower
 
     $ sudo npm install -g grunt-cli bower
-    
+
 #####2. Install project dependencies
 
     $ npm install

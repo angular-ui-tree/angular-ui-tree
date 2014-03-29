@@ -190,7 +190,7 @@
                     && !isEmpty) { // Check if it is a uiTreeNode or it's an empty tree
                     return;
                   }
-                  
+
                   // if placeholder move from empty tree, reset it.
                   if (treeScope && placeElm.parent()[0] != treeScope.$element[0]) {
                     treeScope.resetEmptyElement();
@@ -207,7 +207,7 @@
                     targetElm = targetNode.$element; // Get the element of ui-tree-node
                     var targetOffset = $uiTreeHelper.offset(targetElm);
                     targetBefore = eventObj.pageY < (targetOffset.top + $uiTreeHelper.height(targetElm) / 2);
-          
+
                     if (targetNode.$parentNodesScope.accept(scope, targetNode.index())) {
                       if (targetBefore) {
                         targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
@@ -222,7 +222,7 @@
                       dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), targetNode.childNodesCount());
                     }
                   }
-                  
+
                 }
 
                 scope.$apply(function() {
@@ -235,22 +235,22 @@
               e.preventDefault();
 
               if (dragElm) {
-                // roll back elements changed
-                hiddenPlaceElm.replaceWith(scope.$element);
-                placeElm.remove();
-
-                dragElm.remove();
-                dragElm = null;
-
-                if (scope.$$apply) {
-                  dragInfo.apply();
-                } else {
-                  bindDrag();
-                }
-                scope.$$apply = false;
-                dragInfo = null;
-
                 scope.$apply(function() {
+                  // roll back elements changed
+                  hiddenPlaceElm.replaceWith(scope.$element);
+                  placeElm.remove();
+
+                  dragElm.remove();
+                  dragElm = null;
+
+                  if (scope.$$apply) {
+                    dragInfo.apply(scope.$callbacks);
+                  } else {
+                    bindDrag();
+                  }
+                  scope.$$apply = false;
+                  dragInfo = null;
+
                   scope.$callbacks.dragStop(scope, elements, pos);
                 });
               }

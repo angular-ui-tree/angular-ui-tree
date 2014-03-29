@@ -47,7 +47,7 @@
               index: node.index(),
               siblings: node.$parentNodesScope.$nodes.slice(0),
               parent: node.$parentNodesScope,
-              
+
               moveTo: function(parent, siblings, index) { // Move the node to a new position
                 this.parent = parent;
                 this.siblings = siblings.slice(0);
@@ -85,9 +85,12 @@
                         this.source.index() != this.index;
               },
 
-              apply: function() {
+              apply: function(callbacks) {
                 this.source.remove();
                 this.parent.insertNode(this.index, this.source);
+                if (callbacks) {
+                  callbacks.nodeMoved(this.source, this.parent, this.index);
+                }
               },
             };
           },

@@ -18,7 +18,7 @@
           if (config.treeClass) {
             element.addClass(config.treeClass);
           }
-          
+
           scope.$emptyElm = angular.element($window.document.createElement('div'));
           if (config.emptyTreeClass) {
             scope.$emptyElm.addClass(config.emptyTreeClass);
@@ -47,7 +47,7 @@
           }, true);
 
           // check if the dest node can accept the dragging node
-          // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes` 
+          // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`
           // and the 'max-depth' attribute in `ui-tree` or `ui-tree-nodes`.
           // the method can be overrided
           callbacks.accept = function(sourceNodeScope, destNodesScope, destIndex) {
@@ -55,6 +55,10 @@
               return false;
             }
             return true;
+          };
+
+          callbacks.nodeMoved = function(sourceNodeScope, destNodesScope, destIndex) {
+
           };
 
           //

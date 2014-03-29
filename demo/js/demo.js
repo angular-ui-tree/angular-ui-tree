@@ -40,7 +40,6 @@
     $scope.selectedItem = {};
 
     $scope.options = {
-
     };
 
     $scope.remove = function(scope) {
@@ -59,6 +58,6 @@
         items: []
       });
     };
-  })
+  });
 
 })();

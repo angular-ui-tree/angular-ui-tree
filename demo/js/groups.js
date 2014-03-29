@@ -53,6 +53,13 @@
         var data = sourceNode.$modelValue;
         var destType = destNodes.$element.attr('data-type');
         return (data.type == destType); // only accept the same type
+      },
+      nodeMoved: function(sourceNode, destNodes, destIndex) {
+        if (destNodes.isParent(sourceNode)) {
+          console.log("same parent");
+        } else {
+          console.log("parent changed");
+        }
       }
     };
 

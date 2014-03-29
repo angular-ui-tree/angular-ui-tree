@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  
+
   angular.module('ui.tree')
 
     .controller('TreeNodesController', ['$scope', '$element', 'treeConfig',
@@ -10,7 +10,7 @@
         $scope.$element = $element;
         $scope.$modelValue = null;
         $scope.$nodes = []; // sub nodes
-        $scope.$nodeScope = null; // the scope of node which the nodes belongs to 
+        $scope.$nodeScope = null; // the scope of node which the nodes belongs to
         $scope.$treeScope = null;
         $scope.$type = 'uiTreeNodes';
 
@@ -25,6 +25,10 @@
           return $scope.$treeScope.$callbacks.accept(sourceNode, $scope, destIndex);
         };
 
+        $scope.isParent = function(node) {
+          return node.$parentNodesScope == $scope;
+        };
+
         $scope.hasChild = function() {
           return $scope.$nodes.length > 0;
         };
@@ -32,19 +36,15 @@
         $scope.removeNode = function(node) {
           var index = $scope.$nodes.indexOf(node);
           if (index > -1) {
-            $scope.$apply(function () {
-              $scope.$modelValue.splice(index, 1)[0];
-              $scope.$nodes.splice(index, 1)[0];
-            });
+            $scope.$modelValue.splice(index, 1)[0];
+            $scope.$nodes.splice(index, 1)[0];
             return node;
           }
           return null;
         };
 
         $scope.insertNode = function(index, node) {
-          $scope.$apply(function () {
-            $scope.$modelValue.splice(index, 0, node.$modelValue);
-          });
+          $scope.$modelValue.splice(index, 0, node.$modelValue);
         };
 
 
@@ -54,8 +54,8 @@
           }
           return 0; // if it has no $nodeScope, it's root
         };
-        
-        // check if depth limit has reached 
+
+        // check if depth limit has reached
         $scope.outOfDepth = function(sourceNode) {
           var maxDepth = $scope.maxDepth || $scope.$treeScope.maxDepth;
           if (maxDepth > 0) {

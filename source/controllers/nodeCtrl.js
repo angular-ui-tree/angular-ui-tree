@@ -31,7 +31,7 @@
           treeNodesCtrl.scope.initSubNode($scope); // init sub nodes
 
           $element.on('$destroy', function() {
-            
+
           });
         };
 
@@ -44,12 +44,12 @@
         };
 
         $scope.isSibling = function(targetNode) {
-          return $scope.$parentNodeScope == targetNode.$parentNodeScope;
+          return $scope.$parentNodesScope == targetNode.$parentNodesScope;
         };
 
-        $scope.isChild = function(node) {
+        $scope.isChild = function(targetNode) {
           var nodes = $scope.childNodes();
-          return nodes.indexOf(node) > -1;
+          return nodes && nodes.indexOf(targetNode) > -1;
         };
 
         $scope.prev = function() {
