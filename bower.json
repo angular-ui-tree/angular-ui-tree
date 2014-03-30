@@ -27,7 +27,9 @@
     "bootstrap": "~3.1.0",
     "jquery": ">=1.10.x",
     "jasmine-jquery": "~1.0.0",
-    "angular-mocks": "~1.2.11"
+    "angular-mocks": "~1.2.11",
+    "firebase": "~1.0.11",
+    "angularfire": "~0.7.1"
   },
   "ignore": [
     "node_modules",

@@ -18,7 +18,10 @@
         $scope.maxDepth = 0;
 
         $scope.initSubNode = function(subNode) {
-          $scope.$nodes.splice(subNode.index(), 0, subNode);
+          var index = $scope.$nodes.indexOf(subNode);
+          if (index == -1) {
+            $scope.$nodes.splice(subNode.index(), 0, subNode);
+          }
         };
 
         $scope.accept = function(sourceNode, destIndex) {
@@ -45,6 +48,9 @@
 
         $scope.insertNode = function(index, node) {
           $scope.$modelValue.splice(index, 0, node.$modelValue);
+          if ($scope.$nodes.indexOf(node) == -1) {
+            $scope.$nodes.splice(index, 0, node);
+          }
         };
 
 

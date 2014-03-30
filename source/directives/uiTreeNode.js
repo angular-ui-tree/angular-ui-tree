@@ -156,8 +156,7 @@
                 var decrease = ($uiTreeHelper.offset(dragElm).left - $uiTreeHelper.offset(placeElm).left) >= config.threshold;
                 var targetX = eventObj.pageX - $window.document.body.scrollLeft;
                 var targetY = eventObj.pageY - (window.pageYOffset || $window.document.documentElement.scrollTop);
-                //var dirUp = $uiTreeHelper.offset(placeElm).top > $uiTreeHelper.offset(dragElm).top; // If the movement direction is up?
-                
+
                 // Select the drag target. Because IE does not support CSS 'pointer-events: none', it will always
                 // pick the drag element itself as the target. To prevent this, we hide the drag element while
                 // selecting the target.

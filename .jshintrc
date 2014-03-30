@@ -20,6 +20,7 @@
     "indent": 2,
     "globals": {
         "jQuery": true,
+        "Firebase": true,
         "$": true,
         "_": true,
         "angular": true,
