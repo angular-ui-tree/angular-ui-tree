@@ -57,20 +57,20 @@
             return true;
           };
 
-          callbacks.nodeMoved = function(sourceNodeScope, destNodesScope, destIndex) {
+          callbacks.dropped = function(event) {
 
           };
 
           //
-          callbacks.dragStart = function(sourceNodeScope, elements, pos) {
+          callbacks.dragStart = function(event) {
 
           };
 
-          callbacks.dragMove = function(sourceNodeScope, elements, pos) {
+          callbacks.dragMove = function(event) {
 
           };
 
-          callbacks.dragStop = function(sourceNodeScope, elements, pos) {
+          callbacks.dragStop = function(event) {
 
           };
 

@@ -119,6 +119,9 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
         ui-tree-node                    --> Another node
           ui-tree-handle                --> Handle
 
+## Migrate From v1.x to v2.0
+[Migrate From v1.x to v2.0](https://github.com/JimLiu/angular-ui-tree/wiki/Migrate-From-v1.x-to-v2.0)
+
 ## API
 
 ### ui-tree
@@ -149,8 +152,28 @@ Collapse all it's child nodes.
 ##### expandAll()
 Expand all it's child nodes.
 
+##### $callbacks (type: Object)
+`$callbacks` is a very important property for `angular-ui-tree`. When some special events trigger, the functions in `$callbacks` are called. The callbacks can be passed through the directive.
+Example:
+```js
+myAppModule.controller('MyController', function($scope) {
+  $scope.treeOptions = {
+    accept: function(sourceNodeScope, destNodesScope, destIndex) {
+      return true;
+    },
+  };
+});
+```
+```html
+<div ui-tree="treeOptions">
+  <ol ui-tree-nodes ng-model="nodes">
+    <li ng-repeat="node in nodes" ui-tree-node>{{node.title}}</li>
+  </ol>
+</div>
+```
+
 #### Methods in $callbacks
-##### <a name="accept"></a>accept
+##### <a name="accept"></a>accept(sourceNodeScope, destNodesScope, destIndex)
 Check if the current dragging node can be dropped in the `ui-tree-nodes`.
 
 **Parameters:**
@@ -163,34 +186,39 @@ If the nodes accept the current dragging node.
 - `true` Allow it to drop.
 - `false` Not allow.
 
-##### nodeMoved
-If a node moves it's position after dropped, the `nodeMoved` callback will be called.
+##### <a name="dropped"></a>dropped(event)
+If a node moves it's position after dropped, the `nodeDropped` callback will be called.
 
 **Parameters:**
-- `sourceNodeScope`: The scope of source node which is dragged.
-- `destNodesScope`: The scope of `ui-tree-nodes` which you just dropped in.
-- `destIndex`: The position you dropped in.
-
-##### <a name="dragStart"></a>dragStart
-The `dragStart` function is called when the user starts to drag the node.
-**<a name="dragStartParams"></a>Parameters:**
-- `sourceNodeScope`: The current dragging node.
-- `elements`: The dragging relative elements.
+- <a name="eventParam"></a>`event`: Event arguments, it's an object.
+  * `source`: Source object
+    + `nodeScope`: The scope of source node which was dragged.
+    + `nodesScope`: The scope of the parent nodes of source node  when it began to drag.
+    + `index`: The position when it began to drag.
+  * `dest`: Destination object
+    + `nodesScope`: The scope of `ui-tree-nodes` which you just dropped in.
+    + `index`: The position you dropped in.
+  * `elements`: The dragging relative elements.
     + `placeholder`: The placeholder element.
     + `drag`: The dragging element.
-- `pos`: Position object.
+  * `pos`: Position object.
 
-##### dragMove
+##### <a name="dragStart"></a>dragStart(event)
+The `dragStart` function is called when the user starts to drag the node.
+**Parameters:**
+Same as [Parameters](#eventParam) of dropped.
+
+##### dragMove(event)
 The `dragMove` function is called when the user moves the node.
 
 **Parameters:**
-Same as [Parameters](#dragStartParams) of dragStart.
+Same as [Parameters](#eventParam) of dropped.
 
-##### dragStop
+##### dragStop(event)
 The `dragStop` function is called when the user stop dragging the node.
 
 **Parameters:**
-Same as [Parameters](#dragStartParams) of dragStart.
+Same as [Parameters](#eventParam) of dropped.
 
 ### ui-tree-nodes
 `ui-tree-nodes` is the container of nodes. Every `ui-tree-node` should have a `ui-tree-nodes` as it's container, a `ui-tree-nodes` can have multiple child nodes.
@@ -238,24 +266,6 @@ Number of levels a node can be nested. It bases on the attribute [data-max-depth
 
 ##### nodrop
 Turn off drop on nodes. It bases on the attribute [data-nodrag](#nodes_attrs_nodrop).
-
-##### $callbacks (type: Object)
-`$callbacks` is a very important property for `angular-ui-tree`. When some special events trigger, the functions in `$callbacks` are called. The callbacks can be passed through the directive.
-Example:
-```js
-myAppModule.controller('MyController', function($scope) {
-  $scope.treeNodesOptions = {
-    accept: function(sourceNodeScope, destNodesScope, destIndex) {
-      return true;
-    },
-  };
-});
-```
-```html
-<ol ui-tree-nodes="treeNodesOptions" ng-model="nodes">
-  <li ng-repeat="node in nodes" ui-tree-node>{{node.title}}</li>
-</ol>
-```
 
 #### Methods of scope
 ##### depth()

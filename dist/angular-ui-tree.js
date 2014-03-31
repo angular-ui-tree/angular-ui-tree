@@ -68,6 +68,11 @@
           dragInfo: function(node) {
             return {
               source: node,
+              sourceInfo: {
+                nodeScope: node,
+                index: node.index(),
+                nodesScope: node.$parentNodesScope,
+              },
               index: node.index(),
               siblings: node.$parentNodesScope.$nodes.slice(0),
               parent: node.$parentNodesScope,
@@ -109,16 +114,21 @@
                         this.source.index() != this.index;
               },
 
-              apply: function(scope) {
-                var self = this;
-                var p = this.source.$parentNodesScope;
+              eventArgs: function(elements, pos) {
+                return {
+                  source: this.sourceInfo,
+                  dest: {
+                    index: this.index,
+                    nodesScope: this.parent,
+                  },
+                  elements: elements,
+                  pos: pos,
+                };
+              },
+
+              apply: function() {
                 this.source.remove();
                 this.parent.insertNode(this.index, this.source);
-                if (scope.$callbacks) {
-                  scope.$apply(function() {
-                    scope.$callbacks.nodeMoved(self.source, self.parent, self.index);
-                  });
-                }
               },
             };
           },
@@ -595,20 +605,20 @@
             return true;
           };
 
-          callbacks.nodeMoved = function(sourceNodeScope, destNodesScope, destIndex) {
+          callbacks.dropped = function(event) {
 
           };
 
           //
-          callbacks.dragStart = function(sourceNodeScope, elements, pos) {
+          callbacks.dragStart = function(event) {
 
           };
 
-          callbacks.dragMove = function(sourceNodeScope, elements, pos) {
+          callbacks.dragMove = function(event) {
 
           };
 
-          callbacks.dragStop = function(sourceNodeScope, elements, pos) {
+          callbacks.dragStop = function(event) {
 
           };
 
@@ -783,7 +793,7 @@
                 dragging: dragElm
               };
               scope.$apply(function() {
-                scope.$callbacks.dragStart(scope, elements, pos);
+                scope.$callbacks.dragStart(dragInfo.eventArgs(elements, pos));
               });
 
               if (hasTouch) { // Mobile
@@ -799,7 +809,7 @@
 
             var dragMove = function(e) {
               var eventObj = $uiTreeHelper.eventObj(e);
-              var prev, currentAccept, childAccept;
+              var prev;
               if (dragElm) {
                 e.preventDefault();
 
@@ -916,7 +926,7 @@
                 }
 
                 scope.$apply(function() {
-                  scope.$callbacks.dragMove(scope, elements, pos);
+                  scope.$callbacks.dragMove(dragInfo.eventArgs(elements, pos));
                 });
               }
             };
@@ -932,12 +942,15 @@
                 dragElm.remove();
                 dragElm = null;
                 if (scope.$$apply) {
-                  dragInfo.apply(scope);
+                  dragInfo.apply();
+                  scope.$apply(function() {
+                    scope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
+                  });
                 } else {
                   bindDrag();
                 }
                 scope.$apply(function() {
-                  scope.$callbacks.dragStop(scope, elements, pos);
+                  scope.$callbacks.dragStop(dragInfo.eventArgs(elements, pos));
                 });
                 scope.$$apply = false;
                 dragInfo = null;

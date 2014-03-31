@@ -44,6 +44,11 @@
           dragInfo: function(node) {
             return {
               source: node,
+              sourceInfo: {
+                nodeScope: node,
+                index: node.index(),
+                nodesScope: node.$parentNodesScope,
+              },
               index: node.index(),
               siblings: node.$parentNodesScope.$nodes.slice(0),
               parent: node.$parentNodesScope,
@@ -85,16 +90,21 @@
                         this.source.index() != this.index;
               },
 
-              apply: function(scope) {
-                var self = this;
-                var p = this.source.$parentNodesScope;
+              eventArgs: function(elements, pos) {
+                return {
+                  source: this.sourceInfo,
+                  dest: {
+                    index: this.index,
+                    nodesScope: this.parent,
+                  },
+                  elements: elements,
+                  pos: pos,
+                };
+              },
+
+              apply: function() {
                 this.source.remove();
                 this.parent.insertNode(this.index, this.source);
-                if (scope.$callbacks) {
-                  scope.$apply(function() {
-                    scope.$callbacks.nodeMoved(self.source, self.parent, self.index);
-                  });
-                }
               },
             };
           },

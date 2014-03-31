@@ -92,7 +92,7 @@
                 dragging: dragElm
               };
               scope.$apply(function() {
-                scope.$callbacks.dragStart(scope, elements, pos);
+                scope.$callbacks.dragStart(dragInfo.eventArgs(elements, pos));
               });
 
               if (hasTouch) { // Mobile
@@ -108,7 +108,7 @@
 
             var dragMove = function(e) {
               var eventObj = $uiTreeHelper.eventObj(e);
-              var prev, currentAccept, childAccept;
+              var prev;
               if (dragElm) {
                 e.preventDefault();
 
@@ -225,7 +225,7 @@
                 }
 
                 scope.$apply(function() {
-                  scope.$callbacks.dragMove(scope, elements, pos);
+                  scope.$callbacks.dragMove(dragInfo.eventArgs(elements, pos));
                 });
               }
             };
@@ -241,12 +241,15 @@
                 dragElm.remove();
                 dragElm = null;
                 if (scope.$$apply) {
-                  dragInfo.apply(scope);
+                  dragInfo.apply();
+                  scope.$apply(function() {
+                    scope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
+                  });
                 } else {
                   bindDrag();
                 }
                 scope.$apply(function() {
-                  scope.$callbacks.dragStop(scope, elements, pos);
+                  scope.$callbacks.dragStop(dragInfo.eventArgs(elements, pos));
                 });
                 scope.$$apply = false;
                 dragInfo = null;

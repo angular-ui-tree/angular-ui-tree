@@ -117,7 +117,10 @@
         var destType = destNodes.$element.attr('data-type');
         return (data.type == destType); // only accept the same type
       },
-      nodeMoved: function(sourceNode, destNodes, destIndex) {
+      dropped: function(event) {
+        console.log(event);
+        var sourceNode = event.source.nodeScope;
+        var destNodes = event.dest.nodesScope;
         // update changes to server
         if (destNodes.isParent(sourceNode)
           && destNodes.$element.attr('data-type') == 'category') { // If it moves in the same group, then only update group
