@@ -81,6 +81,7 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
 </div>
 ```
 **Developing Notes:**
+<<<<<<< HEAD
 - Adding `ui-tree` to your root element of the tree.
 - Adding `ui-tree-nodes` to the elements which contain the nodes. `ng-model` is required, and it should be an array, so that the directive knows which model to bind and update.
 - Adding `ui-tree-node` to your node element, it always follows the `ng-repeat` attribute.
@@ -121,6 +122,14 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
 
 ## Migrate From v1.x to v2.0
 [Migrate From v1.x to v2.0](https://github.com/JimLiu/angular-ui-tree/wiki/Migrate-From-v1.x-to-v2.0)
+=======
+- Using `ng-model` to bind the list data with element. It should be an array and it's required.
+- Adding `ui-nested-sortable` to your root element.
+- Adding `ui-nested-sortable-item` to your item element, it always follow the `ng-repeat` attribute.
+- Adding `ui-nested-sortable-handle` to mark which element do you want to handle the drage action
+- All `ui-nested-sortable`, `ng-model`, `ui-nested-sortable-item` and `ui-nested-sortable-handle` are necessary. And they can be nested.
+- If you add a `data-nodrag` attribute to an element, the element won't response for the drag action.
+>>>>>>> FETCH_HEAD
 
 ## API
 
