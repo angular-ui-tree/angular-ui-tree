@@ -85,11 +85,15 @@
                         this.source.index() != this.index;
               },
 
-              apply: function(callbacks) {
+              apply: function(scope) {
+                var self = this;
+                var p = this.source.$parentNodesScope;
                 this.source.remove();
                 this.parent.insertNode(this.index, this.source);
-                if (callbacks) {
-                  callbacks.nodeMoved(this.source, this.parent, this.index);
+                if (scope.$callbacks) {
+                  scope.$apply(function() {
+                    scope.$callbacks.nodeMoved(self.source, self.parent, self.index);
+                  });
                 }
               },
             };

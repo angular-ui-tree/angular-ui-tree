@@ -50,8 +50,6 @@
               scope.nodrop = newVal;
             }
           }, true);
-
-          
         }
       };
     }

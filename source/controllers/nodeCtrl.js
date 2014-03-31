@@ -31,7 +31,6 @@
           treeNodesCtrl.scope.initSubNode($scope); // init sub nodes
 
           $element.on('$destroy', function() {
-
           });
         };
 

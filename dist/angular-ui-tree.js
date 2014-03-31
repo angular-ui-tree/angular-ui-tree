@@ -109,11 +109,15 @@
                         this.source.index() != this.index;
               },
 
-              apply: function(callbacks) {
+              apply: function(scope) {
+                var self = this;
+                var p = this.source.$parentNodesScope;
                 this.source.remove();
                 this.parent.insertNode(this.index, this.source);
-                if (callbacks) {
-                  callbacks.nodeMoved(this.source, this.parent, this.index);
+                if (scope.$callbacks) {
+                  scope.$apply(function() {
+                    scope.$callbacks.nodeMoved(self.source, self.parent, self.index);
+                  });
                 }
               },
             };
@@ -328,10 +332,7 @@
         $scope.maxDepth = 0;
 
         $scope.initSubNode = function(subNode) {
-          var index = $scope.$nodes.indexOf(subNode);
-          if (index == -1) {
-            $scope.$nodes.splice(subNode.index(), 0, subNode);
-          }
+          $scope.$nodes.splice(subNode.index(), 0, subNode);
         };
 
         $scope.accept = function(sourceNode, destIndex) {
@@ -349,18 +350,19 @@
         $scope.removeNode = function(node) {
           var index = $scope.$nodes.indexOf(node);
           if (index > -1) {
-            $scope.$modelValue.splice(index, 1)[0];
-            $scope.$nodes.splice(index, 1)[0];
+            $scope.$apply(function() {
+              $scope.$modelValue.splice(index, 1)[0];
+              $scope.$nodes.splice(index, 1)[0];
+            });
             return node;
           }
           return null;
         };
 
         $scope.insertNode = function(index, node) {
-          $scope.$modelValue.splice(index, 0, node.$modelValue);
-          if ($scope.$nodes.indexOf(node) == -1) {
-            $scope.$nodes.splice(index, 0, node);
-          }
+          $scope.$apply(function() {
+            $scope.$modelValue.splice(index, 0, node.$modelValue);
+          });
         };
 
 
@@ -416,7 +418,6 @@
           treeNodesCtrl.scope.initSubNode($scope); // init sub nodes
 
           $element.on('$destroy', function() {
-
           });
         };
 
@@ -682,8 +683,6 @@
               scope.nodrop = newVal;
             }
           }, true);
-
-          
         }
       };
     }
@@ -926,24 +925,23 @@
               e.preventDefault();
 
               if (dragElm) {
+                // roll back elements changed
+                hiddenPlaceElm.replaceWith(scope.$element);
+                placeElm.remove();
+
+                dragElm.remove();
+                dragElm = null;
+                if (scope.$$apply) {
+                  dragInfo.apply(scope);
+                } else {
+                  bindDrag();
+                }
                 scope.$apply(function() {
-                  // roll back elements changed
-                  hiddenPlaceElm.replaceWith(scope.$element);
-                  placeElm.remove();
-
-                  dragElm.remove();
-                  dragElm = null;
-
-                  if (scope.$$apply) {
-                    dragInfo.apply(scope.$callbacks);
-                  } else {
-                    bindDrag();
-                  }
-                  scope.$$apply = false;
-                  dragInfo = null;
-
                   scope.$callbacks.dragStop(scope, elements, pos);
                 });
+                scope.$$apply = false;
+                dragInfo = null;
+
               }
 
 

@@ -234,24 +234,23 @@
               e.preventDefault();
 
               if (dragElm) {
+                // roll back elements changed
+                hiddenPlaceElm.replaceWith(scope.$element);
+                placeElm.remove();
+
+                dragElm.remove();
+                dragElm = null;
+                if (scope.$$apply) {
+                  dragInfo.apply(scope);
+                } else {
+                  bindDrag();
+                }
                 scope.$apply(function() {
-                  // roll back elements changed
-                  hiddenPlaceElm.replaceWith(scope.$element);
-                  placeElm.remove();
-
-                  dragElm.remove();
-                  dragElm = null;
-
-                  if (scope.$$apply) {
-                    dragInfo.apply(scope.$callbacks);
-                  } else {
-                    bindDrag();
-                  }
-                  scope.$$apply = false;
-                  dragInfo = null;
-
                   scope.$callbacks.dragStop(scope, elements, pos);
                 });
+                scope.$$apply = false;
+                dragInfo = null;
+
               }
 
 

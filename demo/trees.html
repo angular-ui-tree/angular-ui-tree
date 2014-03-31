@@ -22,10 +22,10 @@
       </div>
     </div>
     <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
-      <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">
+      <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer1.html'">
       </li>
     </ol>
-  </script>        
+  </script>
   <script type="text/ng-template" id="nodes_renderer2.html">
     <div class="tree-node">
       <div class="pull-left tree-handle" ui-tree-handle>
@@ -39,7 +39,7 @@
       </div>
     </div>
     <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
-      <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">
+      <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer2.html'">
       </li>
     </ol>
   </script>  

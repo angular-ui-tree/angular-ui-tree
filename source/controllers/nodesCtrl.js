@@ -18,10 +18,7 @@
         $scope.maxDepth = 0;
 
         $scope.initSubNode = function(subNode) {
-          var index = $scope.$nodes.indexOf(subNode);
-          if (index == -1) {
-            $scope.$nodes.splice(subNode.index(), 0, subNode);
-          }
+          $scope.$nodes.splice(subNode.index(), 0, subNode);
         };
 
         $scope.accept = function(sourceNode, destIndex) {
@@ -39,18 +36,19 @@
         $scope.removeNode = function(node) {
           var index = $scope.$nodes.indexOf(node);
           if (index > -1) {
-            $scope.$modelValue.splice(index, 1)[0];
-            $scope.$nodes.splice(index, 1)[0];
+            $scope.$apply(function() {
+              $scope.$modelValue.splice(index, 1)[0];
+              $scope.$nodes.splice(index, 1)[0];
+            });
             return node;
           }
           return null;
         };
 
         $scope.insertNode = function(index, node) {
-          $scope.$modelValue.splice(index, 0, node.$modelValue);
-          if ($scope.$nodes.indexOf(node) == -1) {
-            $scope.$nodes.splice(index, 0, node);
-          }
+          $scope.$apply(function() {
+            $scope.$modelValue.splice(index, 0, node.$modelValue);
+          });
         };
 
 
