@@ -1,9 +1,9 @@
-Angular UI NestedSortable
+Angular UI Tree
 ======================
 
-[![Build Status](https://travis-ci.org/JimLiu/Angular-NestedSortable.png?branch=master)](https://travis-ci.org/JimLiu/Angular-NestedSortable)
+[![Build Status](https://travis-ci.org/JimLiu/angular-ui-tree.png?branch=master)](https://travis-ci.org/JimLiu/angular-ui-tree)
 
-Angular NestedSortable is an AngularJS UI component that can sort nested lists, provides drag & drop support and doesn't depend on jQuery.
+Angular UI Tree is an AngularJS UI component that can sort nested lists, provides drag & drop support and doesn't depend on jQuery.
 
 ## Features
 
@@ -13,7 +13,7 @@ Angular NestedSortable is an AngularJS UI component that can sort nested lists, 
 
 ## Supported browsers
 
-The Angular NestedSortable is tested with the following browsers:
+The Angular UI Tree is tested with the following browsers:
 
 - Chrome (stable)
 - Firefox
@@ -26,7 +26,7 @@ For IE8 support, make sure you do the following:
 - use [jQuery 1.x](http://jquery.com/browser-support/)
 
 ## Demo
-Watch the NestedSortable component in action on the [demo page](http://jimliu.github.io/angular-ui-tree/).
+Watch the Tree component in action on the [demo page](http://jimliu.github.io/angular-ui-tree/).
 
 ## Requirements
 
@@ -35,169 +35,335 @@ Watch the NestedSortable component in action on the [demo page](http://jimliu.gi
 ## Usage
 
 ### Download
-- Using [bower](http://bower.io/) to install it. `bower install Angular-NestedSortable`
-- [Download](https://github.com/JimLiu/Angular-NestedSortable/archive/master.zip) from github.
+- Using [bower](http://bower.io/) to install it. `bower install angular-ui-tree`
+- [Download](https://github.com/JimLiu/angular-ui-tree/archive/master.zip) from github.
+
+### Load CSS
+Load the css file: `angular-ui-tree.min.css` in your application:
+```html
+<link rel="stylesheet" href="bower_components/angular-ui-tree/angular-ui-tree.min.css">
+```
+
 
 ### Load Script
-Load the script file: `angular-nested-sortable.js` in your application:
+Load the script file: `angular-ui-tree.js` or `angular-ui-tree.min.js` in your application:
 
 ```html
-<script type="text/javascript" src="bower_components/angular-nested-sortable/angular-nested-sortable.js"></script>
+<script type="text/javascript" src="bower_components/angular-ui-tree/angular-ui-tree.js"></script>
 ```
 
 ### Code
 Add the sortable module as a dependency to your application module:
 
 ```js
-var myAppModule = angular.module('MyApp', ['ui.nestedSortable'])
+var myAppModule = angular.module('MyApp', ['ui.tree'])
 ```
 
-Injecting `ui.nestedSortable`, `ui-nested-sortable-item` and `ui-nested-sortable-handle` to your html.
+Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your html.
 
-HTML View or Templates
+#### HTML View or Templates
 ```html
-<ol ui-nested-sortable="" ng-model="list">
-  <li ng-repeat="item in list" ui-nested-sortable-item="">
-    <div ui-nested-sortable-handle>
-      {{item.title}}
-    </div>
-    <ol ui-nested-sortable="" ng-model="item.items">
-      <li ng-repeat="subItem in item.items" ui-nested-sortable-item="">
-        <div ui-nested-sortable-handle>
-          {{subItem.title}}
-        </div>
-      </li>
-    </ol>
-  </li>      
-</ol> 
-```  
+<div ui-tree>
+  <ol ui-tree-nodes="" ng-model="list">
+    <li ng-repeat="item in list" ui-tree-node>
+      <div ui-tree-handle>
+        {{item.title}}
+      </div>
+      <ol ui-tree-nodes="" ng-model="item.items">
+        <li ng-repeat="subItem in item.items" ui-tree-node>
+          <div ui-tree-handle>
+            {{subItem.title}}
+          </div>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</div>
+```
 **Developing Notes:**
-- Using `ng-model` to bind the list data with element. It should be an array and it's required.
-- Adding `ui-nested-sortable` to your root element.
-- Adding `ui-nested-sortable-item` to your item element, it always follow the `ng-repeat` attribute.
-- Adding `ui-nested-sortable-handle` to mark which element do you want to handle the drage action
-- All `ui-nested-sortable`, `ng-model`, `ui-nested-sortable-item` and `ui-nested-sortable-handle` are necessary. And they can be nested.
-- If you add a `data-nodrag` attribute to an element, the element won't response for the drag action.
-- If you changed the datasource bound, sometimes you have to call [`$scope.$apply()`](http://docs.angularjs.org/api/ng/type/$rootScope.Scope#$apply) to refresh the view, otherwise you will get an error `Cannot read property '0' of undefined` ([Issue #32](https://github.com/JimLiu/Angular-NestedSortable/issues/32)).
+- Adding `ui-tree` to your root element of the tree.
+- Adding `ui-tree-nodes` to the elements which contain the nodes. `ng-model` is required, and it should be an array, so that the directive knows which model to bind and update.
+- Adding `ui-tree-node` to your node element, it always follows the `ng-repeat` attribute.
+- Adding `ui-tree-handle` to the element used to drag the object.
+- All `ui-tree`, `ui-tree-nodes`, `ng-model`, `ui-tree-node` are necessary. And they can be nested.
+- If you don't add a `ui-tree-handle` for a node, the entire node can be dragged.
+
+#### Unlimited nesting HTML View or Templates Example
+
+```html
+<!-- Nested node template -->
+<script type="text/ng-template" id="nodes_renderer.html">
+  <div ui-tree-handle>
+    {{node.title}}
+  </div>
+  <ol ui-tree-nodes="" ng-model="node.nodes">
+    <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">
+    </li>
+  </ol>
+</script>
+<ol ui-tree-nodes="" ng-model="data" id="tree-root">
+  <li ng-repeat="node in data" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+</ol>
+```
+
+## Structure of angular-ui-tree
+
+    ui-tree                             --> Root of tree
+      ui-tree-nodes                     --> Container of nodes
+        ui-tree-node                    --> One of the node of a tree
+          ui-tree-handle                --> Handle
+          ui-tree-nodes                 --> Container of child-nodes
+            ui-tree-node                --> Child node
+              ui-tree-handle            --> Handle
+            ui-tree-node                --> Child node
+        ui-tree-node                    --> Another node
+          ui-tree-handle                --> Handle
+
+## Migrate From v1.x to v2.0
+[Migrate From v1.x to v2.0](https://github.com/JimLiu/angular-ui-tree/wiki/Migrate-From-v1.x-to-v2.0)
 
 ## API
 
-### Scope of Sortable
-The `scope` of a `ui-nested-sortable` element.
+### ui-tree
+`ui-tree` is the root scope for a tree
 
-#### Properties
-##### sortableModelValue
-Data type: `Array`  
-The data bound with current scope.
+#### Attributes
+##### data-drag-enabled
+Turn on dragging and dropping of nodes.
+- `true` (default): allow drag and drop
+- `false`: turn off drag and drop
+##### data-max-depth
+Number of levels a nodes can be nested (default 0). 0 means no limit.
+**Note**
+If you write your own [$callbacks.accept](#accept) method, you have to check `data-max-depth` by yourself.
+##### Example 
+- turn on/off drag and drop.
+- Limit depth to 5
+```html
+<div ui-tree data-drag-enabled="tree.enabled" data-max-depth="5">
 
-#### Methods
-##### parentItemScope()
-if a `ui-nested-sortable` element belongs to another `ui-nested-sortable-item` element, using `parentItemScope()` to get the scope of it's parent item.
-##### level()
-Calculate it's level in the tree. The level of a root element is 1.
+</div>
+```
+
+#### Methods of scope
 ##### collapseAll()
-Collapse all sub-nodes.
+Collapse all it's child nodes.
+
 ##### expandAll()
-Expand all sub-nodes.
+Expand all it's child nodes.
 
-#### Callbacks
-
-The Callbacks can be passed through the directive.
-
+##### $callbacks (type: Object)
+`$callbacks` is a very important property for `angular-ui-tree`. When some special events trigger, the functions in `$callbacks` are called. The callbacks can be passed through the directive.
+Example:
 ```js
 myAppModule.controller('MyController', function($scope) {
-  $scope.items = [...];
-  $scope.sortableOptions = {
-    accept: function(modelData, sourceItemScope, targetScope, destIndex) {
+  $scope.treeOptions = {
+    accept: function(sourceNodeScope, destNodesScope, destIndex) {
       return true;
     },
-    itemRemoved: function(scope, modelData, sourceIndex) {
-
-    },
-    itemAdded: function(scope, modelData, destIndex) {
-
-    },
-    itemMoved: function(sourceScope, modelData, sourceIndex, destScope, destIndex) {
-
-    },
-    orderChanged: function(scope, modelData, sourceIndex, destIndex) {
-
-    },
-    itemClicked: function(modelData) {
-      
-    },
-    start: function(scope, modelData, elements) {
-
-    },
-    move: function(scope, modelData, elements) {
-
-    },
-    stop: function(scope, modelData, elements) {
-
-    }
   };
 });
 ```
-
 ```html
-<ol ui-nested-sortable="sortableOptions" ng-model="items">
-  <li ng-repeat="item in items" ui-nested-sortable-item="">
-    <div ui-nested-sortable-handle>
-      {{item.title}}
-    </div>
-  </li>      
-</ol> 
+<div ui-tree="treeOptions">
+  <ol ui-tree-nodes ng-model="nodes">
+    <li ng-repeat="node in nodes" ui-tree-node>{{node.title}}</li>
+  </ol>
+</div>
 ```
 
-- `accept` callback: Check if the dragging item can be dropped to current item. `return true` means it can be dropped here. `return false` means it cann't.
-- `itemRemoved` callback: When a sub-item is removed.
-- `itemAdded` callback: When a sub-item is added.
-- `itemMoved` callback: When a sub-item is moved from a node to another node.
-- `orderChanged` callback: Is only fired if the dragged item gets dropped at the same parent node.
-- `itemClicked` callback: When an item is clicked.
-- `start` callback: When an item starts to drag.
-- `move` callback: When an item is moving.
-- `stop` callback: When an item stops dragging.
+#### Methods in $callbacks
+##### <a name="accept"></a>accept(sourceNodeScope, destNodesScope, destIndex)
+Check if the current dragging node can be dropped in the `ui-tree-nodes`.
 
-##### Parameters
-- `scope`, `sourceScope` or `sourceItemScope` is the `scope` object of the dragging item
-- `targetScope` is the `scope` object which the dragging item is dragging over.
-- `modelData` is the data bint with the dragging item
-- `destScope` is the `scope` object which the dragged item dropped.
-- `sourceIndex` is the index of item before it dragged.
-- `destIndex` is the index of item after it dropped.
-- `elements` is a collection of dragging elements.  
+**Parameters:**
+- `sourceNodeScope`: The scope of source node which is dragging.
+- `destNodesScope`: The scope of `ui-tree-nodes` which you want to drop in.
+- `destIndex`: The position you want to drop in.
 
-  - `placeholder`: the placeholder element.  
-  - `dragging`: the current dragging element.
+**Return**
+If the nodes accept the current dragging node.
+- `true` Allow it to drop.
+- `false` Not allow.
+
+##### <a name="dropped"></a>dropped(event)
+If a node moves it's position after dropped, the `nodeDropped` callback will be called.
+
+**Parameters:**
+- <a name="eventParam"></a>`event`: Event arguments, it's an object.
+  * `source`: Source object
+    + `nodeScope`: The scope of source node which was dragged.
+    + `nodesScope`: The scope of the parent nodes of source node  when it began to drag.
+    + `index`: The position when it began to drag.
+  * `dest`: Destination object
+    + `nodesScope`: The scope of `ui-tree-nodes` which you just dropped in.
+    + `index`: The position you dropped in.
+  * `elements`: The dragging relative elements.
+    + `placeholder`: The placeholder element.
+    + `drag`: The dragging element.
+  * `pos`: Position object.
+
+##### <a name="dragStart"></a>dragStart(event)
+The `dragStart` function is called when the user starts to drag the node.
+**Parameters:**
+Same as [Parameters](#eventParam) of dropped.
+
+##### dragMove(event)
+The `dragMove` function is called when the user moves the node.
+
+**Parameters:**
+Same as [Parameters](#eventParam) of dropped.
+
+##### dragStop(event)
+The `dragStop` function is called when the user stop dragging the node.
+
+**Parameters:**
+Same as [Parameters](#eventParam) of dropped.
+
+### ui-tree-nodes
+`ui-tree-nodes` is the container of nodes. Every `ui-tree-node` should have a `ui-tree-nodes` as it's container, a `ui-tree-nodes` can have multiple child nodes.
+
+#### Attributes
+##### data-nodrop<a name="nodes_attrs_nodrop"></a>
+Turn off drop of nodes.
+##### data-max-depth<a name="nodes_attrs_maxDepth"></a>
+Number of levels a nodes can be nested (default 0). 0 means no limit. It can override the `data-max-depth` in `ui-tree`.
+**Note**
+If you write your own [$callbacks.accept](#accept) method, you have to check `data-nodrop` and `data-max-depth` by yourself.
+
+Example: turn off drop.
+```html
+<ol ui-tree-nodes ng-model="nodes" data-nodrop>
+  <li ng-repeat="node in nodes" ui-tree-node>{{node.title}}</li>
+</ol>
+```
+
+#### Properties of scope
+##### $element (type: AngularElement)
+The html element which bind with the `ui-tree-nodes` scope.
+
+##### $modelValue (type: Object)
+The data which bind with the scope.
+
+##### $nodes (type: Array)
+All it's child nodes. The type of child node is scope of `ui-tree-node`.
+
+##### $nodeScope (type: Scope of ui-tree-node)
+The scope of node which current `ui-tree-nodes` belongs to.
+For example:
+
+    ui-tree-nodes                       --> nodes 1
+      ui-tree-node                      --> node 1.1
+        ui-tree-nodes                   --> nodes 1.1
+          ui-tree-node                  --> node 1.1.1
+          ui-tree-node                  --> node 1.1.2
+      ui-tree-node                      --> node 1.2
+
+The property `$nodeScope of` `nodes 1.1` is `node 1.1`. The property `$nodes` of `nodes 1.1` is [`node 1.1.1`, `node 1.1.2`]
+
+##### maxDepth
+Number of levels a node can be nested. It bases on the attribute [data-max-depth](#nodes_attrs_maxDepth).
+
+##### nodrop
+Turn off drop on nodes. It bases on the attribute [data-nodrag](#nodes_attrs_nodrop).
+
+#### Methods of scope
+##### depth()
+Get the depth.
+
+##### outOfDepth(sourceNode)
+Check if depth limit has reached
+
+##### isParent(nodeScope)
+Check if the nodes is the parent of the target node.
+**Parameters:**
+- `nodeScope`: The target node which is used to check with the current nodes.
 
 
-### Scope of Item
-The `scope` of a `ui-nested-sortable-item` element.
+### ui-tree-node
+A node of a tree. Every `ui-tree-node` should have a `ui-tree-nodes` as it's container.
 
-#### Properties
-##### collapsed
-Data type: `Bool`  
-`true`: Current item is collapsed;  
-`false`: Current item is expanded.
+#### Attributes
+##### data-nodrag
+Turn off drag of node.
+Example: turn off drag.
+```html
+<ol ui-tree-nodes ng-model="nodes">
+  <li ng-repeat="node in nodes" ui-tree-node data-nodrag>{{node.title}}</li>
+</ol>
+```
 
-#### Methods
-##### itemData()
-Get the model data which bind with the scope.
-##### maxSubLevels()
-Get the max level of all the sub-items of the scope. If there is no sub-items, return 0.
-##### parentScope()
-Get the scope of the parent `ui-nested-sortable` element.
-##### subScope()
-Get the scope of the child `ui-nested-sortable` element.
+#### Properties of scope
+##### $element (type: AngularElement)
+The html element which bind with the `ui-tree-nodes` scope.
+
+##### $modelValue (type: Object)
+The data which bind with the scope.
+
+##### collapsed (type: Bool)
+If the node is collapsed
+
+- `true`: Current node is collapsed;
+- `false`: Current node is expanded.
+
+##### $parentNodeScope (type: Scope of ui-tree-node)
+The scope of parent node.
+
+##### $childNodesScope (type: Scope of ui-tree-nodes)
+The scope of it's `ui-tree-nodes`.
+
+##### $parentNodesScope (type: Scope of ui-tree-nodes)
+The scope of it's parent `ui-tree-nodes`.
+
+For example:
+
+    ui-tree-nodes                       --> nodes 1
+      ui-tree-node                      --> node 1.1
+        ui-tree-nodes                   --> nodes 1.1
+          ui-tree-node                  --> node 1.1.1
+          ui-tree-node                  --> node 1.1.2
+      ui-tree-node                      --> node 1.2
+
+- `node 1.1.1`.`$parentNodeScope` is `node 1.1`.
+- `node 1.1`.`$childNodesScope` is `nodes 1.1`.
+- `node 1.1`.`$parentNodesScope` is `nodes 1`.
+
+#### Methods of scope
 ##### collapse()
 Collapse current node.
+
 ##### expand()
 Expand current node.
 
+##### toggle()
+Toggle current node.
+
+##### remove()
+Remove current node.
+
+##### depth()
+Get the depth of the node.
+
+##### maxSubDepth()
+Get the max depth of all the child nodes. If there is no child nodes, return 0.
+
+##### isSibling(targetNodeScope)
+Check if the current node is sibling with the target node.
+**Parameters:**
+- `targetNodeScope`: The target node which is used to check with the current node.
+
+##### isChild(targetNodeScope)
+Check if the current node is a child of the target node.
+**Parameters:**
+- `targetNodeScope`: The target node which is used to check with the current node.
+
+
+### ui-tree-handle
+Use the `ui-tree-handle` to specify an element used to drag the object. If you don't add a `ui-tree-handle` for a node, the entire node can be dragged.
+
 ## NgModules Link
 
-[Give us a like on ngmodules](http://ngmodules.org/modules/Angular-NestedSortable)
+[Give us a like on ngmodules](http://ngmodules.org/modules/angular-ui-tree)
 
 ## Development environment setup
 #### Prerequisites
@@ -216,7 +382,7 @@ Run the commands below in the project root directory.
 #####1. Install Grunt and Bower
 
     $ sudo npm install -g grunt-cli bower
-    
+
 #####2. Install project dependencies
 
     $ npm install
@@ -238,8 +404,8 @@ To access the local server, enter the following URL into your web browser:
 By default, it serves the contents of the demo project.
 
 
-####Building NestedSortable
-To build NestedSortable, you use the following command.
+####Building angular-ui-tree
+To build angular-ui-tree, you use the following command.
 
     $ grunt build
 

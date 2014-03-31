@@ -1,18 +1,20 @@
 {
-  "name": "Angular-NestedSortable",
-  "version": "1.3.8",
-  "homepage": "https://github.com/JimLiu/Angular-NestedSortable",
+  "name": "angular-ui-tree",
+  "version": "2.0.0",
+  "homepage": "https://github.com/JimLiu/angular-ui-tree",
   "authors": [
     "Jim Liu <https://github.com/JimLiu>",
     "Voles <https://github.com/Voles>"
   ],
-  "description": "NestedSortable directive for the angular.js",
-  "main": "dist/angular-nested-sortable.js",
+  "description": "Tree directive for the angular.js",
+  "main": "dist/angular-ui-tree.js",
   "keywords": [
     "angular",
     "NestedSortable",
     "sortable",
     "nested",
+    "drag",
+    "drop",
     "tree",
     "node"
   ],
@@ -25,7 +27,9 @@
     "bootstrap": "~3.1.0",
     "jquery": ">=1.10.x",
     "jasmine-jquery": "~1.0.0",
-    "angular-mocks": "~1.2.11"
+    "angular-mocks": "~1.2.11",
+    "firebase": "~1.0.11",
+    "angularfire": "~0.7.1"
   },
   "ignore": [
     "node_modules",

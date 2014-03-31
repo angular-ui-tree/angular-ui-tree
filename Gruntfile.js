@@ -38,7 +38,13 @@ module.exports = function(grunt) {
           '<%= cfg.srcDir %>/**/*.js',
           '!<%= cfg.buildDir %>/*.js'
         ],
-        tasks: ['jshint:source', 'clean:build', 'concat:build', 'uglify:build', 'copy']
+        tasks: ['jshint:source', 'clean:build', 'concat:build', 'uglify:build', 'cssmin', 'copy']
+      },
+      cssmin: {
+        files: [
+          '<%= cfg.srcDir %>/**/*.css'
+        ],
+        tasks: ['cssmin', 'copy']
       }
     },
 
@@ -54,10 +60,10 @@ module.exports = function(grunt) {
 
     // prepare files for demo
     copy: {
-      demo: {
+      main: {
         files: [{
           expand: true,
-          src: ['<%= cfg.buildDir %>/*.js'],
+          src: ['<%= cfg.buildDir %>/*.*'],
           dest: '<%= cfg.demoDir %>/'
         }]
       }
@@ -88,15 +94,17 @@ module.exports = function(grunt) {
       build: {
         src: [
           '<%= cfg.srcDir %>/main.js',
-          '<%= cfg.srcDir %>/helper.js',
-          '<%= cfg.srcDir %>/nestedSortableCtrl.js',
-          '<%= cfg.srcDir %>/nestedSortableHandlerCtrl.js',
-          '<%= cfg.srcDir %>/nestedSortableItemCtrl.js',
-          '<%= cfg.srcDir %>/uiNestedSortable.js',
-          '<%= cfg.srcDir %>/uiNestedSortableHandle.js',
-          '<%= cfg.srcDir %>/uiNestedSortableItem.js'
+          '<%= cfg.srcDir %>/services/helper.js',
+          '<%= cfg.srcDir %>/controllers/treeCtrl.js',
+          '<%= cfg.srcDir %>/controllers/nodesCtrl.js',
+          '<%= cfg.srcDir %>/controllers/nodeCtrl.js',
+          '<%= cfg.srcDir %>/controllers/handleCtrl.js',
+          '<%= cfg.srcDir %>/directives/uiTree.js',
+          '<%= cfg.srcDir %>/directives/uiTreeNodes.js',
+          '<%= cfg.srcDir %>/directives/uiTreeNode.js',
+          '<%= cfg.srcDir %>/directives/uiTreeHandle.js',
         ],
-        dest: '<%= cfg.buildDir %>/angular-nested-sortable.js'
+        dest: '<%= cfg.buildDir %>/angular-ui-tree.js'
       }
     },
 
@@ -108,7 +116,7 @@ module.exports = function(grunt) {
       },
       build: {
         files: {
-          '<%= cfg.buildDir %>/angular-nested-sortable.min.js': ['<%= cfg.buildDir %>/angular-nested-sortable.js']
+          '<%= cfg.buildDir %>/angular-ui-tree.min.js': ['<%= cfg.buildDir %>/angular-ui-tree.js']
         }
       }
     },
@@ -127,6 +135,17 @@ module.exports = function(grunt) {
               mountFolder(connect, '')
             ];
           }
+        }
+      }
+    },
+
+    cssmin: {
+      add_banner: {
+        options: {
+          banner: '/* angular-ui-tree css file */'
+        },
+        files: {
+          '<%= cfg.buildDir %>/angular-ui-tree.min.css': ['<%= cfg.srcDir %>/angular-ui-tree.css']
         }
       }
     },
@@ -179,31 +198,31 @@ module.exports = function(grunt) {
     },
 
     ngdocs: {
-       options: {
-          dest: 'demo/docs',
-          scripts: ['angular.js'],
-            html5Mode: true,
-            startPage: '/guide',
-            title: 'Angular-NestedSortable',
-            analytics: {
-              account: 'UA-48778560-1',
-              domainName: 'github.io'
-            }
-          },
-          guide: {
-            src: ['guide/*.ngdoc'],
-            title: 'Guide'
-          },
-          api: {
-            src: ['source/**/*.js', '!src/**/*.spec.js'],
-            title: 'API Documentation'
-          }
+      options: {
+        dest: 'demo/docs',
+        scripts: ['angular.js'],
+        html5Mode: true,
+        startPage: '/guide',
+        title: 'angular-ui-tree',
+        analytics: {
+          account: 'UA-48778560-1',
+          domainName: 'github.io'
+        }
+      },
+      guide: {
+        src: ['guide/*.ngdoc'],
+        title: 'Guide'
+      },
+      api: {
+        src: ['source/**/*.js', '!src/**/*.spec.js'],
+        title: 'API Documentation'
       }
+    }
   });
 
   // default
   grunt.registerTask('default', ['tasks_list:project']);
-  grunt.registerTask('build', ['jshint:source', 'karma:single', 'clean:build', 'concat:build', 'uglify:build', 'ngdocs', 'copy']);
+  grunt.registerTask('build', ['jshint:source', 'clean:build', 'concat:build', 'cssmin', 'uglify:build', 'copy']);
   grunt.registerTask('webserver', ['build', 'open', 'connect:demo', 'watch']);
   grunt.registerTask('test', ['karma:single']);
   grunt.registerTask('test:continuous', ['karma:continuous']);
