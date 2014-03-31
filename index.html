@@ -2,27 +2,28 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>AngularJS NestedSortable demo</title>
+  <title>AngularJS UI Tree demo</title>
 
   <!-- Stylesheets -->
   <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="demo.css">
+  <link rel="stylesheet" href="dist/angular-ui-tree.min.css">
+  <link rel="stylesheet" href="css/demo.css">
 </head>
-<body ng-app="demo">
+<body ng-app="demoApp">
 
   <div class="container">
 
     <div class="jumbotron">
-      <h1>NestedSortable UI component</h1>
+      <h1>Tree component</h1>
       <p class="lead">The AngularJS Tree component with drag and drop support.</p>
-      <p><a class="btn btn-lg btn-success" href="https://github.com/JimLiu/Angular-NestedSortable" role="button">Code on GitHub</a></p>
+      <p><a class="btn btn-lg btn-success" href="https://github.com/JimLiu/angular-ui-tree" role="button">Code on GitHub</a></p>
     </div>
 
     <div class="row">
       <div class="col-md-4">
         <h2>What?</h2>
         <p>
-          Angular NestedSortable is an AngularJS UI component that can sort nested lists, provides drag &amp; drop support and doesn't depend on jQuery.
+          Angular Tree is an AngularJS UI component that can sort nested lists, provides drag &amp; drop support and doesn't depend on jQuery.
         </p>
       </div>
       <div class="col-md-4">
@@ -36,10 +37,10 @@
       <div class="col-md-4">
         <h2>Examples</h2>
         <ol>
-          <li><a href="sample1.html">Unlimited nesting</a> (<a href="sample1-ie.html">IE compatible</a>)</li>
-          <li><a href="sample2.html">Selective drag &amp; drop</a> (<a href="sample2-ie.html">IE compatible</a>)</li>
-          <li><a href="sample3.html">Full DOM control</a> (<a href="sample3-ie.html">IE compatible</a>)</li>
-          <li><a href="sample4.html">Connected lists</a></li>
+          <li><a href="tree.html">Unlimited nesting</a></li>
+          <li><a href="trees.html">Connected trees</a></li>
+          <li><a href="groups.html">Groups &amp; Categories</a></li>
+          <!-- <li><a href="accept.html">Limited drag &amp; drop</a></li> -->
         </ol>
       </div>
     </div>
@@ -52,33 +53,31 @@
 
     <div class="row">
       <div class="col-md-12">
-
-        <!-- Nested list template -->
-        <script type="text/ng-template" id="items_renderer.html">
-          <div ui-nested-sortable-handle>
-            {{item.title}}
-            <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
-            <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
-            <a class="pull-right btn btn-success btn-xs" data-nodrag ng-click="toggle(this)"><span class="glyphicon" ng-class="{'glyphicon-chevron-up': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
-          </div>
-          <ol ui-nested-sortable="options" ng-model="item.items" ng-class="{hidden: collapsed}">
-            <li ng-repeat="item in item.items" ui-nested-sortable-item="" ng-include="'items_renderer.html'">
-            </li>
-          </ol>
-        </script>
-
           <div class="row" ng-controller="MainCtrl">
             <div class="col-lg-6">
               <h3>Draggable Tree</h3>
-              <ol ui-nested-sortable="options" ng-model="list" >
-                <li ng-repeat="item in list" ui-nested-sortable-item="" ng-include="'items_renderer.html'"></li>
-              </ol>
+
+              <!-- Nested list template -->
+              <script type="text/ng-template" id="items_renderer.html">
+                <div class="angular-ui-tree-handle">
+                  <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle(this)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
+                  {{item.title}}
+                  <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
+                  <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
+                </div>
+                <ol ui-tree-nodes="options" ng-model="item.items" ng-class="{hidden: collapsed}">
+                  <li ng-repeat="item in item.items" ui-tree-node ng-include="'items_renderer.html'">
+                  </li>
+                </ol>
+              </script>
+              <div ui-tree="options">
+                <ol ui-tree-nodes ng-model="list" >
+                  <li ng-repeat="item in list" ui-tree-node ng-include="'items_renderer.html'"></li>
+                </ol>
+              </div>
             </div>
 
             <div class="col-lg-6">
-              <h3>Selected Item</h3>
-              <pre class="code">{{ selectedItem | json }}</pre>
-
               <h3>Full tree</h3>
               <pre class="code">{{ list | json }}</pre>
             </div>
@@ -91,7 +90,7 @@
 
   <!-- JavaScript -->
   <script src="bower_components/angular/angular.min.js"></script>
-  <script src="dist/angular-nested-sortable.min.js"></script>
-  <script src="demo.js"></script>
+  <script src="dist/angular-ui-tree.js"></script>
+  <script src="js/demo.js"></script>
 </body>
 </html>
