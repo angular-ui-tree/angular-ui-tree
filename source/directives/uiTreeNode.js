@@ -28,9 +28,10 @@
                 // disable right click
                 return;
               }
-              if (e.uiTreeDragging) { // event has already fired in other scope.
+              if (e.uiTreeDragging || (e.originalEvent && e.originalEvent.uiTreeDragging)) { // event has already fired in other scope.
                 return;
               }
+
               // the element which is clicked.
               var eventElm = angular.element(e.target);
               var eventScope = eventElm.scope();
@@ -51,7 +52,10 @@
                 eventElm = eventElm.parent();
               }
 
-              e.uiTreeDragging = scope; // stop event bubbling
+              e.uiTreeDragging = true; // stop event bubbling
+              if (e.originalEvent) {
+                e.originalEvent.uiTreeDragging = true;
+              }
               e.preventDefault();
               var eventObj = $uiTreeHelper.eventObj(e);
 
