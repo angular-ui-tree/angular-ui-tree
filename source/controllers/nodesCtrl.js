@@ -33,10 +33,21 @@
           return $scope.$nodes.length > 0;
         };
 
+        $scope.safeApply = function(fn) {
+          var phase = this.$root.$$phase;
+          if(phase == '$apply' || phase == '$digest') {
+            if(fn && (typeof(fn) === 'function')) {
+              fn();
+            }
+          } else {
+            this.$apply(fn);
+          }
+        };
+
         $scope.removeNode = function(node) {
           var index = $scope.$nodes.indexOf(node);
           if (index > -1) {
-            $scope.$apply(function() {
+            $scope.safeApply(function() {
               $scope.$modelValue.splice(index, 1)[0];
               $scope.$nodes.splice(index, 1)[0];
             });
@@ -46,7 +57,7 @@
         };
 
         $scope.insertNode = function(index, node) {
-          $scope.$apply(function() {
+          $scope.safeApply(function() {
             $scope.$modelValue.splice(index, 0, node.$modelValue);
           });
         };
