@@ -59,7 +59,7 @@
 
               <!-- Nested list template -->
               <script type="text/ng-template" id="items_renderer.html">
-                <div class="angular-ui-tree-handle">
+                <div ui-tree-handle>
                   <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle(this)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
                   {{item.title}}
                   <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
