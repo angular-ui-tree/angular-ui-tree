@@ -83,10 +83,6 @@
           return $scope.$parentNodesScope.removeNode($scope);
         };
 
-        $scope.insertNode = function(index, node) {
-          $scope.$childNodesScope && $scope.$childNodesScope.insertNode(index, node);
-        };
-
         $scope.toggle = function() {
           $scope.collapsed = !$scope.collapsed;
         };

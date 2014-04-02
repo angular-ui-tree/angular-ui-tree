@@ -56,9 +56,9 @@
           return null;
         };
 
-        $scope.insertNode = function(index, node) {
+        $scope.insertNode = function(index, nodeData) {
           $scope.safeApply(function() {
-            $scope.$modelValue.splice(index, 0, node.$modelValue);
+            $scope.$modelValue.splice(index, 0, nodeData);
           });
         };
 

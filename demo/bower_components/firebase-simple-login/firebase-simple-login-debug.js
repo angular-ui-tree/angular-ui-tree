@@ -2138,7 +2138,7 @@ fb.simplelogin.SessionStore_.prototype.get = function() {
     var sessionEncryptionKey = goog.net.cookies.get(encryptionStorageKey);
     var payload = localStorage.getItem(sessionPersistentStorageKey);
     if (sessionEncryptionKey && payload) {
-      var session = fb.simplelogin.util.json.eval(sjcl.decrypt(sessionEncryptionKey, fb.simplelogin.util.json.eval(payload)));
+      var session = fb.simplelogin.util.json.parse(sjcl.decrypt(sessionEncryptionKey, fb.simplelogin.util.json.parse(payload)));
       return session;
     }
   } catch (e) {

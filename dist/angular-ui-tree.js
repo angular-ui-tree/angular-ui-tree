@@ -127,8 +127,9 @@
               },
 
               apply: function() {
+                var nodeData = this.source.$modelValue;
                 this.source.remove();
-                this.parent.insertNode(this.index, this.source);
+                this.parent.insertNode(this.index, nodeData);
               },
             };
           },
@@ -380,9 +381,9 @@
           return null;
         };
 
-        $scope.insertNode = function(index, node) {
+        $scope.insertNode = function(index, nodeData) {
           $scope.safeApply(function() {
-            $scope.$modelValue.splice(index, 0, node.$modelValue);
+            $scope.$modelValue.splice(index, 0, nodeData);
           });
         };
 
@@ -489,10 +490,6 @@
 
         $scope.remove = function() {
           return $scope.$parentNodesScope.removeNode($scope);
-        };
-
-        $scope.insertNode = function(index, node) {
-          $scope.$childNodesScope && $scope.$childNodesScope.insertNode(index, node);
         };
 
         $scope.toggle = function() {

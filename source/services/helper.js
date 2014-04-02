@@ -103,8 +103,9 @@
               },
 
               apply: function() {
+                var nodeData = this.source.$modelValue;
                 this.source.remove();
-                this.parent.insertNode(this.index, this.source);
+                this.parent.insertNode(this.index, nodeData);
               },
             };
           },
