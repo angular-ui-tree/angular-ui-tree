@@ -20,7 +20,6 @@
             scope.$nodeScope = treeNodeCtrl.scope;
             treeNodeCtrl.scope.$handleScope = scope;
           }
-          
         }
       };
     }

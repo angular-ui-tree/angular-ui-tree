@@ -35,6 +35,9 @@
               // the element which is clicked.
               var eventElm = angular.element(e.target);
               var eventScope = eventElm.scope();
+              if (!eventScope || !eventScope.$type) {
+                return;
+              }
               if (eventScope.$type != 'uiTreeNode'
                 && eventScope.$type != 'uiTreeHandle') { // Check if it is a node or a handle
                 return;

@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.0.3
+ * @license Angular UI Tree v2.0.4
  * (c) 2010-2014. https://github.com/JimLiu/angular-ui-tree
  * License: MIT
  */
@@ -744,6 +744,9 @@
               // the element which is clicked.
               var eventElm = angular.element(e.target);
               var eventScope = eventElm.scope();
+              if (!eventScope || !eventScope.$type) {
+                return;
+              }
               if (eventScope.$type != 'uiTreeNode'
                 && eventScope.$type != 'uiTreeHandle') { // Check if it is a node or a handle
                 return;
@@ -1044,7 +1047,6 @@
             scope.$nodeScope = treeNodeCtrl.scope;
             treeNodeCtrl.scope.$handleScope = scope;
           }
-          
         }
       };
     }
