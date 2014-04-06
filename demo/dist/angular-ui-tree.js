@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.0.4
+ * @license Angular UI Tree v2.0.5
  * (c) 2010-2014. https://github.com/JimLiu/angular-ui-tree
  * License: MIT
  */
@@ -584,7 +584,7 @@
             if (scope.$nodesScope.$modelValue) {
               scope.resetEmptyElement();
             }
-          }, true);
+          });
 
           scope.$watch(function () {
             return scope.$eval(attrs.dragEnabled);
@@ -592,7 +592,7 @@
             if((typeof newVal) == "boolean") {
               scope.dragEnabled = newVal;
             }
-          }, true);
+          });
 
           scope.$watch(function() {
             return scope.$eval(attrs.maxDepth);
@@ -600,7 +600,7 @@
             if((typeof newVal) == "number") {
               scope.maxDepth = newVal;
             }
-          }, true);
+          });
 
           // check if the dest node can accept the dragging node
           // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`
@@ -640,7 +640,7 @@
             });
 
             scope.$callbacks = callbacks;
-          }, true);
+          });
 
 
         }
@@ -692,7 +692,7 @@
             if((typeof newVal) == "number") {
               scope.maxDepth = newVal;
             }
-          }, true);
+          });
 
           scope.$watch(function () {
             return scope.$eval(attrs.nodrop);
@@ -700,7 +700,7 @@
             if((typeof newVal) == "boolean") {
               scope.nodrop = newVal;
             }
-          }, true);
+          });
         }
       };
     }

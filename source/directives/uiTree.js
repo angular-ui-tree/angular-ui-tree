@@ -28,7 +28,7 @@
             if (scope.$nodesScope.$modelValue) {
               scope.resetEmptyElement();
             }
-          }, true);
+          });
 
           scope.$watch(function () {
             return scope.$eval(attrs.dragEnabled);
@@ -36,7 +36,7 @@
             if((typeof newVal) == "boolean") {
               scope.dragEnabled = newVal;
             }
-          }, true);
+          });
 
           scope.$watch(function() {
             return scope.$eval(attrs.maxDepth);
@@ -44,7 +44,7 @@
             if((typeof newVal) == "number") {
               scope.maxDepth = newVal;
             }
-          }, true);
+          });
 
           // check if the dest node can accept the dragging node
           // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`
@@ -84,7 +84,7 @@
             });
 
             scope.$callbacks = callbacks;
-          }, true);
+          });
 
 
         }
