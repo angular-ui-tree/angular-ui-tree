@@ -41,7 +41,7 @@
             if((typeof newVal) == "number") {
               scope.maxDepth = newVal;
             }
-          });
+          }, true);
 
           scope.$watch(function () {
             return scope.$eval(attrs.nodrop);
@@ -49,7 +49,7 @@
             if((typeof newVal) == "boolean") {
               scope.nodrop = newVal;
             }
-          });
+          }, true);
         }
       };
     }
