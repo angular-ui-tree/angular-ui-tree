@@ -7,7 +7,10 @@
     "Voles <https://github.com/Voles>"
   ],
   "description": "Tree directive for the angular.js",
-  "main": "dist/angular-ui-tree.js",
+  "main": [
+    "dist/angular-ui-tree.js",
+    "dist/angular-ui-tree.min.css"
+  ],
   "keywords": [
     "angular",
     "NestedSortable",
