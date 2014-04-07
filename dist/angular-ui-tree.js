@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.0.1
+ * @license Angular UI Tree v2.0.5
  * (c) 2010-2014. https://github.com/JimLiu/angular-ui-tree
  * License: MIT
  */
@@ -127,8 +127,9 @@
               },
 
               apply: function() {
+                var nodeData = this.source.$modelValue;
                 this.source.remove();
-                this.parent.insertNode(this.index, this.source);
+                this.parent.insertNode(this.index, nodeData);
               },
             };
           },
@@ -380,9 +381,9 @@
           return null;
         };
 
-        $scope.insertNode = function(index, node) {
+        $scope.insertNode = function(index, nodeData) {
           $scope.safeApply(function() {
-            $scope.$modelValue.splice(index, 0, node.$modelValue);
+            $scope.$modelValue.splice(index, 0, nodeData);
           });
         };
 
@@ -489,10 +490,6 @@
 
         $scope.remove = function() {
           return $scope.$parentNodesScope.removeNode($scope);
-        };
-
-        $scope.insertNode = function(index, node) {
-          $scope.$childNodesScope && $scope.$childNodesScope.insertNode(index, node);
         };
 
         $scope.toggle = function() {
@@ -740,12 +737,16 @@
                 // disable right click
                 return;
               }
-              if (e.uiTreeDragging) { // event has already fired in other scope.
+              if (e.uiTreeDragging || (e.originalEvent && e.originalEvent.uiTreeDragging)) { // event has already fired in other scope.
                 return;
               }
+
               // the element which is clicked.
               var eventElm = angular.element(e.target);
               var eventScope = eventElm.scope();
+              if (!eventScope || !eventScope.$type) {
+                return;
+              }
               if (eventScope.$type != 'uiTreeNode'
                 && eventScope.$type != 'uiTreeHandle') { // Check if it is a node or a handle
                 return;
@@ -763,7 +764,10 @@
                 eventElm = eventElm.parent();
               }
 
-              e.uiTreeDragging = scope; // stop event bubbling
+              e.uiTreeDragging = true; // stop event bubbling
+              if (e.originalEvent) {
+                e.originalEvent.uiTreeDragging = true;
+              }
               e.preventDefault();
               var eventObj = $uiTreeHelper.eventObj(e);
 
@@ -807,15 +811,12 @@
                 scope.$callbacks.dragStart(dragInfo.eventArgs(elements, pos));
               });
 
-              if (hasTouch) { // Mobile
-                angular.element($document).bind('touchend', dragEndEvent);
-                angular.element($document).bind('touchcancel', dragEndEvent);
-                angular.element($document).bind('touchmove', dragMoveEvent);
-              } else {
-                angular.element($document).bind('mouseup', dragEndEvent);
-                angular.element($document).bind('mousemove', dragMoveEvent);
-                angular.element($window.document.body).bind('mouseleave', dragCancelEvent);
-              }
+              angular.element($document).bind('touchend', dragEndEvent);
+              angular.element($document).bind('touchcancel', dragEndEvent);
+              angular.element($document).bind('touchmove', dragMoveEvent);
+              angular.element($document).bind('mouseup', dragEndEvent);
+              angular.element($document).bind('mousemove', dragMoveEvent);
+              angular.element($window.document.body).bind('mouseleave', dragCancelEvent);
             };
 
             var dragMove = function(e) {
@@ -969,16 +970,12 @@
               }
 
 
-              if (hasTouch) {
-                angular.element($document).unbind('touchend', dragEndEvent); // Mobile
-                angular.element($document).unbind('touchcancel', dragEndEvent); // Mobile
-                angular.element($document).unbind('touchmove', dragMoveEvent); // Mobile
-              }
-              else {
-                angular.element($document).unbind('mouseup', dragEndEvent);
-                angular.element($document).unbind('mousemove', dragMoveEvent);
-                angular.element($window.document.body).unbind('mouseleave', dragCancelEvent);
-              }
+              angular.element($document).unbind('touchend', dragEndEvent); // Mobile
+              angular.element($document).unbind('touchcancel', dragEndEvent); // Mobile
+              angular.element($document).unbind('touchmove', dragMoveEvent); // Mobile
+              angular.element($document).unbind('mouseup', dragEndEvent);
+              angular.element($document).unbind('mousemove', dragMoveEvent);
+              angular.element($window.document.body).unbind('mouseleave', dragCancelEvent);
             };
 
             var dragStartEvent = function(e) {
@@ -1001,11 +998,8 @@
             };
 
             var bindDrag = function() {
-              if (hasTouch) { // Mobile
-                element.bind('touchstart', dragStartEvent);
-              } else {
-                element.bind('mousedown', dragStartEvent);
-              }
+              element.bind('touchstart', dragStartEvent);
+              element.bind('mousedown', dragStartEvent);
             };
             bindDrag();
 
@@ -1043,7 +1037,6 @@
             scope.$nodeScope = treeNodeCtrl.scope;
             treeNodeCtrl.scope.$handleScope = scope;
           }
-          
         }
       };
     }
