@@ -102,15 +102,12 @@
                 scope.$callbacks.dragStart(dragInfo.eventArgs(elements, pos));
               });
 
-              if (hasTouch) { // Mobile
-                angular.element($document).bind('touchend', dragEndEvent);
-                angular.element($document).bind('touchcancel', dragEndEvent);
-                angular.element($document).bind('touchmove', dragMoveEvent);
-              } else {
-                angular.element($document).bind('mouseup', dragEndEvent);
-                angular.element($document).bind('mousemove', dragMoveEvent);
-                angular.element($window.document.body).bind('mouseleave', dragCancelEvent);
-              }
+              angular.element($document).bind('touchend', dragEndEvent);
+              angular.element($document).bind('touchcancel', dragEndEvent);
+              angular.element($document).bind('touchmove', dragMoveEvent);
+              angular.element($document).bind('mouseup', dragEndEvent);
+              angular.element($document).bind('mousemove', dragMoveEvent);
+              angular.element($window.document.body).bind('mouseleave', dragCancelEvent);
             };
 
             var dragMove = function(e) {
@@ -264,16 +261,12 @@
               }
 
 
-              if (hasTouch) {
-                angular.element($document).unbind('touchend', dragEndEvent); // Mobile
-                angular.element($document).unbind('touchcancel', dragEndEvent); // Mobile
-                angular.element($document).unbind('touchmove', dragMoveEvent); // Mobile
-              }
-              else {
-                angular.element($document).unbind('mouseup', dragEndEvent);
-                angular.element($document).unbind('mousemove', dragMoveEvent);
-                angular.element($window.document.body).unbind('mouseleave', dragCancelEvent);
-              }
+              angular.element($document).unbind('touchend', dragEndEvent); // Mobile
+              angular.element($document).unbind('touchcancel', dragEndEvent); // Mobile
+              angular.element($document).unbind('touchmove', dragMoveEvent); // Mobile
+              angular.element($document).unbind('mouseup', dragEndEvent);
+              angular.element($document).unbind('mousemove', dragMoveEvent);
+              angular.element($window.document.body).unbind('mouseleave', dragCancelEvent);
             };
 
             var dragStartEvent = function(e) {
@@ -296,11 +289,8 @@
             };
 
             var bindDrag = function() {
-              if (hasTouch) { // Mobile
-                element.bind('touchstart', dragStartEvent);
-              } else {
-                element.bind('mousedown', dragStartEvent);
-              }
+              element.bind('touchstart', dragStartEvent);
+              element.bind('mousedown', dragStartEvent);
             };
             bindDrag();
 
