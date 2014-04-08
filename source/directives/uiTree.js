@@ -24,7 +24,7 @@
             scope.$emptyElm.addClass(config.emptyTreeClass);
           }
 
-          scope.$watch('$nodesScope.$modelValue', function() {
+          scope.$watch('$nodesScope.$modelValue.length', function() {
             if (scope.$nodesScope.$modelValue) {
               scope.resetEmptyElement();
             }

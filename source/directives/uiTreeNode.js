@@ -246,13 +246,13 @@
                 dragElm = null;
                 if (scope.$$apply) {
                   dragInfo.apply();
-                  scope.$apply(function() {
+                  scope.$treeScope.$apply(function() {
                     scope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
                   });
                 } else {
                   bindDrag();
                 }
-                scope.$apply(function() {
+                scope.$treeScope.$apply(function() {
                   scope.$callbacks.dragStop(dragInfo.eventArgs(elements, pos));
                 });
                 scope.$$apply = false;

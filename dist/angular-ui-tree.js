@@ -580,7 +580,7 @@
             scope.$emptyElm.addClass(config.emptyTreeClass);
           }
 
-          scope.$watch('$nodesScope.$modelValue', function() {
+          scope.$watch('$nodesScope.$modelValue.length', function() {
             if (scope.$nodesScope.$modelValue) {
               scope.resetEmptyElement();
             }
@@ -955,13 +955,13 @@
                 dragElm = null;
                 if (scope.$$apply) {
                   dragInfo.apply();
-                  scope.$apply(function() {
+                  scope.$treeScope.$apply(function() {
                     scope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
                   });
                 } else {
                   bindDrag();
                 }
-                scope.$apply(function() {
+                scope.$treeScope.$apply(function() {
                   scope.$callbacks.dragStop(dragInfo.eventArgs(elements, pos));
                 });
                 scope.$$apply = false;
