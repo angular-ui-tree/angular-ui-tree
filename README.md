@@ -102,9 +102,11 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
     </li>
   </ol>
 </script>
-<ol ui-tree-nodes="" ng-model="data" id="tree-root">
-  <li ng-repeat="node in data" ui-tree-node ng-include="'nodes_renderer.html'"></li>
-</ol>
+<div ui-tree>
+  <ol ui-tree-nodes="" ng-model="data" id="tree-root">
+    <li ng-repeat="node in data" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+  </ol>
+</div>
 ```
 
 ## Structure of angular-ui-tree
