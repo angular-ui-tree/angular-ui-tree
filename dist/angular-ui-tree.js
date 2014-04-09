@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.0.6
+ * @license Angular UI Tree v2.0.7
  * (c) 2010-2014. https://github.com/JimLiu/angular-ui-tree
  * License: MIT
  */
@@ -695,10 +695,10 @@
           }, true);
 
           scope.$watch(function () {
-            return scope.$eval(attrs.nodrop);
+            return attrs.nodrop;
           }, function (newVal) {
-            if((typeof newVal) == "boolean") {
-              scope.nodrop = newVal;
+            if((typeof newVal) != "undefined") {
+              scope.nodrop = true;
             }
           }, true);
         }

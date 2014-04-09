@@ -44,10 +44,10 @@
           }, true);
 
           scope.$watch(function () {
-            return scope.$eval(attrs.nodrop);
+            return attrs.nodrop;
           }, function (newVal) {
-            if((typeof newVal) == "boolean") {
-              scope.nodrop = newVal;
+            if((typeof newVal) != "undefined") {
+              scope.nodrop = true;
             }
           }, true);
         }

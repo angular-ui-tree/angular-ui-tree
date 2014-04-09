@@ -135,10 +135,12 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
 Turn on dragging and dropping of nodes.
 - `true` (default): allow drag and drop
 - `false`: turn off drag and drop
+
 ##### data-max-depth
 Number of levels a nodes can be nested (default 0). 0 means no limit.
 **Note**
 If you write your own [$callbacks.accept](#accept) method, you have to check `data-max-depth` by yourself.
+
 ##### Example 
 - turn on/off drag and drop.
 - Limit depth to 5
