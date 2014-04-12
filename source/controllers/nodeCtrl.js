@@ -15,7 +15,7 @@
         $scope.$treeScope = null; // uiTree scope
         $scope.$handleScope = null; // it's handle scope
         $scope.$type = 'uiTreeNode';
-        $scope.$$apply = false; // 
+        $scope.$$apply = false; //
 
         $scope.collapsed = false;
 
@@ -31,6 +31,7 @@
           treeNodesCtrl.scope.initSubNode($scope); // init sub nodes
 
           $element.on('$destroy', function() {
+            treeNodesCtrl.scope.destroySubNode($scope); // destroy sub nodes
           });
         };
 
@@ -60,7 +61,7 @@
         };
 
         $scope.siblings = function() {
-          return $scope.$parentNodesScope.$nodes;
+          return $scope.$parentNodesScope.childNodes();
         };
 
         $scope.childNodesCount = function() {
@@ -72,7 +73,7 @@
         };
 
         $scope.childNodes = function() {
-          return $scope.$childNodesScope ? $scope.$childNodesScope.$nodes : null;
+          return $scope.$childNodesScope ? $scope.$childNodesScope.childNodes() : null;
         };
 
         $scope.accept = function(sourceNode, destIndex) {
@@ -106,8 +107,9 @@
         var subDepth = 0;
         var countSubDepth = function(scope) {
           var count = 0;
-          for (var i = 0; i < scope.$nodes.length; i++) {
-            var childNodes = scope.$nodes[i].$childNodesScope;
+          var nodes = scope.childNodes();
+          for (var i = 0; i < nodes.length; i++) {
+            var childNodes = nodes[i].$childNodesScope;
             if (childNodes) {
               count = 1;
               countSubDepth(childNodes);

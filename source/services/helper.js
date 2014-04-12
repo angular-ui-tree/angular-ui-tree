@@ -50,7 +50,7 @@
                 nodesScope: node.$parentNodesScope,
               },
               index: node.index(),
-              siblings: node.$parentNodesScope.$nodes.slice(0),
+              siblings: node.siblings().slice(0),
               parent: node.$parentNodesScope,
 
               moveTo: function(parent, siblings, index) { // Move the node to a new position

@@ -3,31 +3,28 @@
 
   angular.module('ui.tree')
 
-    .controller('TreeNodesController', ['$scope', '$element', 'treeConfig',
-      function ($scope, $element, treeConfig) {
+    .controller('TreeNodesController', ['$scope', '$element', '$timeout', 'treeConfig',
+      function ($scope, $element, $timeout, treeConfig) {
         this.scope = $scope;
 
         $scope.$element = $element;
         $scope.$modelValue = null;
-        $scope.$nodes = []; // sub nodes
         $scope.$nodeScope = null; // the scope of node which the nodes belongs to
         $scope.$treeScope = null;
         $scope.$type = 'uiTreeNodes';
+        $scope.$nodesMap = {};
 
         $scope.nodrop = false;
         $scope.maxDepth = 0;
 
         $scope.initSubNode = function(subNode) {
-          $scope.$nodes.splice(subNode.index(), 0, subNode);
+          $timeout(function() {
+            $scope.$nodesMap[subNode.$modelValue.$$hashKey] = subNode;
+          });
         };
 
-        $scope.reinitNodes = function() {
-          var nodes = $scope.$nodes.splice(0);
-          $scope.$nodes = [];
-          for (var i = 0; i < nodes.length; i++) {
-            var node = nodes[i];
-            $scope.$nodes.splice(node.index(), 0, node);
-          }
+        $scope.destroySubNode = function(subNode) {
+          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = null;
         };
 
         $scope.accept = function(sourceNode, destIndex) {
@@ -39,7 +36,7 @@
         };
 
         $scope.hasChild = function() {
-          return $scope.$nodes.length > 0;
+          return $scope.$modelValue.length > 0;
         };
 
         $scope.safeApply = function(fn) {
@@ -54,11 +51,10 @@
         };
 
         $scope.removeNode = function(node) {
-          var index = $scope.$nodes.indexOf(node);
+          var index = $scope.$modelValue.indexOf(node.$modelValue);
           if (index > -1) {
             $scope.safeApply(function() {
               $scope.$modelValue.splice(index, 1)[0];
-              $scope.$nodes.splice(index, 1)[0];
             });
             return node;
           }
@@ -71,6 +67,13 @@
           });
         };
 
+        $scope.childNodes = function() {
+          var nodes = [];
+          for (var i = 0; i < $scope.$modelValue.length; i++) {
+            nodes.push($scope.$nodesMap[$scope.$modelValue[i].$$hashKey]);
+          }
+          return nodes;
+        };
 
         $scope.depth = function() {
           if ($scope.$nodeScope) {

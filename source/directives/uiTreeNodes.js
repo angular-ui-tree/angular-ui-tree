@@ -30,11 +30,15 @@
           scope.$treeScope = treeCtrl.scope;
 
           if (ngModel) {
-            scope.$watch(attrs.ngModel, function() {
+            ngModel.$render = function() {
               scope.$modelValue = ngModel.$modelValue;
-              scope.reinitNodes(); // we have to keep syncing with $nodes array
-            }, true);
+            };
           }
+          /*
+          scope.$watch(attrs.ngModel, function() {
+            scope.$modelValue = ngModel.$modelValue;
+          }, true);
+          */
 
           scope.$watch(function() {
             return scope.$eval(attrs.maxDepth);

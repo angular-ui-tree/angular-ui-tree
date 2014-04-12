@@ -37,9 +37,10 @@
         };
 
         var collapseOrExpand = function(scope, collapsed) {
-          for (var i = 0; i < scope.$nodes.length; i++) {
-            collapsed ? scope.$nodes[i].collapse() : scope.$nodes[i].expand();
-            var subScope = scope.$nodes[i].$childNodesScope;
+          var nodes = scope.childNodes();
+          for (var i = 0; i < nodes.length; i++) {
+            collapsed ? nodes[i].collapse() : nodes[i].expand();
+            var subScope = nodes[i].$childNodesScope;
             if (subScope) {
               collapseOrExpand(subScope, collapsed);
             }

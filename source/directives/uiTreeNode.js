@@ -204,7 +204,7 @@
                     treeScope = targetNode;
                     if (targetNode.$nodesScope.accept(scope, 0)) {
                       targetNode.place(placeElm);
-                      dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.$nodes, 0);
+                      dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), 0);
                     }
                   } else if (targetNode.dragEnabled()){ // drag enabled
                     targetElm = targetNode.$element; // Get the element of ui-tree-node
