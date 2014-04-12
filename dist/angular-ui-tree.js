@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.0.5
+ * @license Angular UI Tree v2.0.9
  * (c) 2010-2014. https://github.com/JimLiu/angular-ui-tree
  * License: MIT
  */
@@ -74,7 +74,7 @@
                 nodesScope: node.$parentNodesScope,
               },
               index: node.index(),
-              siblings: node.$parentNodesScope.$nodes.slice(0),
+              siblings: node.siblings().slice(0),
               parent: node.$parentNodesScope,
 
               moveTo: function(parent, siblings, index) { // Move the node to a new position
@@ -302,9 +302,10 @@
         };
 
         var collapseOrExpand = function(scope, collapsed) {
-          for (var i = 0; i < scope.$nodes.length; i++) {
-            collapsed ? scope.$nodes[i].collapse() : scope.$nodes[i].expand();
-            var subScope = scope.$nodes[i].$childNodesScope;
+          var nodes = scope.childNodes();
+          for (var i = 0; i < nodes.length; i++) {
+            collapsed ? nodes[i].collapse() : nodes[i].expand();
+            var subScope = nodes[i].$childNodesScope;
             if (subScope) {
               collapseOrExpand(subScope, collapsed);
             }
@@ -328,22 +329,28 @@
 
   angular.module('ui.tree')
 
-    .controller('TreeNodesController', ['$scope', '$element', 'treeConfig',
-      function ($scope, $element, treeConfig) {
+    .controller('TreeNodesController', ['$scope', '$element', '$timeout', 'treeConfig',
+      function ($scope, $element, $timeout, treeConfig) {
         this.scope = $scope;
 
         $scope.$element = $element;
         $scope.$modelValue = null;
-        $scope.$nodes = []; // sub nodes
         $scope.$nodeScope = null; // the scope of node which the nodes belongs to
         $scope.$treeScope = null;
         $scope.$type = 'uiTreeNodes';
+        $scope.$nodesMap = {};
 
         $scope.nodrop = false;
         $scope.maxDepth = 0;
 
         $scope.initSubNode = function(subNode) {
-          $scope.$nodes.splice(subNode.index(), 0, subNode);
+          $timeout(function() {
+            $scope.$nodesMap[subNode.$modelValue.$$hashKey] = subNode;
+          });
+        };
+
+        $scope.destroySubNode = function(subNode) {
+          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = null;
         };
 
         $scope.accept = function(sourceNode, destIndex) {
@@ -355,7 +362,7 @@
         };
 
         $scope.hasChild = function() {
-          return $scope.$nodes.length > 0;
+          return $scope.$modelValue.length > 0;
         };
 
         $scope.safeApply = function(fn) {
@@ -370,11 +377,10 @@
         };
 
         $scope.removeNode = function(node) {
-          var index = $scope.$nodes.indexOf(node);
+          var index = $scope.$modelValue.indexOf(node.$modelValue);
           if (index > -1) {
             $scope.safeApply(function() {
               $scope.$modelValue.splice(index, 1)[0];
-              $scope.$nodes.splice(index, 1)[0];
             });
             return node;
           }
@@ -387,6 +393,13 @@
           });
         };
 
+        $scope.childNodes = function() {
+          var nodes = [];
+          for (var i = 0; i < $scope.$modelValue.length; i++) {
+            nodes.push($scope.$nodesMap[$scope.$modelValue[i].$$hashKey]);
+          }
+          return nodes;
+        };
 
         $scope.depth = function() {
           if ($scope.$nodeScope) {
@@ -424,7 +437,7 @@
         $scope.$treeScope = null; // uiTree scope
         $scope.$handleScope = null; // it's handle scope
         $scope.$type = 'uiTreeNode';
-        $scope.$$apply = false; // 
+        $scope.$$apply = false; //
 
         $scope.collapsed = false;
 
@@ -440,6 +453,7 @@
           treeNodesCtrl.scope.initSubNode($scope); // init sub nodes
 
           $element.on('$destroy', function() {
+            treeNodesCtrl.scope.destroySubNode($scope); // destroy sub nodes
           });
         };
 
@@ -469,7 +483,7 @@
         };
 
         $scope.siblings = function() {
-          return $scope.$parentNodesScope.$nodes;
+          return $scope.$parentNodesScope.childNodes();
         };
 
         $scope.childNodesCount = function() {
@@ -481,7 +495,7 @@
         };
 
         $scope.childNodes = function() {
-          return $scope.$childNodesScope ? $scope.$childNodesScope.$nodes : null;
+          return $scope.$childNodesScope ? $scope.$childNodesScope.childNodes() : null;
         };
 
         $scope.accept = function(sourceNode, destIndex) {
@@ -515,8 +529,9 @@
         var subDepth = 0;
         var countSubDepth = function(scope) {
           var count = 0;
-          for (var i = 0; i < scope.$nodes.length; i++) {
-            var childNodes = scope.$nodes[i].$childNodesScope;
+          var nodes = scope.childNodes();
+          for (var i = 0; i < nodes.length; i++) {
+            var childNodes = nodes[i].$childNodesScope;
             if (childNodes) {
               count = 1;
               countSubDepth(childNodes);
@@ -580,7 +595,7 @@
             scope.$emptyElm.addClass(config.emptyTreeClass);
           }
 
-          scope.$watch('$nodesScope.$modelValue', function() {
+          scope.$watch('$nodesScope.$modelValue.length', function() {
             if (scope.$nodesScope.$modelValue) {
               scope.resetEmptyElement();
             }
@@ -685,6 +700,11 @@
               scope.$modelValue = ngModel.$modelValue;
             };
           }
+          /*
+          scope.$watch(attrs.ngModel, function() {
+            scope.$modelValue = ngModel.$modelValue;
+          }, true);
+          */
 
           scope.$watch(function() {
             return scope.$eval(attrs.maxDepth);
@@ -695,10 +715,10 @@
           }, true);
 
           scope.$watch(function () {
-            return scope.$eval(attrs.nodrop);
+            return attrs.nodrop;
           }, function (newVal) {
-            if((typeof newVal) == "boolean") {
-              scope.nodrop = newVal;
+            if((typeof newVal) != "undefined") {
+              scope.nodrop = true;
             }
           }, true);
         }
@@ -913,7 +933,7 @@
                     treeScope = targetNode;
                     if (targetNode.$nodesScope.accept(scope, 0)) {
                       targetNode.place(placeElm);
-                      dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.$nodes, 0);
+                      dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), 0);
                     }
                   } else if (targetNode.dragEnabled()){ // drag enabled
                     targetElm = targetNode.$element; // Get the element of ui-tree-node
@@ -955,13 +975,13 @@
                 dragElm = null;
                 if (scope.$$apply) {
                   dragInfo.apply();
-                  scope.$apply(function() {
+                  scope.$treeScope.$apply(function() {
                     scope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
                   });
                 } else {
                   bindDrag();
                 }
-                scope.$apply(function() {
+                scope.$treeScope.$apply(function() {
                   scope.$callbacks.dragStop(dragInfo.eventArgs(elements, pos));
                 });
                 scope.$$apply = false;

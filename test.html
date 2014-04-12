@@ -3,52 +3,32 @@
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <title>Demo</title>
 <link rel="stylesheet" type="text/css" href="http://jimliu.github.io/angular-ui-tree/dist/angular-ui-tree.min.css">
-<link rel="stylesheet" type="text/css" href="http://jimliu.github.io/angular-ui-tree/css/demo.css">
 
-<script src="//code.jquery.com/jquery-1.10.2.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.4/angular.min.js"></script>
+<script type="text/javascript" src="http://code.angularjs.org/1.2.16/angular.min.js"></script>
 <script type="text/javascript" src="dist/angular-ui-tree.js"></script>
 <script type="text/javascript">
 //<![CDATA[ 
 
   angular.module('treeApp', ['ui.tree'])
   .controller('treeCtrl', function($scope) {
+    $scope.data = [
+      {title: 'A'},
+      {title: 'B'},
+      {title: 'C'}
+    ];
 
-    $scope.rows = [{
-      "name": "node1",
-      "columns": [
-        {
-          "name": "node1.1"
-        },
-        {
-          "name": "node1.2"
-        }
-      ],
-    }, {
-      "name": "node2",
-      "columns": [
-        {
-          "name": "node2.1"
-        },
-        {
-          "name": "node2.2"
-        }
-      ],
-    }, {
-      "name": "node3",
-      "columns": [
-        {
-          "name": "node3.1"
-        }
-      ],
-    }, {
-      "name": "node4",
-      "columns": [
-        {
-          "name": "node4.1"
-        }
-      ],
-    }];
+    $scope.treeOptions = {
+      dragStart: function(event) {
+        console.log('Start dragging', event);
+      },
+      dragStop: function(event) {
+              // This will be never called :(
+        console.log('Stop dragging', event);
+      },
+      dropped: function(event) {
+        console.log('dropped', event);
+      },
+    };
   });
 
 //]]>  
@@ -59,24 +39,13 @@
 <style type="text/css"></style></head>
 <body ng-app="treeApp">
   <div ng-controller="treeCtrl">
-    <div ui-tree>
-      <ol ui-tree-nodes ng-model="rows">
-        <li ng-repeat="row in rows" ui-tree-node>
-          <div ui-tree-handle>
-            {{row.name}}
-          </div>
-          <ol ui-tree-nodes ng-model="row.columns">
-            <li ng-repeat="column in row.columns" ui-tree-node>
-              <div ui-tree-handle>
-                {{column.name}}
-              </div>
-            </li>
-          </ol>
+      <ol ui-tree="treeOptions" ui-tree-nodes ng-model="data">
+        <li ng-repeat="item in data" ui-tree-node>
+            {{item.title}}
         </li>
       </ol>
-    </div>
     <pre>
-{{ rows | json }}
+{{ data | json }}
     </pre>
 </div>
 

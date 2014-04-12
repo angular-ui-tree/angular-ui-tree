@@ -12,6 +12,11 @@
       scope.toggle();
     };
 
+    $scope.moveLastToTheBegginig = function () {
+      var a = $scope.data.pop();
+      $scope.data.splice(0,0, a);
+    };
+
     $scope.newSubItem = function(scope) {
       var nodeData = scope.$modelValue;
       nodeData.nodes.push({
