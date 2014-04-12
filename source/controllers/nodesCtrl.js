@@ -21,6 +21,15 @@
           $scope.$nodes.splice(subNode.index(), 0, subNode);
         };
 
+        $scope.reinitNodes = function() {
+          var nodes = $scope.$nodes.splice(0);
+          $scope.$nodes = [];
+          for (var i = 0; i < nodes.length; i++) {
+            var node = nodes[i];
+            $scope.$nodes.splice(node.index(), 0, node);
+          }
+        };
+
         $scope.accept = function(sourceNode, destIndex) {
           return $scope.$treeScope.$callbacks.accept(sourceNode, $scope, destIndex);
         };

@@ -30,9 +30,10 @@
           scope.$treeScope = treeCtrl.scope;
 
           if (ngModel) {
-            ngModel.$render = function() {
+            scope.$watch(attrs.ngModel, function() {
               scope.$modelValue = ngModel.$modelValue;
-            };
+              scope.reinitNodes(); // we have to keep syncing with $nodes array
+            }, true);
           }
 
           scope.$watch(function() {
