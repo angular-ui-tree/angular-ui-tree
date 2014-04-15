@@ -3,8 +3,8 @@
 
   angular.module('ui.tree')
 
-    .directive('uiTreeNode', ['treeConfig', '$uiTreeHelper', '$window', '$document',
-      function (treeConfig, $uiTreeHelper, $window, $document) {
+    .directive('uiTreeNode', ['treeConfig', '$uiTreeHelper', '$window', '$document','$timeout',
+      function (treeConfig, $uiTreeHelper, $window, $document, $timeout) {
         return {
           require: ['^uiTreeNodes', '^uiTree'],
           restrict: 'A',
@@ -22,6 +22,7 @@
             var placeElm, hiddenPlaceElm, dragElm;
             var treeScope = null;
             var elements; // As a parameter for callbacks
+            var dragTimer = null;
 
             var dragStart = function(e) {
               if (!hasTouch && (e.button == 2 || e.which == 3)) {
@@ -290,7 +291,11 @@
 
             var bindDrag = function() {
               element.bind('touchstart', dragStartEvent);
-              element.bind('mousedown', dragStartEvent);
+              element.bind('mousedown', function (e) {
+                dragTimer = $timeout(function(){dragStartEvent(e);}, scope.dragDelay);
+                e.preventDefault();
+              });
+              element.bind('mouseup',function(){$timeout.cancel(dragTimer);});
             };
             bindDrag();
 
