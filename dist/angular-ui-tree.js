@@ -280,6 +280,7 @@
 
         $scope.dragEnabled = true;
         $scope.maxDepth = 0;
+        $scope.dragDelay = 0;
 
         // Check if it's a empty tree
         $scope.isEmpty = function() {
@@ -621,6 +622,14 @@
             }
           }, true);
 
+          scope.$watch(function() {
+            return scope.$eval(attrs.dragDelay);
+          }, function(newVal) {
+            if((typeof newVal) == "number") {
+              scope.dragDelay = newVal;
+            }
+          }, true);
+
           // check if the dest node can accept the dragging node
           // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`
           // and the 'max-depth' attribute in `ui-tree` or `ui-tree-nodes`.
@@ -736,8 +745,8 @@
 
   angular.module('ui.tree')
 
-    .directive('uiTreeNode', ['treeConfig', '$uiTreeHelper', '$window', '$document',
-      function (treeConfig, $uiTreeHelper, $window, $document) {
+    .directive('uiTreeNode', ['treeConfig', '$uiTreeHelper', '$window', '$document','$timeout',
+      function (treeConfig, $uiTreeHelper, $window, $document, $timeout) {
         return {
           require: ['^uiTreeNodes', '^uiTree'],
           restrict: 'A',
@@ -755,6 +764,7 @@
             var placeElm, hiddenPlaceElm, dragElm;
             var treeScope = null;
             var elements; // As a parameter for callbacks
+            var dragTimer = null;
 
             var dragStart = function(e) {
               if (!hasTouch && (e.button == 2 || e.which == 3)) {
@@ -1023,7 +1033,11 @@
 
             var bindDrag = function() {
               element.bind('touchstart', dragStartEvent);
-              element.bind('mousedown', dragStartEvent);
+              element.bind('mousedown', function (e) {
+                dragTimer = $timeout(function(){dragStartEvent(e);}, scope.dragDelay);
+                e.preventDefault();
+              });
+              element.bind('mouseup',function(){$timeout.cancel(dragTimer);});
             };
             bindDrag();
 
@@ -1039,6 +1053,7 @@
     ]);
 
 })();
+
 (function () {
   'use strict';
 
