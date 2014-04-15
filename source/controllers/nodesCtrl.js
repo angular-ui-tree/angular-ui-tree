@@ -69,8 +69,10 @@
 
         $scope.childNodes = function() {
           var nodes = [];
-          for (var i = 0; i < $scope.$modelValue.length; i++) {
-            nodes.push($scope.$nodesMap[$scope.$modelValue[i].$$hashKey]);
+          if ($scope.$modelValue) {
+            for (var i = 0; i < $scope.$modelValue.length; i++) {
+              nodes.push($scope.$nodesMap[$scope.$modelValue[i].$$hashKey]);
+            }
           }
           return nodes;
         };

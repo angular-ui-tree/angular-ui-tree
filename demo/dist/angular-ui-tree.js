@@ -395,8 +395,10 @@
 
         $scope.childNodes = function() {
           var nodes = [];
-          for (var i = 0; i < $scope.$modelValue.length; i++) {
-            nodes.push($scope.$nodesMap[$scope.$modelValue[i].$$hashKey]);
+          if ($scope.$modelValue) {
+            for (var i = 0; i < $scope.$modelValue.length; i++) {
+              nodes.push($scope.$nodesMap[$scope.$modelValue[i].$$hashKey]);
+            }
           }
           return nodes;
         };
@@ -495,7 +497,9 @@
         };
 
         $scope.childNodes = function() {
-          return $scope.$childNodesScope ? $scope.$childNodesScope.childNodes() : null;
+          return $scope.$childNodesScope && $scope.$childNodesScope.$modelValue ?
+              $scope.$childNodesScope.childNodes() :
+              null;
         };
 
         $scope.accept = function(sourceNode, destIndex) {

@@ -73,7 +73,9 @@
         };
 
         $scope.childNodes = function() {
-          return $scope.$childNodesScope ? $scope.$childNodesScope.childNodes() : null;
+          return $scope.$childNodesScope && $scope.$childNodesScope.$modelValue ?
+              $scope.$childNodesScope.childNodes() :
+              null;
         };
 
         $scope.accept = function(sourceNode, destIndex) {
