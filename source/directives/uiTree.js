@@ -46,6 +46,14 @@
             }
           }, true);
 
+          scope.$watch(function() {
+            return scope.$eval(attrs.dragDelay);
+          }, function(newVal) {
+            if((typeof newVal) == "number") {
+              scope.dragDelay = newVal;
+            }
+          }, true);
+
           // check if the dest node can accept the dragging node
           // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`
           // and the 'max-depth' attribute in `ui-tree` or `ui-tree-nodes`.
