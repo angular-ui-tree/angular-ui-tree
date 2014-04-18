@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.0.9
+ * @license Angular UI Tree v2.0.10
  * (c) 2010-2014. https://github.com/JimLiu/angular-ui-tree
  * License: MIT
  */
@@ -1035,7 +1035,6 @@
               element.bind('touchstart', dragStartEvent);
               element.bind('mousedown', function (e) {
                 dragTimer = $timeout(function(){dragStartEvent(e);}, scope.dragDelay);
-                e.preventDefault();
               });
               element.bind('mouseup',function(){$timeout.cancel(dragTimer);});
             };

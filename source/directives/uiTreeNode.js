@@ -293,7 +293,6 @@
               element.bind('touchstart', dragStartEvent);
               element.bind('mousedown', function (e) {
                 dragTimer = $timeout(function(){dragStartEvent(e);}, scope.dragDelay);
-                e.preventDefault();
               });
               element.bind('mouseup',function(){$timeout.cancel(dragTimer);});
             };
