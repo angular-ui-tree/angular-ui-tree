@@ -141,11 +141,15 @@ Number of levels a nodes can be nested (default 0). 0 means no limit.
 **Note**
 If you write your own [$callbacks.accept](#accept) method, you have to check `data-max-depth` by yourself.
 
+##### data-drag-delay
+Number of milliseconds a click must be held to start a drag. (default 0)
+
 ##### Example 
 - turn on/off drag and drop.
 - Limit depth to 5
+- 500 milliseconds delay
 ```html
-<div ui-tree data-drag-enabled="tree.enabled" data-max-depth="5">
+<div ui-tree data-drag-enabled="tree.enabled" data-max-depth="5" data-drag-delay="500">
 
 </div>
 ```

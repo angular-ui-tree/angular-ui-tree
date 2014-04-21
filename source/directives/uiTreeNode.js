@@ -116,6 +116,7 @@
               var prev;
               if (dragElm) {
                 e.preventDefault();
+                $window.getSelection().removeAllRanges();
 
                 dragElm.css({
                   'left' : eventObj.pageX - pos.offsetX + 'px',
