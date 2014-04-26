@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.0.10
+ * @license Angular UI Tree v2.0.11
  * (c) 2010-2014. https://github.com/JimLiu/angular-ui-tree
  * License: MIT
  */
@@ -39,6 +39,30 @@
     .factory('$uiTreeHelper', ['$document', '$window',
       function ($document, $window) {
         return {
+
+          /**
+           * A hashtable used to storage data of nodes
+           * @type {Object}
+           */
+          nodesData: {
+          },
+
+          setNodeAttribute: function(scope, attrName, val) {
+            var data = this.nodesData[scope.$modelValue.$$hashKey];
+            if (!data) {
+              data = {};
+              this.nodesData[scope.$modelValue.$$hashKey] = data;
+            }
+            data[attrName] = val;
+          },
+
+          getNodeAttribute: function(scope, attrName) {
+            var data = this.nodesData[scope.$modelValue.$$hashKey];
+            if (data) {
+              return data[attrName];
+            }
+            return null;
+          },
 
           /**
            * @ngdoc method
@@ -606,29 +630,26 @@
             }
           }, true);
 
-          scope.$watch(function () {
-            return scope.$eval(attrs.dragEnabled);
-          }, function (newVal) {
-            if((typeof newVal) == "boolean") {
-              scope.dragEnabled = newVal;
+          attrs.$observe('dragEnabled', function(val) {
+            var de = scope.$eval(val);
+            if((typeof de) == "boolean") {
+              scope.dragEnabled = de;
             }
-          }, true);
+          });
 
-          scope.$watch(function() {
-            return scope.$eval(attrs.maxDepth);
-          }, function(newVal) {
-            if((typeof newVal) == "number") {
-              scope.maxDepth = newVal;
+          attrs.$observe('maxDepth', function(val) {
+            var md = scope.$eval(val);
+            if((typeof md) == "number") {
+              scope.maxDepth = md;
             }
-          }, true);
+          });
 
-          scope.$watch(function() {
-            return scope.$eval(attrs.dragDelay);
-          }, function(newVal) {
-            if((typeof newVal) == "number") {
-              scope.dragDelay = newVal;
+          attrs.$observe('dragDelay', function(val) {
+            var dd = scope.$eval(val);
+            if((typeof dd) == "number") {
+              scope.dragDelay = dd;
             }
-          }, true);
+          });
 
           // check if the dest node can accept the dragging node
           // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`
@@ -710,30 +731,24 @@
 
           if (ngModel) {
             ngModel.$render = function() {
+              if (!ngModel.$modelValue || !angular.isArray(ngModel.$modelValue)) {
+                ngModel.$setViewValue([]);
+              }
               scope.$modelValue = ngModel.$modelValue;
             };
           }
-          /*
-          scope.$watch(attrs.ngModel, function() {
-            scope.$modelValue = ngModel.$modelValue;
-          }, true);
-          */
 
-          scope.$watch(function() {
-            return scope.$eval(attrs.maxDepth);
-          }, function(newVal) {
-            if((typeof newVal) == "number") {
-              scope.maxDepth = newVal;
+          attrs.$observe('maxDepth', function(val) {
+            var md = scope.$eval(val);
+            if((typeof md) == "number") {
+              scope.maxDepth = md;
             }
-          }, true);
+          });
 
-          scope.$watch(function () {
-            return attrs.nodrop;
-          }, function (newVal) {
-            if((typeof newVal) != "undefined") {
-              scope.nodrop = true;
-            }
-          }, true);
+          attrs.$observe('nodrop', function(val) {
+            scope.nodrop = ((typeof val) != "undefined");
+          });
+
         }
       };
     }
@@ -758,6 +773,19 @@
               element.addClass(config.nodeClass);
             }
             scope.init(controllersArr);
+
+            scope.collapsed = !!$uiTreeHelper.getNodeAttribute(scope, 'collapsed');
+            attrs.$observe('collapsed', function(val) {
+              var collapsed = scope.$eval(val);
+              if((typeof collapsed) == "boolean") {
+                scope.collapsed = collapsed;
+              }
+            });
+
+            scope.$watch('collapsed', function(val) {
+              $uiTreeHelper.setNodeAttribute(scope, 'collapsed', val);
+              attrs.$set('collapsed', val);
+            });
 
             var hasTouch = 'ontouchstart' in window;
             var startPos, firstMoving, dragInfo, pos;

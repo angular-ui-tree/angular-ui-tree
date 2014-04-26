@@ -17,6 +17,19 @@
             }
             scope.init(controllersArr);
 
+            scope.collapsed = !!$uiTreeHelper.getNodeAttribute(scope, 'collapsed');
+            attrs.$observe('collapsed', function(val) {
+              var collapsed = scope.$eval(val);
+              if((typeof collapsed) == "boolean") {
+                scope.collapsed = collapsed;
+              }
+            });
+
+            scope.$watch('collapsed', function(val) {
+              $uiTreeHelper.setNodeAttribute(scope, 'collapsed', val);
+              attrs.$set('collapsed', val);
+            });
+
             var hasTouch = 'ontouchstart' in window;
             var startPos, firstMoving, dragInfo, pos;
             var placeElm, hiddenPlaceElm, dragElm;

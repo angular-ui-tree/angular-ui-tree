@@ -37,27 +37,18 @@
               scope.$modelValue = ngModel.$modelValue;
             };
           }
-          /*
-          scope.$watch(attrs.ngModel, function() {
-            scope.$modelValue = ngModel.$modelValue;
-          }, true);
-          */
 
-          scope.$watch(function() {
-            return scope.$eval(attrs.maxDepth);
-          }, function(newVal) {
-            if((typeof newVal) == "number") {
-              scope.maxDepth = newVal;
+          attrs.$observe('maxDepth', function(val) {
+            var md = scope.$eval(val);
+            if((typeof md) == "number") {
+              scope.maxDepth = md;
             }
-          }, true);
+          });
 
-          scope.$watch(function () {
-            return attrs.nodrop;
-          }, function (newVal) {
-            if((typeof newVal) != "undefined") {
-              scope.nodrop = true;
-            }
-          }, true);
+          attrs.$observe('nodrop', function(val) {
+            scope.nodrop = ((typeof val) != "undefined");
+          });
+
         }
       };
     }

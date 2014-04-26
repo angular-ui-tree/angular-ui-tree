@@ -30,29 +30,26 @@
             }
           }, true);
 
-          scope.$watch(function () {
-            return scope.$eval(attrs.dragEnabled);
-          }, function (newVal) {
-            if((typeof newVal) == "boolean") {
-              scope.dragEnabled = newVal;
+          attrs.$observe('dragEnabled', function(val) {
+            var de = scope.$eval(val);
+            if((typeof de) == "boolean") {
+              scope.dragEnabled = de;
             }
-          }, true);
+          });
 
-          scope.$watch(function() {
-            return scope.$eval(attrs.maxDepth);
-          }, function(newVal) {
-            if((typeof newVal) == "number") {
-              scope.maxDepth = newVal;
+          attrs.$observe('maxDepth', function(val) {
+            var md = scope.$eval(val);
+            if((typeof md) == "number") {
+              scope.maxDepth = md;
             }
-          }, true);
+          });
 
-          scope.$watch(function() {
-            return scope.$eval(attrs.dragDelay);
-          }, function(newVal) {
-            if((typeof newVal) == "number") {
-              scope.dragDelay = newVal;
+          attrs.$observe('dragDelay', function(val) {
+            var dd = scope.$eval(val);
+            if((typeof dd) == "number") {
+              scope.dragDelay = dd;
             }
-          }, true);
+          });
 
           // check if the dest node can accept the dragging node
           // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`
