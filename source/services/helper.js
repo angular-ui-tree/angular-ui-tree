@@ -43,7 +43,7 @@
           /**
            * @ngdoc method
            * @methodOf ui.tree.service:$nodrag
-           * @param  {Object} angular element
+           * @param  {Object} targetElm angular element
            * @return {Bool} check if the node can be dragged.
            */
           nodrag: function (targetElm) {
@@ -71,7 +71,7 @@
               sourceInfo: {
                 nodeScope: node,
                 index: node.index(),
-                nodesScope: node.$parentNodesScope,
+                nodesScope: node.$parentNodesScope
               },
               index: node.index(),
               siblings: node.siblings().slice(0),
@@ -119,10 +119,10 @@
                   source: this.sourceInfo,
                   dest: {
                     index: this.index,
-                    nodesScope: this.parent,
+                    nodesScope: this.parent
                   },
                   elements: elements,
-                  pos: pos,
+                  pos: pos
                 };
               },
 
@@ -130,7 +130,7 @@
                 var nodeData = this.source.$modelValue;
                 this.source.remove();
                 this.parent.insertNode(this.index, nodeData);
-              },
+              }
             };
           },
 
