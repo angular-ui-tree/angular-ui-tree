@@ -31,11 +31,16 @@
             });
 
             var hasTouch = 'ontouchstart' in window;
+            // todo startPos is unused
             var startPos, firstMoving, dragInfo, pos;
             var placeElm, hiddenPlaceElm, dragElm;
             var treeScope = null;
             var elements; // As a parameter for callbacks
             var dragTimer = null;
+            var body = document.body,
+                html = document.documentElement,
+                document_height,
+                document_width;
 
             var dragStart = function(e) {
               if (!hasTouch && (e.button == 2 || e.which == 3)) {
@@ -121,20 +126,59 @@
               angular.element($document).bind('touchmove', dragMoveEvent);
               angular.element($document).bind('mouseup', dragEndEvent);
               angular.element($document).bind('mousemove', dragMoveEvent);
-              angular.element($window.document.body).bind('mouseleave', dragCancelEvent);
+              angular.element($document).bind('mouseleave', dragCancelEvent);
+              document_height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+              document_width = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
             };
 
             var dragMove = function(e) {
               var eventObj = $uiTreeHelper.eventObj(e);
-              var prev;
+              var prev, leftElmPos, topElmPos;
+
               if (dragElm) {
                 e.preventDefault();
                 $window.getSelection().removeAllRanges();
 
+                leftElmPos = eventObj.pageX - pos.offsetX;
+                topElmPos = eventObj.pageY - pos.offsetY;
+
+                //dragElm can't leave the screen on the left
+                if(leftElmPos < 0){
+                  leftElmPos = 0;
+                }
+
+                //dragElm can't leave the screen on the top
+                if(topElmPos < 0){
+                  topElmPos = 0;
+                }
+
+                //dragElm can't leave the screen on the bottom
+                if ((topElmPos + 10) > document_height){
+                  topElmPos = document_height - 10;
+                }
+
+                //dragElm can't leave the screen on the right
+                if((leftElmPos + 10) > document_width) {
+                  leftElmPos = document_width - 10;
+                }
+
                 dragElm.css({
-                  'left' : eventObj.pageX - pos.offsetX + 'px',
-                  'top'  : eventObj.pageY - pos.offsetY + 'px'
+                  'left': leftElmPos + 'px',
+                  'top': topElmPos + 'px'
                 });
+
+                var top_scroll = window.pageYOffset || $window.document.documentElement.scrollTop;
+                var bottom_scroll = top_scroll + (window.innerHeight || $window.document.clientHeight || $window.document.clientHeight);
+
+                // to scroll down if cursor y-position is greater than the bottom position the vertical scroll
+                if (bottom_scroll < eventObj.pageY && bottom_scroll <= document_height) {
+                  window.scrollBy(0, 10);
+                }
+
+                // to scroll top if cursor y-position is less than the top position the vertical scroll
+                if (top_scroll > eventObj.pageY) {
+                  window.scrollBy(0, -10);
+                }
 
                 $uiTreeHelper.positionMoved(e, pos, firstMoving);
                 if (firstMoving) {
@@ -172,6 +216,7 @@
                 }
 
                 // check if add it as a child node first
+                // todo decrease is unused
                 var decrease = ($uiTreeHelper.offset(dragElm).left - $uiTreeHelper.offset(placeElm).left) >= config.threshold;
                 var targetX = eventObj.pageX - $window.document.body.scrollLeft;
                 var targetY = eventObj.pageY - (window.pageYOffset || $window.document.documentElement.scrollTop);
@@ -198,6 +243,9 @@
                   // check it's new position
                   targetNode = targetElm.scope();
                   var isEmpty = false;
+                  if (!targetNode) {
+                    return;
+                  }
                   if (targetNode.$type == 'uiTree' && targetNode.dragEnabled) {
                     isEmpty = targetNode.isEmpty(); // Check if it's empty tree
                   }

@@ -38,7 +38,7 @@ module.exports = function(grunt) {
           '<%= cfg.srcDir %>/**/*.js',
           '!<%= cfg.buildDir %>/*.js'
         ],
-        tasks: ['jshint:source', 'clean:build', 'concat:build', 'uglify:build', 'cssmin', 'copy']
+        tasks: ['jshint:source', 'clean:build', 'concat:build', 'closure-compiler:build', 'cssmin', 'copy']
       },
       cssmin: {
         files: [
@@ -102,21 +102,21 @@ module.exports = function(grunt) {
           '<%= cfg.srcDir %>/directives/uiTree.js',
           '<%= cfg.srcDir %>/directives/uiTreeNodes.js',
           '<%= cfg.srcDir %>/directives/uiTreeNode.js',
-          '<%= cfg.srcDir %>/directives/uiTreeHandle.js',
+          '<%= cfg.srcDir %>/directives/uiTreeHandle.js'
         ],
         dest: '<%= cfg.buildDir %>/angular-ui-tree.js'
       }
     },
 
-    // uglify
-    uglify: {
-      options: {
-        preserveComments: 'some',
-        mangle: false
-      },
+    // closure-compiler
+    'closure-compiler': {
       build: {
-        files: {
-          '<%= cfg.buildDir %>/angular-ui-tree.min.js': ['<%= cfg.buildDir %>/angular-ui-tree.js']
+        noreport: true,
+        closurePath: '.',
+        js: '<%= cfg.buildDir %>/angular-ui-tree.js',
+        jsOutputFile: '<%= cfg.buildDir %>/angular-ui-tree.min.js',
+        options: {
+          compilation_level: 'SIMPLE_OPTIMIZATIONS'
         }
       }
     },
@@ -222,7 +222,7 @@ module.exports = function(grunt) {
 
   // default
   grunt.registerTask('default', ['tasks_list:project']);
-  grunt.registerTask('build', ['jshint:source', 'clean:build', 'concat:build', 'cssmin', 'uglify:build', 'copy']);
+  grunt.registerTask('build', ['jshint:source', 'clean:build', 'concat:build', 'cssmin', 'closure-compiler:build', 'copy']);
   grunt.registerTask('webserver', ['build', 'open', 'connect:demo', 'watch']);
   grunt.registerTask('test', ['karma:single']);
   grunt.registerTask('test:continuous', ['karma:continuous']);
