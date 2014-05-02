@@ -42,7 +42,7 @@ Watch the Tree component in action on the [demo page](http://jimliu.github.io/an
 ### Load CSS
 Load the css file: `angular-ui-tree.min.css` in your application:
 ```html
-<link rel="stylesheet" href="bower_components/angular-ui-tree/angular-ui-tree.min.css">
+<link rel="stylesheet" href="bower_components/angular-ui-tree/dist/angular-ui-tree.min.css">
 ```
 
 
@@ -50,7 +50,7 @@ Load the css file: `angular-ui-tree.min.css` in your application:
 Load the script file: `angular-ui-tree.js` or `angular-ui-tree.min.js` in your application:
 
 ```html
-<script type="text/javascript" src="bower_components/angular-ui-tree/angular-ui-tree.js"></script>
+<script type="text/javascript" src="bower_components/angular-ui-tree/dist/angular-ui-tree.js"></script>
 ```
 
 ### Code
