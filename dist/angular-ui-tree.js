@@ -732,7 +732,7 @@
           if (ngModel) {
             ngModel.$render = function() {
               if (!ngModel.$modelValue || !angular.isArray(ngModel.$modelValue)) {
-                ngModel.$setViewValue([]);
+                scope.$modelValue = [];
               }
               scope.$modelValue = ngModel.$modelValue;
             };

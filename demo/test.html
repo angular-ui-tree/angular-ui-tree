@@ -10,16 +10,18 @@
 //<![CDATA[ 
 
   angular.module('treeApp', ['ui.tree'])
-  .controller('treeCtrl', function($scope) {
-    $scope.data = [
-      {title: 'A'},
-      {title: 'Abc'},
-      {title: 'Ab'},
-      {title: 'Ac'},
-      {title: 'bc'},
-      {title: 'B'},
-      {title: 'C'}
-    ];
+  .controller('treeCtrl', function($scope, $timeout) {
+    $timeout(function(){
+      $scope.data = [
+        {title: 'A'},
+        {title: 'Abc'},
+        {title: 'Ab'},
+        {title: 'Ac'},
+        {title: 'bc'},
+        {title: 'B'},
+        {title: 'C'}
+      ];
+    },100);
 
     $scope.treeOptions = {
       dragStart: function(event) {
