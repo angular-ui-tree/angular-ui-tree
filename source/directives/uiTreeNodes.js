@@ -49,6 +49,10 @@
             scope.nodrop = ((typeof val) != "undefined");
           });
 
+          attrs.$observe('horizontal', function(val) {
+            scope.horizontal = ((typeof val) != "undefined");
+          });
+
         }
       };
     }
