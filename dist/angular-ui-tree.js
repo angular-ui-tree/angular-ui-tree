@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.0.13
+ * @license Angular UI Tree v2.0.12
  * (c) 2010-2014. https://github.com/JimLiu/angular-ui-tree
  * License: MIT
  */
@@ -679,6 +679,10 @@
 
           };
 
+          callbacks.beforeDrop = function(event) {
+
+          };
+
           scope.$watch(attrs.uiTree, function(newVal, oldVal){
             angular.forEach(newVal, function(value, key){
               if (callbacks[key]) {
@@ -1064,6 +1068,9 @@
               e.preventDefault();
 
               if (dragElm) {
+                scope.$treeScope.$apply(function() {
+                  scope.$callbacks.beforeDrop(dragInfo.eventArgs(elements, pos));
+                });
                 // roll back elements changed
                 hiddenPlaceElm.replaceWith(scope.$element);
                 placeElm.remove();

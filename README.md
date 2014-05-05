@@ -229,6 +229,12 @@ The `dragStop` function is called when the user stop dragging the node.
 **Parameters:**
 Same as [Parameters](#eventParam) of dropped.
 
+##### beforeDrop(event)
+The `beforeDrop` function is called before the dragging node is dropped.
+
+**Parameters:**
+Same as [Parameters](#eventParam) of dropped.
+
 ### ui-tree-nodes
 `ui-tree-nodes` is the container of nodes. Every `ui-tree-node` should have a `ui-tree-nodes` as it's container, a `ui-tree-nodes` can have multiple child nodes.
 

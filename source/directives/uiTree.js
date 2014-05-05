@@ -79,6 +79,10 @@
 
           };
 
+          callbacks.beforeDrop = function(event) {
+
+          };
+
           scope.$watch(attrs.uiTree, function(newVal, oldVal){
             angular.forEach(newVal, function(value, key){
               if (callbacks[key]) {

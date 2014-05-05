@@ -303,6 +303,9 @@
               e.preventDefault();
 
               if (dragElm) {
+                scope.$treeScope.$apply(function() {
+                  scope.$callbacks.beforeDrop(dragInfo.eventArgs(elements, pos));
+                });
                 // roll back elements changed
                 hiddenPlaceElm.replaceWith(scope.$element);
                 placeElm.remove();
