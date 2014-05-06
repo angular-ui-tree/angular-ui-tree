@@ -1128,11 +1128,10 @@
             };
 
             var bindDrag = function() {
-              element.bind('touchstart', dragStartEvent);
-              element.bind('mousedown', function (e) {
+              element.bind('touchstart mousedown', function (e) {
                 dragTimer = $timeout(function(){dragStartEvent(e);}, scope.dragDelay);
               });
-              element.bind('mouseup',function(){$timeout.cancel(dragTimer);});
+              element.bind('touchend touchmove touchcancel mousemove mouseup',function(){$timeout.cancel(dragTimer);});
             };
             bindDrag();
 
