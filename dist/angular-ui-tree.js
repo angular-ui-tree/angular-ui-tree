@@ -996,8 +996,12 @@
                 // Select the drag target. Because IE does not support CSS 'pointer-events: none', it will always
                 // pick the drag element itself as the target. To prevent this, we hide the drag element while
                 // selecting the target.
+                var displayElm;
                 if (angular.isFunction(dragElm.hide)) {
                   dragElm.hide();
+                }else{
+                  displayElm = dragElm[0].style.display;
+                  dragElm[0].style.display = "none";
                 }
 
                 // when using elementFromPoint() inside an iframe, you have to call
@@ -1007,6 +1011,8 @@
                 var targetElm = angular.element($window.document.elementFromPoint(targetX, targetY));
                 if (angular.isFunction(dragElm.show)) {
                   dragElm.show();
+                }else{
+                  dragElm[0].style.display = displayElm;
                 }
 
                 // move vertical
