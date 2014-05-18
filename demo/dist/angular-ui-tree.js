@@ -877,6 +877,13 @@
               dragElm.css('width', $uiTreeHelper.width(scope.$element) + 'px');
               dragElm.css('z-index', 9999);
 
+              // Prevents cursor to change rapidly in Opera 12.16 and IE when dragging an element
+              var hStyle = (scope.$element[0].querySelector('.angular-ui-tree-handle') || scope.$element[0]).currentStyle;
+              if (hStyle) {
+                document.body.setAttribute('ui-tree-cursor', $document.find('body').css('cursor') || '');
+                $document.find('body').css({'cursor': hStyle.cursor + '!important'});
+              }
+
               scope.$element.after(placeElm);
               scope.$element.after(hiddenPlaceElm);
               dragElm.append(scope.$element);
@@ -1105,6 +1112,12 @@
 
               }
 
+              // Restore cursor in Opera 12.16 and IE
+              var oldCur = document.body.getAttribute('ui-tree-cursor');
+              if (oldCur !== null) {
+                $document.find('body').css({'cursor': oldCur});
+                document.body.removeAttribute('ui-tree-cursor');
+              }
 
               angular.element($document).unbind('touchend', dragEndEvent); // Mobile
               angular.element($document).unbind('touchcancel', dragEndEvent); // Mobile
