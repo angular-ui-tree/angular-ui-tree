@@ -879,6 +879,13 @@
               dragElm.css('width', $uiTreeHelper.width(scope.$element) + 'px');
               dragElm.css('z-index', 9999);
 
+              // Prevents cursor to change rapidly in Opera 12.16 and IE when dragging an element
+              var hStyle = (scope.$element[0].querySelector('.angular-ui-tree-handle') || scope.$element[0]).currentStyle;
+              if (hStyle) {
+                document.body.setAttribute('ui-tree-cursor', $document.find('body').css('cursor') || '');
+                $document.find('body').css({'cursor': hStyle.cursor + '!important'});
+              }
+
               scope.$element.after(placeElm);
               scope.$element.after(hiddenPlaceElm);
               dragElm.append(scope.$element);
@@ -998,8 +1005,12 @@
                 // Select the drag target. Because IE does not support CSS 'pointer-events: none', it will always
                 // pick the drag element itself as the target. To prevent this, we hide the drag element while
                 // selecting the target.
+                var displayElm;
                 if (angular.isFunction(dragElm.hide)) {
                   dragElm.hide();
+                }else{
+                  displayElm = dragElm[0].style.display;
+                  dragElm[0].style.display = "none";
                 }
 
                 // when using elementFromPoint() inside an iframe, you have to call
@@ -1009,6 +1020,8 @@
                 var targetElm = angular.element($window.document.elementFromPoint(targetX, targetY));
                 if (angular.isFunction(dragElm.show)) {
                   dragElm.show();
+                }else{
+                  dragElm[0].style.display = displayElm;
                 }
 
                 // move vertical
@@ -1101,6 +1114,12 @@
 
               }
 
+              // Restore cursor in Opera 12.16 and IE
+              var oldCur = document.body.getAttribute('ui-tree-cursor');
+              if (oldCur !== null) {
+                $document.find('body').css({'cursor': oldCur});
+                document.body.removeAttribute('ui-tree-cursor');
+              }
 
               angular.element($document).unbind('touchend', dragEndEvent); // Mobile
               angular.element($document).unbind('touchcancel', dragEndEvent); // Mobile
