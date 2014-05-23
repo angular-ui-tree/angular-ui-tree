@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.1.2
+ * @license Angular UI Tree v2.1.3
  * (c) 2010-2014. https://github.com/JimLiu/angular-ui-tree
  * License: MIT
  */
@@ -528,7 +528,9 @@
         };
 
         $scope.accept = function(sourceNode, destIndex) {
-          return $scope.$childNodesScope && $scope.$childNodesScope.accept(sourceNode, destIndex);
+          return $scope.$childNodesScope &&
+                  $scope.$childNodesScope.$modelValue &&
+                  $scope.$childNodesScope.accept(sourceNode, destIndex);
         };
 
         $scope.remove = function() {

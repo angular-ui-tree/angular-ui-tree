@@ -79,7 +79,9 @@
         };
 
         $scope.accept = function(sourceNode, destIndex) {
-          return $scope.$childNodesScope && $scope.$childNodesScope.accept(sourceNode, destIndex);
+          return $scope.$childNodesScope &&
+                  $scope.$childNodesScope.$modelValue &&
+                  $scope.$childNodesScope.accept(sourceNode, destIndex);
         };
 
         $scope.remove = function() {
