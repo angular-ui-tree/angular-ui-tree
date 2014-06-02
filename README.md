@@ -144,6 +144,11 @@ If you write your own [$callbacks.accept](#accept) method, you have to check `da
 ##### data-drag-delay
 Number of milliseconds a click must be held to start a drag. (default 0)
 
+##### data-empty-place-holder-enabled
+If a tree is empty, there will be an empty place hoder which is used to drop node from other trees by default.
+- `true` (default): display an empty place holder if the tree is empty
+- `false`: do not display an empty place hoder
+
 ##### Example 
 - turn on/off drag and drop.
 - Limit depth to 5

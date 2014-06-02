@@ -37,6 +37,13 @@
             }
           });
 
+          attrs.$observe('emptyPlaceHolderEnabled', function(val) {
+            var ep = scope.$eval(val);
+            if((typeof ep) == "boolean") {
+              scope.emptyPlaceHolderEnabled = ep;
+            }
+          });
+
           attrs.$observe('maxDepth', function(val) {
             var md = scope.$eval(val);
             if((typeof md) == "number") {

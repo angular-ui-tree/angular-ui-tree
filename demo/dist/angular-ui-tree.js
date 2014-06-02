@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.1.3
+ * @license Angular UI Tree v2.1.4
  * (c) 2010-2014. https://github.com/JimLiu/angular-ui-tree
  * License: MIT
  */
@@ -303,6 +303,7 @@
         $scope.$callbacks = null;
 
         $scope.dragEnabled = true;
+        $scope.emptyPlaceHolderEnabled = true;
         $scope.maxDepth = 0;
         $scope.dragDelay = 0;
 
@@ -319,7 +320,8 @@
         };
 
         $scope.resetEmptyElement = function() {
-          if ($scope.$nodesScope.$modelValue.length === 0) {
+          if ($scope.$nodesScope.$modelValue.length === 0 &&
+            $scope.emptyPlaceHolderEnabled) {
             $element.append($scope.$emptyElm);
           } else {
             $scope.$emptyElm.remove();
@@ -636,6 +638,13 @@
             var de = scope.$eval(val);
             if((typeof de) == "boolean") {
               scope.dragEnabled = de;
+            }
+          });
+
+          attrs.$observe('emptyPlaceHolderEnabled', function(val) {
+            var ep = scope.$eval(val);
+            if((typeof ep) == "boolean") {
+              scope.emptyPlaceHolderEnabled = ep;
             }
           });
 

@@ -14,6 +14,7 @@
         $scope.$callbacks = null;
 
         $scope.dragEnabled = true;
+        $scope.emptyPlaceHolderEnabled = true;
         $scope.maxDepth = 0;
         $scope.dragDelay = 0;
 
@@ -30,7 +31,8 @@
         };
 
         $scope.resetEmptyElement = function() {
-          if ($scope.$nodesScope.$modelValue.length === 0) {
+          if ($scope.$nodesScope.$modelValue.length === 0 &&
+            $scope.emptyPlaceHolderEnabled) {
             $element.append($scope.$emptyElm);
           } else {
             $scope.$emptyElm.remove();
