@@ -209,7 +209,7 @@ If a node moves it's position after dropped, the `nodeDropped` callback will be 
     + `index`: The position you dropped in.
   * `elements`: The dragging relative elements.
     + `placeholder`: The placeholder element.
-    + `drag`: The dragging element.
+    + `dragging`: The dragging element.
   * `pos`: Position object.
 
 ##### <a name="dragStart"></a>dragStart(event)
@@ -307,6 +307,9 @@ Example: turn off drag.
   <li ng-repeat="node in nodes" ui-tree-node data-nodrag>{{node.title}}</li>
 </ol>
 ```
+
+##### data-collapsed
+Collapse the node.
 
 #### Properties of scope
 ##### $element (type: AngularElement)
