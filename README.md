@@ -200,6 +200,17 @@ If the nodes accept the current dragging node.
 - `true` Allow it to drop.
 - `false` Not allow.
 
+##### <a name="beforeDrag"></a>beforeDrag(sourceNodeScope)
+Check if the current selected node can be dragged.
+
+**Parameters:**
+- `sourceNodeScope`: The scope of source node which is selected.
+
+**Return**
+If current node is draggable.
+- `true` Allow it to drag.
+- `false` Not allow.
+
 ##### <a name="dropped"></a>dropped(event)
 If a node moves it's position after dropped, the `nodeDropped` callback will be called.
 

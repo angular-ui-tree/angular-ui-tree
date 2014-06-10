@@ -31,6 +31,10 @@
           return $scope.$treeScope.$callbacks.accept(sourceNode, $scope, destIndex);
         };
 
+        $scope.beforeDrag = function(sourceNode) {
+          return $scope.$treeScope.$callbacks.beforeDrag(sourceNode);
+        };
+
         $scope.isParent = function(node) {
           return node.$parentNodesScope == $scope;
         };
