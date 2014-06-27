@@ -68,6 +68,7 @@
 
               var eventElmTagName = eventElm.prop('tagName').toLowerCase();
               if (eventElmTagName == 'input' ||
+                eventElmTagName == 'textarea' ||
                 eventElmTagName == 'button') { // if it's a input or button, ignore it
                 return;
               }
