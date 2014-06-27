@@ -80,6 +80,10 @@
                 eventElm = eventElm.parent();
               }
 
+              if (!scope.beforeDrag(scope)){
+                return;
+              }
+
               e.uiTreeDragging = true; // stop event bubbling
               if (e.originalEvent) {
                 e.originalEvent.uiTreeDragging = true;

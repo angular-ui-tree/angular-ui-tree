@@ -10,7 +10,8 @@
         controller: 'TreeController',
         link: function(scope, element, attrs) {
           var callbacks = {
-            accept: null
+            accept: null,
+            beforeDrag: null
           };
 
           var config = {};
@@ -66,6 +67,10 @@
             if (destNodesScope.nodrop || destNodesScope.outOfDepth(sourceNodeScope)) {
               return false;
             }
+            return true;
+          };
+
+          callbacks.beforeDrag = function(sourceNodeScope) {
             return true;
           };
 

@@ -384,6 +384,10 @@
           return $scope.$treeScope.$callbacks.accept(sourceNode, $scope, destIndex);
         };
 
+        $scope.beforeDrag = function(sourceNode) {
+          return $scope.$treeScope.$callbacks.beforeDrag(sourceNode);
+        };
+
         $scope.isParent = function(node) {
           return node.$parentNodesScope == $scope;
         };
@@ -614,7 +618,8 @@
         controller: 'TreeController',
         link: function(scope, element, attrs) {
           var callbacks = {
-            accept: null
+            accept: null,
+            beforeDrag: null
           };
 
           var config = {};
@@ -670,6 +675,10 @@
             if (destNodesScope.nodrop || destNodesScope.outOfDepth(sourceNodeScope)) {
               return false;
             }
+            return true;
+          };
+
+          callbacks.beforeDrag = function(sourceNodeScope) {
             return true;
           };
 
@@ -854,6 +863,10 @@
                   return;
                 }
                 eventElm = eventElm.parent();
+              }
+
+              if (!scope.beforeDrag(scope)){
+                return;
               }
 
               e.uiTreeDragging = true; // stop event bubbling
