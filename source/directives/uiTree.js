@@ -31,31 +31,27 @@
             }
           }, true);
 
-          attrs.$observe('dragEnabled', function(val) {
-            var de = scope.$eval(val);
-            if((typeof de) == "boolean") {
-              scope.dragEnabled = de;
+          scope.$watch(attrs.dragEnabled, function(val) {
+            if((typeof val) == "boolean") {
+              scope.dragEnabled = val;
             }
           });
 
-          attrs.$observe('emptyPlaceHolderEnabled', function(val) {
-            var ep = scope.$eval(val);
-            if((typeof ep) == "boolean") {
-              scope.emptyPlaceHolderEnabled = ep;
+          scope.$watch(attrs.emptyPlaceHolderEnabled, function(val) {
+            if((typeof val) == "boolean") {
+              scope.emptyPlaceHolderEnabled = val;
             }
           });
 
-          attrs.$observe('maxDepth', function(val) {
-            var md = scope.$eval(val);
-            if((typeof md) == "number") {
-              scope.maxDepth = md;
+          scope.$watch(attrs.maxDepth, function(val) {
+            if((typeof val) == "number") {
+              scope.maxDepth = val;
             }
           });
 
-          attrs.$observe('dragDelay', function(val) {
-            var dd = scope.$eval(val);
-            if((typeof dd) == "number") {
-              scope.dragDelay = dd;
+          scope.$watch(attrs.dragDelay, function(val) {
+            if((typeof val) == "number") {
+              scope.dragDelay = val;
             }
           });
 

@@ -38,10 +38,9 @@
             };
           }
 
-          attrs.$observe('maxDepth', function(val) {
-            var md = scope.$eval(val);
-            if((typeof md) == "number") {
-              scope.maxDepth = md;
+          scope.$watch(attrs.maxDepth, function(val) {
+            if((typeof val) == "number") {
+              scope.maxDepth = val;
             }
           });
 
