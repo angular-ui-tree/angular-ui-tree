@@ -18,10 +18,10 @@
             scope.init(controllersArr);
 
             scope.collapsed = !!$uiTreeHelper.getNodeAttribute(scope, 'collapsed');
-            attrs.$observe('collapsed', function(val) {
-              var collapsed = scope.$eval(val);
-              if((typeof collapsed) == "boolean") {
-                scope.collapsed = collapsed;
+
+            scope.$watch(attrs.collapsed, function(val) {
+              if((typeof val) == "boolean") {
+                scope.collapsed = val;
               }
             });
 
