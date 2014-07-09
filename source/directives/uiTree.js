@@ -70,6 +70,10 @@
             return true;
           };
 
+          callbacks.removed = function(node){
+          
+          };
+
           callbacks.dropped = function(event) {
 
           };
