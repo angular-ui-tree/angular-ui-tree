@@ -1,28 +1,30 @@
-describe('nestedSortableCtrl', function () {
+describe('treeCtrl', function () {
 
     var scope, $compile, attrs;
     var element;
 
-    beforeEach(module('ui.nestedSortable'));
+    beforeEach(module('ui.tree'));
 
     beforeEach(inject(function ($rootScope, _$controller_, _$compile_) {
         scope = $rootScope;
         $controller = _$controller_;
         $compile = _$compile_;
 
-        element = angular.element('<ol ui-nested-sortable="options" ng-model="list">' +
-            '<li ng-repeat="item in list" ui-nested-sortable-item="">' +
-              '<div ui-nested-sortable-handle>' +
+        // TODO: move test element + data to a generic module so we can reuse it for other tests
+        element = angular.element('<div ui-tree="options">' + 
+            '<ol ui-tree-nodes ng-model="list">' +
+            '<li ng-repeat="item in list" ui-tree-node="">' +
+              '<div ui-tree-handle>' +
                 '{{item.title}}' +
               '</div>' +
-              '<ol ui-nested-sortable="options" ng-model="item.items">' +
-                '<li ng-repeat="subItem in item.items" ui-nested-sortable-item="">' +
-                  '<div ui-nested-sortable-handle>' +
+              '<ol ui-tree-nodes="" ng-model="item.items">' +
+                '<li ng-repeat="subItem in item.items" ui-tree-node="">' +
+                  '<div ui-tree-handle>' +
                     '{{subItem.title}}' +
                   '</div>' +
-                  '<ol ui-nested-sortable="options" ng-model="subItem.items">' +
-                    '<li ng-repeat="subItem1 in subItem.items" ui-nested-sortable-item="">' +
-                      '<div ui-nested-sortable-handle>' +
+                  '<ol ui-tree-nodes="" ng-model="subItem.items">' +
+                    '<li ng-repeat="subItem1 in subItem.items" ui-tree-node="">' +
+                      '<div ui-tree-handle>' +
                         '{{subItem1.title}}' +
                       '</div>' +
                     '</li>' +
@@ -30,9 +32,9 @@ describe('nestedSortableCtrl', function () {
                 '</li>' +
               '</ol>' +
             '</li>' + 
-          '</ol>');
+          '</ol>' +
+          '</div>');
 
-        controller = $controller('NestedSortableController', {$scope: scope, $attrs: attrs});
 
         scope.list = [
         {
@@ -123,17 +125,15 @@ describe('nestedSortableCtrl', function () {
         return element;
     }
 
-    // test controller
-    it('should init the correct sortable element', function () {
-        var tree = createTree();
-        scope.initSortable(tree);
-        expect(scope.sortableElement).toBe(tree);
-    });
-
     it('should insert the sortable item at the right position', function () {
         var tree, index, itemModelData;
 
+
         tree = createTree();
+
+        var localScope;
+        localScope = angular.element(tree.children('ol').first()).scope();
+
         index = 1;
         itemModelData = {
           id: 3,
@@ -141,25 +141,9 @@ describe('nestedSortableCtrl', function () {
           items: []
         };
 
-        scope.sortableModelValue = [{id: 1, title: 'foo'}, {id: 2, title: 'bar'}];
-        scope.insertSortableItem(index, itemModelData);
-        expect(scope.sortableModelValue[index].title).toEqual('baz');
-    });
-
-    it('should should set the parent scope of a newly initialized child node', function () {
-        var tree, subitem;
-
-        tree = createTree();
-        subItem = {};
-
-        scope.initSubItemElement(subItem);
-        expect(subItem.parentScope).toEqual(scope);
-    });
-
-    it('should return the correct parent item scope', function () {
-        var sortable = {parentItemScope: 'foo'};
-        scope.initSortable(sortable);
-        expect(scope.parentItemScope()).toEqual('foo');
+        localScope.$modelValue = [{id: 1, title: 'foo'}, {id: 2, title: 'bar'}];
+        localScope.insertNode(index, itemModelData);
+        expect(localScope.$modelValue[index].title).toEqual('baz');
     });
 });
 
