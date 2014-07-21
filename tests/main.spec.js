@@ -3,26 +3,27 @@ describe('main', function () {
     var scope, $compile;
     var element;
 
-    beforeEach(module('ui.nestedSortable'));
+    beforeEach(module('ui.tree'));
 
     beforeEach(inject(function ($rootScope, _$compile_) {
         scope = $rootScope;
         $compile = _$compile_;
 
         // TODO: move test element + data to a generic module so we can reuse it for other tests
-        element = angular.element('<ol ui-nested-sortable="options" ng-model="list">' +
-            '<li ng-repeat="item in list" ui-nested-sortable-item="">' +
-              '<div ui-nested-sortable-handle>' +
+        element = angular.element('<div ui-tree="options">' + 
+            '<ol ui-tree-nodes ng-model="list">' +
+            '<li ng-repeat="item in list" ui-tree-node="">' +
+              '<div ui-tree-handle>' +
                 '{{item.title}}' +
               '</div>' +
-              '<ol ui-nested-sortable="options" ng-model="item.items">' +
-                '<li ng-repeat="subItem in item.items" ui-nested-sortable-item="">' +
-                  '<div ui-nested-sortable-handle>' +
+              '<ol ui-tree-nodes="" ng-model="item.items">' +
+                '<li ng-repeat="subItem in item.items" ui-tree-node="">' +
+                  '<div ui-tree-handle>' +
                     '{{subItem.title}}' +
                   '</div>' +
-                  '<ol ui-nested-sortable="options" ng-model="subItem.items">' +
-                    '<li ng-repeat="subItem1 in subItem.items" ui-nested-sortable-item="">' +
-                      '<div ui-nested-sortable-handle>' +
+                  '<ol ui-tree-nodes="" ng-model="subItem.items">' +
+                    '<li ng-repeat="subItem1 in subItem.items" ui-tree-node="">' +
+                      '<div ui-tree-handle>' +
                         '{{subItem1.title}}' +
                       '</div>' +
                     '</li>' +
@@ -30,7 +31,8 @@ describe('main', function () {
                 '</li>' +
               '</ol>' +
             '</li>' + 
-          '</ol>');
+          '</ol>' +
+          '</div>');
 
         scope.list = [
         {
@@ -134,7 +136,7 @@ describe('main', function () {
 
     it('should show 4 root nodes', function () {
       var tree = createTree();
-      expect(tree.children('li').length).toEqual(4);
+      expect(tree.children('ol').first().children('li').length).toEqual(4);
     });
 
     it('should show the first node with no child nodes', function () {
@@ -144,18 +146,18 @@ describe('main', function () {
 
     it('should show the third node with 3 child nodes', function () {
       var tree = createTree();
-      expect(tree.children('li').eq(2).find('> ol').children('li').length).toEqual(3);
+      expect(tree.children('ol').first().children('li').eq(2).find('> ol').children('li').length).toEqual(3);
     });
 
     // test if the node text is shown
     it('should show \'item1\' as text for the first node', function () {
       var tree = createTree();
-      expect(tree.children('li').first()).toHaveText('item1');
+      expect(tree.children('ol').first().children('li').first()).toHaveText('item1');
     });
 
     it('should show \'item2.1.2\' as text for the second child node of the first child node of node 2', function () {
       var tree = createTree();
-      expect(tree.children('li').eq(1).find('> ol').children('li').first().find('> ol').children('li').eq(1)).toHaveText('item2.1.2');
+      expect(tree.children('ol').first().children('li').eq(1).find('> ol').children('li').first().find('> ol').children('li').eq(1)).toHaveText('item2.1.2');
     });
 
     // TODO: simulate drag and drop events and check if the position of the nodes is still correct
