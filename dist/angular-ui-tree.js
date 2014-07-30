@@ -356,8 +356,8 @@
 
   angular.module('ui.tree')
 
-    .controller('TreeNodesController', ['$scope', '$element', '$timeout', 'treeConfig',
-      function ($scope, $element, $timeout, treeConfig) {
+    .controller('TreeNodesController', ['$scope', '$element', 'treeConfig',
+      function ($scope, $element, treeConfig) {
         this.scope = $scope;
 
         $scope.$element = $element;
@@ -371,9 +371,7 @@
         $scope.maxDepth = 0;
 
         $scope.initSubNode = function(subNode) {
-          $timeout(function() {
-            $scope.$nodesMap[subNode.$modelValue.$$hashKey] = subNode;
-          });
+          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = subNode;
         };
 
         $scope.destroySubNode = function(subNode) {
