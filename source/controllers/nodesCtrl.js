@@ -18,10 +18,16 @@
         $scope.maxDepth = 0;
 
         $scope.initSubNode = function(subNode) {
+          if(!subNode.$modelValue) {
+            return null;
+          }
           $scope.$nodesMap[subNode.$modelValue.$$hashKey] = subNode;
         };
 
         $scope.destroySubNode = function(subNode) {
+          if(!subNode.$modelValue) {
+            return null;
+          }
           $scope.$nodesMap[subNode.$modelValue.$$hashKey] = null;
         };
 
