@@ -378,6 +378,7 @@
         };
 
         $scope.destroySubNode = function(subNode) {
+          if(!subNode.$modelValue) return null;
           $scope.$nodesMap[subNode.$modelValue.$$hashKey] = null;
         };
 
