@@ -84,7 +84,7 @@
                 eventElm = eventElm.parent();
               }
 
-              if (!scope.beforeDrag(scope)){
+              if (!scope.beforeDrag(scope, e)){
                 return;
               }
 

@@ -35,8 +35,8 @@
           return $scope.$treeScope.$callbacks.accept(sourceNode, $scope, destIndex);
         };
 
-        $scope.beforeDrag = function(sourceNode) {
-          return $scope.$treeScope.$callbacks.beforeDrag(sourceNode);
+        $scope.beforeDrag = function(sourceNode, event) {
+          return $scope.$treeScope.$callbacks.beforeDrag(sourceNode, event);
         };
 
         $scope.isParent = function(node) {
