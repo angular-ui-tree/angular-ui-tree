@@ -45,6 +45,54 @@
                 document_width;
 
             var dragStart = function(e) {
+              if (scope.dragDistance > 0)
+              {
+                var eventObj = $uiTreeHelper.eventObj(e);
+                pos = $uiTreeHelper.positionStarted(eventObj, scope.$element);
+
+                var tempMoveFunction = function(tempEvent)
+                {
+                  tempEvent.preventDefault();
+
+                  var distance = Math.floor(Math.sqrt(Math.pow(tempEvent.pageX - pos.startX, 2) + Math.pow(tempEvent.pageY - pos.startY, 2)));
+
+                  if (distance >= scope.dragDistance)
+                  {
+                    angular.element($document).unbind('touchmove');
+                    angular.element($document).unbind('mousemove');
+                    angular.element($document).unbind('touchend');
+                    angular.element($document).unbind('touchcancel');
+                    angular.element($document).unbind('mouseup');
+
+                    drag(e);
+                  }
+                };
+                angular.element($document).bind('touchmove', tempMoveFunction);
+                angular.element($document).bind('mousemove', tempMoveFunction);
+
+                var tempEndFunction = function(tempEvent)
+                {
+                  tempEvent.preventDefault();
+
+                  angular.element($document).unbind('touchmove');
+                  angular.element($document).unbind('mousemove');
+                  angular.element($document).unbind('touchend');
+                  angular.element($document).unbind('touchcancel');
+                  angular.element($document).unbind('mouseup');
+
+                  dragEndEvent(tempEvent);
+                };
+                angular.element($document).bind('touchend', tempEndFunction);
+                angular.element($document).bind('touchcancel', tempEndFunction);
+                angular.element($document).bind('mouseup', tempEndFunction);
+              }
+              else
+              {
+                drag(e);
+              }
+            };
+
+            var drag = function(e) {
               if (!hasTouch && (e.button == 2 || e.which == 3)) {
                 // disable right click
                 return;
