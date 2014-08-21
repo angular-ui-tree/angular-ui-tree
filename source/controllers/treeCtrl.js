@@ -18,6 +18,9 @@
         $scope.maxDepth = 0;
         $scope.dragDelay = 0;
         $scope.dragDistance = 0;
+        $scope.lockX = false;
+        $scope.lockY = false;
+        $scope.boundTo = undefined;
 
         // Check if it's a empty tree
         $scope.isEmpty = function() {
