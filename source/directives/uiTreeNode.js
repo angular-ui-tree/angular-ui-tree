@@ -406,8 +406,8 @@
               element.bind('touchstart mousedown', function (e) {
                 dragDelaying = true;
                 dragStarted = false;
-                dragStartEvent(e);
-                dragTimer = $timeout(function(){dragDelaying = false;}, scope.dragDelay);
+
+                dragTimer = $timeout(function(){dragStartEvent(e); dragDelaying = false;}, scope.dragDelay);
               });
               element.bind('touchend touchcancel mouseup',function(){$timeout.cancel(dragTimer);});
             };
