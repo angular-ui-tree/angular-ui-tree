@@ -332,30 +332,34 @@
                   return;
                 }
 
-                // move horizontal
-                if (pos.dirAx && pos.distAxX >= config.levelThreshold) {
-                  pos.distAxX = 0;
-
-                  // increase horizontal level if previous sibling exists and is not collapsed
-                  if (pos.distX > 0) {
-                    prev = dragInfo.prev();
-                    if (prev && !prev.collapsed
-                      && prev.accept(scope, prev.childNodesCount())) {
-                      prev.$childNodesScope.$element.append(placeElm);
-                      dragInfo.moveTo(prev.$childNodesScope, prev.childNodes(), prev.childNodesCount());
-                    }
+                // Change horizontal level
+                var previous = dragInfo.prev();
+                var parent = dragInfo.parentNode();
+                // If we have a element right above us and it's not collapsed and it accept the current element
+                if (previous && !previous.collapsed && previous.accept(scope, previous.childNodesCount()))
+                {
+                  // And if the horizontal position of the mouse is greater than the one of the parent
+                  if (elmLeftPos >= (previous.$element.offset().left + scope.spacing - scope.spacingThreshold))
+                  {
+                    // Then move the element as a children of the previous element
+                    previous.$childNodesScope.$element.append(placeElm);
+                    dragInfo.moveTo(previous.$childNodesScope, previous.childNodes(), previous.childNodesCount());
                   }
+                }
 
-                  // decrease horizontal level
-                  if (pos.distX < 0) {
-                    // we can't decrease a level if an item preceeds the current one
-                    var next = dragInfo.next();
-                    if (!next) {
-                      var target = dragInfo.parentNode(); // As a sibling of it's parent node
-                      if (target
-                        && target.$parentNodesScope.accept(scope, target.index() + 1)) {
-                        target.$element.after(placeElm);
-                        dragInfo.moveTo(target.$parentNodesScope, target.siblings(), target.index() + 1);
+                // If we have a parent
+                if (parent)
+                {
+                  // And that the horizontal position of the mouse is around the position of the parent
+                  if (elmLeftPos <= (parent.$element.offset().left + scope.spacingThreshold))
+                  {
+                    // And that there is no element after the current one
+                    if (!dragInfo.next())
+                    {
+                      // Then move the element into the parent
+                      if (parent.$parentNodesScope.accept(scope, parent.index() + 1)) {
+                        parent.$element.after(placeElm);
+                        dragInfo.moveTo(parent.$parentNodesScope, parent.siblings(), parent.index() + 1);
                       }
                     }
                   }
