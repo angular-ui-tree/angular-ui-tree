@@ -411,6 +411,9 @@
                     return;
                   }
 
+                  targetElm = targetNode.$element; // Get the element of ui-tree-node
+                  var targetElmOffset = $uiTreeHelper.offset(targetElm);
+
                   // if placeholder move from empty tree, reset it.
                   if (treeScope && placeElm.parent()[0] != treeScope.$element[0]) {
                     treeScope.resetEmptyElement();
@@ -424,26 +427,28 @@
                       dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), 0);
                     }
                   } else if (targetNode.dragEnabled()){ // drag enabled
-                    targetElm = targetNode.$element; // Get the element of ui-tree-node
-                    var targetOffset = $uiTreeHelper.offset(targetElm);
-                    targetBefore = targetNode.horizontal ? eventObj.pageX < (targetOffset.left + $uiTreeHelper.width(targetElm) / 2)
-                                                         : eventObj.pageY < (targetOffset.top + $uiTreeHelper.height(targetElm) / 2);
-
-                    if (targetNode.$parentNodesScope.accept(scope, targetNode.index())) {
-                      if (targetBefore) {
-                        targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
-                        dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index());
-                      } else {
+                    if (targetNode.$parentNodesScope.accept(scope, targetNode.index()))
+                    {
+                      if (elmTopPos >= (targetElmOffset.top + (targetElmOffset.height / 2)))
+                      {
                         targetElm.after(placeElm);
                         dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index() + 1);
                       }
+                      else if (elmTopPos <= (targetElmOffset.top + (targetElmOffset.height / 2)))
+                      {
+                        targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
+                        dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index());
+                      }
                     }
-                    else if (!targetBefore && targetNode.accept(scope, targetNode.childNodesCount())) { // we have to check if it can add the dragging node as a child
-                      targetNode.$childNodesScope.$element.append(placeElm);
-                      dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), targetNode.childNodesCount());
+                    else
+                    {
+                      if (elmTopPos >= (targetElmOffset.top + (targetElmOffset.height / 2)) && targetNode.accept(scope, targetNode.childNodesCount()))
+                      {
+                        targetNode.$childNodesScope.$element.append(placeElm);
+                        dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), targetNode.childNodesCount());
+                      }
                     }
                   }
-
                 }
 
                 scope.$apply(function() {
