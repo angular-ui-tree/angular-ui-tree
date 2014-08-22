@@ -55,6 +55,30 @@
             }
           });
 
+          scope.$watch(attrs.dragDistance, function(val) {
+            if((typeof val) == "number") {
+              scope.dragDistance = val;
+            }
+          });
+
+          scope.$watch(attrs.lockX, function(val) {
+            if((typeof val) == "boolean") {
+              scope.lockX = val;
+            }
+          });
+
+          scope.$watch(attrs.lockY, function(val) {
+            if((typeof val) == "boolean") {
+              scope.lockY = val;
+            }
+          });
+
+          scope.$watch(attrs.boundTo, function(val) {
+            if((typeof val) == "string" && val.length > 0) {
+              scope.boundTo = angular.element(val);
+            }
+          });
+
           // check if the dest node can accept the dragging node
           // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`
           // and the 'max-depth' attribute in `ui-tree` or `ui-tree-nodes`.
