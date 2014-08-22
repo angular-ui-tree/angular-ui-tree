@@ -93,7 +93,7 @@
             };
 
             var drag = function(e) {
-              var position = angular.copy(scope.$element.offset());
+              var position = angular.copy($uiTreeHelper.offset(scope.$element));
 
               if (!hasTouch && (e.button == 2 || e.which == 3)) {
                 // disable right click
