@@ -226,30 +226,30 @@
                 topElmPos = eventObj.pageY - pos.offsetY;
 
                 //dragElm can't leave the screen or the bounding parent on the left
-                if (((!scope.boundTo || scope.boundTo.length === 0) && leftElmPos < 0) || (scope.boundTo && leftElmPos < scope.boundTo.position().left)) {
-                  leftElmPos = (!scope.boundTo || scope.boundTo.length === 0) ? 0 : scope.boundTo.position().left;
+                if (((!scope.boundTo || scope.boundTo.length === 0 || !scope.boundTo.position()) && leftElmPos < 0) || (scope.boundTo && leftElmPos < scope.boundTo.offset().left)) {
+                  leftElmPos = (!scope.boundTo || scope.boundTo.length === 0) ? 0 : scope.boundTo.offset().left;
                 }
 
                 //dragElm can't leave the screen or the bounding parent on the top
-                if (((!scope.boundTo || scope.boundTo.length === 0) && topElmPos < 0) || (scope.boundTo && topElmPos < scope.boundTo.position().top)){
-                  topElmPos = (!scope.boundTo || scope.boundTo.length === 0) ? 0 : scope.boundTo.position().top;
+                if (((!scope.boundTo || scope.boundTo.length === 0 || !scope.boundTo.position()) && topElmPos < 0) || (scope.boundTo && topElmPos < scope.boundTo.offset().top)){
+                  topElmPos = (!scope.boundTo || scope.boundTo.length === 0) ? 0 : scope.boundTo.offset().top;
                 }
 
                 var handleElement = scope.$element.find('.angular-ui-tree-handle');
                 var handleHeight = (handleElement) ? handleElement.height() : 10;
 
                 //dragElm can't leave the screen or the bounding parent on the bottom
-                if (((!scope.boundTo || scope.boundTo.length === 0) && (topElmPos + handleHeight) > document_height)
-                      || (scope.boundTo && (topElmPos + handleHeight) > (scope.boundTo.position().top + scope.boundTo.height()))){
+                if (((!scope.boundTo || scope.boundTo.length === 0 || !scope.boundTo.position()) && (topElmPos + handleHeight) > document_height)
+                      || (scope.boundTo && (topElmPos + handleHeight) > (scope.boundTo.offset().top + scope.boundTo.height()))){
                   topElmPos = (!scope.boundTo || scope.boundTo.length === 0) ? (document_height - handleHeight)
-                                                                             : ((scope.boundTo.position().top + scope.boundTo.height()) - handleHeight);
+                                                                             : ((scope.boundTo.offset().top + scope.boundTo.height()) - handleHeight);
                 }
 
                 //dragElm can't leave the screen or the bounding parent on the right
-                if (((!scope.boundTo || scope.boundTo.length === 0) && (leftElmPos + scope.$element.width()) > document_width)
-                      || (scope.boundTo && (leftElmPos + scope.$element.width()) > (scope.boundTo.position().left + scope.boundTo.width()))){
+                if (((!scope.boundTo || scope.boundTo.length === 0 || !scope.boundTo.position()) && (leftElmPos + scope.$element.width()) > document_width)
+                      || (scope.boundTo && (leftElmPos + scope.$element.width()) > (scope.boundTo.offset().left + scope.boundTo.outerWidth()))){
                   leftElmPos = (!scope.boundTo || scope.boundTo.length === 0) ? (document_width - scope.$element.width())
-                                                                              : ((scope.boundTo.position().left + scope.boundTo.width()) - scope.$element.width());
+                                                                              : ((scope.boundTo.offset().left + scope.boundTo.outerWidth()) - scope.$element.width());
                 }
 
                 if (scope.lockY)
