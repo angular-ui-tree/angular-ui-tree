@@ -21,6 +21,8 @@
         $scope.lockX = false;
         $scope.lockY = false;
         $scope.boundTo = undefined;
+        $scope.spacing = 50;
+        $scope.spacingThreshold = Math.floor($scope.spacing / 4);
 
         // Check if it's a empty tree
         $scope.isEmpty = function() {
