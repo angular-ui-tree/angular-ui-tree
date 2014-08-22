@@ -366,8 +366,6 @@
                 }
 
                 // check if add it as a child node first
-                // todo decrease is unused
-                var decrease = ($uiTreeHelper.offset(dragElm).left - $uiTreeHelper.offset(placeElm).left) >= config.threshold;
                 var targetX = eventObj.pageX - $window.document.body.scrollLeft;
                 var targetY = eventObj.pageY - (window.pageYOffset || $window.document.documentElement.scrollTop);
 
