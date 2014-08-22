@@ -93,6 +93,8 @@
             };
 
             var drag = function(e) {
+              var position = angular.copy(scope.$element.offset());
+
               if (!hasTouch && (e.button == 2 || e.which == 3)) {
                 // disable right click
                 return;
@@ -180,8 +182,8 @@
               dragElm.append(scope.$element);
               $document.find('body').append(dragElm);
               dragElm.css({
-                'left' : eventObj.pageX - pos.offsetX + 'px',
-                'top'  : eventObj.pageY - pos.offsetY + 'px'
+                'left' : position.left + 'px',
+                'top'  : position.top + 'px'
               });
               elements = {
                 placeholder: placeElm,
