@@ -93,7 +93,7 @@
             };
 
             var drag = function(e) {
-              var position = angular.copy($uiTreeHelper.offset(scope.$element));
+              var position = $uiTreeHelper.offset(scope.$element);
 
               if (!hasTouch && (e.button == 2 || e.which == 3)) {
                 // disable right click
@@ -237,13 +237,15 @@
 
                 // Retrieve handle position and dimension
                 hdlElm = scope.$element.find('.angular-ui-tree-handle');
-                var hdlElmOffset = $uiTreeHelper.offset(hdlElm);
+                var hdlElmOffset;
                 if (angular.isDefined(hdlElm) && hdlElm.length > 0)
                 {
+                  hdlElmOffset = $uiTreeHelper.offset(hdlElm);
                   hdlLeftPos = hdlElmOffset.left;
                   hdlWidth = hdlElmOffset.width;
                   hdlTopPos = hdlElmOffset.top;
                   hdlHeight = hdlElmOffset.height;
+                  hdlOffset = hdlElm.position().top;
                 }
                 else
                 {
@@ -255,7 +257,6 @@
                 hdlRightPos = hdlLeftPos + hdlWidth;
                 hdlBottomPos = hdlTopPos + hdlHeight;
 
-                hdlOffset = hdlElm.position().top;
 
                 // If we are bounded to an element, and that element exists (and is offset is defined)
                 if (angular.isDefined(scope.boundTo) && scope.boundTo.length > 0 && angular.isDefined(scope.boundTo.offset()))
@@ -338,8 +339,9 @@
                 // If we have a element right above us and it's not collapsed and it accept the current element
                 if (previous && !previous.collapsed && previous.accept(scope, previous.childNodesCount()))
                 {
+                  var previousElmOffset = $uiTreeHelper.offset(previous.$element);
                   // And if the horizontal position of the mouse is greater than the one of the parent
-                  if (elmLeftPos >= (previous.$element.offset().left + scope.spacing - scope.spacingThreshold))
+                  if (elmLeftPos >= (previousElmOffset.left + scope.spacing - scope.spacingThreshold))
                   {
                     // Then move the element as a children of the previous element
                     previous.$childNodesScope.$element.append(placeElm);
@@ -350,8 +352,9 @@
                 // If we have a parent
                 if (parent)
                 {
+                  var parentElmOffset = $uiTreeHelper.offset(parent.$element);
                   // And that the horizontal position of the mouse is around the position of the parent
-                  if (elmLeftPos <= (parent.$element.offset().left + scope.spacingThreshold))
+                  if (elmLeftPos <= (parentElmOffset.left + scope.spacingThreshold))
                   {
                     // And that there is no element after the current one
                     if (!dragInfo.next())
