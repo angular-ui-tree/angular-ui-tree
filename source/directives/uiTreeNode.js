@@ -213,7 +213,9 @@
               }
 
               var eventObj = $uiTreeHelper.eventObj(e);
-              var prev, leftElmPos, originLeftElmPos, topElmPos, originTopElmPos;
+              var prev, elmLeftPos, elmOriginLeftPos, elmWidth, elmRightPos, elmTopPos, elmOriginTopPos, elmHeight, elmBottomPos,
+                  hdlElm, hdlLeftPos, hdlWidth, hdlRightPos, hdlTopPos, hdlHeight, hdlBottomPos, hdlOffset,
+                  boundToLeftPos, boundToWidth, boundToRightPos, boundToTopPos, boundToHeight, boundToBottomPos;
 
               if (dragElm) {
                 e.preventDefault();
@@ -224,49 +226,91 @@
                   $window.document.selection.empty();
                 }
 
-                leftElmPos = eventObj.pageX - pos.offsetX;
-                topElmPos = eventObj.pageY - pos.offsetY;
+                var dragElmOffset = $uiTreeHelper.offset(dragElm);
+                // Retrieve object position and dimensions
+                elmLeftPos = eventObj.pageX - pos.offsetX;
+                elmWidth = dragElmOffset.width;
+                elmRightPos = elmLeftPos + elmWidth;
+                elmTopPos = eventObj.pageY - pos.offsetY;
+                elmHeight = dragElmOffset.height;
+                elmBottomPos = elmTopPos + elmHeight;
+
+                // Retrieve handle position and dimension
+                hdlElm = scope.$element.find('.angular-ui-tree-handle');
+                var hdlElmOffset = $uiTreeHelper.offset(hdlElm);
+                if (angular.isDefined(hdlElm) && hdlElm.length > 0)
+                {
+                  hdlLeftPos = hdlElmOffset.left;
+                  hdlWidth = hdlElmOffset.width;
+                  hdlTopPos = hdlElmOffset.top;
+                  hdlHeight = hdlElmOffset.height;
+                }
+                else
+                {
+                  hdlLeftPos = elmLeftPos;
+                  hdlWidth = elmWidth;
+                  hdlTopPos = elmTopPos;
+                  hdlHeight = 10;
+                }
+                hdlRightPos = hdlLeftPos + hdlWidth;
+                hdlBottomPos = hdlTopPos + hdlHeight;
+
+                hdlOffset = hdlElm.position().top;
+
+                // If we are bounded to an element, and that element exists (and is offset is defined)
+                if (angular.isDefined(scope.boundTo) && scope.boundTo.length > 0 && angular.isDefined(scope.boundTo.offset()))
+                {
+                  var boundToOffset = $uiTreeHelper.offset(scope.boundTo);
+                  // Then get it's position and dimension
+                  boundToLeftPos = boundToOffset.left;
+                  boundToWidth = boundToOffset.width;
+                  boundToTopPos = boundToOffset.top;
+                  boundToHeight = boundToOffset.height;
+                }
+                // Else, bound to document
+                else
+                {
+                  boundToLeftPos = 0;
+                  boundToWidth = document_width;
+                  boundToTopPos = 0;
+                  boundToHeight = document_height;
+                }
+                boundToRightPos = boundToLeftPos + boundToWidth;
+                boundToBottomPos = boundToTopPos + boundToHeight;
 
                 //dragElm can't leave the screen or the bounding parent on the left
-                if (((!scope.boundTo || scope.boundTo.length === 0 || !scope.boundTo.position()) && leftElmPos < 0) || (scope.boundTo && leftElmPos < scope.boundTo.offset().left)) {
-                  leftElmPos = (!scope.boundTo || scope.boundTo.length === 0) ? 0 : scope.boundTo.offset().left;
+                if (elmLeftPos < boundToLeftPos) {
+                  elmLeftPos = boundToLeftPos;
                 }
 
                 //dragElm can't leave the screen or the bounding parent on the top
-                if (((!scope.boundTo || scope.boundTo.length === 0 || !scope.boundTo.position()) && topElmPos < 0) || (scope.boundTo && topElmPos < scope.boundTo.offset().top)){
-                  topElmPos = (!scope.boundTo || scope.boundTo.length === 0) ? 0 : scope.boundTo.offset().top;
-                }
-
-                var handleElement = scope.$element.find('.angular-ui-tree-handle');
-                var handleHeight = (handleElement) ? handleElement.height() : 10;
-
-                //dragElm can't leave the screen or the bounding parent on the bottom
-                if (((!scope.boundTo || scope.boundTo.length === 0 || !scope.boundTo.position()) && (topElmPos + handleHeight) > document_height)
-                      || (scope.boundTo && (topElmPos + handleHeight) > (scope.boundTo.offset().top + scope.boundTo.height()))){
-                  topElmPos = (!scope.boundTo || scope.boundTo.length === 0) ? (document_height - handleHeight)
-                                                                             : ((scope.boundTo.offset().top + scope.boundTo.height()) - handleHeight);
+                if (elmTopPos < boundToTopPos) {
+                  elmTopPos = boundToTopPos;
                 }
 
                 //dragElm can't leave the screen or the bounding parent on the right
-                if (((!scope.boundTo || scope.boundTo.length === 0 || !scope.boundTo.position()) && (leftElmPos + scope.$element.width()) > document_width)
-                      || (scope.boundTo && (leftElmPos + scope.$element.width()) > (scope.boundTo.offset().left + scope.boundTo.outerWidth()))){
-                  leftElmPos = (!scope.boundTo || scope.boundTo.length === 0) ? (document_width - scope.$element.width())
-                                                                              : ((scope.boundTo.offset().left + scope.boundTo.outerWidth()) - scope.$element.width());
+                if (elmRightPos > boundToRightPos){
+                  elmLeftPos = boundToRightPos - elmWidth;
+                }
+
+                //dragElm can't leave the screen or the bounding parent on the bottom
+                if (elmTopPos > boundToBottomPos){
+                  elmTopPos = boundToBottomPos;
                 }
 
                 if (scope.lockY)
                 {
-                  topElmPos = originTopElmPos;
+                  elmTopPos = elmOriginTopPos;
                 }
 
                 if (scope.lockX)
                 {
-                  leftElmPos = originLeftElmPos;
+                  elmLeftPos = elmOriginLeftPos;
                 }
 
                 dragElm.css({
-                  'left': leftElmPos + 'px',
-                  'top': topElmPos + 'px'
+                  'left': elmLeftPos + 'px',
+                  'top': elmTopPos + 'px'
                 });
 
                 var top_scroll = window.pageYOffset || $window.document.documentElement.scrollTop;
