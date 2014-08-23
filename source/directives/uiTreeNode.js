@@ -461,7 +461,10 @@
             };
 
             var dragEnd = function(e) {
-              e.preventDefault();
+              if (angular.isDefined(e))
+              {
+                e.preventDefault();
+              }
 
               if (dragElm) {
                 scope.$treeScope.$apply(function() {
@@ -532,6 +535,13 @@
               });
               element.bind('touchend touchcancel mouseup',function(){$timeout.cancel(dragTimer);});
             };
+
+            var unbind = function()
+            {
+              dragEnd();
+              angular.element($window.document.body).unbind('keydown');
+            };
+
             bindDrag();
 
             angular.element($window.document.body).bind("keydown", function(e) {
@@ -540,6 +550,8 @@
                 dragEnd(e);
               }
             });
+
+            scope.$on("$destroy", unbind);
           }
         };
       }
