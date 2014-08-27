@@ -399,7 +399,8 @@
                   var targetBefore, targetNode;
                   // check it's new position
                   targetNode = targetElm.scope();
-                  var isEmpty = false;
+                  var isEmpty = false,
+                      isTree = false;
                   if (!targetNode) {
                     return;
                   }
@@ -411,7 +412,11 @@
                   }
                   if (targetNode.$type != 'uiTreeNode'
                     && !isEmpty) { // Check if it is a uiTreeNode or it's an empty tree
-                    return;
+                    if(targetNode.$type == 'uiTree') {
+                      isTree = true;
+                    } else {
+                      return;
+                    }
                   }
 
                   targetElm = targetNode.$element; // Get the element of ui-tree-node
@@ -428,6 +433,11 @@
                     if (targetNode.$nodesScope.accept(scope, 0)) {
                       targetNode.place(placeElm);
                       dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), 0);
+                    }
+                  } else if (isTree) { // it's in the bottom padded portion of the tree itself
+                    if (targetNode.$nodesScope.accept(scope, targetNode.$nodesScope.childNodes().length)) {
+                      targetNode.place(placeElm);
+                      dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), targetNode.$nodesScope.childNodes().length + 1);
                     }
                   } else if (targetNode.dragEnabled()){ // drag enabled
                     if (targetNode.$parentNodesScope.accept(scope, targetNode.index()))
