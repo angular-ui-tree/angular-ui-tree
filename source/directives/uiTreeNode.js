@@ -314,6 +314,24 @@
                   'top': elmTopPos + 'px'
                 });
 
+                // When dragging a node over parent scroll.
+                var $parentElement = scope.$parent.$element[0];
+                while($parentElement.style.overflowY !== 'auto' && $parentElement.style.overflowY !== 'scroll') {
+                  $parentElement = $parentElement.parentNode;
+                }
+
+                var parent_top = $parentElement.offsetTop;
+                var parent_bottom = parent_top + $parentElement.offsetHeight;
+
+                // to scroll top if cursor y-position is less than the the scollable parent element's top position the vertical scroll
+                if(eventObj.pageY < parent_top) {
+                  $parentElement.scrollTop -= 10;
+                }
+                // to scroll down if cursor y-position is greater than the scollable parent element' bottom position the vertical scroll
+                if(eventObj.pageY > parent_bottom) {
+                  $parentElement.scrollTop += 10;
+                }
+
                 var top_scroll = window.pageYOffset || $window.document.documentElement.scrollTop;
                 var bottom_scroll = top_scroll + (window.innerHeight || $window.document.clientHeight || $window.document.clientHeight);
 
