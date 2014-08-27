@@ -290,8 +290,8 @@
                 }
 
                 //dragElm can't leave the screen or the bounding parent on the right
-                if (elmRightPos > boundToRightPos){
-                  elmLeftPos = boundToRightPos - elmWidth;
+                if (elmLeftPos > boundToRightPos){
+                  elmLeftPos = boundToRightPos;
                 }
 
                 //dragElm can't leave the screen or the bounding parent on the bottom
