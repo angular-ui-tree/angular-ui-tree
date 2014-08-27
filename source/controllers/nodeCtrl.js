@@ -8,6 +8,7 @@
         this.scope = $scope;
 
         $scope.$element = $element;
+        $scope.$nodeElement = $element;
         $scope.$modelValue = null; // Model value for node;
         $scope.$parentNodeScope = null; // uiTreeNode Scope of parent node;
         $scope.$childNodesScope = null; // uiTreeNodes Scope of child nodes.

@@ -8,6 +8,7 @@
         this.scope = $scope;
 
         $scope.$element = $element;
+        $scope.$treeElement = $element;
         $scope.$nodesScope = null; // root nodes
         $scope.$type = 'uiTree';
         $scope.$emptyElm = null;
@@ -21,6 +22,8 @@
         $scope.lockX = false;
         $scope.lockY = false;
         $scope.boundTo = undefined;
+        $scope.stickySide = 'bottom';
+        $scope.stickiness = 0.5;
         $scope.spacing = 50;
         $scope.spacingThreshold = Math.floor($scope.spacing / 4);
 

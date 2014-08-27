@@ -86,6 +86,12 @@
             }
           });
 
+          scope.$watch(attrs.stickiness, function(val) {
+            if(angular.isNumber(val) && val >= -100 && val <= 100) {
+              scope.stickySide = (val < 0) ? 'top' : 'bottom';
+              scope.stickiness = Math.abs((val / 100));
+            }
+          });
           // check if the dest node can accept the dragging node
           // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`
           // and the 'max-depth' attribute in `ui-tree` or `ui-tree-nodes`.

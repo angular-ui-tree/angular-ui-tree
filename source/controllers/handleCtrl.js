@@ -8,6 +8,7 @@
         this.scope = $scope;
 
         $scope.$element = $element;
+        $scope.$handleElement = $element;
         $scope.$nodeScope = null;
         $scope.$type = 'uiTreeHandle';
 
