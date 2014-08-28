@@ -18,14 +18,14 @@
         $scope.maxDepth = 0;
 
         $scope.initSubNode = function(subNode) {
-          if(!subNode.$modelValue) {
+          if (!subNode.$modelValue) {
             return null;
           }
           $scope.$nodesMap[subNode.$modelValue.$$hashKey] = subNode;
         };
 
         $scope.destroySubNode = function(subNode) {
-          if(!subNode.$modelValue) {
+          if (!subNode.$modelValue) {
             return null;
           }
           $scope.$nodesMap[subNode.$modelValue.$$hashKey] = null;
@@ -49,8 +49,8 @@
 
         $scope.safeApply = function(fn) {
           var phase = this.$root.$$phase;
-          if(phase == '$apply' || phase == '$digest') {
-            if(fn && (typeof(fn) === 'function')) {
+          if (phase == '$apply' || phase == '$digest') {
+            if (fn && (typeof(fn) === 'function')) {
               fn();
             }
           } else {
