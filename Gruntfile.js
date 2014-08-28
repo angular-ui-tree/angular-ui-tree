@@ -175,6 +175,10 @@ module.exports = function(grunt) {
       }
     },
 
+    jscs: {
+      src: ['<%= cfg.srcDir %>/*.js', '<%= cfg.srcDir %>/**/*.js']
+    },
+
     // available tasks
     tasks_list: {
       options: {},
@@ -222,7 +226,7 @@ module.exports = function(grunt) {
 
   // default
   grunt.registerTask('default', ['tasks_list:project']);
-  grunt.registerTask('build', ['jshint:source', 'clean:build', 'concat:build', 'cssmin', 'uglify:build', 'copy']);
+  grunt.registerTask('build', ['jscs:src', 'jshint:source', 'clean:build', 'concat:build', 'cssmin', 'uglify:build', 'copy']);
   grunt.registerTask('webserver', ['build', 'open', 'connect:demo', 'watch']);
   grunt.registerTask('test', ['karma:single']);
   grunt.registerTask('test:continuous', ['karma:continuous']);
