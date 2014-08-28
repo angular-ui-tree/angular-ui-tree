@@ -228,6 +228,6 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['tasks_list:project']);
   grunt.registerTask('build', ['jscs:src', 'jshint:source', 'clean:build', 'concat:build', 'cssmin', 'uglify:build', 'copy']);
   grunt.registerTask('webserver', ['build', 'open', 'connect:demo', 'watch']);
-  grunt.registerTask('test', ['karma:single']);
+  grunt.registerTask('test', ['jscs:src', 'jshint:source', 'karma:single']);
   grunt.registerTask('test:continuous', ['karma:continuous']);
 };
