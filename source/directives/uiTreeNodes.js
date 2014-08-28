@@ -23,8 +23,7 @@
           if (treeNodeCtrl) {
             treeNodeCtrl.scope.$childNodesScope = scope;
             scope.$nodeScope = treeNodeCtrl.scope;
-          }
-          else { // find the root nodes if there is no parent node and have a parent ui-tree
+          } else { // find the root nodes if there is no parent node and have a parent ui-tree
             treeCtrl.scope.$nodesScope = scope;
           }
           scope.$treeScope = treeCtrl.scope;
@@ -39,7 +38,7 @@
           }
 
           scope.$watch(attrs.maxDepth, function(val) {
-            if((typeof val) == "number") {
+            if ((typeof val) == "number") {
               scope.maxDepth = val;
             }
           });

@@ -32,55 +32,55 @@
           }, true);
 
           scope.$watch(attrs.dragEnabled, function(val) {
-            if((typeof val) == "boolean") {
+            if ((typeof val) == "boolean") {
               scope.dragEnabled = val;
             }
           });
 
           scope.$watch(attrs.emptyPlaceHolderEnabled, function(val) {
-            if((typeof val) == "boolean") {
+            if ((typeof val) == "boolean") {
               scope.emptyPlaceHolderEnabled = val;
             }
           });
 
           scope.$watch(attrs.maxDepth, function(val) {
-            if((typeof val) == "number") {
+            if ((typeof val) == "number") {
               scope.maxDepth = val;
             }
           });
 
           scope.$watch(attrs.dragDelay, function(val) {
-            if((typeof val) == "number") {
+            if ((typeof val) == "number") {
               scope.dragDelay = val;
             }
           });
 
           scope.$watch(attrs.dragDistance, function(val) {
-            if((typeof val) == "number") {
+            if ((typeof val) == "number") {
               scope.dragDistance = val;
             }
           });
 
           scope.$watch(attrs.lockX, function(val) {
-            if((typeof val) == "boolean") {
+            if ((typeof val) == "boolean") {
               scope.lockX = val;
             }
           });
 
           scope.$watch(attrs.lockY, function(val) {
-            if((typeof val) == "boolean") {
+            if ((typeof val) == "boolean") {
               scope.lockY = val;
             }
           });
 
           scope.$watch(attrs.boundTo, function(val) {
-            if((typeof val) == "string" && val.length > 0) {
+            if ((typeof val) == "string" && val.length > 0) {
               scope.boundTo = angular.element(val);
             }
           });
 
           scope.$watch(attrs.spacing, function(val) {
-            if((typeof val) == "number" && val > 0) {
+            if ((typeof val) == "number" && val > 0) {
               scope.spacing = val;
               scope.spacingThreshold = Math.floor(scope.spacing / 4);
             }
@@ -101,7 +101,7 @@
             return true;
           };
 
-          callbacks.removed = function(node){
+          callbacks.removed = function(node) {
 
           };
 
@@ -126,8 +126,8 @@
 
           };
 
-          scope.$watch(attrs.uiTree, function(newVal, oldVal){
-            angular.forEach(newVal, function(value, key){
+          scope.$watch(attrs.uiTree, function(newVal, oldVal) {
+            angular.forEach(newVal, function(value, key) {
               if (callbacks[key]) {
                 if (typeof value === "function") {
                   callbacks[key] = value;
@@ -137,7 +137,6 @@
 
             scope.$callbacks = callbacks;
           }, true);
-
 
         }
       };

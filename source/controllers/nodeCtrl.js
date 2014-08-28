@@ -84,7 +84,7 @@
                   $scope.$childNodesScope.accept(sourceNode, destIndex);
         };
 
-        $scope.removeNode = function(){
+        $scope.removeNode = function() {
           var node = $scope.remove();
           $scope.$callbacks.removed(node);
           return node;
