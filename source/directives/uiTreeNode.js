@@ -367,7 +367,7 @@
                   }
                 }
 
-                var intersectWith = findIntersect(elmPos, scope.$treeElement.children());
+                var intersectWith = findIntersect(elmPos, scope.$treeElement.children(), scope.collideWith, pos.dirY);
                 var targetElm;
                 if (intersectWith)
                 {
@@ -427,29 +427,35 @@
                     var childsHeight = (targetNode.hasChild()) ? $uiTreeHelper.offset(targetNode.$childNodesScope.$element).height : 0;
                     if (pos.dirY > 0)
                     {
-                      var elmVertDown = (scope.stickySide === 'top') ? elmPos.top : elmPos.bottom;
-                      if (elmVertDown >= (targetElmOffset.top + ((targetElmOffset.height - childsHeight) * scope.stickiness)))
+                      var elmVertDown = (scope.collideWith === 'top') ? elmPos.top : elmPos.bottom;
+                      if (elmVertDown >= (targetElmOffset.top + ((targetElmOffset.height - childsHeight) * scope.coverage)))
                       {
-                        if (targetNode.hasChild() && targetNode.accept(scope, 0))
+                        if (!targetNode.hasChild() || !targetNode.accept(scope, 0))
                         {
-                          console.log("Down, Overlap, HasChild, Prepend");
-                          targetNode.$childNodesScope.$element.prepend(placeElm);
-                          dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), 0);
+                          targetElm.after(placeElm);
+                          dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index() + 1);
                         }
                         else
                         {
-                          console.log("Down, Overlap, NoChild, After");
-                          targetElm.after(placeElm);
-                          dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index() + 1);
+                          var firstChild = (targetNode.childNodes().length > 0) ? targetNode.childNodes()[0] : undefined;
+                          var firstChildOffset = $uiTreeHelper.offset(firstChild.$element);
+
+                          var firstChildChildsHeight = (firstChild.hasChild()) ? $uiTreeHelper.offset(firstChild.$childNodesScope.$element).height : 0;
+
+                          if (angular.isUndefined(firstChild) || (angular.isDefined(firstChild) &&
+                              elmVertDown < (firstChildOffset.top + ((firstChildOffset.height - firstChildChildsHeight) * scope.coverage))))
+                          {
+                            targetNode.$childNodesScope.$element.prepend(placeElm);
+                            dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), 0);
+                          }
                         }
                       }
                     }
                     else if (pos.dirY < 0 && pos.distAxY > 8)
                     {
-                      var elmVertUp = (scope.stickySide === 'top') ? elmPos.bottom : elmPos.top;
-                      if (elmVertUp <= (targetElmOffset.top + targetElmOffset.height - (targetElmOffset.height * scope.stickiness)))
+                      var elmVertUp = (scope.collideWith === 'top') ? elmPos.bottom : elmPos.top;
+                      if (elmVertUp <= (targetElmOffset.top + targetElmOffset.height - (targetElmOffset.height * scope.coverage)))
                       {
-                        console.log("Up, Overlap, Before");
                         targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
                         dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index());
                       }
@@ -492,7 +498,6 @@
                 });
                 scope.$$apply = false;
                 dragInfo = null;
-
               }
 
               // Restore cursor in Opera 12.16 and IE
@@ -545,7 +550,7 @@
               angular.element($window.document.body).unbind('keydown');
             };
 
-            var findIntersect = function(elmPos, nodes)
+            var findIntersect = function(elmPos, nodes, collideWith, direction)
             {
               var intersectWith = false;
 
@@ -558,11 +563,11 @@
                 {
                   if (nodeElement.hasClass('angular-ui-tree-nodes'))
                   {
-                    intersectWith = findIntersect(elmPos,nodeElement.children());
+                    intersectWith = findIntersect(elmPos, nodeElement.children(), collideWith, direction);
                   }
                   else if (nodeElement.hasClass('angular-ui-tree-node'))
                   {
-                    intersectWithChild = findIntersect(elmPos, nodeElement.children());
+                    intersectWithChild = findIntersect(elmPos, nodeElement.children(), collideWith, direction);
 
                     if (!intersectWithChild)
                     {
@@ -576,7 +581,17 @@
                         bottom: nodeOffset.top + nodeOffset.height
                       };
 
-                      var isOverElementHeight = (elmPos.bottom >= nodePos.top && elmPos.top <= nodePos.bottom);
+                      var isOverElementHeight;
+                      if (direction < 0)
+                      {
+                        isOverElementHeight = (collideWith === 'bottom') ? (elmPos.top <= nodePos.bottom && elmPos.bottom >= nodePos.top)
+                                                                             : (elmPos.bottom <= nodePos.bottom && elmPos.bottom >= nodePos.top);
+                      }
+                      else if (direction > 0)
+                      {
+                        isOverElementHeight = (collideWith === 'bottom') ? (elmPos.bottom >= nodePos.top && elmPos.top <= nodePos.bottom)
+                                                                             : (elmPos.top >= nodePos.top && elmPos.top <= nodePos.bottom);
+                      }
 
                       if (isOverElementHeight) {
                         intersectWith = nodes[nodeIdx];

@@ -82,10 +82,10 @@
             }
           });
 
-          scope.$watch(attrs.stickiness, function(val) {
+          scope.$watch(attrs.coverage, function(val) {
             if(angular.isNumber(val) && val >= -100 && val <= 100) {
-              scope.stickySide = (val < 0) ? 'top' : 'bottom';
-              scope.stickiness = Math.abs((val / 100));
+              scope.collideWith = (val < 0) ? 'top' : 'bottom';
+              scope.coverage = Math.abs((val / 100));
             }
           });
           // check if the dest node can accept the dragging node

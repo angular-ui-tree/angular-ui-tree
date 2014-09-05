@@ -22,8 +22,8 @@
         $scope.lockX = false;
         $scope.lockY = false;
         $scope.boundTo = undefined;
-        $scope.stickySide = 'bottom';
-        $scope.stickiness = 0.5;
+        $scope.collideWith = 'bottom';
+        $scope.coverage = 0.5;
         $scope.spacing = 50;
         $scope.spacingThreshold = Math.floor($scope.spacing / 4);
 
