@@ -1,4 +1,4 @@
-(function () {
+(function() {
   'use strict';
 
   angular.module('ui.tree')
@@ -267,5 +267,4 @@
         };
       }
     ]);
-
 })();

@@ -1,4 +1,4 @@
-(function () {
+(function() {
   'use strict';
 
   angular.module('ui.tree')
@@ -11,7 +11,6 @@
         $scope.$handleElement = $element;
         $scope.$nodeScope = null;
         $scope.$type = 'uiTreeHandle';
-
       }
     ]);
 })();

@@ -1,4 +1,4 @@
-(function () {
+(function() {
   'use strict';
 
   angular.module('ui.tree')
@@ -44,19 +44,19 @@
           });
 
           scope.$watch(attrs.maxDepth, function(val) {
-            if(angular.isNumber(val)) {
+            if (angular.isNumber(val)) {
               scope.maxDepth = val;
             }
           });
 
           scope.$watch(attrs.dragDelay, function(val) {
-            if(angular.isNumber(val)) {
+            if (angular.isNumber(val)) {
               scope.dragDelay = val;
             }
           });
 
           scope.$watch(attrs.dragDistance, function(val) {
-            if(angular.isNumber(val)) {
+            if (angular.isNumber(val)) {
               scope.dragDistance = val;
             }
           });
@@ -70,20 +70,20 @@
           });
 
           scope.$watch(attrs.boundTo, function(val) {
-            if(angular.isString(val) && val.length > 0) {
+            if (angular.isString(val) && val.length > 0) {
               scope.boundTo = angular.element(val);
             }
           });
 
           scope.$watch(attrs.spacing, function(val) {
-            if(angular.isNumber(val) && val > 0) {
+            if (angular.isNumber(val) && val > 0) {
               scope.spacing = val;
               scope.spacingThreshold = Math.floor(scope.spacing / 4);
             }
           });
 
           scope.$watch(attrs.coverage, function(val) {
-            if(angular.isNumber(val) && val >= -100 && val <= 100) {
+            if (angular.isNumber(val) && val >= -100 && val <= 100) {
               scope.collideWith = (val < 0) ? 'top' : 'bottom';
               scope.coverage = Math.abs((val / 100));
             }
@@ -139,7 +139,6 @@
 
             scope.$callbacks = callbacks;
           }, true);
-
         }
       };
     }

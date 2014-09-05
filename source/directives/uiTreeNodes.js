@@ -1,4 +1,4 @@
-(function () {
+(function() {
   'use strict';
 
   angular.module('ui.tree')
@@ -38,7 +38,7 @@
           }
 
           scope.$watch(attrs.maxDepth, function(val) {
-            if(angular.isNumber(val)) {
+            if (angular.isNumber(val)) {
               scope.maxDepth = val;
             }
           });
