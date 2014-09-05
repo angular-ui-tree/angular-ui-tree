@@ -438,7 +438,7 @@
                                                            : (targetElmOffset.top + ((targetElmOffset.height - childsHeight) * scope.coverage));
 
                         if (elmVertDown >= downLimit) {
-                          if (!targetNode.hasChild() || !targetNode.accept(scope, 0)) {
+                          if (targetNode.collapsed || !targetNode.hasChild() || !targetNode.accept(scope, 0)) {
                             targetElm.after(placeElm);
                             dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index() + 1);
                           } else {
