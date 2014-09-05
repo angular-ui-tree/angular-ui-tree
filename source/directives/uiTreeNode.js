@@ -345,7 +345,7 @@
                   }
                 }
 
-                // Ceck if we are above another tree
+                // Check if we are above another tree
                 var targetX = eventObj.pageX - $window.document.body.scrollLeft;
                 var targetY = eventObj.pageY - (window.pageYOffset || $window.document.documentElement.scrollTop);
                 // Select the drag target. Because IE does not support CSS 'pointer-events: none', it will always
@@ -362,9 +362,6 @@
                 // elementFromPoint() twice to make sure IE8 returns the correct value
                 $window.document.elementFromPoint(targetX, targetY);
                 var closestElement = angular.element($window.document.elementFromPoint(targetX, targetY));
-                var closestNode = closestElement.scope();
-                var nodes = (angular.isDefined(closestNode) && angular.isDefined(closestNode.$treeElement) && angular.isDefined(closestNode.$treeElement.children()))
-                            ? closestNode.$treeElement.children() : scope.$treeElement.children();
 
                 if (angular.isFunction(dragElm.show)) {
                   dragElm.show();
@@ -372,90 +369,160 @@
                   dragElm[0].style.display = displayElm;
                 }
 
-                // Compute the intersected element of the tree we are hovering
-                var intersectWith = findIntersect(elmPos, nodes, scope.collideWith, pos.dirY);
-                var targetElm;
-                if (intersectWith) {
-                  targetElm = angular.element(intersectWith);
-                } else {
-                  return;
-                }
+                var targetBefore, targetNode, targetElm, isEmpty, isTree, targetElmOffset;
+                if (!scope.horizontal) {
+                  var closestNode = closestElement.scope();
+                  var nodes = (angular.isDefined(closestNode) && angular.isDefined(closestNode.$treeElement) && angular.isDefined(closestNode.$treeElement.children()))
+                            ? closestNode.$treeElement.children() : scope.$treeElement.children();
 
-                // move vertical
-                if (!pos.dirAx) {
-                  var targetNode;
-                  // check it's new position
-                  targetNode = targetElm.scope();
-                  var isEmpty = false,
-                      isTree = false;
-
-                  if (!targetNode) {
+                  // Compute the intersected element of the tree we are hovering
+                  var intersectWith = findIntersect(elmPos, nodes, scope.collideWith, (scope.horizontal) ? pos.dirX : pos.dirY, scope.horizontal);
+                  if (intersectWith) {
+                    targetElm = angular.element(intersectWith);
+                  } else {
                     return;
                   }
 
-                  if (targetNode.$type == 'uiTree' && targetNode.dragEnabled) {
-                    isEmpty = targetNode.isEmpty(); // Check if it's empty tree
-                  }
+                  // move vertical
+                  if ((!scope.horizontal && !pos.dirAx) || (scope.horizontal && pos.dirAx)) {
+                    // check it's new position
+                    targetNode = targetElm.scope();
+                    isEmpty = false,
+                    isTree = false;
 
-                  if (targetNode.$type == 'uiTreeHandle') {
-                    targetNode = targetNode.$nodeScope;
-                  }
-
-                  if (targetNode.$type != 'uiTreeNode' && !isEmpty) { // Check if it is a uiTreeNode or it's an empty tree
-                    if (targetNode.$type == 'uiTree') {
-                      isTree = true;
-                    } else {
+                    if (!targetNode) {
                       return;
                     }
-                  }
 
-                  targetElm = targetNode.$element; // Get the element of ui-tree-node
-                  var targetElmOffset = $uiTreeHelper.offset(targetElm);
-
-                  // if placeholder move from empty tree, reset it.
-                  if (treeScope && placeElm.parent()[0] != treeScope.$element[0]) {
-                    treeScope.resetEmptyElement();
-                    treeScope = null;
-                  }
-
-                  if (isEmpty) { // it's an empty tree
-                    treeScope = targetNode;
-                    if (targetNode.$nodesScope.accept(scope, 0)) {
-                      targetNode.place(placeElm);
-                      dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), 0);
+                    if (targetNode.$type == 'uiTree' && targetNode.dragEnabled) {
+                      isEmpty = targetNode.isEmpty(); // Check if it's empty tree
                     }
-                  } else if (isTree) { // it's in the bottom padded portion of the tree itself
-                    if (targetNode.$nodesScope.accept(scope, targetNode.$nodesScope.childNodes().length)) {
-                      targetNode.place(placeElm);
-                      dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), targetNode.$nodesScope.childNodes().length + 1);
+
+                    if (targetNode.$type == 'uiTreeHandle') {
+                      targetNode = targetNode.$nodeScope;
                     }
-                  } else if (targetNode.dragEnabled()){ // drag enabled
-                    var childsHeight = (targetNode.hasChild()) ? $uiTreeHelper.offset(targetNode.$childNodesScope.$element).height : 0;
-                    if (pos.dirY > 0) {
-                      var elmVertDown = (scope.collideWith === 'top') ? elmPos.top : elmPos.bottom;
-                      if (elmVertDown >= (targetElmOffset.top + ((targetElmOffset.height - childsHeight) * scope.coverage))) {
-                        if (!targetNode.hasChild() || !targetNode.accept(scope, 0)) {
-                          targetElm.after(placeElm);
-                          dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index() + 1);
-                        } else {
-                          var firstChild = (targetNode.childNodes().length > 0) ? targetNode.childNodes()[0] : undefined;
-                          var firstChildOffset = $uiTreeHelper.offset(firstChild.$element);
 
-                          var firstChildChildsHeight = (firstChild.hasChild()) ? $uiTreeHelper.offset(firstChild.$childNodesScope.$element).height : 0;
+                    if (targetNode.$type != 'uiTreeNode' && !isEmpty) { // Check if it is a uiTreeNode or it's an empty tree
+                      if (targetNode.$type == 'uiTree') {
+                        isTree = true;
+                      } else {
+                        return;
+                      }
+                    }
 
-                          if (angular.isUndefined(firstChild) || (angular.isDefined(firstChild) &&
-                              elmVertDown < (firstChildOffset.top + ((firstChildOffset.height - firstChildChildsHeight) * scope.coverage))))
-                          {
-                            targetNode.$childNodesScope.$element.prepend(placeElm);
-                            dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), 0);
+                    targetElm = targetNode.$element; // Get the element of ui-tree-node
+                    targetElmOffset = $uiTreeHelper.offset(targetElm);
+
+                    // if placeholder move from empty tree, reset it.
+                    if (treeScope && placeElm.parent()[0] != treeScope.$element[0]) {
+                      treeScope.resetEmptyElement();
+                      treeScope = null;
+                    }
+
+                    if (isEmpty) { // it's an empty tree
+                      treeScope = targetNode;
+                      if (targetNode.$nodesScope.accept(scope, 0)) {
+                        targetNode.place(placeElm);
+                        dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), 0);
+                      }
+                    } else if (isTree) { // it's in the bottom padded portion of the tree itself
+                      if (targetNode.$nodesScope.accept(scope, targetNode.$nodesScope.childNodes().length)) {
+                        targetNode.place(placeElm);
+                        dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), targetNode.$nodesScope.childNodes().length + 1);
+                      }
+                    } else if (targetNode.dragEnabled()) { // drag enabled
+                      var childsHeight = (targetNode.hasChild()) ? $uiTreeHelper.offset(targetNode.$childNodesScope.$element).height : 0;
+                      if ((!scope.horizontal && pos.dirY > 0) || (scope.horizontal && pos.dirX > 0)) {
+                        var elmVertDown = (scope.collideWith === 'top') ? (scope.horizontal) ? elmPos.right : elmPos.top : (scope.horizontal) ? elmPos.left : elmPos.bottom;
+                        var downLimit = (scope.horizontal) ? ((targetElmOffset.left - elmPos.left) + (targetElmOffset.width * scope.coverage))
+                                                           : (targetElmOffset.top + ((targetElmOffset.height - childsHeight) * scope.coverage));
+
+                        if (elmVertDown >= downLimit) {
+                          if (!targetNode.hasChild() || !targetNode.accept(scope, 0)) {
+                            targetElm.after(placeElm);
+                            dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index() + 1);
+                          } else {
+                            var firstChild = (targetNode.childNodes().length > 0) ? targetNode.childNodes()[0] : undefined;
+                            var firstChildOffset = $uiTreeHelper.offset(firstChild.$element);
+
+                            var firstChildChildsHeight = (firstChild.hasChild()) ? $uiTreeHelper.offset(firstChild.$childNodesScope.$element).height : 0;
+
+                            if (angular.isUndefined(firstChild) || (angular.isDefined(firstChild) &&
+                                elmVertDown < (firstChildOffset.top + ((firstChildOffset.height - firstChildChildsHeight) * scope.coverage))))
+                            {
+                              targetNode.$childNodesScope.$element.prepend(placeElm);
+                              dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), 0);
+                            }
                           }
                         }
+                      } else if (((!scope.horizontal && pos.dirY < 0) || (scope.horizontal && pos.dirX < 0)) && ((!scope.horizontal && pos.distAxY > 8) || (!scope.horizontal && pos.distAxX > 8))) {
+                        var elmVertUp = (scope.collideWith === 'top') ? (scope.horizontal) ? elmPos.left : elmPos.bottom : (scope.horizontal) ? elmPos.right : elmPos.top;
+                        var upLimit = (scope.horizontal) ? ((targetElmOffset.left - elmPos.left) + targetElmOffset.width - (targetElmOffset.width * scope.coverage))
+                                                         : (targetElmOffset.top + targetElmOffset.height - (targetElmOffset.height * scope.coverage));
+
+                        if (elmVertUp <= upLimit) {
+                          targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
+                          dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index());
+                        }
                       }
-                    } else if (pos.dirY < 0 && pos.distAxY > 8) {
-                      var elmVertUp = (scope.collideWith === 'top') ? elmPos.bottom : elmPos.top;
-                      if (elmVertUp <= (targetElmOffset.top + targetElmOffset.height - (targetElmOffset.height * scope.coverage))) {
-                        targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
-                        dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index());
+                    }
+                  }
+                } else {
+                  // move vertical
+                  if (!pos.dirAx) {
+                    targetElm = closestElement;
+                    // check it's new position
+                    targetNode = targetElm.scope();
+                    isEmpty = false;
+                    isTree = false;
+
+                    if (!targetNode) {
+                      return;
+                    }
+                    if (targetNode.$type == 'uiTree' && targetNode.dragEnabled) {
+                      isEmpty = targetNode.isEmpty(); // Check if it's empty tree
+                    }
+                    if (targetNode.$type == 'uiTreeHandle') {
+                      targetNode = targetNode.$nodeScope;
+                    }
+                    if (targetNode.$type != 'uiTreeNode' && !isEmpty) { // Check if it is a uiTreeNode or it's an empty tree
+                      if (targetNode.$type == 'uiTree') {
+                        isTree = true;
+                      } else {
+                        return;
+                      }
+                    }
+
+                    // if placeholder move from empty tree, reset it.
+                    if (treeScope && placeElm.parent()[0] != treeScope.$element[0]) {
+                      treeScope.resetEmptyElement();
+                      treeScope = null;
+                    }
+
+                    if (isEmpty) { // it's an empty tree
+                      treeScope = targetNode;
+                      if (targetNode.$nodesScope.accept(scope, 0)) {
+                        targetNode.place(placeElm);
+                        dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), 0);
+                      }
+                    } else if (targetNode.dragEnabled()){ // drag enabled
+                      targetElm = targetNode.$element; // Get the element of ui-tree-node
+                      var targetOffset = $uiTreeHelper.offset(targetElm);
+                      targetBefore = targetNode.horizontal ? eventObj.pageX < (targetOffset.left + $uiTreeHelper.width(targetElm) / 2)
+                                                           : eventObj.pageY < (targetOffset.top + $uiTreeHelper.height(targetElm) / 2);
+
+                      if (targetNode.$parentNodesScope.accept(scope, targetNode.index())) {
+                        if (targetBefore) {
+                          targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
+                          dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index());
+                        } else {
+                          targetElm.after(placeElm);
+                          dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index() + 1);
+                        }
+                      }
+                      else if (!targetBefore && targetNode.accept(scope, targetNode.childNodesCount())) { // we have to check if it can add the dragging node as a child
+                        targetNode.$childNodesScope.$element.append(placeElm);
+                        dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), targetNode.childNodesCount());
                       }
                     }
                   }
@@ -551,7 +618,7 @@
               angular.element($window.document.body).unbind('keydown');
             };
 
-            var findIntersect = function(elmPos, nodes, collideWith, direction) {
+            var findIntersect = function(elmPos, nodes, collideWith, direction, horizontal) {
               var intersectWith = false;
 
               for (var nodeIdx in nodes) {
@@ -560,9 +627,9 @@
 
                 if (angular.isDefined(nodeElement[0])) {
                   if (nodeElement.hasClass('angular-ui-tree-nodes')) {
-                    intersectWith = findIntersect(elmPos, nodeElement.children(), collideWith, direction);
+                    intersectWith = findIntersect(elmPos, nodeElement.children(), collideWith, direction, horizontal);
                   } else if (nodeElement.hasClass('angular-ui-tree-node')) {
-                    intersectWithChild = findIntersect(elmPos, nodeElement.children(), collideWith, direction);
+                    intersectWithChild = findIntersect(elmPos, nodeElement.children(), collideWith, direction, horizontal);
 
                     if (!intersectWithChild) {
                       var nodeOffset = $uiTreeHelper.offset(nodeElement);
@@ -575,16 +642,27 @@
                         bottom: nodeOffset.top + nodeOffset.height
                       };
 
+                      var isOverElementWidth;
                       var isOverElementHeight;
-                      if (direction < 0) {
-                        isOverElementHeight = (collideWith === 'bottom') ? (elmPos.top <= nodePos.bottom && elmPos.bottom >= nodePos.top)
-                                                                             : (elmPos.bottom <= nodePos.bottom && elmPos.bottom >= nodePos.top);
-                      } else if (direction > 0) {
-                        isOverElementHeight = (collideWith === 'bottom') ? (elmPos.bottom >= nodePos.top && elmPos.top <= nodePos.bottom)
-                                                                             : (elmPos.top >= nodePos.top && elmPos.top <= nodePos.bottom);
+                      if (horizontal) {
+                        if (direction < 0) {
+                          isOverElementWidth = (collideWith === 'bottom') ? (elmPos.left <= nodePos.right && elmPos.right >= nodePos.left)
+                                                                           : (elmPos.right <= nodePos.right && elmPos.right >= nodePos.left);
+                        } else if (direction > 0) {
+                          isOverElementWidth = (collideWith === 'bottom') ? (elmPos.right >= nodePos.left && elmPos.left <= nodePos.right)
+                                                                          : (elmPos.left >= nodePos.left && elmPos.left <= nodePos.right);
+                        }
                       }
 
-                      if (isOverElementHeight) {
+                      if (direction < 0) {
+                        isOverElementHeight = (collideWith === 'bottom') ? (elmPos.top <= nodePos.bottom && elmPos.bottom >= nodePos.top)
+                                                                         : (elmPos.bottom <= nodePos.bottom && elmPos.bottom >= nodePos.top);
+                      } else if (direction > 0) {
+                        isOverElementHeight = (collideWith === 'bottom') ? (elmPos.bottom >= nodePos.top && elmPos.top <= nodePos.bottom)
+                                                                         : (elmPos.top >= nodePos.top && elmPos.top <= nodePos.bottom);
+                      }
+
+                      if ((horizontal && (isOverElementWidth && isOverElementHeight)) || (!horizontal && isOverElementHeight)) {
                         intersectWith = nodes[nodeIdx];
                       }
                     } else {
