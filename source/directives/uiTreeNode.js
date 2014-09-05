@@ -345,7 +345,35 @@
                   }
                 }
 
-                var intersectWith = findIntersect(elmPos, scope.$treeElement.children(), scope.collideWith, pos.dirY);
+                // Ceck if we are above another tree
+                var targetX = eventObj.pageX - $window.document.body.scrollLeft;
+                var targetY = eventObj.pageY - (window.pageYOffset || $window.document.documentElement.scrollTop);
+                // Select the drag target. Because IE does not support CSS 'pointer-events: none', it will always
+                // pick the drag element itself as the target. To prevent this, we hide the drag element while
+                // selecting the target.
+                var displayElm;
+                if (angular.isFunction(dragElm.hide)) {
+                  dragElm.hide();
+                } else {
+                  displayElm = dragElm[0].style.display;
+                  dragElm[0].style.display = "none";
+                }
+                // when using elementFromPoint() inside an iframe, you have to call
+                // elementFromPoint() twice to make sure IE8 returns the correct value
+                $window.document.elementFromPoint(targetX, targetY);
+                var closestElement = angular.element($window.document.elementFromPoint(targetX, targetY));
+                var closestNode = closestElement.scope();
+                var nodes = (angular.isDefined(closestNode) && angular.isDefined(closestNode.$treeElement) && angular.isDefined(closestNode.$treeElement.children()))
+                            ? closestNode.$treeElement.children() : scope.$treeElement.children();
+
+                if (angular.isFunction(dragElm.show)) {
+                  dragElm.show();
+                } else {
+                  dragElm[0].style.display = displayElm;
+                }
+
+                // Compute the intersected element of the tree we are hovering
+                var intersectWith = findIntersect(elmPos, nodes, scope.collideWith, pos.dirY);
                 var targetElm;
                 if (intersectWith) {
                   targetElm = angular.element(intersectWith);
