@@ -8,6 +8,7 @@
         this.scope = $scope;
 
         $scope.$element = $element;
+        $scope.$nodesElement = $element;
         $scope.$modelValue = null;
         $scope.$nodeScope = null; // the scope of node which the nodes belongs to
         $scope.$treeScope = null;

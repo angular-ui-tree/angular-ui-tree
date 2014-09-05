@@ -38,17 +38,17 @@
           }
 
           scope.$watch(attrs.maxDepth, function(val) {
-            if ((typeof val) == "number") {
+            if(angular.isNumber(val)) {
               scope.maxDepth = val;
             }
           });
 
           attrs.$observe('nodrop', function(val) {
-            scope.nodrop = ((typeof val) != "undefined");
+            scope.nodrop = angular.isDefined(val);
           });
 
           attrs.$observe('horizontal', function(val) {
-            scope.horizontal = ((typeof val) != "undefined");
+            scope.horizontal = angular.isDefined(val);
           });
 
         }

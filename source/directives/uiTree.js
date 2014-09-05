@@ -32,60 +32,62 @@
           }, true);
 
           scope.$watch(attrs.dragEnabled, function(val) {
-            if ((typeof val) == "boolean") {
+            if ((typeof val) === 'boolean') {
               scope.dragEnabled = val;
             }
           });
 
           scope.$watch(attrs.emptyPlaceHolderEnabled, function(val) {
-            if ((typeof val) == "boolean") {
+            if ((typeof val) === 'boolean') {
               scope.emptyPlaceHolderEnabled = val;
             }
           });
 
           scope.$watch(attrs.maxDepth, function(val) {
-            if ((typeof val) == "number") {
+            if(angular.isNumber(val)) {
               scope.maxDepth = val;
             }
           });
 
           scope.$watch(attrs.dragDelay, function(val) {
-            if ((typeof val) == "number") {
+            if(angular.isNumber(val)) {
               scope.dragDelay = val;
             }
           });
 
           scope.$watch(attrs.dragDistance, function(val) {
-            if ((typeof val) == "number") {
+            if(angular.isNumber(val)) {
               scope.dragDistance = val;
             }
           });
 
           scope.$watch(attrs.lockX, function(val) {
-            if ((typeof val) == "boolean") {
-              scope.lockX = val;
-            }
+            scope.lockX = angular.isDefined(val);
           });
 
           scope.$watch(attrs.lockY, function(val) {
-            if ((typeof val) == "boolean") {
-              scope.lockY = val;
-            }
+            scope.lockY = angular.isDefined(val);
           });
 
           scope.$watch(attrs.boundTo, function(val) {
-            if ((typeof val) == "string" && val.length > 0) {
+            if(angular.isString(val) && val.length > 0) {
               scope.boundTo = angular.element(val);
             }
           });
 
           scope.$watch(attrs.spacing, function(val) {
-            if ((typeof val) == "number" && val > 0) {
+            if(angular.isNumber(val) && val > 0) {
               scope.spacing = val;
               scope.spacingThreshold = Math.floor(scope.spacing / 4);
             }
           });
 
+          scope.$watch(attrs.coverage, function(val) {
+            if(angular.isNumber(val) && val >= -100 && val <= 100) {
+              scope.collideWith = (val < 0) ? 'top' : 'bottom';
+              scope.coverage = Math.abs((val / 100));
+            }
+          });
           // check if the dest node can accept the dragging node
           // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`
           // and the 'max-depth' attribute in `ui-tree` or `ui-tree-nodes`.
