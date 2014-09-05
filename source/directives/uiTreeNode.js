@@ -551,12 +551,19 @@
                 dragElm = null;
                 if (scope.$$apply) {
                   dragInfo.apply();
+
+                  var dragInfoEventArgs = dragInfo.eventArgs(elements, pos);
                   scope.$treeScope.$apply(function() {
-                    scope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
+                    scope.$callbacks.dropped(dragInfoEventArgs);
+                  });
+
+                  scope.$treeScope.$apply(function() {
+                    dragInfoEventArgs.dest.nodesScope.$callbacks.droppedInto(dragInfo.eventArgs(elements, pos));
                   });
                 } else {
                   bindDrag();
                 }
+
                 scope.$treeScope.$apply(function() {
                   scope.$callbacks.dragStop(dragInfo.eventArgs(elements, pos));
                 });

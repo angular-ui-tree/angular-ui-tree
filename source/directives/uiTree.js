@@ -111,6 +111,10 @@
 
           };
 
+          callbacks.droppedInto = function(event) {
+
+          };
+
           //
           callbacks.dragStart = function(event) {
 
