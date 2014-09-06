@@ -376,11 +376,21 @@
                 var targetBefore, targetNode, targetElm, isEmpty, isTree, targetElmOffset;
                 if (!scope.horizontal) {
                   var closestNode = closestElement.scope();
-                  var nodes = (angular.isDefined(closestNode) && angular.isDefined(closestNode.$treeElement) && angular.isDefined(closestNode.$treeElement.children()))
-                            ? closestNode.$treeElement.children() : scope.$treeElement.children();
+
+                  var closestScope;
+                  if (angular.isDefined(closestNode) && angular.isDefined(closestNode.$treeElement) && angular.isDefined(closestNode.$treeElement.children())) {
+                    closestScope = closestNode;
+                  } else {
+                    closestScope = scope;
+                  }
+                  var nodes = closestScope.$treeElement.children();
+
+                  var treeChange = (angular.isUndefined(scope.previousTreeId) || scope.previousTreeId.length === 0 || scope.previousTreeId !== closestScope.$treeScope.$id);
+                  scope.previousTreeId = closestScope.$treeScope.$id;
 
                   // Compute the intersected element of the tree we are hovering
-                  var intersectWith = findIntersect(elmPos, nodes, scope.collideWith, (scope.horizontal) ? pos.dirX : pos.dirY, scope.horizontal);
+                  var direction = (treeChange) ? 1 : (scope.horizontal) ? pos.dirX : pos.dirY;
+                  var intersectWith = findIntersect(elmPos, nodes, scope.collideWith, direction, scope.horizontal);
                   if (intersectWith) {
                     targetElm = angular.element(intersectWith);
                   } else {
@@ -388,7 +398,7 @@
                   }
 
                   // move vertical
-                  if ((!scope.horizontal && !pos.dirAx) || (scope.horizontal && pos.dirAx)) {
+                  if ((!scope.horizontal && !pos.dirAx) || (scope.horizontal && pos.dirAx) || treeChange) {
                     // check it's new position
                     targetNode = targetElm.scope();
                     isEmpty = false,
@@ -460,16 +470,19 @@
                         }
                       }
 
+                      var moved = false;
                       var childsHeight = (targetNode.hasChild()) ? $uiTreeHelper.offset(targetNode.$childNodesScope.$element).height : 0;
-                      if ((!scope.horizontal && pos.dirY > 0) || (scope.horizontal && pos.dirX > 0)) {
+                      if ((!scope.horizontal && pos.dirY > 0) || (scope.horizontal && pos.dirX > 0) || treeChange) {
                         var elmVertDown = (scope.collideWith === 'top') ? (scope.horizontal) ? elmPos.right : elmPos.top : (scope.horizontal) ? elmPos.left : elmPos.bottom;
                         var downLimit = (scope.horizontal) ? ((targetElmOffset.left - elmPos.left) + (targetElmOffset.width * scope.coverage))
-                                                           : (targetElmOffset.top + ((targetElmOffset.height - childsHeight) * scope.coverage));
+                                                          : (targetElmOffset.top + ((targetElmOffset.height - childsHeight) * scope.coverage));
 
                         if (elmVertDown >= downLimit) {
                           if (targetNode.collapsed || !targetNode.hasChild() || !targetNode.accept(scope, 0)) {
                             targetElm.after(placeElm);
                             dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index() + 1);
+
+                            moved = true;
                           } else {
                             var firstChild = (targetNode.childNodes().length > 0) ? targetNode.childNodes()[0] : undefined;
                             var firstChildOffset = $uiTreeHelper.offset(firstChild.$element);
@@ -481,17 +494,25 @@
                             {
                               targetNode.$childNodesScope.$element.prepend(placeElm);
                               dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), 0);
+
+                              moved = true;
                             }
                           }
                         }
-                      } else if (((!scope.horizontal && pos.dirY < 0) || (scope.horizontal && pos.dirX < 0)) && ((!scope.horizontal && pos.distAxY > 8) || (!scope.horizontal && pos.distAxX > 8))) {
+                      }
+
+                      if ((((!scope.horizontal && pos.dirY < 0) || (scope.horizontal && pos.dirX < 0))
+                            && ((!scope.horizontal && pos.distAxY > 8) || (!scope.horizontal && pos.distAxX > 8))
+                            || treeChange) && !moved) {
                         var elmVertUp = (scope.collideWith === 'top') ? (scope.horizontal) ? elmPos.left : elmPos.bottom : (scope.horizontal) ? elmPos.right : elmPos.top;
                         var upLimit = (scope.horizontal) ? ((targetElmOffset.left - elmPos.left) + targetElmOffset.width - (targetElmOffset.width * scope.coverage))
-                                                         : (targetElmOffset.top + targetElmOffset.height - (targetElmOffset.height * scope.coverage));
+                                                        : (targetElmOffset.top + targetElmOffset.height - (targetElmOffset.height * scope.coverage));
 
                         if (elmVertUp <= upLimit) {
                           targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
                           dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index());
+
+                          moved = true;
                         }
                       }
                     }
