@@ -647,7 +647,9 @@
                     dragInfoEventArgs.dest.nodesScope.$callbacks.droppedInto(dragInfo.eventArgs(elements, pos));
                   });
                 } else {
-                  bindDrag();
+                  scope.$treeScope.$apply(function() {
+                    scope.$callbacks.dragCancel(dragInfo.eventArgs(elements, pos));
+                  });
                 }
 
                 scope.$treeScope.$apply(function() {

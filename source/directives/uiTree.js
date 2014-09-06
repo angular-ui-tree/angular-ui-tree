@@ -166,6 +166,10 @@
 
           };
 
+          callbacks.dragCancel = function(event) {
+
+          };
+
           callbacks.dragStop = function(event) {
 
           };
