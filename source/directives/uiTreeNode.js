@@ -719,6 +719,17 @@
                 dragCancelEvent(e);
               }
 
+              if (angular.isDefined(scope.lockXKey)) {
+                if (e.keyCode === scope.lockXKey) {
+                  scope.lockX = true;
+                }
+              }
+              if (angular.isDefined(scope.lockYKey)) {
+                if (e.keyCode === scope.lockYKey) {
+                  scope.lockY = true;
+                }
+              }
+
               if (e.keyCode === scope.copyKey) {
                 if (!scope.copy) {
                   scope.copy = true;
@@ -728,6 +739,17 @@
             });
 
             angular.element($window.document.body).bind("keyup", function(e) {
+              if (angular.isDefined(scope.lockXKey)) {
+                if (e.keyCode === scope.lockXKey) {
+                  scope.lockX = false;
+                }
+              }
+              if (angular.isDefined(scope.lockYKey)) {
+                if (e.keyCode === scope.lockYKey) {
+                  scope.lockY = false;
+                }
+              }
+
               if (e.keyCode === scope.copyKey) {
                 if (scope.copy) {
                   scope.copy = false;

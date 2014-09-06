@@ -62,11 +62,25 @@
           });
 
           scope.$watch(attrs.lockX, function(val) {
-            scope.lockX = angular.isDefined(val);
+            if (angular.isString(val)) {
+              val = val.toLowerCase();
+              if (val.length > 0) {
+                scope.lockXKey = (angular.isDefined(keys[val])) ? keys[val] : (val.length === 1) ? (val.charCodeAt(0) - 32) : undefined;
+              }
+            }
+
+            scope.lockX = (angular.isUndefined(scope.lockXKey)) ? angular.isDefined(val) : false;
           });
 
           scope.$watch(attrs.lockY, function(val) {
-            scope.lockY = angular.isDefined(val);
+            if (angular.isString(val)) {
+              val = val.toLowerCase();
+              if (val.length > 0) {
+                scope.lockYKey = (angular.isDefined(keys[val])) ? keys[val] : (val.length === 1) ? (val.charCodeAt(0) - 32) : undefined;
+              }
+            }
+
+            scope.lockY = (angular.isUndefined(scope.lockXKey)) ? angular.isDefined(val) : false;
           });
 
           scope.$watch(attrs.boundTo, function(val) {

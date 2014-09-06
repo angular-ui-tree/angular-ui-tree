@@ -19,7 +19,9 @@
         $scope.maxDepth = 0;
         $scope.dragDelay = 0;
         $scope.dragDistance = 0;
+        $scope.lockXKey = undefined;
         $scope.lockX = false;
+        $scope.lockYKey = undefined;
         $scope.lockY = false;
         $scope.boundTo = undefined;
         $scope.collideWith = 'bottom';
