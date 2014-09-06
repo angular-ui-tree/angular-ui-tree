@@ -3,8 +3,8 @@
 
   angular.module('ui.tree')
 
-    .controller('TreeNodesController', ['$scope', '$element', 'treeConfig',
-      function ($scope, $element, treeConfig) {
+    .controller('TreeNodesController', ['$scope', '$element', '$q', 'treeConfig',
+      function ($scope, $element, $q, treeConfig) {
         this.scope = $scope;
 
         $scope.$element = $element;
@@ -60,20 +60,31 @@
         };
 
         $scope.removeNode = function(node) {
+          var deferred = $q.defer();
+
           var index = $scope.$modelValue.indexOf(node.$modelValue);
           if (index > -1) {
             $scope.safeApply(function() {
               $scope.$modelValue.splice(index, 1)[0];
+
+              deferred.resolve(node);
             });
-            return node;
+          } else {
+            deferred.reject('not found');
           }
-          return null;
+
+          return deferred.promise;
         };
 
         $scope.insertNode = function(index, nodeData) {
+          var deferred = $q.defer();
+
           $scope.safeApply(function() {
             $scope.$modelValue.splice(index, 0, nodeData);
+            deferred.resolve('inserted');
           });
+
+          return deferred.promise;
         };
 
         $scope.childNodes = function() {
