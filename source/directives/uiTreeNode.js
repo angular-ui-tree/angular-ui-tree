@@ -685,15 +685,12 @@
 
             var findIntersect = function(elmPos, nodes, collideWith, direction, horizontal) {
               var intersectWith = false;
-
               for (var nodeIdx in nodes) {
                 var intersectWithChild = false;
                 var nodeElement = angular.element(nodes[nodeIdx]);
 
                 if (angular.isDefined(nodeElement[0])) {
-                  if (nodeElement.hasClass('angular-ui-tree-nodes')) {
-                    intersectWith = findIntersect(elmPos, nodeElement.children(), collideWith, direction, horizontal);
-                  } else if (nodeElement.hasClass('angular-ui-tree-node')) {
+                  if (nodeElement.hasClass('angular-ui-tree-node')) {
                     intersectWithChild = findIntersect(elmPos, nodeElement.children(), collideWith, direction, horizontal);
 
                     if (!intersectWithChild) {
@@ -733,10 +730,16 @@
                     } else {
                       intersectWith = intersectWithChild;
                     }
+                  } else {
+                    intersectWith = findIntersect(elmPos, nodeElement.children(), collideWith, direction, horizontal);
                   }
                 }
-              }
 
+                if (intersectWith !== false)
+                {
+                  break;
+                }
+              }
               return intersectWith;
             };
 
