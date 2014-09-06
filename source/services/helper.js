@@ -76,11 +76,11 @@
               source: node,
               sourceInfo: {
                 nodeScope: node,
-                index: node.index(),
+                index: (angular.isFunction(node.index)) ? node.index() : 0,
                 nodesScope: node.$parentNodesScope
               },
-              index: node.index(),
-              siblings: node.siblings().slice(0),
+              index: (angular.isFunction(node.index)) ? node.index() : 0,
+              siblings: (angular.isFunction(node.siblings)) ? node.siblings().slice(0) : [],
               parent: node.$parentNodesScope,
 
               moveTo: function(parent, siblings, index) { // Move the node to a new position
@@ -142,7 +142,10 @@
               apply: function() {
                 var nodeData = this.source.$modelValue;
                 this.source.remove();
-                this.parent.insertNode(this.index, nodeData);
+                if (angular.isDefined(this.parent))
+                {
+                  this.parent.insertNode(this.index, nodeData);
+                }
               }
             };
           },
