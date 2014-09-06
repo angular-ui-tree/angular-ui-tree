@@ -58,11 +58,11 @@
                   var distance = Math.floor(Math.sqrt(Math.pow(tempEvent.pageX - pos.startX, 2) + Math.pow(tempEvent.pageY - pos.startY, 2)));
 
                   if (distance >= scope.dragDistance) {
-                    angular.element($document).unbind('touchmove');
-                    angular.element($document).unbind('mousemove');
-                    angular.element($document).unbind('touchend');
-                    angular.element($document).unbind('touchcancel');
-                    angular.element($document).unbind('mouseup');
+                    angular.element($document).unbind('touchmove', tempMoveFunction);
+                    angular.element($document).unbind('mousemove', tempMoveFunction);
+                    angular.element($document).unbind('touchend', tempEndFunction);
+                    angular.element($document).unbind('touchcancel', tempEndFunction);
+                    angular.element($document).unbind('mouseup', tempEndFunction);
 
                     drag(e);
                   }
@@ -73,11 +73,11 @@
                 var tempEndFunction = function(tempEvent) {
                   tempEvent.preventDefault();
 
-                  angular.element($document).unbind('touchmove');
-                  angular.element($document).unbind('mousemove');
-                  angular.element($document).unbind('touchend');
-                  angular.element($document).unbind('touchcancel');
-                  angular.element($document).unbind('mouseup');
+                  angular.element($document).unbind('touchmove', tempMoveFunction);
+                  angular.element($document).unbind('mousemove', tempMoveFunction);
+                  angular.element($document).unbind('touchend', tempEndFunction);
+                  angular.element($document).unbind('touchcancel', tempEndFunction);
+                  angular.element($document).unbind('mouseup', tempEndFunction);
 
                   dragEndEvent(tempEvent);
                 };
