@@ -19,6 +19,7 @@
         $scope.maxDepth = 0;
         $scope.dragDelay = 0;
         $scope.dragDistance = 0;
+        $scope.cancelKey = keys.escape;
         $scope.lockXKey = undefined;
         $scope.lockX = false;
         $scope.lockYKey = undefined;

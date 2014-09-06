@@ -720,7 +720,7 @@
             bindDrag();
 
             angular.element($window.document.body).bind("keydown", function(e) {
-              if (e.keyCode === 27) {
+              if (e.keyCode === scope.cancelKey) {
                 dragCancelEvent(e);
               }
 

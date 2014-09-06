@@ -103,6 +103,15 @@
             }
           });
 
+          scope.$watch(attrs.cancel, function(val) {
+            if (angular.isString(val)) {
+              val = val.toLowerCase();
+              if (val.length > 0) {
+                scope.cancelKey = (angular.isDefined(keys[val])) ? keys[val] : (val.charCodeAt(0) - 32);
+              }
+            }
+          });
+
           scope.$watch(attrs.copy, function(val) {
             if (angular.isString(val)) {
               val = val.toLowerCase();
