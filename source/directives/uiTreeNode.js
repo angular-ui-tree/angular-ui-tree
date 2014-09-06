@@ -515,6 +515,22 @@
                           moved = true;
                         }
                       }
+
+                      if (moved) {
+                        var dragInfoEventsArgs = dragInfo.eventArgs(elements, pos);
+
+                        if (angular.isDefined(dragInfoEventsArgs) && angular.isDefined(dragInfoEventsArgs.dest))
+                        {
+                          if (angular.isUndefined(scope.dragInfoEventsArgs) || angular.isUndefined(scope.dragInfoEventsArgs.dest)
+                              || !angular.equals(scope.dragInfoEventsArgs.dest, dragInfoEventsArgs.dest))
+                          {
+                            scope.$apply(function() {
+                              scope.$callbacks.placeholderMove(dragInfoEventsArgs);
+                            });
+                          }
+                          scope.dragInfoEventsArgs = dragInfoEventsArgs;
+                        }
+                      }
                     }
                   }
                 } else {

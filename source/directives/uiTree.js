@@ -130,12 +130,15 @@
 
           };
 
-          //
           callbacks.dragStart = function(event) {
 
           };
 
           callbacks.dragMove = function(event) {
+
+          };
+
+          callbacks.placeholderMove = function(event) {
 
           };
 
