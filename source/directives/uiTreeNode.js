@@ -616,7 +616,7 @@
               }
             };
 
-            var dragEnd = function(e) {
+            var dragEnd = function(e, cancel) {
               if (angular.isDefined(e)) {
                 e.preventDefault();
               }
@@ -635,7 +635,7 @@
 
                 dragElm.remove();
                 dragElm = null;
-                if (scope.$$apply) {
+                if (scope.$$apply && !cancel) {
                   dragInfo.apply(scope.copy);
 
                   var dragInfoEventArgs = dragInfo.eventArgs(elements, pos);
@@ -647,6 +647,8 @@
                     dragInfoEventArgs.dest.nodesScope.$callbacks.droppedInto(dragInfo.eventArgs(elements, pos));
                   });
                 } else {
+                  scope.$element.removeClass(treeConfig.hiddenClass);
+
                   scope.$treeScope.$apply(function() {
                     scope.$callbacks.dragCancel(dragInfo.eventArgs(elements, pos));
                   });
@@ -655,6 +657,7 @@
                 scope.$treeScope.$apply(function() {
                   scope.$callbacks.dragStop(dragInfo.eventArgs(elements, pos));
                 });
+
                 scope.$$apply = false;
                 dragInfo = null;
               }
@@ -691,7 +694,7 @@
 
             var dragCancelEvent = function(e) {
               scope.$$apply = false;
-              dragEnd(e);
+              dragEnd(e, true);
             };
 
             var bindDrag = function() {
