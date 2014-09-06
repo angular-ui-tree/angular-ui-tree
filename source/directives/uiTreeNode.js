@@ -320,28 +320,30 @@
                 }
 
                 // Change horizontal level
-                var previous = dragInfo.prev();
-                var parent = dragInfo.parentNode();
-                // If we have a element right above us and it's not collapsed and it accept the current element
-                if (previous && !previous.collapsed && previous.accept(scope, previous.childNodesCount())) {
-                  var previousElmOffset = $uiTreeHelper.offset(previous.$element);
-                  // And if the horizontal position of the mouse is greater than the one of the parent
-                  if (elmPos.left >= (previousElmOffset.left + scope.spacing - scope.spacingThreshold)) {
-                    // Then move the element as a children of the previous element
-                    previous.$childNodesScope.$element.append(placeElm);
-                    dragInfo.moveTo(previous.$childNodesScope, previous.childNodes(), previous.childNodesCount());
-                  }
-                }
+                if (!scope.horizontal && pos.dirAx)
+                {
+                  var previous = dragInfo.prev();
+                  var parent = dragInfo.parentNode();
 
-                // If we have a parent
-                if (parent) {
-                  var parentElmOffset = $uiTreeHelper.offset(parent.$element);
-                  // And that the horizontal position of the mouse is around the position of the parent
-                  if (elmPos.left <= (parentElmOffset.left + scope.spacingThreshold)) {
-                    // And that there is no element after the current one
-                    if (!dragInfo.next()) {
-                      // Then move the element into the parent
-                      if (parent.$parentNodesScope.accept(scope, parent.index() + 1)) {
+                  // If we have a element right above us and it's not collapsed and it accept the current element
+                  if (previous && !previous.collapsed) {
+                    var previousElmOffset = $uiTreeHelper.offset(previous.$element);
+                    // And if the horizontal position of the mouse is greater than the one of the parent
+                    if (elmPos.left >= (previousElmOffset.left + scope.spacing - scope.spacingThreshold)) {
+                      // Then move the element as a children of the previous element
+                      previous.$childNodesScope.$element.append(placeElm);
+                      dragInfo.moveTo(previous.$childNodesScope, previous.childNodes(), previous.childNodesCount());
+                    }
+                  }
+
+                  // If we have a parent
+                  if (parent) {
+                    var parentElmOffset = $uiTreeHelper.offset(parent.$element);
+                    // And that the horizontal position of the mouse is around the position of the parent
+                    if (elmPos.left <= (parentElmOffset.left + scope.spacingThreshold)) {
+                      // And that there is no element after the current one
+                      if (!dragInfo.next()) {
+                        // Then move the element into the parent
                         parent.$element.after(placeElm);
                         dragInfo.moveTo(parent.$parentNodesScope, parent.siblings(), parent.index() + 1);
                       }
@@ -435,15 +437,11 @@
 
                     if (isEmpty) { // it's an empty tree
                       treeScope = targetNode;
-                      if (targetNode.$nodesScope.accept(scope, 0)) {
-                        targetNode.place(placeElm);
-                        dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), 0);
-                      }
+                      targetNode.place(placeElm);
+                      dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), 0);
                     } else if (isTree) { // it's in the bottom padded portion of the tree itself
-                      if (targetNode.$nodesScope.accept(scope, targetNode.$nodesScope.childNodes().length)) {
-                        targetNode.place(placeElm);
-                        dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), targetNode.$nodesScope.childNodes().length + 1);
-                      }
+                      targetNode.place(placeElm);
+                      dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), targetNode.$nodesScope.childNodes().length + 1);
                     } else if (targetNode.dragEnabled()) { // drag enabled
                       if (angular.isDefined(scope.expandTimeoutOn) && scope.expandTimeoutOn !== targetNode.id) {
                         $timeout.cancel(scope.expandTimeout);
@@ -478,11 +476,9 @@
                                                           : (targetElmOffset.top + ((targetElmOffset.height - childsHeight) * scope.coverage));
 
                         if (elmVertDown >= downLimit) {
-                          if (targetNode.collapsed || !targetNode.hasChild() || !targetNode.accept(scope, 0)) {
+                          if (targetNode.collapsed || !targetNode.hasChild()) {
                             targetElm.after(placeElm);
-                            dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index() + 1);
-
-                            moved = true;
+                            moved = dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index() + 1);
                           } else {
                             var firstChild = (targetNode.childNodes().length > 0) ? targetNode.childNodes()[0] : undefined;
                             var firstChildOffset = $uiTreeHelper.offset(firstChild.$element);
@@ -493,9 +489,7 @@
                                 elmVertDown < (firstChildOffset.top + ((firstChildOffset.height - firstChildChildsHeight) * scope.coverage))))
                             {
                               targetNode.$childNodesScope.$element.prepend(placeElm);
-                              dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), 0);
-
-                              moved = true;
+                              moved = dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), 0);
                             }
                           }
                         }
@@ -510,9 +504,7 @@
 
                         if (elmVertUp <= upLimit) {
                           targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
-                          dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index());
-
-                          moved = true;
+                          moved = dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index());
                         }
                       }
 
@@ -567,10 +559,8 @@
 
                     if (isEmpty) { // it's an empty tree
                       treeScope = targetNode;
-                      if (targetNode.$nodesScope.accept(scope, 0)) {
-                        targetNode.place(placeElm);
-                        dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), 0);
-                      }
+                      targetNode.place(placeElm);
+                      dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), 0);
                     } else if (targetNode.dragEnabled()){ // drag enabled
                       targetElm = targetNode.$element; // Get the element of ui-tree-node
                       var targetOffset = $uiTreeHelper.offset(targetElm);
@@ -585,8 +575,7 @@
                           targetElm.after(placeElm);
                           dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index() + 1);
                         }
-                      }
-                      else if (!targetBefore && targetNode.accept(scope, targetNode.childNodesCount())) { // we have to check if it can add the dragging node as a child
+                      } else if (!targetBefore && targetNode.accept(scope, targetNode.childNodesCount())) { // we have to check if it can add the dragging node as a child
                         targetNode.$childNodesScope.$element.append(placeElm);
                         dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), targetNode.childNodesCount());
                       }
