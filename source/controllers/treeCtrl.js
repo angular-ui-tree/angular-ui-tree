@@ -3,8 +3,8 @@
 
   angular.module('ui.tree')
 
-    .controller('TreeController', ['$scope', '$element', '$attrs', 'treeConfig',
-      function ($scope, $element, $attrs, treeConfig) {
+    .controller('TreeController', ['$scope', '$element', '$attrs', 'treeConfig', 'keys',
+      function ($scope, $element, $attrs, treeConfig, keys) {
         this.scope = $scope;
 
         $scope.$element = $element;
@@ -27,6 +27,8 @@
         $scope.spacing = 50;
         $scope.spacingThreshold = Math.floor($scope.spacing / 4);
 
+        $scope.copyKey = undefined;
+        $scope.copy = false;
         // Check if it's a empty tree
         $scope.isEmpty = function() {
           return ($scope.$nodesScope && $scope.$nodesScope.$modelValue

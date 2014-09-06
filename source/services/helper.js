@@ -139,12 +139,16 @@
                 };
               },
 
-              apply: function() {
+              apply: function(copy) {
                 var nodeData = this.source.$modelValue;
-                this.source.remove();
+                if (!copy) {
+                  this.source.remove();
+                }
                 if (angular.isDefined(this.parent))
                 {
-                  this.parent.insertNode(this.index, nodeData);
+                  var data = (copy) ? angular.copy(nodeData) : nodeData;
+                  var index = (copy) ? (this.index + 1) : this.index;
+                  this.parent.insertNode(index, data);
                 }
               }
             };

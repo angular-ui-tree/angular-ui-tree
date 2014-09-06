@@ -2,8 +2,8 @@
   'use strict';
 
   angular.module('ui.tree')
-  .directive('uiTree', [ 'treeConfig', '$window',
-    function(treeConfig, $window) {
+  .directive('uiTree', [ 'treeConfig', 'keys', '$window',
+    function(treeConfig, keys, $window) {
       return {
         restrict: 'A',
         scope: true,
@@ -88,6 +88,16 @@
               scope.coverage = Math.abs((val / 100));
             }
           });
+
+          scope.$watch(attrs.copy, function(val) {
+            if (angular.isString(val)) {
+              val = val.toLowerCase();
+              if (val.length > 0) {
+                scope.copyKey = (angular.isDefined(keys[val])) ? keys[val] : (val.charCodeAt(0) - 32);
+              }
+            }
+          });
+
           // check if the dest node can accept the dragging node
           // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`
           // and the 'max-depth' attribute in `ui-tree` or `ui-tree-nodes`.
