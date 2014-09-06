@@ -30,6 +30,7 @@
 	margin: 0px;
 	padding: 0px;
 	min-height: 20px;
+	min-width: 200px;
 	line-height: 20px;
 }
 
@@ -59,5 +60,5 @@
     position: absolute;
     pointer-events: none;
     z-index: 999;
-    opacity: .8;    
+    opacity: .8;
 }
