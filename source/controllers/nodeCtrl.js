@@ -19,6 +19,7 @@
         $scope.$$apply = false; //
 
         $scope.collapsed = false;
+        $scope.expandOnHover = false;
 
         $scope.init = function(controllersArr) {
           var treeNodesCtrl = controllersArr[0];

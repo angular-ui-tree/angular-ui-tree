@@ -103,6 +103,21 @@
             return true;
           };
 
+          callbacks.expandTimeoutStart = function()
+          {
+
+          };
+
+          callbacks.expandTimeoutCancel = function()
+          {
+
+          };
+
+          callbacks.expandTimeoutEnd = function()
+          {
+
+          };
+
           callbacks.removed = function(node) {
 
           };

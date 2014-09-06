@@ -29,6 +29,10 @@
               attrs.$set('collapsed', val);
             });
 
+            scope.$watch(attrs.expandOnHover, function(val) {
+              scope.expandOnHover = val;
+            });
+
             var hasTouch = 'ontouchstart' in window;
             // todo startPos is unused
             var startPos, firstMoving, dragInfo, pos;
@@ -431,6 +435,31 @@
                         dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), targetNode.$nodesScope.childNodes().length + 1);
                       }
                     } else if (targetNode.dragEnabled()) { // drag enabled
+                      if (angular.isDefined(scope.expandTimeoutOn) && scope.expandTimeoutOn !== targetNode.id) {
+                        $timeout.cancel(scope.expandTimeout);
+                        delete scope.expandTimeout;
+                        delete scope.expandTimeoutOn;
+
+                        scope.$callbacks.expandTimeoutCancel();
+                      }
+
+                      if (targetNode.collapsed) {
+                        if (scope.expandOnHover === true || (angular.isNumber(scope.expandOnHover) && scope.expandOnHover === 0)) {
+                          targetNode.collapsed = false;
+                        } else if (scope.expandOnHover !== false && angular.isNumber(scope.expandOnHover) && scope.expandOnHover > 0) {
+                          if (angular.isUndefined(scope.expandTimeoutOn)) {
+                            scope.expandTimeoutOn = targetNode.$id;
+
+                            scope.$callbacks.expandTimeoutStart();
+                            scope.expandTimeout = $timeout(function()
+                            {
+                              scope.$callbacks.expandTimeoutEnd();
+                              targetNode.collapsed = false;
+                            }, scope.expandOnHover);
+                          }
+                        }
+                      }
+
                       var childsHeight = (targetNode.hasChild()) ? $uiTreeHelper.offset(targetNode.$childNodesScope.$element).height : 0;
                       if ((!scope.horizontal && pos.dirY > 0) || (scope.horizontal && pos.dirX > 0)) {
                         var elmVertDown = (scope.collideWith === 'top') ? (scope.horizontal) ? elmPos.right : elmPos.top : (scope.horizontal) ? elmPos.left : elmPos.bottom;
@@ -538,6 +567,8 @@
               if (angular.isDefined(e)) {
                 e.preventDefault();
               }
+
+              $timeout.cancel(scope.expandTimeout);
 
               if (dragElm) {
                 scope.$treeScope.$apply(function() {
