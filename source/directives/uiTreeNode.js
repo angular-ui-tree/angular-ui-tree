@@ -326,7 +326,7 @@
                   var parent = dragInfo.parentNode();
 
                   // If we have a element right above us and it's not collapsed and it accept the current element
-                  if (previous && !previous.collapsed) {
+                  if (previous && !previous.collapsed && previous.$childNodesScope) {
                     var previousElmOffset = $uiTreeHelper.offset(previous.$element);
                     // And if the horizontal position of the mouse is greater than the one of the parent
                     if (elmPos.left >= (previousElmOffset.left + scope.spacing - scope.spacingThreshold)) {
@@ -387,8 +387,9 @@
                   }
                   var nodes = closestScope.$treeElement.children();
 
-                  var treeChange = (angular.isUndefined(scope.previousTreeId) || scope.previousTreeId.length === 0 || scope.previousTreeId !== closestScope.$treeScope.$id);
-                  scope.previousTreeId = closestScope.$treeScope.$id;
+                  var treeChange = (angular.isUndefined(scope.previousTreeId) || scope.previousTreeId.length === 0
+                                    || angular.isUndefined(closestScope.$treeScope) || scope.previousTreeId !== closestScope.$treeScope.$id);
+                  scope.previousTreeId = (angular.isDefined(closestScope.$treeScope)) ? closestScope.$treeScope.$id : undefined;
 
                   // Compute the intersected element of the tree we are hovering
                   var direction = (treeChange) ? 1 : (scope.horizontal) ? pos.dirX : pos.dirY;
