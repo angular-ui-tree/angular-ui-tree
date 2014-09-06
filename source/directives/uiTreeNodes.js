@@ -2,7 +2,7 @@
   'use strict';
 
   angular.module('ui.tree')
-  .directive('uiTreeNodes', [ 'treeConfig', '$window',
+  .directive('uiTreeNodes', [ 'treeConfig',
     function(treeConfig) {
       return {
         require: ['ngModel', '?^uiTreeNode', '^uiTree'],
