@@ -320,7 +320,7 @@
                 }
 
                 // Change horizontal level
-                if (!scope.horizontal && pos.dirAx)
+                if ((!scope.horizontal && pos.dirAx) || (scope.horizontal && pos.dirY !== 0))
                 {
                   var previous = dragInfo.prev();
                   var parent = dragInfo.parentNode();
