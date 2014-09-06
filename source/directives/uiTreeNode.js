@@ -393,7 +393,7 @@
 
                   // Compute the intersected element of the tree we are hovering
                   var direction = (treeChange) ? 1 : (scope.horizontal) ? pos.dirX : pos.dirY;
-                  var intersectWith = findIntersect(elmPos, nodes, scope.collideWith, direction, scope.horizontal);
+                  var intersectWith = $uiTreeHelper.findIntersect(elmPos, nodes, scope.collideWith, direction, scope.horizontal);
                   if (intersectWith) {
                     targetElm = angular.element(intersectWith);
                   } else {
@@ -681,66 +681,6 @@
             var unbind = function() {
               dragEnd();
               angular.element($window.document.body).unbind('keydown');
-            };
-
-            var findIntersect = function(elmPos, nodes, collideWith, direction, horizontal) {
-              var intersectWith = false;
-              for (var nodeIdx in nodes) {
-                var intersectWithChild = false;
-                var nodeElement = angular.element(nodes[nodeIdx]);
-
-                if (angular.isDefined(nodeElement[0])) {
-                  if (nodeElement.hasClass('angular-ui-tree-node')) {
-                    intersectWithChild = findIntersect(elmPos, nodeElement.children(), collideWith, direction, horizontal);
-
-                    if (!intersectWithChild) {
-                      var nodeOffset = $uiTreeHelper.offset(nodeElement);
-                      var nodePos = {
-                        left: nodeOffset.left,
-                        width: nodeOffset.width,
-                        right: nodeOffset.left + nodeOffset.width,
-                        top: nodeOffset.top,
-                        height: nodeOffset.height,
-                        bottom: nodeOffset.top + nodeOffset.height
-                      };
-
-                      var isOverElementWidth;
-                      var isOverElementHeight;
-                      if (horizontal) {
-                        if (direction < 0) {
-                          isOverElementWidth = (collideWith === 'bottom') ? (elmPos.left <= nodePos.right && elmPos.right >= nodePos.left)
-                                                                           : (elmPos.right <= nodePos.right && elmPos.right >= nodePos.left);
-                        } else if (direction > 0) {
-                          isOverElementWidth = (collideWith === 'bottom') ? (elmPos.right >= nodePos.left && elmPos.left <= nodePos.right)
-                                                                          : (elmPos.left >= nodePos.left && elmPos.left <= nodePos.right);
-                        }
-                      }
-
-                      if (direction < 0) {
-                        isOverElementHeight = (collideWith === 'bottom') ? (elmPos.top <= nodePos.bottom && elmPos.bottom >= nodePos.top)
-                                                                         : (elmPos.bottom <= nodePos.bottom && elmPos.bottom >= nodePos.top);
-                      } else if (direction > 0) {
-                        isOverElementHeight = (collideWith === 'bottom') ? (elmPos.bottom >= nodePos.top && elmPos.top <= nodePos.bottom)
-                                                                         : (elmPos.top >= nodePos.top && elmPos.top <= nodePos.bottom);
-                      }
-
-                      if ((horizontal && (isOverElementWidth && isOverElementHeight)) || (!horizontal && isOverElementHeight)) {
-                        intersectWith = nodes[nodeIdx];
-                      }
-                    } else {
-                      intersectWith = intersectWithChild;
-                    }
-                  } else {
-                    intersectWith = findIntersect(elmPos, nodeElement.children(), collideWith, direction, horizontal);
-                  }
-                }
-
-                if (intersectWith !== false)
-                {
-                  break;
-                }
-              }
-              return intersectWith;
             };
 
             bindDrag();
