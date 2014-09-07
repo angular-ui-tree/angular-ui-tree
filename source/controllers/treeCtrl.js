@@ -14,6 +14,7 @@
         $scope.$emptyElm = undefined;
         $scope.$callbacks = undefined;
 
+        $scope.$selecteds = [];
 
         $scope.dragEnabled = true;
         $scope.emptyPlaceHolderEnabled = true;
@@ -33,6 +34,9 @@
 
         $scope.copyKey = undefined;
         $scope.copy = false;
+        $scope.multiSelectKey = undefined;
+        $scope.multiSelect = false;
+
         // Check if it's a empty tree
         $scope.isEmpty = function() {
           return ($scope.$nodesScope && $scope.$nodesScope.$modelValue

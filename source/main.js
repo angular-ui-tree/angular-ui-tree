@@ -14,9 +14,13 @@
       nodesClass: 'angular-ui-tree-nodes',
       nodeClass: 'angular-ui-tree-node',
       handleClass: 'angular-ui-tree-handle',
+      placeHoldersWrapperClass: 'angular-ui-tree-placeholders-wrapper',
       placeHolderClass: 'angular-ui-tree-placeholder',
       dragClass: 'angular-ui-tree-drag',
-      dragThreshold: 3,
+      dragWrapperClass: 'angular-ui-tree-drag-wrapper',
+      selectedClass: 'angular-ui-tree-selected',
+      selectedCopyClass: 'angular-ui-tree-selected-copy',
+      dragUpThreshold: 10,
       levelThreshold: 30
     })
     .constant('keys', {

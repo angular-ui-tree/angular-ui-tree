@@ -17,9 +17,11 @@
         $scope.$handleScope = undefined; // it's handle scope
         $scope.$type = 'uiTreeNode';
         $scope.$$apply = false; //
+        $scope.$dragInfo = undefined;
 
         $scope.collapsed = false;
         $scope.expandOnHover = false;
+        $scope.selected = false;
 
         $scope.init = function(controllersArr) {
           var treeNodesCtrl = controllersArr[0];
@@ -35,6 +37,34 @@
           $element.on('$destroy', function() {
             treeNodesCtrl.scope.destroySubNode($scope); // destroy sub nodes
           });
+        };
+
+        $scope.toggleSelected = function() {
+          if ($scope.selected) {
+            $scope.unselect();
+          } else {
+            $scope.select();
+          }
+        };
+
+        $scope.select = function() {
+          if (!$scope.selected) {
+            $scope.selected = true;
+
+            $scope.$treeScope.$selecteds.push($scope.$element);
+
+            $scope.$callbacks.select($scope);
+          }
+        };
+
+        $scope.unselect = function() {
+          if ($scope.selected) {
+            $scope.selected = false;
+
+            $scope.$treeScope.$selecteds.splice($scope.$treeScope.$selecteds.indexOf($scope.$element), 0);
+
+            $scope.$callbacks.unselect($scope);
+          }
         };
 
         $scope.index = function() {

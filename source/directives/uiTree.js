@@ -121,6 +121,15 @@
             }
           });
 
+          scope.$watch(attrs.select, function(val) {
+            if (angular.isString(val)) {
+              val = val.toLowerCase();
+              if (val.length > 0) {
+                scope.multiSelectKey = (angular.isDefined(keys[val])) ? keys[val] : (val.charCodeAt(0) - 32);
+              }
+            }
+          });
+
           // check if the dest node can accept the dragging node
           // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`
           // and the 'max-depth' attribute in `ui-tree` or `ui-tree-nodes`.
@@ -188,6 +197,18 @@
           };
 
           callbacks.endCopy = function() {
+          };
+
+          callbacks.startSelect = function() {
+          };
+
+          callbacks.select = function(node) {
+          };
+
+          callbacks.unselect = function(node) {
+          };
+
+          callbacks.endSelect = function() {
           };
 
           scope.$watch(attrs.uiTree, function(newVal, oldVal) {
