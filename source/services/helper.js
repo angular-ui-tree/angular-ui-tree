@@ -147,7 +147,10 @@
                 if (angular.isDefined(this.parent))
                 {
                   var data = (copy) ? angular.copy(nodeData) : nodeData;
-                  var index = (copy) ? (this.index + 1) : this.index;
+                  var index = this.index;
+                  if (copy && this.sourceInfo.index < this.index && this.sourceInfo.nodesScope === this.parent) {
+                    index = this.index + 1;
+                  }
                   this.parent.insertNode(index, data);
                 }
               }
