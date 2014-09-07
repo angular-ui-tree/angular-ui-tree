@@ -736,8 +736,12 @@
               }
 
               if (e.keyCode === scope.copyKey) {
-                if (!scope.copy) {
-                  scope.copy = true;
+                if (!scope.$treeScope.copy) {
+                  scope.$treeScope.$apply(function() {
+                    scope.$treeScope.copy = true;
+
+                    scope.$treeScope.$callbacks.startCopy();
+                  });
                   restartDrag(e);
                 }
               }
@@ -756,8 +760,12 @@
               }
 
               if (e.keyCode === scope.copyKey) {
-                if (scope.copy) {
-                  scope.copy = false;
+                if (scope.$treeScope.copy) {
+                  scope.$treeScope.$apply(function() {
+                    scope.$treeScope.copy = false;
+
+                    scope.$treeScope.$callbacks.endCopy();
+                  });
                   restartDrag(e);
                 }
               }

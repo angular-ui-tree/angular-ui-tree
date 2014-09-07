@@ -177,6 +177,10 @@
 
           callbacks.beforeDrop = function(event) {
 
+          callbacks.startCopy = function() {
+          };
+
+          callbacks.endCopy = function() {
           };
 
           scope.$watch(attrs.uiTree, function(newVal, oldVal) {
