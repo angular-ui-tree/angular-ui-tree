@@ -72,89 +72,93 @@
           },
 
           dragInfo: function(node) {
-            return {
-              source: node,
-              sourceInfo: {
-                nodeScope: node,
+            if (angular.isDefined(node)) {
+              return {
+                source: node,
+                sourceInfo: {
+                  nodeScope: node,
+                  index: (angular.isFunction(node.index)) ? node.index() : 0,
+                  nodesScope: node.$parentNodesScope
+                },
                 index: (angular.isFunction(node.index)) ? node.index() : 0,
-                nodesScope: node.$parentNodesScope
-              },
-              index: (angular.isFunction(node.index)) ? node.index() : 0,
-              siblings: (angular.isFunction(node.siblings)) ? node.siblings().slice(0) : [],
-              parent: node.$parentNodesScope,
+                siblings: (angular.isFunction(node.siblings)) ? node.siblings().slice(0) : [],
+                parent: node.$parentNodesScope,
 
-              moveTo: function(parent, siblings, index) { // Move the node to a new position
-                if (parent.accept(node, index))
-                {
-                  this.parent = parent;
-                  this.siblings = siblings.slice(0);
-                  var i = this.siblings.indexOf(this.source); // If source node is in the target nodes
-                  if (i > -1) {
-                    this.siblings.splice(i, 1);
-                    if (this.source.index() < index) {
-                      index--;
+                moveTo: function(parent, siblings, index) { // Move the node to a new position
+                  if (parent.accept(node, index))
+                  {
+                    this.parent = parent;
+                    this.siblings = siblings.slice(0);
+                    var i = this.siblings.indexOf(this.source); // If source node is in the target nodes
+                    if (i > -1) {
+                      this.siblings.splice(i, 1);
+                      if (this.source.index() < index) {
+                        index--;
+                      }
                     }
+                    this.siblings.splice(index, 0, this.source);
+                    this.index = index;
+
+                    return true;
                   }
-                  this.siblings.splice(index, 0, this.source);
-                  this.index = index;
 
-                  return true;
-                }
+                  return false;
+                },
 
-                return false;
-              },
+                parentNode: function() {
+                  return this.parent.$nodeScope;
+                },
 
-              parentNode: function() {
-                return this.parent.$nodeScope;
-              },
-
-              prev: function() {
-                if (this.index > 0) {
-                  return this.siblings[this.index - 1];
-                }
-                return undefined;
-              },
-
-              next: function() {
-                if (this.index < this.siblings.length - 1) {
-                  return this.siblings[this.index + 1];
-                }
-                return undefined;
-              },
-
-              isDirty: function() {
-                return this.source.$parentNodesScope != this.parent ||
-                        this.source.index() != this.index;
-              },
-
-              eventArgs: function(elements, pos) {
-                return {
-                  source: this.sourceInfo,
-                  dest: {
-                    index: this.index,
-                    nodesScope: this.parent
-                  },
-                  elements: elements,
-                  pos: pos
-                };
-              },
-
-              apply: function(copy) {
-                var nodeData = this.source.$modelValue;
-                if (!copy) {
-                  this.source.remove();
-                }
-                if (angular.isDefined(this.parent))
-                {
-                  var data = (copy) ? angular.copy(nodeData) : nodeData;
-                  var index = this.index;
-                  if (copy && this.sourceInfo.index < this.index && this.sourceInfo.nodesScope === this.parent) {
-                    index = this.index + 1;
+                prev: function() {
+                  if (this.index > 0) {
+                    return this.siblings[this.index - 1];
                   }
-                  this.parent.insertNode(index, data);
+                  return undefined;
+                },
+
+                next: function() {
+                  if (this.index < this.siblings.length - 1) {
+                    return this.siblings[this.index + 1];
+                  }
+                  return undefined;
+                },
+
+                isDirty: function() {
+                  return this.source.$parentNodesScope != this.parent ||
+                          this.source.index() != this.index;
+                },
+
+                eventArgs: function(elements, pos) {
+                  return {
+                    source: this.sourceInfo,
+                    dest: {
+                      index: this.index,
+                      nodesScope: this.parent
+                    },
+                    elements: elements,
+                    pos: pos
+                  };
+                },
+
+                apply: function(copy) {
+                  var nodeData = this.source.$modelValue;
+                  if (!copy) {
+                    this.source.remove();
+                  }
+                  if (angular.isDefined(this.parent))
+                  {
+                    var data = (copy) ? angular.copy(nodeData) : nodeData;
+                    var index = this.index;
+                    if (copy && this.sourceInfo.index < this.index && this.sourceInfo.nodesScope === this.parent) {
+                      index = this.index + 1;
+                    }
+                    this.parent.insertNode(index, data);
+                  }
                 }
-              }
-            };
+              };
+            } else {
+              return undefined;
+            }
           },
 
           /**
