@@ -18,8 +18,6 @@
       placeHolderClass: 'angular-ui-tree-placeholder',
       dragClass: 'angular-ui-tree-drag',
       dragWrapperClass: 'angular-ui-tree-drag-wrapper',
-      selectedClass: 'angular-ui-tree-selected',
-      selectedCopyClass: 'angular-ui-tree-selected-copy',
       dragUpThreshold: 10,
       levelThreshold: 30
     })
