@@ -176,6 +176,13 @@
           };
 
           callbacks.beforeDrop = function(event) {
+          };
+
+          callbacks.lock = function(axis) {
+          };
+
+          callbacks.unlock = function(axis) {
+          };
 
           callbacks.startCopy = function() {
           };

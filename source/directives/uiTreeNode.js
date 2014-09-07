@@ -726,12 +726,20 @@
 
               if (angular.isDefined(scope.lockXKey)) {
                 if (e.keyCode === scope.lockXKey) {
-                  scope.lockX = true;
+                  scope.$apply(function() {
+                    scope.lockX = true;
+
+                    scope.$treeScope.$callbacks.lock('X');
+                  });
                 }
               }
               if (angular.isDefined(scope.lockYKey)) {
                 if (e.keyCode === scope.lockYKey) {
-                  scope.lockY = true;
+                  scope.$apply(function() {
+                    scope.lockY = true;
+
+                    scope.$treeScope.$callbacks.lock('Y');
+                  });
                 }
               }
 
@@ -750,12 +758,20 @@
             angular.element($window.document.body).bind("keyup", function(e) {
               if (angular.isDefined(scope.lockXKey)) {
                 if (e.keyCode === scope.lockXKey) {
-                  scope.lockX = false;
+                  scope.$apply(function() {
+                    scope.lockX = false;
+
+                    scope.$treeScope.$callbacks.unlock('X');
+                  });
                 }
               }
               if (angular.isDefined(scope.lockYKey)) {
                 if (e.keyCode === scope.lockYKey) {
-                  scope.lockY = false;
+                  scope.$apply(function() {
+                    scope.lockY = false;
+
+                    scope.$treeScope.$callbacks.unlock('Y');
+                  });
                 }
               }
 
