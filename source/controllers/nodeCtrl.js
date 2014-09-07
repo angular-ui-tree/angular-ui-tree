@@ -20,7 +20,8 @@
         $scope.$dragInfo = undefined;
 
         $scope.collapsed = false;
-        $scope.expandOnHover = false;
+        $scope.expandOnHover = undefined;
+
         $scope.selected = false;
 
         $scope.init = function(controllersArr) {
@@ -53,7 +54,7 @@
 
             $scope.$treeScope.$selecteds.push($scope.$element);
 
-            $scope.$callbacks.select($scope);
+            $scope.$treeScope.$callbacks.select($scope);
           }
         };
 
@@ -61,9 +62,12 @@
           if ($scope.selected) {
             $scope.selected = false;
 
-            $scope.$treeScope.$selecteds.splice($scope.$treeScope.$selecteds.indexOf($scope.$element), 0);
+            var indexOf = $scope.$treeScope.$selecteds.indexOf($scope.$element);
+            if (angular.isDefined(indexOf) && indexOf > -1) {
+              $scope.$treeScope.$selecteds.splice(indexOf, 1);
 
-            $scope.$callbacks.unselect($scope);
+              $scope.$treeScope.$callbacks.unselect($scope);
+            }
           }
         };
 

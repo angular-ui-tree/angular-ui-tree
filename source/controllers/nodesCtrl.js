@@ -18,6 +18,8 @@
         $scope.nodrop = false;
         $scope.maxDepth = 0;
 
+        $scope.expandOnHover = undefined;
+
         $scope.initSubNode = function(subNode) {
           if (!subNode.$modelValue) {
             return undefined;

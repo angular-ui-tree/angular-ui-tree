@@ -6,7 +6,7 @@
       function (treeConfig, $uiTreeHelper, $window, $document, $timeout, $filter) {
         return {
           require: ['^uiTreeNodes', '^uiTree'],
-          restrict: 'A',
+          restrict: 'EA',
           controller: 'TreeNodeController',
           link: function(scope, element, attrs, controllersArr) {
             var config = {};
@@ -18,7 +18,7 @@
 
             scope.collapsed = !!$uiTreeHelper.getNodeAttribute(scope, 'collapsed');
             scope.$watch(attrs.collapsed, function(val) {
-              if ((typeof val) == "boolean") {
+              if ((typeof val) === "boolean") {
                 scope.collapsed = val;
               }
             });
@@ -29,7 +29,9 @@
 
             scope.selected = !!$uiTreeHelper.getNodeAttribute(scope, 'selected');
             scope.$watch(attrs.selected, function(val) {
-              scope.selected = angular.isDefined(val);
+              if ((typeof val) === "boolean") {
+                scope.selected = val;
+              }
             });
             scope.$watch('selected', function(val) {
               $uiTreeHelper.setNodeAttribute(scope, 'selected', val);
@@ -96,7 +98,7 @@
             };
 
             var dragStart = function(e) {
-              if (scope.dragDistance > 0) {
+              if (scope.$treeScope.dragDistance > 0) {
                 var eventObj = $uiTreeHelper.eventObj(e);
                 pos = $uiTreeHelper.positionStarted(eventObj, scope.$element);
 
@@ -105,7 +107,7 @@
 
                   var distance = Math.floor(Math.sqrt(Math.pow(tempEvent.pageX - pos.startX, 2) + Math.pow(tempEvent.pageY - pos.startY, 2)));
 
-                  if (distance >= scope.dragDistance) {
+                  if (distance >= scope.$treeScope.dragDistance) {
                     angular.element($document).unbind('touchmove', tempMoveFunction);
                     angular.element($document).unbind('mousemove', tempMoveFunction);
                     angular.element($document).unbind('touchend', tempEndFunction);
@@ -149,8 +151,8 @@
                   // disable right click
                   return;
                 }
-                if ((scope.$treeScope.dragEvent.uiTreeDragging || (scope.$treeScope.dragEvent.originalEvent
-                     && scope.$treeScope.dragEvent.originalEvent.uiTreeDragging)) && ! restart) { // event has already fired in other scope.
+                if ((scope.$treeScope.dragEvent.uiTreeDragging || (scope.$treeScope.dragEvent.originalEvent &&
+                     scope.$treeScope.dragEvent.originalEvent.uiTreeDragging)) && !restart) { // event has already fired in other scope.
                   return;
                 }
                 // the element which is clicked.
@@ -184,7 +186,7 @@
                   eventElm = eventElm.parent();
                 }
 
-                if (!scope.beforeDrag(scope, scope.$treeScope.dragEvent) && !restart) {
+                if (!scope.$parentNodesScope.beforeDrag(scope, scope.$treeScope.dragEvent) && !restart) {
                   return;
                 }
 
@@ -230,9 +232,9 @@
                   if (angular.isDefined(scope.$treeScope.$selecteds) && scope.$treeScope.$selecteds.length > 0) {
                     var orderedElements = [];
 
-                    placeElm = angular.element($window.document.createElement('div')).addClass(treeConfig.placeHoldersWrapperClass);
+                    placeElm = angular.element($window.document.createElement('div')).addClass(config.placeHoldersWrapperClass);
                     hiddenPlaceElm = angular.element($window.document.createElement('div'));
-                    dragElm = angular.element($window.document.createElement('div')).addClass(treeConfig.dragWrapperClass);
+                    dragElm = angular.element($window.document.createElement('div')).addClass(config.dragWrapperClass);
 
                     pos = $uiTreeHelper.positionStarted(eventObj, angular.element(scope.$treeScope.$selecteds[0]));
 
@@ -287,6 +289,11 @@
                         document.body.setAttribute('ui-tree-cursor', $document.find('body').css('cursor') || '');
                         $document.find('body').css({ cursor: hStyle.cursor + '!important' });
                       }
+
+                      selectedElementScope.$apply(function() {
+                        selectedElementScope.selected = false;
+                        selectedElementScope.original = true;
+                      });
                     });
 
                     dragElm.css('z-index', 9999).addClass(config.dragClass);
@@ -346,7 +353,7 @@
                     var selectedElementScope = selectedElement.scope();
 
                     selectedElementScope.$apply(function() {
-                      scope.$callbacks.dragStart(selectedElementScope.$dragInfo.eventArgs(elements, pos));
+                      scope.$treeScope.$callbacks.dragStart(selectedElementScope.$dragInfo.eventArgs(elements, pos));
                     });
                   });
                 }
@@ -377,7 +384,7 @@
                 elmPos.bottom = elmPos.top + elmPos.height;
 
                 // Retrieve handle position and dimension
-                hdlElm = scope.$element.find(treeConfig.handleClass);
+                hdlElm = scope.$element.find(config.handleClass);
                 var hdlElmOffset;
                 if (angular.isDefined(hdlElm) && hdlElm.length > 0) {
                   hdlElmOffset = $uiTreeHelper.offset(hdlElm);
@@ -395,8 +402,8 @@
                 hdlPos.bottom = hdlPos.top + hdlPos.height;
 
                 // If we are bounded to an element, and that element exists (and is offset is defined)
-                if (angular.isDefined(scope.boundTo) && scope.boundTo.length > 0 && angular.isDefined(scope.boundTo.offset())) {
-                  var boundToOffset = $uiTreeHelper.offset(scope.boundTo);
+                if (angular.isDefined(scope.$treeScope.boundTo) && scope.$treeScope.boundTo.length > 0) {
+                  var boundToOffset = $uiTreeHelper.offset(scope.$treeScope.boundTo);
                   // Then get it's position and dimension
                   boundToPos.left = boundToOffset.left;
                   boundToPos.width = boundToOffset.width;
@@ -427,10 +434,10 @@
                 if (elmPos.top > boundToPos.bottom){
                   elmPos.top = boundToPos.bottom;
                 }
-                if (scope.lockY) {
+                if (scope.$treeScope.lockY) {
                   elmPos.top = elmOrigPos.top;
                 }
-                if (scope.lockX) {
+                if (scope.$treeScope.lockX) {
                   elmPos.left = elmOrigPos.left;
                 }
 
@@ -460,7 +467,7 @@
                 // var targetX = eventObj.pageX - $window.document.body.scrollLeft;
                 var targetX = elmPos.left + (elmPos.width / 2);
                 // var targetY = eventObj.pageY - (window.pageYOffset || $window.document.documentElement.scrollTop);
-                var targetY = elmPos.top + (elmPos.height * scope.coverage);
+                var targetY = elmPos.top + (elmPos.height * scope.$treeScope.coverage);
                 // Select the drag target. Because IE does not support CSS 'pointer-events: none', it will always
                 // pick the drag element itself as the target. To prevent this, we hide the drag element while
                 // selecting the target.
@@ -485,12 +492,12 @@
                 var targetBefore, targetNode, targetElm, isEmpty, isTree, targetElmOffset;
                 var closestNode = closestElement.scope();
                 var closestScope;
-                if (angular.isDefined(closestNode) && angular.isDefined(closestNode.$treeElement) && angular.isDefined(closestNode.$treeElement.children())) {
+                if (angular.isDefined(closestNode) && angular.isDefined(closestNode.$treeScope.$treeElement) && angular.isDefined(closestNode.$treeScope.$treeElement.children())) {
                   closestScope = closestNode;
                 } else {
                   closestScope = scope;
                 }
-                var nodes = closestScope.$treeElement.children();
+                var nodes = closestScope.$treeScope.$treeElement.children();
 
                 var treeChange = (angular.isUndefined(scope.previousTreeId) || scope.previousTreeId.length === 0
                                   || angular.isUndefined(closestScope.$treeScope) || scope.previousTreeId !== closestScope.$treeScope.$id);
@@ -498,7 +505,7 @@
 
                 // Compute the intersected element of the tree we are hovering
                 var direction = (treeChange) ? 1 : (pos.dirAx) ? pos.dirX : pos.dirY;
-                var intersectWith = $uiTreeHelper.findIntersect(elmPos, nodes, scope.collideWith, direction, scope.horizontal);
+                var intersectWith = $uiTreeHelper.findIntersect(elmPos, nodes, scope.$treeScope.collideWith, direction, scope.$parentNodesScope.horizontal);
                 if (intersectWith) {
                   targetElm = angular.element(intersectWith);
                 }
@@ -513,7 +520,7 @@
                   if (angular.isDefined(previous) && !previous.collapsed && angular.isDefined(previous.$childNodesScope)) {
                     var previousElmOffset = $uiTreeHelper.offset(previous.$element);
                     // And if the horizontal position of the mouse is greater than the one of the parent
-                    if (elmPos.left >= (previousElmOffset.left + scope.spacing - scope.spacingThreshold)) {
+                    if (elmPos.left >= (previousElmOffset.left + scope.$treeScope.spacing - scope.$treeScope.spacingThreshold)) {
                       // Then move the element as a children of the previous element
                       previous.$childNodesScope.$element.append(placeElm);
 
@@ -533,7 +540,7 @@
                   if (angular.isDefined(parent)) {
                     var parentElmOffset = $uiTreeHelper.offset(parent.$element);
                     // And that the horizontal position of the mouse is around the position of the parent
-                    if (elmPos.left <= (parentElmOffset.left + scope.spacingThreshold)) {
+                    if (elmPos.left <= (parentElmOffset.left + scope.$treeScope.spacingThreshold)) {
                       // And that there is no element after the current one
                       if (!dragInfo.next()) {
                         // Then move the element as the parent sibling
@@ -591,15 +598,15 @@
                     angular.forEach(scope.$treeScope.$selecteds, function(selectedElement, index) {
                       var selectedElementScope = angular.element(selectedElement).scope();
 
-                      selectedElementScope.moved = selectedElementScope.$dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), index);
+                      selectedElementScope.moved = selectedElementScope.$dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.$parentNodesScope.childNodes(), index);
                     });
                   } else if (isTree) { // it's in the bottom padded portion of the tree itself
                     targetNode.place(placeElm);
                     angular.forEach(scope.$treeScope.$selecteds, function(selectedElement, index) {
                       var selectedElementScope = angular.element(selectedElement).scope();
 
-                      selectedElementScope.moved = selectedElementScope.$dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(),
-                                                                                         (targetNode.$nodesScope.childNodes().length + 1 + index));
+                      selectedElementScope.moved = selectedElementScope.$dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.$parentNodesScope.childNodes(),
+                                                                                         (targetNode.$parentNodesScope.childNodes().length + 1 + index));
                     });
                   } else if (targetNode.dragEnabled()) { // drag enabled
                     // If another node was witing for expand, cancel it
@@ -611,33 +618,35 @@
                         delete selectedElementScope.expandTimeout;
                         delete selectedElementScope.expandTimeoutOn;
 
-                        selectedElementScope.$apply(function() {
-                          scope.$callbacks.expandTimeoutCancel();
+                        targetNode.$apply(function() {
+                          scope.$treeScope.$callbacks.expandTimeoutCancel();
                         });
                       }
                     });
 
                     // If the node is collapsed, expand it accordingly to the configuration
                     if (targetNode.collapsed) {
-                      if (scope.expandOnHover === true || (angular.isNumber(scope.expandOnHover) && scope.expandOnHover === 0)) {
+                      var expandOnHover = targetNode.expandOnHover || targetNode.$parentNodesScope.expandOnHover || targetNode.$treeScope.expandOnHover;
+
+                      if (expandOnHover === true || (angular.isNumber(expandOnHover) && expandOnHover === 0)) {
                         targetNode.collapsed = false;
-                      } else if (scope.expandOnHover !== false && angular.isNumber(scope.expandOnHover) && scope.expandOnHover > 0) {
+                      } else if (expandOnHover !== false && angular.isNumber(expandOnHover) && expandOnHover > 0) {
                         angular.forEach(scope.$treeScope.$selecteds, function(selectedElement) {
                           var selectedElementScope = angular.element(selectedElement).scope();
 
                           if (angular.isUndefined(selectedElementScope.expandTimeoutOn)) {
                             selectedElementScope.expandTimeoutOn = targetNode.$id;
-                            selectedElementScope.$apply(function() {
-                              scope.$callbacks.expandTimeoutStart();
+                            targetNode.$apply(function() {
+                              targetNode.$treeScope.$callbacks.expandTimeoutStart();
                             });
                             selectedElementScope.expandTimeout = $timeout(function()
                             {
-                              selectedElementScope.$apply(function() {
-                                scope.$callbacks.expandTimeoutEnd();
+                              targetNode.$apply(function() {
+                                targetNode.$treeScope.$callbacks.expandTimeoutEnd();
                               });
 
                               targetNode.collapsed = false;
-                            }, scope.expandOnHover);
+                            }, expandOnHover);
                           }
                         });
                       }
@@ -645,10 +654,11 @@
 
                     var childsHeight = (targetNode.hasChild()) ? $uiTreeHelper.offset(targetNode.$childNodesScope.$element).height : 0;
 
-                    if ((!scope.horizontal && pos.dirY > 0) || (scope.horizontal && pos.dirX > 0) || treeChange) {
-                      var elmVertDown = (scope.collideWith === 'top') ? (scope.horizontal) ? elmPos.right : elmPos.top : (scope.horizontal) ? elmPos.left : elmPos.bottom;
-                      var downLimit = (scope.horizontal) ? ((targetElmOffset.left - elmPos.left) + (targetElmOffset.width * scope.coverage))
-                                                        : (targetElmOffset.top + ((targetElmOffset.height - childsHeight) * scope.coverage));
+                    if ((!scope.$parentNodesScope.horizontal && pos.dirY > 0) || (scope.$parentNodesScope.horizontal && pos.dirX > 0) || treeChange) {
+                      var elmVertDown = (scope.$treeScope.collideWith === 'top') ? (scope.$parentNodesScope.horizontal) ? elmPos.right : elmPos.top
+                                                                                : (scope.$parentNodesScope.horizontal) ? elmPos.left : elmPos.bottom;
+                      var downLimit = (scope.$parentNodesScope.horizontal) ? ((targetElmOffset.left - elmPos.left) + (targetElmOffset.width * scope.$treeScope.coverage))
+                                                        : (targetElmOffset.top + ((targetElmOffset.height - childsHeight) * scope.$treeScope.coverage));
 
                       // If the element as moved behond the trigger
                       if (elmVertDown >= downLimit) {
@@ -666,7 +676,7 @@
                           var firstChildChildsHeight = (angular.isDefined(firstChild) && firstChild.hasChild()) ? $uiTreeHelper.offset(firstChild.$childNodesScope.$element).height : 0;
 
                           if (angular.isUndefined(firstChild) || (angular.isDefined(firstChild) &&
-                              elmVertDown < (firstChildOffset.top + ((firstChildOffset.height - firstChildChildsHeight) * scope.coverage))))
+                              elmVertDown < (firstChildOffset.top + ((firstChildOffset.height - firstChildChildsHeight) * scope.$treeScope.coverage))))
                           {
                             targetNode.$childNodesScope.$element.prepend(placeElm);
                             angular.forEach(scope.$treeScope.$selecteds, function(selectedElement, index) {
@@ -679,12 +689,13 @@
                       }
                     }
 
-                    if ((((!scope.horizontal && pos.dirY < 0) || (scope.horizontal && pos.dirX < 0))
-                          && ((!scope.horizontal && pos.distAxY > treeConfig.dragUpThreshold) || (!scope.horizontal && pos.distAxX > 8))
+                    if ((((!scope.$parentNodesScope.horizontal && pos.dirY < 0) || (scope.$parentNodesScope.horizontal && pos.dirX < 0))
+                          && ((!scope.$parentNodesScope.horizontal && pos.distAxY > config.dragUpThreshold) || (!scope.$parentNodesScope.horizontal && pos.distAxX > 8))
                           || treeChange)) {
-                      var elmVertUp = (scope.collideWith === 'top') ? (scope.horizontal) ? elmPos.left : elmPos.bottom : (scope.horizontal) ? elmPos.right : elmPos.top;
-                      var upLimit = (scope.horizontal) ? ((targetElmOffset.left - elmPos.left) + targetElmOffset.width - (targetElmOffset.width * scope.coverage))
-                                                      : (targetElmOffset.top + targetElmOffset.height - (targetElmOffset.height * scope.coverage));
+                      var elmVertUp = (scope.$treeScope.collideWith === 'top') ? (scope.$parentNodesScope.horizontal) ? elmPos.left : elmPos.bottom
+                                                                               : (scope.$parentNodesScope.horizontal) ? elmPos.right : elmPos.top;
+                      var upLimit = (scope.$parentNodesScope.horizontal) ? ((targetElmOffset.left - elmPos.left) + targetElmOffset.width - (targetElmOffset.width * scope.$treeScope.coverage))
+                                                      : (targetElmOffset.top + targetElmOffset.height - (targetElmOffset.height * scope.$treeScope.coverage));
 
                       if (elmVertUp <= upLimit) {
                         targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
@@ -708,7 +719,7 @@
                               || !angular.equals(selectedElementScope.dragInfoEventsArgs.dest, dragInfoEventsArgs.dest))
                           {
                             selectedElementScope.$apply(function() {
-                              scope.$callbacks.placeholderMove(dragInfoEventsArgs);
+                              scope.$treeScope.$callbacks.placeholderMove(dragInfoEventsArgs);
                             });
 
                             selectedElementScope.dragInfoEventsArgs = dragInfoEventsArgs;
@@ -724,7 +735,7 @@
                 var selectedElementScope = angular.element(selectedElement).scope();
 
                 selectedElementScope.$apply(function() {
-                  scope.$callbacks.dragMove(selectedElementScope.$dragInfo.eventArgs(elements, pos));
+                  scope.$treeScope.$callbacks.dragMove(selectedElementScope.$dragInfo.eventArgs(elements, pos));
                 });
               });
             };
@@ -741,53 +752,56 @@
 
                 angular.forEach(scope.$treeScope.$selecteds, function(selectedElement, index) {
                   var selectedElementScope = angular.element(selectedElement).scope();
-                  var dragInfoEventArgs = selectedElementScope.$dragInfo.eventArgs(elements, pos);
 
-                  selectedElementScope.$apply(function() {
-                    scope.$callbacks.beforeDrop(dragInfoEventArgs);
-                  });
-
-                  if (selectedElementScope.$$apply && !cancel) {
-                    selectedElementScope.$dragInfo.apply(scope.$treeScope.copy);
+                  if (angular.isDefined(selectedElementScope)) {
+                    var dragInfoEventArgs = selectedElementScope.$dragInfo.eventArgs(elements, pos);
 
                     selectedElementScope.$apply(function() {
-                      scope.$callbacks.dropped(dragInfoEventArgs);
+                      scope.$treeScope.$callbacks.beforeDrop(dragInfoEventArgs);
                     });
-                    dragInfoEventArgs.dest.nodesScope.$apply(function() {
-                      scope.$callbacks.droppedInto(dragInfoEventArgs);
-                    });
-                  } else {
-                    selectedElementScope.$element.removeClass(treeConfig.hiddenClass);
+
+                    if (selectedElementScope.$$apply && !cancel) {
+                      selectedElementScope.$dragInfo.apply(scope.$treeScope.copy);
+
+                      selectedElementScope.$apply(function() {
+                        scope.$treeScope.$callbacks.dropped(dragInfoEventArgs);
+                      });
+                      dragInfoEventArgs.dest.nodesScope.$apply(function() {
+                        scope.$treeScope.$callbacks.droppedInto(dragInfoEventArgs);
+                      });
+                    } else {
+                      selectedElementScope.$element.removeClass(config.hiddenClass);
+
+                      selectedElementScope.$apply(function() {
+                        scope.$treeScope.$callbacks.dragCancel(dragInfoEventArgs);
+                      });
+                    }
 
                     selectedElementScope.$apply(function() {
-                      scope.$callbacks.dragCancel(dragInfoEventArgs);
+                      scope.$treeScope.$callbacks.dragStop(dragInfoEventArgs);
+                    });
+
+                    selectedElementScope.$dragInfo = undefined;
+
+                    selectedElementScope.$apply(function() {
+                      delete selectedElementScope.original;
                     });
                   }
-
-                  selectedElementScope.$apply(function() {
-                    scope.$callbacks.dragStop(dragInfoEventArgs);
-                  });
-
-                  selectedElementScope.$dragInfo = undefined;
-
-                  selectedElementScope.$apply(function() {
-                    selectedElementScope.selected = false;
-                  });
                 });
 
-                placeElm.remove();
-                placeElm = undefined;
-                hiddenPlaceElm.remove();
-                hiddenPlaceElm = undefined;
+                if (angular.isDefined(placeElm)) {
+                  placeElm.remove();
+                  placeElm = undefined;
+                }
+                if (angular.isDefined(hiddenPlaceElm)) {
+                  hiddenPlaceElm.remove();
+                  hiddenPlaceElm = undefined;
+                }
                 if (angular.isDefined(dragElm)) {
                   dragElm.remove();
                   dragElm = undefined;
                 }
 
-                // angular.forEach(scope.$treeScope.$selecteds, function(selectedElement) {
-                //   var selectedElementScope = angular.element(selectedElement).scope();
-                //   selectedElementScope.$apply(selectedElementScope.unselect);
-                // });
                 scope.$treeScope.$selecteds = [];
               }
 
@@ -857,7 +871,7 @@
                   dragTimer = $timeout(function() {
                     dragStartEvent(e);
                     dragDelaying = false;
-                  }, scope.dragDelay);
+                  }, scope.$treeScope.dragDelay);
                 } else {
                   toggleSelect(e);
                 }
@@ -875,30 +889,30 @@
             bindDrag();
 
             angular.element($window.document.body).bind("keydown", function(e) {
-              if (e.keyCode === scope.cancelKey) {
+              if (e.keyCode === scope.$treeScope.cancelKey) {
                 dragCancelEvent(e);
               }
 
-              if (angular.isDefined(scope.lockXKey)) {
-                if (e.keyCode === scope.lockXKey) {
-                  scope.$apply(function() {
-                    scope.lockX = true;
+              if (angular.isDefined(scope.$treeScope.lockXKey)) {
+                if (e.keyCode === scope.$treeScope.lockXKey) {
+                  scope.$treeScope.$apply(function() {
+                    scope.$treeScope.lockX = true;
 
                     scope.$treeScope.$callbacks.lock('X');
                   });
                 }
               }
-              if (angular.isDefined(scope.lockYKey)) {
-                if (e.keyCode === scope.lockYKey) {
-                  scope.$apply(function() {
-                    scope.lockY = true;
+              if (angular.isDefined(scope.$treeScope.lockYKey)) {
+                if (e.keyCode === scope.$treeScope.lockYKey) {
+                  scope.$treeScope.$apply(function() {
+                    scope.$treeScope.lockY = true;
 
                     scope.$treeScope.$callbacks.lock('Y');
                   });
                 }
               }
 
-              if (e.keyCode === scope.copyKey) {
+              if (e.keyCode === scope.$treeScope.copyKey) {
                 if (!scope.$treeScope.copy) {
                   scope.$treeScope.$apply(function() {
                     scope.$treeScope.copy = true;
@@ -907,8 +921,8 @@
                   });
                   restartDrag(e);
                 }
-              } else if (e.keyCode === scope.multiSelectKey) {
-                if (!scope.multiSelect) {
+              } else if (e.keyCode === scope.$treeScope.multiSelectKey) {
+                if (!scope.$treeScope.multiSelect) {
                   scope.$treeScope.$apply(function() {
                     scope.$treeScope.multiSelect = true;
 
@@ -919,26 +933,26 @@
             });
 
             angular.element($window.document.body).bind("keyup", function(e) {
-              if (angular.isDefined(scope.lockXKey)) {
-                if (e.keyCode === scope.lockXKey) {
-                  scope.$apply(function() {
-                    scope.lockX = false;
+              if (angular.isDefined(scope.$treeScope.lockXKey)) {
+                if (e.keyCode === scope.$treeScope.lockXKey) {
+                  scope.$treeScope.$apply(function() {
+                    scope.$treeScope.lockX = false;
 
                     scope.$treeScope.$callbacks.unlock('X');
                   });
                 }
               }
-              if (angular.isDefined(scope.lockYKey)) {
-                if (e.keyCode === scope.lockYKey) {
-                  scope.$apply(function() {
-                    scope.lockY = false;
+              if (angular.isDefined(scope.$treeScope.lockYKey)) {
+                if (e.keyCode === scope.$treeScope.lockYKey) {
+                  scope.$treeScope.$apply(function() {
+                    scope.$treeScope.lockY = false;
 
                     scope.$treeScope.$callbacks.unlock('Y');
                   });
                 }
               }
 
-              if (e.keyCode === scope.copyKey) {
+              if (e.keyCode === scope.$treeScope.copyKey) {
                 if (scope.$treeScope.copy) {
                   scope.$treeScope.$apply(function() {
                     scope.$treeScope.copy = false;
@@ -947,8 +961,8 @@
                   });
                   restartDrag(e);
                 }
-              } else if (e.keyCode === scope.multiSelectKey) {
-                if (scope.multiSelect) {
+              } else if (e.keyCode === scope.$treeScope.multiSelectKey) {
+                if (scope.$treeScope.multiSelect) {
                   scope.$treeScope.$apply(function() {
                     scope.$treeScope.multiSelect = false;
 

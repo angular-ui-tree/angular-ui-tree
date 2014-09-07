@@ -6,11 +6,15 @@
     function(treeConfig) {
       return {
         require: ['ngModel', '?^uiTreeNode', '^uiTree'],
-        restrict: 'A',
-        scope: true,
+        restrict: 'EA',
+        scope: {
+          maxDepth: '=?',
+          expandOnHover: '=?',
+          noDrop: '=?',
+          horizontal: '=?'
+        },
         controller: 'TreeNodesController',
         link: function(scope, element, attrs, controllersArr) {
-
           var config = {};
           angular.extend(config, treeConfig);
           if (config.nodesClass) {
@@ -20,6 +24,7 @@
           var ngModel = controllersArr[0];
           var treeNodeCtrl = controllersArr[1];
           var treeCtrl = controllersArr[2];
+
           if (treeNodeCtrl) {
             treeNodeCtrl.scope.$childNodesScope = scope;
             scope.$nodeScope = treeNodeCtrl.scope;
@@ -36,21 +41,6 @@
               scope.$modelValue = ngModel.$modelValue;
             };
           }
-
-          scope.$watch(attrs.maxDepth, function(val) {
-            if (angular.isNumber(val)) {
-              scope.maxDepth = val;
-            }
-          });
-
-          attrs.$observe('nodrop', function(val) {
-            scope.nodrop = angular.isDefined(val);
-          });
-
-          attrs.$observe('horizontal', function(val) {
-            scope.horizontal = angular.isDefined(val);
-          });
-
         }
       };
     }
