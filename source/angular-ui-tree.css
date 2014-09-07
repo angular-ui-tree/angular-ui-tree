@@ -64,6 +64,9 @@
 .angular-ui-tree-handle.select {
 	cursor: cell;
 }
+.angular-ui-tree-handle.copy {
+	cursor: copy;
+}
 
 .angular-ui-tree-drag {
     position: absolute;
