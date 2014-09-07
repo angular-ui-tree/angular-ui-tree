@@ -112,14 +112,14 @@
                 if (this.index > 0) {
                   return this.siblings[this.index - 1];
                 }
-                return null;
+                return undefined;
               },
 
               next: function() {
                 if (this.index < this.siblings.length - 1) {
                   return this.siblings[this.index + 1];
                 }
-                return null;
+                return undefined;
               },
 
               isDirty: function() {
