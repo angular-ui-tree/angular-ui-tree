@@ -38,6 +38,16 @@
 .angular-ui-tree-node.selected > .angular-ui-tree-handle {
 	background: #DDE7FF;
 	border: 1px solid black;
+	border-bottom: 0;
+}
+.angular-ui-tree-node.selected > .angular-ui-tree-nodes {
+	border: 1px solid black;
+	border-top: 0;
+}
+
+.angular-ui-tree-node.original > .angular-ui-tree-handle {
+	background: #E2E2E2;
+	border: 1px solid lightgrey;
 }
 
 .angular-ui-tree-hidden {
