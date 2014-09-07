@@ -9,10 +9,8 @@
   <link rel="stylesheet" href="dist/angular-ui-tree.min.css">
   <link rel="stylesheet" href="css/demo.css">
 </head>
-<body ng-app="demoApp">
-
+<body ng-app="demoApp" ng-controller="MainCtrl">
   <div class="container">
-
     <div class="jumbotron">
       <h1>Tree component</h1>
       <p class="lead">The AngularJS Tree component with drag and drop support.</p>
@@ -53,33 +51,110 @@
     </div>
 
     <div class="row">
+      <div class="row">
+        <div class="col-md-12">
+          <h3>Play with parameters</h3>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3">
+          <div class="row">
+            <label class="col-md-10" for="dragEnabled">Drag enabled</label> <input type="checkbox" id="dragEnabled" ng-model="dragEnabled">
+          </div>
+          <div class="row">
+            <label class="col-md-10" for="emptyPlaceholderEnabled">Empty placeholder enabled</label> <input type="checkbox" id="emptyPlaceholderEnabled" ng-model="emptyPlaceholderEnabled">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <label class="col-md-6" for="maxDepth">Max depth</label> <input type="number" id="maxDepth" ng-model="maxDepth" min="1" max="10">
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <label class="col-md-6" for="dragDelay">Drag delay</label> <input type="number" id="dragDelay" ng-model="dragDelay" min="0" style="max-width: 80px;"> <em>(in ms)</em>
+          </div>
+          <div class="row">
+            <label class="col-md-6" for="dragDistance">Drag distance</label> <input type="number" id="dragDistance" ng-model="dragDistance" min="0" style="max-width: 80px;"> <em>(in px)</em>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <label class="col-md-10" for="lockX">Lock X (horizontal) axis</label> <input type="checkbox" id="lockX" ng-model="lockX">
+          </div>
+          <div class="row">
+            <label class="col-md-10" for="lockY">Lock Y (vertical) axis</label> <input type="checkbox" id="lockY" ng-model="lockY">
+          </div>
+          <div class="row">
+            <label class="col-md-5" for="boundTo">Bound to</label> <input type="text" id="boundTo" ng-model="boundTo" style="max-width: 155px;">
+          </div>
+        </div>
+      </div>
+      <br />
+      <div class="row">
+        <div class="col-md-3">
+          <div class="row">
+            <label class="col-md-5" for="spacing">Spacing</label> <input type="number" id="spacing" ng-model="spacing" min="0" style="max-width: 155px;">
+          </div>
+          <div class="row">
+            <label class="col-md-6" for="coverage">Coverage</label> <input type="number" id="coverage" ng-model="coverage" min="-100" max="100"> <em>(in %)</em>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <label class="col-md-6" for="cancelKey">Cancel key</label> <select id="cancelKey" ng-model="cancelKey"><option ng-repeat="(key, keyCode) in keys" value="{{ key }}">{{ key }} ({{ keyCode }})</option></select>
+          </div>
+          <div class="row">
+            <label class="col-md-6" for="copyKey">Copy key</label> <select id="copyKey" ng-model="copyKey"><option ng-repeat="(key, keyCode) in keys" value="{{ key }}">{{ key }} ({{ keyCode }})</option></select>
+          </div>
+          <div class="row">
+            <label class="col-md-6" for="selectKey">Select key</label> <select id="selectKey" ng-model="selectKey"><option ng-repeat="(key, keyCode) in keys" value="{{ key }}">{{ key }} ({{ keyCode }})</option></select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <label class="col-md-10" for="enableExpandOnHover">Enable "Expand on hover"</label> <input type="checkbox" id="enableExpandOnHover" ng-model="enableExpandOnHover">
+          </div>
+          <div class="row" ng-if="enableExpandOnHover">
+            <label class="col-md-7" for="expandOnHover">Expand on hover</label> <input type="number" id="coverage" ng-model="coverage" min="0" style="max-width: 60px;"> <em>(in ms)</em>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
       <div class="col-md-12">
-          <div class="row" ng-controller="MainCtrl">
+          <div class="row" id="boundary">
             <div class="col-lg-6">
-              <h3>Draggable Tree</h3>
+              <h4>Draggable Tree</h4>
 
               <!-- Nested list template -->
               <script type="text/ng-template" id="items_renderer.html">
                 <div ui-tree-handle ng-class="{ 'select': $treeScope.multiSelect, 'copy': $treeScope.copy }">
-                  <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle(this)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
+                  <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle(this)">
+                    <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed }"></span>
+                  </a>
                   {{item.title}}
-                  <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
-                  <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
+
+                  <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)">
+                    <span class="glyphicon glyphicon-remove"></span>
+                  </a>
+                  <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;">
+                    <span class="glyphicon glyphicon-plus"></span>
+                  </a>
                 </div>
-                <ol ui-tree-nodes="options" ng-model="item.items" ng-class="{ 'hidden': collapsed }">
-                  <li ng-repeat="item in item.items" ui-tree-node ng-class="{ 'selected': selected }" ng-include="'items_renderer.html'">
-                  </li>
+                <ol ui-tree-nodes ng-model="item.items" ng-class="{ 'hidden': collapsed }">
+                  <li ng-repeat="item in item.items" ui-tree-node ng-class="{ 'selected': selected, 'original': original }" ng-include="'items_renderer.html'"></li>
                 </ol>
               </script>
-              <div ui-tree="options" data-spacing="20" copy="'shift'" select="'ctrl'">
-                <ol ui-tree-nodes ng-model="list" >
-                  <li ng-repeat="item in list" ui-tree-node ng-class="{ 'selected': selected }" ng-include="'items_renderer.html'"></li>
+              <ui-tree callbacks="callbacks" drag-enabled="dragEnabled" empty-placeholder-enabled="emptyPlaceholderEnabled" max-depth="maxDepth" drag-delay="dragDelay" drag-distance="dragDistance" lock-x="lockX" lock-y="lockY" bound-to="boundTo" spacing="spacing" coverage="coverage" cancel-key="cancelKey" copy-key="copyKey" select-key="selectKey" expand-on-hover="(enableExpandOnHover) ? expandOnHover : enableExpandOnHover">
+                <ol ui-tree-nodes ng-model="list">
+                  <li ng-repeat="item in list" ui-tree-node ng-class="{ 'selected': selected, 'original': original }" ng-include="'items_renderer.html'"></li>
                 </ol>
-              </div>
+              </ui-tree>
             </div>
 
             <div class="col-lg-6">
-              <h3>Full tree</h3>
+              <h4>Full tree</h4>
               <pre class="code">{{ list | json }}</pre>
             </div>
           </div>
