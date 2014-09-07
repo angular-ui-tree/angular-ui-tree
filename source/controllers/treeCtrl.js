@@ -9,10 +9,11 @@
 
         $scope.$element = $element;
         $scope.$treeElement = $element;
-        $scope.$nodesScope = null; // root nodes
+        $scope.$nodesScope = undefined; // root nodes
         $scope.$type = 'uiTree';
-        $scope.$emptyElm = null;
-        $scope.$callbacks = null;
+        $scope.$emptyElm = undefined;
+        $scope.$callbacks = undefined;
+
 
         $scope.dragEnabled = true;
         $scope.emptyPlaceHolderEnabled = true;

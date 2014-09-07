@@ -9,7 +9,7 @@
 
         $scope.$element = $element;
         $scope.$handleElement = $element;
-        $scope.$nodeScope = null;
+        $scope.$nodeScope = undefined;
         $scope.$type = 'uiTreeHandle';
       }
     ]);

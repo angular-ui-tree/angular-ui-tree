@@ -37,11 +37,11 @@
             // todo startPos is unused
             var startPos, firstMoving, dragInfo, pos;
             var placeElm, hiddenPlaceElm, dragElm;
-            var treeScope = null;
+            var treeScope;
             var elements; // As a parameter for callbacks
             var dragDelaying = true;
             var dragStarted = false;
-            var dragTimer = null;
+            var dragTimer;
             var body = document.body,
                 html = document.documentElement,
                 documentHeight,

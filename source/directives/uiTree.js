@@ -10,8 +10,8 @@
         controller: 'TreeController',
         link: function(scope, element, attrs) {
           var callbacks = {
-            accept: null,
-            beforeDrag: null
+            accept: undefined,
+            beforeDrag: undefined
           };
 
           var config = {};

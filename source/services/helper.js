@@ -25,7 +25,7 @@
 
           setNodeAttribute: function(scope, attrName, val) {
             if (!scope.$modelValue) {
-              return null;
+              return undefined;
             }
             var data = this.nodesData[scope.$modelValue.$$hashKey];
             if (!data) {
@@ -37,13 +37,13 @@
 
           getNodeAttribute: function(scope, attrName) {
             if (!scope.$modelValue) {
-              return null;
+              return undefined;
             }
             var data = this.nodesData[scope.$modelValue.$$hashKey];
             if (data) {
               return data[attrName];
             }
-            return null;
+            return undefined;
           },
 
           /**

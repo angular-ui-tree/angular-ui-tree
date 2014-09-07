@@ -9,9 +9,9 @@
 
         $scope.$element = $element;
         $scope.$nodesElement = $element;
-        $scope.$modelValue = null;
-        $scope.$nodeScope = null; // the scope of node which the nodes belongs to
-        $scope.$treeScope = null;
+        $scope.$modelValue = undefined;
+        $scope.$nodeScope = undefined; // the scope of node which the nodes belongs to
+        $scope.$treeScope = undefined;
         $scope.$type = 'uiTreeNodes';
         $scope.$nodesMap = {};
 
@@ -20,16 +20,16 @@
 
         $scope.initSubNode = function(subNode) {
           if (!subNode.$modelValue) {
-            return null;
+            return undefined;
           }
           $scope.$nodesMap[subNode.$modelValue.$$hashKey] = subNode;
         };
 
         $scope.destroySubNode = function(subNode) {
           if (!subNode.$modelValue) {
-            return null;
+            return undefined;
           }
-          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = null;
+          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = undefined;
         };
 
         $scope.accept = function(sourceNode, destIndex) {

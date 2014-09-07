@@ -9,12 +9,12 @@
 
         $scope.$element = $element;
         $scope.$nodeElement = $element;
-        $scope.$modelValue = null; // Model value for node;
-        $scope.$parentNodeScope = null; // uiTreeNode Scope of parent node;
-        $scope.$childNodesScope = null; // uiTreeNodes Scope of child nodes.
-        $scope.$parentNodesScope = null; // uiTreeNodes Scope of parent nodes.
-        $scope.$treeScope = null; // uiTree scope
-        $scope.$handleScope = null; // it's handle scope
+        $scope.$modelValue = undefined; // Model value for node;
+        $scope.$parentNodeScope = undefined; // uiTreeNode Scope of parent node;
+        $scope.$childNodesScope = undefined; // uiTreeNodes Scope of child nodes.
+        $scope.$parentNodesScope = undefined; // uiTreeNodes Scope of parent nodes.
+        $scope.$treeScope = undefined; // uiTree scope
+        $scope.$handleScope = undefined; // it's handle scope
         $scope.$type = 'uiTreeNode';
         $scope.$$apply = false; //
 
@@ -23,7 +23,7 @@
 
         $scope.init = function(controllersArr) {
           var treeNodesCtrl = controllersArr[0];
-          $scope.$treeScope = controllersArr[1] ? controllersArr[1].scope : null;
+          $scope.$treeScope = controllersArr[1] ? controllersArr[1].scope : undefined;
 
           // find the scope of it's parent node
           $scope.$parentNodeScope = treeNodesCtrl.scope.$nodeScope;
@@ -59,7 +59,7 @@
           if (index > 0) {
             return $scope.siblings()[index - 1];
           }
-          return null;
+          return undefined;
         };
 
         $scope.siblings = function() {
@@ -76,8 +76,7 @@
 
         $scope.childNodes = function() {
           return $scope.$childNodesScope && $scope.$childNodesScope.$modelValue ?
-              $scope.$childNodesScope.childNodes() :
-              null;
+                 $scope.$childNodesScope.childNodes() : undefined;
         };
 
         $scope.accept = function(sourceNode, destIndex) {
