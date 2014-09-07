@@ -132,55 +132,47 @@
             return true;
           };
 
+          callbacks.collapse = function(node, all) {
+          };
+
+          callbacks.expand = function(node, all) {
+          };
+
           callbacks.beforeDrag = function(sourceNodeScope) {
             return true;
           };
 
-          callbacks.expandTimeoutStart = function()
-          {
-
+          callbacks.expandTimeoutStart = function() {
           };
 
-          callbacks.expandTimeoutCancel = function()
-          {
-
+          callbacks.expandTimeoutCancel = function() {
           };
 
-          callbacks.expandTimeoutEnd = function()
-          {
-
+          callbacks.expandTimeoutEnd = function() {
           };
 
           callbacks.removed = function(node) {
-
           };
 
           callbacks.dropped = function(event) {
-
           };
 
           callbacks.droppedInto = function(event) {
-
           };
 
           callbacks.dragStart = function(event) {
-
           };
 
           callbacks.dragMove = function(event) {
-
           };
 
           callbacks.placeholderMove = function(event) {
-
           };
 
           callbacks.dragCancel = function(event) {
-
           };
 
           callbacks.dragStop = function(event) {
-
           };
 
           callbacks.beforeDrop = function(event) {

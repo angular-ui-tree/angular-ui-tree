@@ -57,7 +57,7 @@
         var collapseOrExpand = function(scope, collapsed) {
           var nodes = scope.childNodes();
           for (var i = 0; i < nodes.length; i++) {
-            collapsed ? nodes[i].collapse() : nodes[i].expand();
+            collapsed ? nodes[i].collapse(true) : nodes[i].expand(true);
             var subScope = nodes[i].$childNodesScope;
             if (subScope) {
               collapseOrExpand(subScope, collapsed);
@@ -72,7 +72,6 @@
         $scope.expandAll = function() {
           collapseOrExpand($scope.$nodesScope, false);
         };
-
       }
     ]);
 })();

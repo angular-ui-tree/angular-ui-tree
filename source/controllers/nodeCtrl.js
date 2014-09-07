@@ -99,12 +99,16 @@
           $scope.collapsed = !$scope.collapsed;
         };
 
-        $scope.collapse = function() {
+        $scope.collapse = function(all) {
           $scope.collapsed = true;
+
+          $scope.$callbacks.collapse($scope, all);
         };
 
-        $scope.expand = function() {
+        $scope.expand = function(all) {
           $scope.collapsed = false;
+
+          $scope.$callbacks.expand($scope, all);
         };
 
         $scope.depth = function() {
