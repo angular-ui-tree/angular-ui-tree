@@ -178,7 +178,7 @@
                   return;
                 }
 
-                // check if it or it's parents has a 'data-nodrag' attribute
+                // check if it or it's parents has a 'nodrag' attribute
                 while (eventElm && eventElm[0] && eventElm[0] != element) {
                   if ($uiTreeHelper.nodrag(eventElm)) { // if the node mark as `nodrag`, DONOT drag it.
                     return;

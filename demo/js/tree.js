@@ -3,7 +3,6 @@
 
   angular.module('treeApp', ['ui.tree'])
   .controller('treeCtrl', function($scope) {
-
     $scope.remove = function(scope) {
       scope.remove();
     };
@@ -83,16 +82,6 @@
         {
           "id": 31,
           "title": "node3.1",
-          "nodes": []
-        }
-      ],
-    }, {
-      "id": 4,
-      "title": "node4",
-      "nodes": [
-        {
-          "id": 41,
-          "title": "node4.1",
           "nodes": []
         }
       ],

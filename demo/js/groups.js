@@ -114,7 +114,7 @@
     $scope.options = {
       accept: function(sourceNode, destNodes, destIndex) {
         var data = sourceNode.$modelValue;
-        var destType = destNodes.$element.attr('data-type');
+        var destType = destNodes.$element.attr('type');
         return (data.type == destType); // only accept the same type
       },
       dropped: function(event) {
@@ -123,7 +123,7 @@
         var destNodes = event.dest.nodesScope;
         // update changes to server
         if (destNodes.isParent(sourceNode)
-          && destNodes.$element.attr('data-type') == 'category') { // If it moves in the same group, then only update group
+          && destNodes.$element.attr('type') == 'category') { // If it moves in the same group, then only update group
           var group = destNodes.$nodeScope.$modelValue;
           group.save();
         } else { // save all
