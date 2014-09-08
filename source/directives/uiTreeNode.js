@@ -921,7 +921,9 @@
                   scope.$treeScope.$apply(function() {
                     scope.$treeScope.lockX = true;
 
-                    scope.$treeScope.$callbacks.lock('X');
+                    scope.$treeScope.$apply(function() {
+                      scope.$treeScope.$callbacks.lock('X');
+                    });
                   });
                 }
               }
@@ -930,7 +932,9 @@
                   scope.$treeScope.$apply(function() {
                     scope.$treeScope.lockY = true;
 
-                    scope.$treeScope.$callbacks.lock('Y');
+                    scope.$treeScope.$apply(function() {
+                      scope.$treeScope.$callbacks.lock('Y');
+                    });
                   });
                 }
               }
@@ -940,7 +944,9 @@
                   scope.$treeScope.$apply(function() {
                     scope.$treeScope.copy = true;
 
-                    scope.$treeScope.$callbacks.startCopy();
+                    scope.$treeScope.$apply(function() {
+                      scope.$treeScope.$callbacks.startCopy();
+                    });
                   });
                   restartDrag(e);
                 }
@@ -949,7 +955,9 @@
                   scope.$treeScope.$apply(function() {
                     scope.$treeScope.multiSelect = true;
 
-                    scope.$treeScope.$callbacks.startSelect();
+                    scope.$treeScope.$apply(function() {
+                      scope.$treeScope.$callbacks.startSelect();
+                    });
                   });
                 }
               }
@@ -961,7 +969,9 @@
                   scope.$treeScope.$apply(function() {
                     scope.$treeScope.lockX = false;
 
-                    scope.$treeScope.$callbacks.unlock('X');
+                    scope.$treeScope.$apply(function() {
+                      scope.$treeScope.$callbacks.unlock('X');
+                    });
                   });
                 }
               }
@@ -970,7 +980,9 @@
                   scope.$treeScope.$apply(function() {
                     scope.$treeScope.lockY = false;
 
-                    scope.$treeScope.$callbacks.unlock('Y');
+                    scope.$treeScope.$apply(function() {
+                      scope.$treeScope.$callbacks.unlock('Y');
+                    });
                   });
                 }
               }
@@ -980,7 +992,9 @@
                   scope.$treeScope.$apply(function() {
                     scope.$treeScope.copy = false;
 
-                    scope.$treeScope.$callbacks.endCopy();
+                    scope.$treeScope.$apply(function() {
+                      scope.$treeScope.$callbacks.endCopy();
+                    });
                   });
                   restartDrag(e);
                 }
@@ -989,7 +1003,9 @@
                   scope.$treeScope.$apply(function() {
                     scope.$treeScope.multiSelect = false;
 
-                    scope.$treeScope.$callbacks.endSelect();
+                    scope.$treeScope.$apply(function() {
+                      scope.$treeScope.$callbacks.endSelect();
+                    });
                   });
                 }
               }
