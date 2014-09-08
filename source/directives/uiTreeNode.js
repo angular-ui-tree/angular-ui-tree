@@ -478,10 +478,25 @@
                   displayElm = dragElm[0].style.display;
                   dragElm[0].style.display = "none";
                 }
+
+                var placeDisplayElm;
+                if (angular.isFunction(placeElm.hide)) {
+                  placeElm.hide();
+                } else {
+                  placeDisplayElm = placeElm[0].style.display;
+                  placeElm[0].style.display = "none";
+                }
+
                 // when using elementFromPoint() inside an iframe, you have to call
                 // elementFromPoint() twice to make sure IE8 returns the correct value
                 $window.document.elementFromPoint(targetX, targetY);
                 var closestElement = angular.element($window.document.elementFromPoint(targetX, targetY));
+
+                if (angular.isFunction(placeElm.show)) {
+                  placeElm.show();
+                } else {
+                  placeElm[0].style.display = placeDisplayElm;
+                }
 
                 if (angular.isFunction(dragElm.show)) {
                   dragElm.show();
@@ -492,6 +507,12 @@
                 var targetBefore, targetNode, targetElm, isEmpty, isTree, targetElmOffset;
                 var closestScope = closestElement.scope();
                 var selectedScope;
+
+                if (angular.isDefined(closestScope) && angular.isDefined(closestScope.$nodeScope)) {
+                  closestScope = closestScope.$nodeScope;
+                } else if (angular.isDefined(closestScope) && angular.isDefined(closestScope.$nodesScope)) {
+                  closestScope = closestScope.$nodesScope;
+                }
 
                 if (angular.isDefined(closestScope) && angular.isDefined(closestScope.$treeScope) && angular.isDefined(closestScope.$treeScope.$treeElement)
                     && angular.isDefined(closestScope.$treeScope.$treeElement.children())) {
