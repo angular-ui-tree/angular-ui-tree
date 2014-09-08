@@ -121,7 +121,7 @@
 
         $scope.removeNode = function() {
           var node = $scope.remove();
-          $scope.$callbacks.removed(node);
+          $scope.$treeScope.$callbacks.removed(node);
           return node;
         };
 
@@ -136,13 +136,13 @@
         $scope.collapse = function(all) {
           $scope.collapsed = true;
 
-          $scope.$callbacks.collapse($scope, all);
+          $scope.$treeScope.$callbacks.collapse($scope, all);
         };
 
         $scope.expand = function(all) {
           $scope.collapsed = false;
 
-          $scope.$callbacks.expand($scope, all);
+          $scope.$treeScope.$callbacks.expand($scope, all);
         };
 
         $scope.depth = function() {
