@@ -81,8 +81,7 @@
             try {
               $scope.boundTo = angular.element($window.document.querySelectorAll(val));
             } catch (exception) {
-              console.log(exception);
-              $scope.boundTo ='';
+              $scope.boundTo = '';
             }
           }
         });

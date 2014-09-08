@@ -145,6 +145,7 @@
                   if (!copy) {
                     this.source.remove();
                   }
+
                   if (angular.isDefined(this.parent))
                   {
                     var data = (copy) ? angular.copy(nodeData) : nodeData;
