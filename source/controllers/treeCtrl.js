@@ -160,10 +160,12 @@
         $scope.collapseAll = function() {
           collapseOrExpand($scope.$nodesScope, true);
         };
+        $scope.$on('collapseAll', $scope.collapseAll);
 
         $scope.expandAll = function() {
           collapseOrExpand($scope.$nodesScope, false);
         };
+        $scope.$on('expandAll', $scope.expandAll);
       }
     ]);
 })();
