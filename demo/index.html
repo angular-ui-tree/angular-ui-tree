@@ -101,13 +101,13 @@
         </div>
         <div class="col-md-3">
           <div class="row">
-            <label class="col-md-6" for="cancelKey">Cancel key</label> <select id="cancelKey" ng-model="cancelKey"><option ng-repeat="(key, keyCode) in keys" value="{{ key }}">{{ key }} ({{ keyCode }})</option></select>
+            <label class="col-md-6" for="cancelKey">Cancel key</label> <select id="cancelKey" ng-model="cancelKey"><option ng-repeat="(key, keyCode) in keys" value="{{ key }}" ng-selected="cancelKey === key">{{ key }} ({{ keyCode }})</option></select>
           </div>
           <div class="row">
-            <label class="col-md-6" for="copyKey">Copy key</label> <select id="copyKey" ng-model="copyKey"><option ng-repeat="(key, keyCode) in keys" value="{{ key }}">{{ key }} ({{ keyCode }})</option></select>
+            <label class="col-md-6" for="copyKey">Copy key</label> <select id="copyKey" ng-model="copyKey"><option ng-repeat="(key, keyCode) in keys" value="{{ key }}" ng-selected="copyKey === key">{{ key }} ({{ keyCode }})</option></select>
           </div>
           <div class="row">
-            <label class="col-md-6" for="selectKey">Select key</label> <select id="selectKey" ng-model="selectKey"><option ng-repeat="(key, keyCode) in keys" value="{{ key }}">{{ key }} ({{ keyCode }})</option></select>
+            <label class="col-md-6" for="selectKey">Select key</label> <select id="selectKey" ng-model="selectKey"><option ng-repeat="(key, keyCode) in keys" value="{{ key }}" ng-selected="selectKey === key">{{ key }} ({{ keyCode }})</option></select>
           </div>
         </div>
         <div class="col-md-3">
