@@ -490,18 +490,20 @@
                 }
 
                 var targetBefore, targetNode, targetElm, isEmpty, isTree, targetElmOffset;
-                var closestNode = closestElement.scope();
-                var closestScope;
-                if (angular.isDefined(closestNode) && angular.isDefined(closestNode.$treeScope.$treeElement) && angular.isDefined(closestNode.$treeScope.$treeElement.children())) {
-                  closestScope = closestNode;
+                var closestScope = closestElement.scope();
+                var selectedScope;
+
+                if (angular.isDefined(closestScope) && angular.isDefined(closestScope.$treeScope) && angular.isDefined(closestScope.$treeScope.$treeElement)
+                    && angular.isDefined(closestScope.$treeScope.$treeElement.children())) {
+                  selectedScope = closestScope;
                 } else {
-                  closestScope = scope;
+                  selectedScope = scope;
                 }
-                var nodes = closestScope.$treeScope.$treeElement.children();
+                var nodes = selectedScope.$treeScope.$treeElement.children();
 
                 var treeChange = (angular.isUndefined(scope.previousTreeId) || scope.previousTreeId.length === 0
-                                  || angular.isUndefined(closestScope.$treeScope) || scope.previousTreeId !== closestScope.$treeScope.$id);
-                scope.previousTreeId = (angular.isDefined(closestScope.$treeScope)) ? closestScope.$treeScope.$id : undefined;
+                                  || angular.isUndefined(selectedScope.$treeScope) || scope.previousTreeId !== selectedScope.$treeScope.$id);
+                scope.previousTreeId = (angular.isDefined(selectedScope.$treeScope)) ? selectedScope.$treeScope.$id : undefined;
 
                 // Compute the intersected element of the tree we are hovering
                 var direction = (treeChange) ? 1 : (pos.dirAx) ? pos.dirX : pos.dirY;
@@ -695,7 +697,7 @@
                       var elmVertUp = (scope.$treeScope.collideWith === 'top') ? (scope.$parentNodesScope.horizontal) ? elmPos.left : elmPos.bottom
                                                                                : (scope.$parentNodesScope.horizontal) ? elmPos.right : elmPos.top;
                       var upLimit = (scope.$parentNodesScope.horizontal) ? ((targetElmOffset.left - elmPos.left) + targetElmOffset.width - (targetElmOffset.width * scope.$treeScope.coverage))
-                                                      : (targetElmOffset.top + targetElmOffset.height - (targetElmOffset.height * scope.$treeScope.coverage));
+                                                      : (targetElmOffset.top + targetElmOffset.height - childsHeight - ((targetElmOffset.height - childsHeight) * scope.$treeScope.coverage));
 
                       if (elmVertUp <= upLimit) {
                         targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
