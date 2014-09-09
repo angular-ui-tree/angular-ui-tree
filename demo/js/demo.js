@@ -4,21 +4,23 @@
   angular.module('demoApp', ['ui.tree'])
   .controller('MainCtrl', function($scope, $timeout, keys) {
     // Parameters
-    $scope.dragEnabled = true;
-    $scope.emptyPlaceholderEnabled = false;
-    $scope.maxDepth = 10;
-    $scope.dragDelay = 0;
-    $scope.dragDistance = 0;
-    $scope.lockX = false;
-    $scope.lockY = false;
-    $scope.boundTo = '';
-    $scope.spacing = 20;
-    $scope.coverage = 50;
-    $scope.cancelKey = 'esc';
-    $scope.copyKey = 'shift';
-    $scope.selectKey = 'ctrl';
-    $scope.enableExpandOnHover = true;
-    $scope.expandOnHover = (enableExpandOnHover) ? 500 : false;
+    $scope.parameters = {
+      dragEnabled: true,
+      emptyPlaceholderEnabled: false,
+      maxDepth: 10,
+      dragDelay: 0,
+      dragDistance: 0,
+      lockX: false,
+      lockY: false,
+      boundTo: '',
+      spacing: 20,
+      coverage: 50,
+      cancelKey: 'esc',
+      copyKey: 'shift',
+      selectKey: 'ctrl',
+      enableExpandOnHover: true,
+      expandOnHover: 500,
+    };
 
     $scope.keys = keys;
 
@@ -57,10 +59,6 @@
     }];
 
     $scope.callbacks = {
-      beforeDrag: function() {
-        console.log('beforeDrag');
-        return true;
-      }
     };
 
     $scope.remove = function(scope) {

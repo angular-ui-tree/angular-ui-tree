@@ -60,32 +60,32 @@
       <div class="row">
         <div class="col-md-3">
           <div class="row">
-            <label class="col-md-10" for="dragEnabled">Drag enabled</label> <input type="checkbox" id="dragEnabled" ng-model="dragEnabled">
+            <label class="col-md-10" for="dragEnabled">Drag enabled</label> <input type="checkbox" id="dragEnabled" ng-model="parameters.dragEnabled">
           </div>
           <div class="row">
-            <label class="col-md-10" for="emptyPlaceholderEnabled">Empty placeholder enabled</label> <input type="checkbox" id="emptyPlaceholderEnabled" ng-model="emptyPlaceholderEnabled">
-          </div>
-        </div>
-        <div class="col-md-3">
-          <label class="col-md-6" for="maxDepth">Max depth</label> <input type="number" id="maxDepth" ng-model="maxDepth" min="1" max="10">
-        </div>
-        <div class="col-md-3">
-          <div class="row">
-            <label class="col-md-6" for="dragDelay">Drag delay</label> <input type="number" id="dragDelay" ng-model="dragDelay" min="0" style="max-width: 80px;"> <em>(in ms)</em>
-          </div>
-          <div class="row">
-            <label class="col-md-6" for="dragDistance">Drag distance</label> <input type="number" id="dragDistance" ng-model="dragDistance" min="0" style="max-width: 80px;"> <em>(in px)</em>
+            <label class="col-md-10" for="emptyPlaceholderEnabled">Empty placeholder enabled</label> <input type="checkbox" id="emptyPlaceholderEnabled" ng-model="parameters.emptyPlaceholderEnabled">
           </div>
         </div>
         <div class="col-md-3">
+          <label class="col-md-6" for="maxDepth">Max depth</label> <input type="number" id="maxDepth" ng-model="parameters.maxDepth" min="1" max="10">
+        </div>
+        <div class="col-md-3">
           <div class="row">
-            <label class="col-md-10" for="lockX">Lock X (horizontal) axis</label> <input type="checkbox" id="lockX" ng-model="lockX">
+            <label class="col-md-6" for="dragDelay">Drag delay</label> <input type="number" id="dragDelay" ng-model="parameters.dragDelay" min="0" style="max-width: 80px;"> <em>(in ms)</em>
           </div>
           <div class="row">
-            <label class="col-md-10" for="lockY">Lock Y (vertical) axis</label> <input type="checkbox" id="lockY" ng-model="lockY">
+            <label class="col-md-6" for="dragDistance">Drag distance</label> <input type="number" id="dragDistance" ng-model="parameters.dragDistance" min="0" style="max-width: 80px;"> <em>(in px)</em>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <label class="col-md-10" for="lockX">Lock X (horizontal) axis</label> <input type="checkbox" id="lockX" ng-model="parameters.lockX">
           </div>
           <div class="row">
-            <label class="col-md-5" for="boundTo">Bound to</label> <input type="text" id="boundTo" ng-model="boundTo" style="max-width: 155px;">
+            <label class="col-md-10" for="lockY">Lock Y (vertical) axis</label> <input type="checkbox" id="lockY" ng-model="parameters.lockY">
+          </div>
+          <div class="row">
+            <label class="col-md-5" for="boundTo">Bound to</label> <input type="text" id="boundTo" ng-model="parameters.boundTo" style="max-width: 155px;">
           </div>
         </div>
       </div>
@@ -93,29 +93,29 @@
       <div class="row">
         <div class="col-md-3">
           <div class="row">
-            <label class="col-md-5" for="spacing">Spacing</label> <input type="number" id="spacing" ng-model="spacing" min="0" style="max-width: 155px;">
+            <label class="col-md-5" for="spacing">Spacing</label> <input type="number" id="spacing" ng-model="parameters.spacing" min="0" style="max-width: 155px;">
           </div>
           <div class="row">
-            <label class="col-md-6" for="coverage">Coverage</label> <input type="number" id="coverage" ng-model="coverage" min="-100" max="100"> <em>(in %)</em>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="row">
-            <label class="col-md-6" for="cancelKey">Cancel key</label> <select id="cancelKey" ng-model="cancelKey"><option ng-repeat="(key, keyCode) in keys" value="{{ key }}" ng-selected="cancelKey === key">{{ key }} ({{ keyCode }})</option></select>
-          </div>
-          <div class="row">
-            <label class="col-md-6" for="copyKey">Copy key</label> <select id="copyKey" ng-model="copyKey"><option ng-repeat="(key, keyCode) in keys" value="{{ key }}" ng-selected="copyKey === key">{{ key }} ({{ keyCode }})</option></select>
-          </div>
-          <div class="row">
-            <label class="col-md-6" for="selectKey">Select key</label> <select id="selectKey" ng-model="selectKey"><option ng-repeat="(key, keyCode) in keys" value="{{ key }}" ng-selected="selectKey === key">{{ key }} ({{ keyCode }})</option></select>
+            <label class="col-md-6" for="coverage">Coverage</label> <input type="number" id="coverage" ng-model="parameters.coverage" min="-100" max="100"> <em>(in %)</em>
           </div>
         </div>
         <div class="col-md-3">
           <div class="row">
-            <label class="col-md-10" for="enableExpandOnHover">Enable "Expand on hover"</label> <input type="checkbox" id="enableExpandOnHover" ng-model="enableExpandOnHover">
+            <label class="col-md-6" for="cancelKey">Cancel key</label> <select id="cancelKey" ng-model="parameters.cancelKey"><option ng-repeat="(key, keyCode) in keys" value="{{ key }}" ng-selected="cancelKey === key">{{ key }} ({{ keyCode }})</option></select>
+          </div>
+          <div class="row">
+            <label class="col-md-6" for="copyKey">Copy key</label> <select id="copyKey" ng-model="parameters.copyKey"><option ng-repeat="(key, keyCode) in keys" value="{{ key }}" ng-selected="copyKey === key">{{ key }} ({{ keyCode }})</option></select>
+          </div>
+          <div class="row">
+            <label class="col-md-6" for="selectKey">Select key</label> <select id="selectKey" ng-model="parameters.selectKey"><option ng-repeat="(key, keyCode) in keys" value="{{ key }}" ng-selected="selectKey === key">{{ key }} ({{ keyCode }})</option></select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <label class="col-md-10" for="enableExpandOnHover">Enable "Expand on hover"</label> <input type="checkbox" id="enableExpandOnHover" ng-model="parameters.enableExpandOnHover">
           </div>
           <div class="row" ng-if="enableExpandOnHover">
-            <label class="col-md-7" for="expandOnHover">Expand on hover</label> <input type="number" id="coverage" ng-model="coverage" min="0" style="max-width: 60px;"> <em>(in ms)</em>
+            <label class="col-md-7" for="expandOnHover">Expand on hover</label> <input type="number" id="expandOnHover" ng-model="expandOnHover" min="0" style="max-width: 60px;"> <em>(in ms)</em>
           </div>
         </div>
       </div>
@@ -146,7 +146,7 @@
                   <li ng-repeat="item in item.items" ui-tree-node ng-class="{ 'selected': selected, 'original': original }" ng-include="'items_renderer.html'"></li>
                 </ol>
               </script>
-              <ui-tree callbacks="callbacks" drag-enabled="dragEnabled" empty-placeholder-enabled="emptyPlaceholderEnabled" max-depth="maxDepth" drag-delay="dragDelay" drag-distance="dragDistance" lock-x="lockX" lock-y="lockY" bound-to="boundTo" spacing="spacing" coverage="coverage" cancel-key="cancelKey" copy-key="copyKey" select-key="selectKey" expand-on-hover="(enableExpandOnHover) ? expandOnHover : enableExpandOnHover">
+              <ui-tree callbacks="callbacks" drag-enabled="parameters.dragEnabled" empty-placeholder-enabled="parameters.emptyPlaceholderEnabled" max-depth="parameters.maxDepth" drag-delay="parameters.dragDelay" drag-distance="parameters.dragDistance" lock-x="parameters.lockX" lock-y="parameters.lockY" bound-to="parameters.boundTo" spacing="parameters.spacing" coverage="parameters.coverage" cancel-key="parameters.cancelKey" copy-key="parameters.copyKey" select-key="parameters.selectKey" expand-on-hover="(parameters.enableExpandOnHover) ? parameters.expandOnHover : parameters.enableExpandOnHover">
                 <ol ui-tree-nodes ng-model="list">
                   <li ng-repeat="item in list" ui-tree-node ng-class="{ 'selected': selected, 'original': original }" ng-include="'items_renderer.html'"></li>
                 </ol>
