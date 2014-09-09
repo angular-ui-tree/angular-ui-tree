@@ -770,24 +770,20 @@
         };
 
         $scope.select = function() {
-          if (!$scope.selected) {
+          if (!$scope.selected && $scope.$treeScope.$callbacks.select($scope)) {
             $scope.selected = true;
 
             $scope.$treeScope.$selecteds.push($scope.$element);
-
-            $scope.$treeScope.$callbacks.select($scope);
           }
         };
 
         $scope.unselect = function() {
-          if ($scope.selected) {
+          if ($scope.selected && $scope.$treeScope.$callbacks.unselect($scope)) {
             $scope.selected = false;
 
             var indexOf = $scope.$treeScope.$selecteds.indexOf($scope.$element);
             if (angular.isDefined(indexOf) && indexOf > -1) {
               $scope.$treeScope.$selecteds.splice(indexOf, 1);
-
-              $scope.$treeScope.$callbacks.unselect($scope);
             }
           }
         };
@@ -842,11 +838,13 @@
         };
 
         $scope.removeNode = function() {
-          var node = $scope.remove();
+          if ($scope.$treeScope.$callbacks.remove(node)) {
+            var node = $scope.remove();
 
-          $scope.$treeScope.$callbacks.removed(node);
+            return node;
+          }
 
-          return node;
+          return undefined;
         };
 
         $scope.remove = function() {
@@ -858,15 +856,11 @@
         };
 
         $scope.collapse = function(all) {
-          $scope.collapsed = true;
-
-          $scope.$treeScope.$callbacks.collapse($scope, all);
+          $scope.collapsed = $scope.$treeScope.$callbacks.collapse($scope, all);
         };
 
         $scope.expand = function(all) {
-          $scope.collapsed = false;
-
-          $scope.$treeScope.$callbacks.expand($scope, all);
+          $scope.collapsed = !$scope.$treeScope.$callbacks.expand($scope, all);
         };
 
         $scope.depth = function() {
@@ -978,9 +972,11 @@
           };
 
           callbacks.collapse = function(node, all) {
+            return true;
           };
 
           callbacks.expand = function(node, all) {
+            return true;
           };
 
           callbacks.beforeDrag = function(sourceNodeScope) {
@@ -994,9 +990,11 @@
           };
 
           callbacks.expandTimeoutEnd = function() {
+            return true;
           };
 
-          callbacks.removed = function(node) {
+          callbacks.remove = function(node) {
+            return true;
           };
 
           callbacks.dropped = function(event) {
@@ -1021,27 +1019,34 @@
           };
 
           callbacks.beforeDrop = function(event) {
+            return true;
           };
 
           callbacks.lock = function(axis) {
+            return true;
           };
 
           callbacks.unlock = function(axis) {
+            return true;
           };
 
           callbacks.startCopy = function() {
+            return true;
           };
 
           callbacks.endCopy = function() {
           };
 
           callbacks.startSelect = function() {
+            return true;
           };
 
           callbacks.select = function(node) {
+            return true;
           };
 
           callbacks.unselect = function(node) {
+            return true;
           };
 
           callbacks.endSelect = function() {
@@ -1783,10 +1788,8 @@
                             selectedElementScope.expandTimeout = $timeout(function()
                             {
                               targetNode.$apply(function() {
-                                targetNode.$treeScope.$callbacks.expandTimeoutEnd();
+                                targetNode.collapsed = !targetNode.$treeScope.$callbacks.expandTimeoutEnd();
                               });
-
-                              targetNode.collapsed = false;
                             }, expandOnHover);
                           }
                         });
@@ -1907,7 +1910,7 @@
                     var dragInfoEventArgs = selectedElementScope.$dragInfo.eventArgs(elements, pos);
 
                     selectedElementScope.$apply(function() {
-                      scope.$treeScope.$callbacks.beforeDrop(dragInfoEventArgs);
+                      selectedElementScope.$$apply = scope.$treeScope.$callbacks.beforeDrop(dragInfoEventArgs);
                     });
 
                     if (selectedElementScope.$$apply && !cancel) {
@@ -2046,22 +2049,14 @@
               if (angular.isDefined(scope.$treeScope.lockXKey)) {
                 if (e.keyCode === scope.$treeScope.lockXKey) {
                   scope.$treeScope.$apply(function() {
-                    scope.$treeScope.lockX = true;
-
-                    scope.$treeScope.$apply(function() {
-                      scope.$treeScope.$callbacks.lock('X');
-                    });
+                    scope.$treeScope.lockX = scope.$treeScope.$callbacks.lock('X');
                   });
                 }
               }
               if (angular.isDefined(scope.$treeScope.lockYKey)) {
                 if (e.keyCode === scope.$treeScope.lockYKey) {
                   scope.$treeScope.$apply(function() {
-                    scope.$treeScope.lockY = true;
-
-                    scope.$treeScope.$apply(function() {
-                      scope.$treeScope.$callbacks.lock('Y');
-                    });
+                    scope.$treeScope.lockY = scope.$treeScope.$callbacks.lock('Y');
                   });
                 }
               }
@@ -2069,22 +2064,14 @@
               if (e.keyCode === scope.$treeScope.copyKey) {
                 if (!scope.$treeScope.copy) {
                   scope.$treeScope.$apply(function() {
-                    scope.$treeScope.copy = true;
-
-                    scope.$treeScope.$apply(function() {
-                      scope.$treeScope.$callbacks.startCopy();
-                    });
+                    scope.$treeScope.copy = scope.$treeScope.$callbacks.startCopy();
                   });
                   restartDrag(e);
                 }
               } else if (e.keyCode === scope.$treeScope.multiSelectKey) {
                 if (!scope.$treeScope.multiSelect) {
                   scope.$treeScope.$apply(function() {
-                    scope.$treeScope.multiSelect = true;
-
-                    scope.$treeScope.$apply(function() {
-                      scope.$treeScope.$callbacks.startSelect();
-                    });
+                    scope.$treeScope.multiSelect = scope.$treeScope.$callbacks.startSelect();
                   });
                 }
               }
@@ -2094,22 +2081,14 @@
               if (angular.isDefined(scope.$treeScope.lockXKey)) {
                 if (e.keyCode === scope.$treeScope.lockXKey) {
                   scope.$treeScope.$apply(function() {
-                    scope.$treeScope.lockX = false;
-
-                    scope.$treeScope.$apply(function() {
-                      scope.$treeScope.$callbacks.unlock('X');
-                    });
+                    scope.$treeScope.lockX = !scope.$treeScope.$callbacks.unlock('X');
                   });
                 }
               }
               if (angular.isDefined(scope.$treeScope.lockYKey)) {
                 if (e.keyCode === scope.$treeScope.lockYKey) {
                   scope.$treeScope.$apply(function() {
-                    scope.$treeScope.lockY = false;
-
-                    scope.$treeScope.$apply(function() {
-                      scope.$treeScope.$callbacks.unlock('Y');
-                    });
+                    scope.$treeScope.lockY = !scope.$treeScope.$callbacks.unlock('Y');
                   });
                 }
               }
@@ -2117,22 +2096,14 @@
               if (e.keyCode === scope.$treeScope.copyKey) {
                 if (scope.$treeScope.copy) {
                   scope.$treeScope.$apply(function() {
-                    scope.$treeScope.copy = false;
-
-                    scope.$treeScope.$apply(function() {
-                      scope.$treeScope.$callbacks.endCopy();
-                    });
+                    scope.$treeScope.copy = !scope.$treeScope.$callbacks.endCopy();
                   });
                   restartDrag(e);
                 }
               } else if (e.keyCode === scope.$treeScope.multiSelectKey) {
                 if (scope.$treeScope.multiSelect) {
                   scope.$treeScope.$apply(function() {
-                    scope.$treeScope.multiSelect = false;
-
-                    scope.$treeScope.$apply(function() {
-                      scope.$treeScope.$callbacks.endSelect();
-                    });
+                    scope.$treeScope.multiSelect = !scope.$treeScope.$callbacks.endSelect();
                   });
                 }
               }
