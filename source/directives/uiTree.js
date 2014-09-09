@@ -54,9 +54,11 @@
           };
 
           callbacks.collapse = function(node, all) {
+            return true;
           };
 
           callbacks.expand = function(node, all) {
+            return true;
           };
 
           callbacks.beforeDrag = function(sourceNodeScope) {

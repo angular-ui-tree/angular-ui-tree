@@ -137,15 +137,11 @@
         };
 
         $scope.collapse = function(all) {
-          $scope.collapsed = true;
-
-          $scope.$treeScope.$callbacks.collapse($scope, all);
+          $scope.collapsed = $scope.$treeScope.$callbacks.collapse($scope, all);
         };
 
         $scope.expand = function(all) {
-          $scope.collapsed = false;
-
-          $scope.$treeScope.$callbacks.expand($scope, all);
+          $scope.collapsed = !$scope.$treeScope.$callbacks.expand($scope, all);
         };
 
         $scope.depth = function() {
