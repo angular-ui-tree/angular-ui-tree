@@ -72,9 +72,11 @@
           };
 
           callbacks.expandTimeoutEnd = function() {
+            return true;
           };
 
-          callbacks.removed = function(node) {
+          callbacks.remove = function(node) {
+            return true;
           };
 
           callbacks.dropped = function(event) {
@@ -99,27 +101,34 @@
           };
 
           callbacks.beforeDrop = function(event) {
+            return true;
           };
 
           callbacks.lock = function(axis) {
+            return true;
           };
 
           callbacks.unlock = function(axis) {
+            return true;
           };
 
           callbacks.startCopy = function() {
+            return true;
           };
 
           callbacks.endCopy = function() {
           };
 
           callbacks.startSelect = function() {
+            return true;
           };
 
           callbacks.select = function(node) {
+            return true;
           };
 
           callbacks.unselect = function(node) {
+            return true;
           };
 
           callbacks.endSelect = function() {

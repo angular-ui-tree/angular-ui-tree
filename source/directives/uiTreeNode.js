@@ -678,10 +678,8 @@
                             selectedElementScope.expandTimeout = $timeout(function()
                             {
                               targetNode.$apply(function() {
-                                targetNode.$treeScope.$callbacks.expandTimeoutEnd();
+                                targetNode.collapsed = !targetNode.$treeScope.$callbacks.expandTimeoutEnd();
                               });
-
-                              targetNode.collapsed = false;
                             }, expandOnHover);
                           }
                         });
@@ -802,7 +800,7 @@
                     var dragInfoEventArgs = selectedElementScope.$dragInfo.eventArgs(elements, pos);
 
                     selectedElementScope.$apply(function() {
-                      scope.$treeScope.$callbacks.beforeDrop(dragInfoEventArgs);
+                      selectedElementScope.$$apply = scope.$treeScope.$callbacks.beforeDrop(dragInfoEventArgs);
                     });
 
                     if (selectedElementScope.$$apply && !cancel) {
@@ -941,22 +939,14 @@
               if (angular.isDefined(scope.$treeScope.lockXKey)) {
                 if (e.keyCode === scope.$treeScope.lockXKey) {
                   scope.$treeScope.$apply(function() {
-                    scope.$treeScope.lockX = true;
-
-                    scope.$treeScope.$apply(function() {
-                      scope.$treeScope.$callbacks.lock('X');
-                    });
+                    scope.$treeScope.lockX = scope.$treeScope.$callbacks.lock('X');
                   });
                 }
               }
               if (angular.isDefined(scope.$treeScope.lockYKey)) {
                 if (e.keyCode === scope.$treeScope.lockYKey) {
                   scope.$treeScope.$apply(function() {
-                    scope.$treeScope.lockY = true;
-
-                    scope.$treeScope.$apply(function() {
-                      scope.$treeScope.$callbacks.lock('Y');
-                    });
+                    scope.$treeScope.lockY = scope.$treeScope.$callbacks.lock('Y');
                   });
                 }
               }
@@ -964,22 +954,14 @@
               if (e.keyCode === scope.$treeScope.copyKey) {
                 if (!scope.$treeScope.copy) {
                   scope.$treeScope.$apply(function() {
-                    scope.$treeScope.copy = true;
-
-                    scope.$treeScope.$apply(function() {
-                      scope.$treeScope.$callbacks.startCopy();
-                    });
+                    scope.$treeScope.copy = scope.$treeScope.$callbacks.startCopy();
                   });
                   restartDrag(e);
                 }
               } else if (e.keyCode === scope.$treeScope.multiSelectKey) {
                 if (!scope.$treeScope.multiSelect) {
                   scope.$treeScope.$apply(function() {
-                    scope.$treeScope.multiSelect = true;
-
-                    scope.$treeScope.$apply(function() {
-                      scope.$treeScope.$callbacks.startSelect();
-                    });
+                    scope.$treeScope.multiSelect = scope.$treeScope.$callbacks.startSelect();
                   });
                 }
               }
@@ -989,22 +971,14 @@
               if (angular.isDefined(scope.$treeScope.lockXKey)) {
                 if (e.keyCode === scope.$treeScope.lockXKey) {
                   scope.$treeScope.$apply(function() {
-                    scope.$treeScope.lockX = false;
-
-                    scope.$treeScope.$apply(function() {
-                      scope.$treeScope.$callbacks.unlock('X');
-                    });
+                    scope.$treeScope.lockX = !scope.$treeScope.$callbacks.unlock('X');
                   });
                 }
               }
               if (angular.isDefined(scope.$treeScope.lockYKey)) {
                 if (e.keyCode === scope.$treeScope.lockYKey) {
                   scope.$treeScope.$apply(function() {
-                    scope.$treeScope.lockY = false;
-
-                    scope.$treeScope.$apply(function() {
-                      scope.$treeScope.$callbacks.unlock('Y');
-                    });
+                    scope.$treeScope.lockY = !scope.$treeScope.$callbacks.unlock('Y');
                   });
                 }
               }
@@ -1012,22 +986,14 @@
               if (e.keyCode === scope.$treeScope.copyKey) {
                 if (scope.$treeScope.copy) {
                   scope.$treeScope.$apply(function() {
-                    scope.$treeScope.copy = false;
-
-                    scope.$treeScope.$apply(function() {
-                      scope.$treeScope.$callbacks.endCopy();
-                    });
+                    scope.$treeScope.copy = !scope.$treeScope.$callbacks.endCopy();
                   });
                   restartDrag(e);
                 }
               } else if (e.keyCode === scope.$treeScope.multiSelectKey) {
                 if (scope.$treeScope.multiSelect) {
                   scope.$treeScope.$apply(function() {
-                    scope.$treeScope.multiSelect = false;
-
-                    scope.$treeScope.$apply(function() {
-                      scope.$treeScope.$callbacks.endSelect();
-                    });
+                    scope.$treeScope.multiSelect = !scope.$treeScope.$callbacks.endSelect();
                   });
                 }
               }

@@ -49,24 +49,20 @@
         };
 
         $scope.select = function() {
-          if (!$scope.selected) {
+          if (!$scope.selected && $scope.$treeScope.$callbacks.select($scope)) {
             $scope.selected = true;
 
             $scope.$treeScope.$selecteds.push($scope.$element);
-
-            $scope.$treeScope.$callbacks.select($scope);
           }
         };
 
         $scope.unselect = function() {
-          if ($scope.selected) {
+          if ($scope.selected && $scope.$treeScope.$callbacks.unselect($scope)) {
             $scope.selected = false;
 
             var indexOf = $scope.$treeScope.$selecteds.indexOf($scope.$element);
             if (angular.isDefined(indexOf) && indexOf > -1) {
               $scope.$treeScope.$selecteds.splice(indexOf, 1);
-
-              $scope.$treeScope.$callbacks.unselect($scope);
             }
           }
         };
@@ -121,11 +117,13 @@
         };
 
         $scope.removeNode = function() {
-          var node = $scope.remove();
+          if ($scope.$treeScope.$callbacks.remove(node)) {
+            var node = $scope.remove();
 
-          $scope.$treeScope.$callbacks.removed(node);
+            return node;
+          }
 
-          return node;
+          return undefined;
         };
 
         $scope.remove = function() {
