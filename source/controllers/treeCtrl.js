@@ -40,9 +40,9 @@
 
         $scope.$watch('callbacks', function(newOptions) {
           angular.forEach(newOptions, function(value, key) {
-            if ($scope.callbacks[key]) {
+            if ($scope.$callbacks[key]) {
               if (angular.isFunction(value)) {
-                $scope.callbacks[key] = value;
+                $scope.$callbacks[key] = value;
               }
             }
           });

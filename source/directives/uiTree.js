@@ -49,6 +49,7 @@
             if (destNodesScope.nodrop || destNodesScope.outOfDepth(sourceNodeScope)) {
               return false;
             }
+
             return true;
           };
 

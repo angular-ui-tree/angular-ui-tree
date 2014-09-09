@@ -85,17 +85,19 @@
                 parent: node.$parentNodesScope,
 
                 moveTo: function(parent, siblings, index) { // Move the node to a new position
-                  if (parent.accept(node, index))
+                  if (parent.accept(node, index) === true)
                   {
                     this.parent = parent;
                     this.siblings = siblings.slice(0);
                     var i = this.siblings.indexOf(this.source); // If source node is in the target nodes
+
                     if (i > -1) {
                       this.siblings.splice(i, 1);
                       if (this.source.index() < index) {
                         index--;
                       }
                     }
+
                     this.siblings.splice(index, 0, this.source);
                     this.index = index;
 

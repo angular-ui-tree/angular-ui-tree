@@ -546,7 +546,9 @@
                     // And if the horizontal position of the mouse is greater than the one of the parent
                     if (elmPos.left >= (previousElmOffset.left + scope.$treeScope.spacing - scope.$treeScope.spacingThreshold)) {
                       // Then move the element as a children of the previous element
-                      previous.$childNodesScope.$element.append(placeElm);
+                      if (previous.accept(scope, previous.childNodesCount())) {
+                        previous.$childNodesScope.$element.append(placeElm);
+                      }
 
                       angular.forEach(scope.$treeScope.$selecteds, function(selectedElement, index) {
                         var selectedElementScope = angular.element(selectedElement).scope();
@@ -568,7 +570,10 @@
                       // And that there is no element after the current one
                       if (!dragInfo.next()) {
                         // Then move the element as the parent sibling
-                        parent.$element.after(placeElm);
+                        if (parent.accept(scope, (parent.index() + 1))) {
+                          parent.$element.after(placeElm);
+                        }
+
                         angular.forEach(scope.$treeScope.$selecteds, function(selectedElement, index) {
                           var selectedElementScope = angular.element(selectedElement).scope();
 
@@ -618,14 +623,21 @@
 
                   if (isEmpty) { // it's an empty tree
                     treeScope = targetNode;
-                    targetNode.place(placeElm);
+
+                    if (targetNode.accept(scope, 0)) {
+                      targetNode.place(placeElm);
+                    }
+
                     angular.forEach(scope.$treeScope.$selecteds, function(selectedElement, index) {
                       var selectedElementScope = angular.element(selectedElement).scope();
 
                       selectedElementScope.moved = selectedElementScope.$dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.$parentNodesScope.childNodes(), index);
                     });
                   } else if (isTree) { // it's in the bottom padded portion of the tree itself
-                    targetNode.place(placeElm);
+                    if (targetNode.accept(scope, (targetNode.$parentNodesScope.childNodes().length + 1))) {
+                      targetNode.place(placeElm);
+                    }
+
                     angular.forEach(scope.$treeScope.$selecteds, function(selectedElement, index) {
                       var selectedElementScope = angular.element(selectedElement).scope();
 
@@ -687,7 +699,10 @@
                       // If the element as moved behond the trigger
                       if (elmVertDown >= downLimit) {
                         if ((targetNode.collapsed || !targetNode.hasChild()) && !scope.asChild) {
-                          targetElm.after(placeElm);
+                          if (targetNode.accept(scope, (targetNode.index() + 1))) {
+                            targetElm.after(placeElm);
+                          }
+
                           angular.forEach(scope.$treeScope.$selecteds, function(selectedElement, index) {
                             var selectedElementScope = angular.element(selectedElement).scope();
 
@@ -702,7 +717,10 @@
                           if (angular.isUndefined(firstChild) || (angular.isDefined(firstChild) &&
                               elmVertDown < (firstChildOffset.top + ((firstChildOffset.height - firstChildChildsHeight) * scope.$treeScope.coverage))))
                           {
-                            targetNode.$childNodesScope.$element.prepend(placeElm);
+                            if (targetNode.accept(scope, 0)) {
+                              targetNode.$childNodesScope.$element.prepend(placeElm);
+                            }
+
                             angular.forEach(scope.$treeScope.$selecteds, function(selectedElement, index) {
                               var selectedElementScope = angular.element(selectedElement).scope();
 
@@ -722,7 +740,10 @@
                                                       : (targetElmOffset.top + targetElmOffset.height - childsHeight - ((targetElmOffset.height - childsHeight) * scope.$treeScope.coverage));
 
                       if (elmVertUp <= upLimit) {
-                        targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
+                        if (targetNode.accept(scope, targetNode.index())) {
+                          targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
+                        }
+
                         angular.forEach(scope.$treeScope.$selecteds, function(selectedElement, index) {
                           var selectedElementScope = angular.element(selectedElement).scope();
 
