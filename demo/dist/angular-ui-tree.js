@@ -154,17 +154,19 @@
                 parent: node.$parentNodesScope,
 
                 moveTo: function(parent, siblings, index) { // Move the node to a new position
-                  if (parent.accept(node, index))
+                  if (parent.accept(node, index) === true)
                   {
                     this.parent = parent;
                     this.siblings = siblings.slice(0);
                     var i = this.siblings.indexOf(this.source); // If source node is in the target nodes
+
                     if (i > -1) {
                       this.siblings.splice(i, 1);
                       if (this.source.index() < index) {
                         index--;
                       }
                     }
+
                     this.siblings.splice(index, 0, this.source);
                     this.index = index;
 
@@ -442,8 +444,8 @@
         $scope.$selecteds = [];
 
         $scope.dragEnabled = (angular.isUndefined($scope.dragEnabled)) ? true : $scope.dragEnabled;
-        $scope.emptyPlaceholderEnabled = (angular.isUndefined($scope.emptyPlaceholderEnabled)) ? true : $scope.emptyPlaceholderEnabled;
-        $scope.maxDepth = (angular.isUndefined($scope.maxDepth)) ? 0 : $scope.maxDepth;
+        $scope.emptyPlaceholderEnabled = (angular.isUndefined($scope.emptyPlaceholderEnabled)) ? false : $scope.emptyPlaceholderEnabled;
+        $scope.maxDepth = (angular.isUndefined($scope.maxDepth)) ? 10 : $scope.maxDepth;
         $scope.dragDelay = (angular.isUndefined($scope.dragDelay)) ? 0 : $scope.dragDelay;
         $scope.dragDistance = (angular.isUndefined($scope.dragDistance)) ? 0 : $scope.dragDistance;
         $scope.cancelKey = keys.escape;
@@ -462,13 +464,13 @@
         $scope.multiSelectKey = undefined;
         $scope.multiSelect = false;
 
-        $scope.expandOnHover = (angular.isUndefined($scope.expandOnHover)) ? false : $scope.expandOnHover;
+        $scope.expandOnHover = (angular.isUndefined($scope.expandOnHover)) ? 500 : $scope.expandOnHover;
 
         $scope.$watch('callbacks', function(newOptions) {
           angular.forEach(newOptions, function(value, key) {
-            if ($scope.callbacks[key]) {
+            if ($scope.$callbacks[key]) {
               if (angular.isFunction(value)) {
-                $scope.callbacks[key] = value;
+                $scope.$callbacks[key] = value;
               }
             }
           });
@@ -739,7 +741,7 @@
         $scope.$dragInfo = undefined;
 
         $scope.collapsed = false;
-        $scope.expandOnHover = undefined;
+        $scope.expandOnHover = false;
 
         $scope.selected = false;
 
@@ -799,7 +801,7 @@
         };
 
         $scope.isSibling = function(targetNode) {
-          return $scope.$parentNodesScope == targetNode.$parentNodesScope;
+          return $scope.$parentNodesScope === targetNode.$parentNodesScope;
         };
 
         $scope.isChild = function(targetNode) {
@@ -812,6 +814,7 @@
           if (index > 0) {
             return $scope.siblings()[index - 1];
           }
+
           return undefined;
         };
 
@@ -820,7 +823,7 @@
         };
 
         $scope.childNodesCount = function() {
-          return $scope.childNodes() ? $scope.childNodes().length : 0;
+          return (angular.isDefined($scope.childNodes())) ? $scope.childNodes().length : 0;
         };
 
         $scope.hasChild = function() {
@@ -828,19 +831,21 @@
         };
 
         $scope.childNodes = function() {
-          return $scope.$childNodesScope && $scope.$childNodesScope.$modelValue ?
+          return (angular.isDefined($scope.$childNodesScope) && angular.isDefined($scope.$childNodesScope.$modelValue)) ?
                  $scope.$childNodesScope.childNodes() : undefined;
         };
 
         $scope.accept = function(sourceNode, destIndex) {
-          return $scope.$childNodesScope &&
-                  $scope.$childNodesScope.$modelValue &&
+          return angular.isDefined($scope.$childNodesScope) &&
+                  angular.isDefined($scope.$childNodesScope.$modelValue) &&
                   $scope.$childNodesScope.accept(sourceNode, destIndex);
         };
 
         $scope.removeNode = function() {
           var node = $scope.remove();
+
           $scope.$treeScope.$callbacks.removed(node);
+
           return node;
         };
 
@@ -869,6 +874,7 @@
           if (parentNode) {
             return parentNode.depth() + 1;
           }
+
           return 1;
         };
 
@@ -891,6 +897,7 @@
           if ($scope.$childNodesScope) {
             countSubDepth($scope.$childNodesScope);
           }
+
           return subDepth;
         };
 
@@ -966,6 +973,7 @@
             if (destNodesScope.nodrop || destNodesScope.outOfDepth(sourceNodeScope)) {
               return false;
             }
+
             return true;
           };
 
@@ -1643,7 +1651,9 @@
                     // And if the horizontal position of the mouse is greater than the one of the parent
                     if (elmPos.left >= (previousElmOffset.left + scope.$treeScope.spacing - scope.$treeScope.spacingThreshold)) {
                       // Then move the element as a children of the previous element
-                      previous.$childNodesScope.$element.append(placeElm);
+                      if (previous.accept(scope, previous.childNodesCount())) {
+                        previous.$childNodesScope.$element.append(placeElm);
+                      }
 
                       angular.forEach(scope.$treeScope.$selecteds, function(selectedElement, index) {
                         var selectedElementScope = angular.element(selectedElement).scope();
@@ -1665,7 +1675,10 @@
                       // And that there is no element after the current one
                       if (!dragInfo.next()) {
                         // Then move the element as the parent sibling
-                        parent.$element.after(placeElm);
+                        if (parent.accept(scope, (parent.index() + 1))) {
+                          parent.$element.after(placeElm);
+                        }
+
                         angular.forEach(scope.$treeScope.$selecteds, function(selectedElement, index) {
                           var selectedElementScope = angular.element(selectedElement).scope();
 
@@ -1715,14 +1728,21 @@
 
                   if (isEmpty) { // it's an empty tree
                     treeScope = targetNode;
-                    targetNode.place(placeElm);
+
+                    if (targetNode.accept(scope, 0)) {
+                      targetNode.place(placeElm);
+                    }
+
                     angular.forEach(scope.$treeScope.$selecteds, function(selectedElement, index) {
                       var selectedElementScope = angular.element(selectedElement).scope();
 
                       selectedElementScope.moved = selectedElementScope.$dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.$parentNodesScope.childNodes(), index);
                     });
                   } else if (isTree) { // it's in the bottom padded portion of the tree itself
-                    targetNode.place(placeElm);
+                    if (targetNode.accept(scope, (targetNode.$parentNodesScope.childNodes().length + 1))) {
+                      targetNode.place(placeElm);
+                    }
+
                     angular.forEach(scope.$treeScope.$selecteds, function(selectedElement, index) {
                       var selectedElementScope = angular.element(selectedElement).scope();
 
@@ -1784,7 +1804,10 @@
                       // If the element as moved behond the trigger
                       if (elmVertDown >= downLimit) {
                         if ((targetNode.collapsed || !targetNode.hasChild()) && !scope.asChild) {
-                          targetElm.after(placeElm);
+                          if (targetNode.accept(scope, (targetNode.index() + 1))) {
+                            targetElm.after(placeElm);
+                          }
+
                           angular.forEach(scope.$treeScope.$selecteds, function(selectedElement, index) {
                             var selectedElementScope = angular.element(selectedElement).scope();
 
@@ -1799,7 +1822,10 @@
                           if (angular.isUndefined(firstChild) || (angular.isDefined(firstChild) &&
                               elmVertDown < (firstChildOffset.top + ((firstChildOffset.height - firstChildChildsHeight) * scope.$treeScope.coverage))))
                           {
-                            targetNode.$childNodesScope.$element.prepend(placeElm);
+                            if (targetNode.accept(scope, 0)) {
+                              targetNode.$childNodesScope.$element.prepend(placeElm);
+                            }
+
                             angular.forEach(scope.$treeScope.$selecteds, function(selectedElement, index) {
                               var selectedElementScope = angular.element(selectedElement).scope();
 
@@ -1819,7 +1845,10 @@
                                                       : (targetElmOffset.top + targetElmOffset.height - childsHeight - ((targetElmOffset.height - childsHeight) * scope.$treeScope.coverage));
 
                       if (elmVertUp <= upLimit) {
-                        targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
+                        if (targetNode.accept(scope, targetNode.index())) {
+                          targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
+                        }
+
                         angular.forEach(scope.$treeScope.$selecteds, function(selectedElement, index) {
                           var selectedElementScope = angular.element(selectedElement).scope();
 
