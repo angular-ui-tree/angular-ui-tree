@@ -20,7 +20,7 @@
         $scope.$dragInfo = undefined;
 
         $scope.collapsed = false;
-        $scope.expandOnHover = undefined;
+        $scope.expandOnHover = false;
 
         $scope.selected = false;
 
@@ -80,7 +80,7 @@
         };
 
         $scope.isSibling = function(targetNode) {
-          return $scope.$parentNodesScope == targetNode.$parentNodesScope;
+          return $scope.$parentNodesScope === targetNode.$parentNodesScope;
         };
 
         $scope.isChild = function(targetNode) {
@@ -93,6 +93,7 @@
           if (index > 0) {
             return $scope.siblings()[index - 1];
           }
+
           return undefined;
         };
 
@@ -101,7 +102,7 @@
         };
 
         $scope.childNodesCount = function() {
-          return $scope.childNodes() ? $scope.childNodes().length : 0;
+          return (angular.isDefined($scope.childNodes())) ? $scope.childNodes().length : 0;
         };
 
         $scope.hasChild = function() {
@@ -109,19 +110,21 @@
         };
 
         $scope.childNodes = function() {
-          return $scope.$childNodesScope && $scope.$childNodesScope.$modelValue ?
+          return (angular.isDefined($scope.$childNodesScope) && angular.isDefined($scope.$childNodesScope.$modelValue)) ?
                  $scope.$childNodesScope.childNodes() : undefined;
         };
 
         $scope.accept = function(sourceNode, destIndex) {
-          return $scope.$childNodesScope &&
-                  $scope.$childNodesScope.$modelValue &&
+          return angular.isDefined($scope.$childNodesScope) &&
+                  angular.isDefined($scope.$childNodesScope.$modelValue) &&
                   $scope.$childNodesScope.accept(sourceNode, destIndex);
         };
 
         $scope.removeNode = function() {
           var node = $scope.remove();
+
           $scope.$treeScope.$callbacks.removed(node);
+
           return node;
         };
 
@@ -150,6 +153,7 @@
           if (parentNode) {
             return parentNode.depth() + 1;
           }
+
           return 1;
         };
 
@@ -172,6 +176,7 @@
           if ($scope.$childNodesScope) {
             countSubDepth($scope.$childNodesScope);
           }
+
           return subDepth;
         };
 

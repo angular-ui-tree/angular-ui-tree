@@ -16,8 +16,8 @@
         $scope.$selecteds = [];
 
         $scope.dragEnabled = (angular.isUndefined($scope.dragEnabled)) ? true : $scope.dragEnabled;
-        $scope.emptyPlaceholderEnabled = (angular.isUndefined($scope.emptyPlaceholderEnabled)) ? true : $scope.emptyPlaceholderEnabled;
-        $scope.maxDepth = (angular.isUndefined($scope.maxDepth)) ? 0 : $scope.maxDepth;
+        $scope.emptyPlaceholderEnabled = (angular.isUndefined($scope.emptyPlaceholderEnabled)) ? false : $scope.emptyPlaceholderEnabled;
+        $scope.maxDepth = (angular.isUndefined($scope.maxDepth)) ? 10 : $scope.maxDepth;
         $scope.dragDelay = (angular.isUndefined($scope.dragDelay)) ? 0 : $scope.dragDelay;
         $scope.dragDistance = (angular.isUndefined($scope.dragDistance)) ? 0 : $scope.dragDistance;
         $scope.cancelKey = keys.escape;
@@ -36,7 +36,7 @@
         $scope.multiSelectKey = undefined;
         $scope.multiSelect = false;
 
-        $scope.expandOnHover = (angular.isUndefined($scope.expandOnHover)) ? false : $scope.expandOnHover;
+        $scope.expandOnHover = (angular.isUndefined($scope.expandOnHover)) ? 500 : $scope.expandOnHover;
 
         $scope.$watch('callbacks', function(newOptions) {
           angular.forEach(newOptions, function(value, key) {
