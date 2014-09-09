@@ -528,8 +528,9 @@
 
                 // Compute the intersected element of the tree we are hovering
                 var direction = (treeChange) ? 1 : (pos.dirAx) ? pos.dirX : pos.dirY;
+
                 var intersectWith = $uiTreeHelper.findIntersect(elmPos, nodes, scope.$treeScope.collideWith, direction, scope.$parentNodesScope.horizontal);
-                if (intersectWith) {
+                if (angular.isDefined(intersectWith)) {
                   targetElm = angular.element(intersectWith);
                 }
 
