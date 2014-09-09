@@ -358,16 +358,16 @@
 
           findIntersect: function(elmPos, nodes, collideWith, direction, horizontal) {
             var self = this;
-            var intersectWith = false;
-            for (var nodeIdx in nodes) {
-              var intersectWithChild = false;
+            var intersectWith;
+            for (var nodeIdx = 0; nodeIdx < nodes.length; nodeIdx++) {
+              var intersectWithChild;
               var nodeElement = angular.element(nodes[nodeIdx]);
 
               if (angular.isDefined(nodeElement[0])) {
                 if (nodeElement.hasClass('angular-ui-tree-node')) {
                   intersectWithChild = self.findIntersect(elmPos, nodeElement.children(), collideWith, direction, horizontal);
 
-                  if (!intersectWithChild) {
+                  if (angular.isUndefined(intersectWithChild)) {
                     var nodeOffset = self.offset(nodeElement);
                     var nodePos = {
                       left: nodeOffset.left,
@@ -405,15 +405,18 @@
                     intersectWith = intersectWithChild;
                   }
                 } else {
-                  intersectWith = self.findIntersect(elmPos, nodeElement.children(), collideWith, direction, horizontal);
+                  if (angular.isDefined(nodeElement.children()) && nodeElement.children().length > 0) {
+                    intersectWith = self.findIntersect(elmPos, nodeElement.children(), collideWith, direction, horizontal);
+                  }
                 }
               }
 
-              if (intersectWith !== false)
+              if (angular.isDefined(intersectWith))
               {
                 break;
               }
             }
+
             return intersectWith;
           }
         };
@@ -1622,8 +1625,9 @@
 
                 // Compute the intersected element of the tree we are hovering
                 var direction = (treeChange) ? 1 : (pos.dirAx) ? pos.dirX : pos.dirY;
+
                 var intersectWith = $uiTreeHelper.findIntersect(elmPos, nodes, scope.$treeScope.collideWith, direction, scope.$parentNodesScope.horizontal);
-                if (intersectWith) {
+                if (angular.isDefined(intersectWith)) {
                   targetElm = angular.element(intersectWith);
                 }
 
