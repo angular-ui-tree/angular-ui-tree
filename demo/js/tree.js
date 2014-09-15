@@ -11,7 +11,7 @@
       scope.toggle();
     };
 
-    $scope.moveLastToTheBegginig = function () {
+    $scope.moveLastToTheBeginning = function () {
       var a = $scope.data.pop();
       $scope.data.splice(0,0, a);
     };
