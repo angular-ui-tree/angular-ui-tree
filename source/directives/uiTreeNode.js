@@ -806,7 +806,7 @@
                     if (selectedElementScope.$$apply && !cancel) {
                       selectedElementScope.$dragInfo.apply(scope.$treeScope.copy);
 
-                      selectedElementScope.$apply(function() {
+                      scope.$treeScope.$apply(function() {
                         scope.$treeScope.$callbacks.dropped(dragInfoEventArgs);
                       });
                       dragInfoEventArgs.dest.nodesScope.$apply(function() {
