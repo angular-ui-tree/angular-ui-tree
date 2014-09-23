@@ -202,23 +202,36 @@
                   'top': topElmPos + 'px'
                 });
 
-                // When dragging a node over parent scroll.
-                var $parentElement = scope.$parent.$element[0];
-                while($parentElement.style.overflowY !== 'auto' && $parentElement.style.overflowY !== 'scroll') {
-                  $parentElement = $parentElement.parentNode;
+                // when dragging a node over parent scroll.
+                var parentElement = scope.$parent.$element[0];
+                var parentOverflow = parentElement.style.overflow;
+                var parentOverflowY = parentElement.style.overflowY;
+                
+                while(parentOverflowY !== 'auto' && parentOverflowY !== 'scroll' && parentElement != $window.document.body) {
+                  // Fixed for IE.
+                  if((parentOverflow === 'scroll' || parentOverflow === 'auto') && parentOverflowY !== 'hidden') {
+                    break;
+                  }
+                  parentElement = parentElement.parentNode;
+                  parentOverflow = parentElement.style.overflow;
+                  parentOverflowY = parentElement.style.overflowY;
                 }
 
-                var parent_top = $parentElement.offsetTop;
-                var parent_bottom = parent_top + $parentElement.offsetHeight;
+                if(parentElement) {
+                  var parent_top = parentElement.getBoundingClientRect().top;
+                  var parent_bottom = parent_top + parentElement.offsetHeight;
 
-                // to scroll top if cursor y-position is less than the the scollable parent element's top position the vertical scroll
-                if(eventObj.pageY < parent_top) {
-                  $parentElement.scrollTop -= 10;
+                  var top_distance = eventObj.pageY - window.pageYOffset || $window.document.documentElement.scrollTop;
+                  // to scroll top if cursor y-position is less than the the scollable parent element's top position the vertical scroll
+                  if(top_distance < parent_top) {
+                    parentElement.scrollTop -= 10;
+                  }
+                  // to scroll down if cursor y-position is greater than the scollable parent element' bottom position the vertical scroll
+                  if(top_distance > parent_bottom) {
+                    parentElement.scrollTop += 10;
+                  }
                 }
-                // to scroll down if cursor y-position is greater than the scollable parent element' bottom position the vertical scroll
-                if(eventObj.pageY > parent_bottom) {
-                  $parentElement.scrollTop += 10;
-                }
+                
 
                 var top_scroll = window.pageYOffset || $window.document.documentElement.scrollTop;
                 var bottom_scroll = top_scroll + (window.innerHeight || $window.document.clientHeight || $window.document.clientHeight);
