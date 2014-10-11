@@ -1,4 +1,9 @@
-/* Firebase v1.0.21 */ var CLOSURE_NO_DEPS = true; var COMPILED = false;
+/* Firebase v1.0.24 - License: https://www.firebase.com/terms/terms-of-service.html */ var CLOSURE_NO_DEPS = true; var scope = this; (function(){"use strict";function m(c,b){if(0===c.length||0===b.length)return c.concat(b);var a=c[c.length-1],d=Math.round(a/1099511627776)||32,e;if(32===d)e=c.concat(b);else{e=b;var a=a|0,f=c.slice(0,c.length-1),g;for(void 0===f&&(f=[]);32<=d;d-=32)f.push(a),a=0;if(0===d)e=f.concat(e);else{for(g=0;g<e.length;g++)f.push(a|e[g]>>>d),a=e[g]<<32-d;g=e.length?e[e.length-1]:0;e=Math.round(g/1099511627776)||32;f.push(n(d+e&31,32<d+e?a:f.pop(),1));e=f}}return e}
+function p(c){var b=c.length;return 0===b?0:32*(b-1)+(Math.round(c[b-1]/1099511627776)||32)}function n(c,b,a){return 32===c?b:(a?b|0:b<<32-c)+1099511627776*c}function r(c){c?(this.c=c.c.slice(0),this.b=c.b.slice(0),this.a=c.a):this.reset()}
+r.prototype={d:512,reset:function(){this.c=this.e.slice(0);this.b=[];this.a=0;return this},update:function(c){if("string"===typeof c){c=unescape(encodeURIComponent(c));var b=[],a,d=0;for(a=0;a<c.length;a++)d=d<<8|c.charCodeAt(a),3===(a&3)&&(b.push(d),d=0);a&3&&b.push(n(8*(a&3),d));c=b}a=this.b=m(this.b,c);b=this.a;c=this.a=b+p(c);for(b=this.d+b&-this.d;b<=c;b+=this.d)s(this,a.splice(0,16));return this},e:[1732584193,4023233417,2562383102,271733878,3285377520],f:[1518500249,1859775393,2400959708,3395469782]};
+function s(c,b){var a,d,e,f,g,l,q,k=b.slice(0),h=c.c;e=h[0];f=h[1];g=h[2];l=h[3];q=h[4];for(a=0;79>=a;a++)16<=a&&(k[a]=(k[a-3]^k[a-8]^k[a-14]^k[a-16])<<1|(k[a-3]^k[a-8]^k[a-14]^k[a-16])>>>31),d=19>=a?f&g|~f&l:39>=a?f^g^l:59>=a?f&g|f&l|g&l:79>=a?f^g^l:void 0,d=(e<<5|e>>>27)+d+q+k[a]+c.f[Math.floor(a/20)]|0,q=l,l=g,g=f<<30|f>>>2,f=e,e=d;h[0]=h[0]+e|0;h[1]=h[1]+f|0;h[2]=h[2]+g|0;h[3]=h[3]+l|0;h[4]=h[4]+q|0}
+function t(c){var b=(new r).update(c),a,d=b.b;c=b.c;d=m(d,[n(1,1)]);for(a=d.length+2;a&15;a++)d.push(0);d.push(Math.floor(b.a/4294967296));for(d.push(b.a|0);d.length;)s(b,d.splice(0,16));b.reset();var e,b="";a=0;var d="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",f=0,g=p(c);e&&(d=d.substr(0,62)+"-_");for(e=0;6*b.length<g;)b+=d.charAt((f^c[e]>>>a)>>>26),6>a?(f=c[e]<<6-a,a+=26,e++):(f<<=6,a-=6);for(;b.length&3;)b+="=";return b}var u=["sjclHashToBase64"],v=this;
+u[0]in v||!v.execScript||v.execScript("var "+u[0]);for(var w;u.length&&(w=u.shift());)u.length||void 0===t?v=v[w]?v[w]:v[w]={}:v[w]=t;}).apply(scope); var COMPILED = false;
 var goog = goog || {};
 goog.global = this;
 goog.global.CLOSURE_UNCOMPILED_DEFINES;
@@ -886,8 +891,11 @@ fb.core.util.validation.validatePriority = function(fnName, argumentNumber, prio
   if (optional && !goog.isDef(priority)) {
     return;
   }
+  if (fb.core.util.isInvalidJSONNumber(priority)) {
+    throw new Error(fb.util.validation.errorPrefix(fnName, argumentNumber, optional) + "is " + priority.toString() + ", but must be a valid Firebase priority (a string, finite number, or null).");
+  }
   if (priority !== null && !goog.isNumber(priority) && !goog.isString(priority) && !(goog.isObject(priority) && fb.util.obj.contains(priority, ".sv"))) {
-    throw new Error(fb.util.validation.errorPrefix(fnName, argumentNumber, optional) + "must be a valid firebase priority " + "(a string, number, or null).");
+    throw new Error(fb.util.validation.errorPrefix(fnName, argumentNumber, optional) + "must be a valid Firebase priority " + "(a string, finite number, or null).");
   }
 };
 fb.core.util.validation.validateEventType = function(fnName, argumentNumber, eventType, optional) {
@@ -1740,187 +1748,7 @@ fb.core.RepoInfo.prototype.updateHost = function(newHost) {
 fb.core.RepoInfo.prototype.toString = function() {
   return(this.secure ? "https://" : "http://") + this.host;
 };
-goog.provide("fb.constants");
-var NODE_CLIENT = false;
-var CLIENT_VERSION = "0.0.0";
-goog.provide("sjcl");
-"use strict";
-sjcl = {cipher:{}, hash:{}, keyexchange:{}, mode:{}, misc:{}, codec:{}, exception:{corrupt:function(a) {
-  this.toString = function() {
-    return "CORRUPT: " + this.message;
-  };
-  this.message = a;
-}, invalid:function(a) {
-  this.toString = function() {
-    return "INVALID: " + this.message;
-  };
-  this.message = a;
-}, bug:function(a) {
-  this.toString = function() {
-    return "BUG: " + this.message;
-  };
-  this.message = a;
-}, notReady:function(a) {
-  this.toString = function() {
-    return "NOT READY: " + this.message;
-  };
-  this.message = a;
-}}};
-sjcl.bitArray = {bitSlice:function(a, b, c) {
-  a = sjcl.bitArray.e(a.slice(b / 32), 32 - (b & 31)).slice(1);
-  return void 0 === c ? a : sjcl.bitArray.clamp(a, c - b);
-}, extract:function(a, b, c) {
-  var d = Math.floor(-b - c & 31);
-  return((b + c - 1 ^ b) & -32 ? a[b / 32 | 0] << 32 - d ^ a[b / 32 + 1 | 0] >>> d : a[b / 32 | 0] >>> d) & (1 << c) - 1;
-}, concat:function(a, b) {
-  if (0 === a.length || 0 === b.length) {
-    return a.concat(b);
-  }
-  var c = a[a.length - 1], d = sjcl.bitArray.getPartial(c);
-  return 32 === d ? a.concat(b) : sjcl.bitArray.e(b, d, c | 0, a.slice(0, a.length - 1));
-}, bitLength:function(a) {
-  var b = a.length;
-  return 0 === b ? 0 : 32 * (b - 1) + sjcl.bitArray.getPartial(a[b - 1]);
-}, clamp:function(a, b) {
-  if (32 * a.length < b) {
-    return a;
-  }
-  a = a.slice(0, Math.ceil(b / 32));
-  var c = a.length;
-  b &= 31;
-  0 < c && b && (a[c - 1] = sjcl.bitArray.partial(b, a[c - 1] & 2147483648 >> b - 1, 1));
-  return a;
-}, partial:function(a, b, c) {
-  return 32 === a ? b : (c ? b | 0 : b << 32 - a) + 1099511627776 * a;
-}, getPartial:function(a) {
-  return Math.round(a / 1099511627776) || 32;
-}, equal:function(a, b) {
-  if (sjcl.bitArray.bitLength(a) !== sjcl.bitArray.bitLength(b)) {
-    return!1;
-  }
-  var c = 0, d;
-  for (d = 0;d < a.length;d++) {
-    c |= a[d] ^ b[d];
-  }
-  return 0 === c;
-}, e:function(a, b, c, d) {
-  var e;
-  e = 0;
-  for (void 0 === d && (d = []);32 <= b;b -= 32) {
-    d.push(c), c = 0;
-  }
-  if (0 === b) {
-    return d.concat(a);
-  }
-  for (e = 0;e < a.length;e++) {
-    d.push(c | a[e] >>> b), c = a[e] << 32 - b;
-  }
-  e = a.length ? a[a.length - 1] : 0;
-  a = sjcl.bitArray.getPartial(e);
-  d.push(sjcl.bitArray.partial(b + a & 31, 32 < b + a ? c : d.pop(), 1));
-  return d;
-}, h:function(a, b) {
-  return[a[0] ^ b[0], a[1] ^ b[1], a[2] ^ b[2], a[3] ^ b[3]];
-}, byteswapM:function(a) {
-  var b, c;
-  for (b = 0;b < a.length;++b) {
-    c = a[b], a[b] = c >>> 24 | c >>> 8 & 65280 | (c & 65280) << 8 | c << 24;
-  }
-  return a;
-}};
-sjcl.codec.utf8String = {fromBits:function(a) {
-  var b = "", c = sjcl.bitArray.bitLength(a), d, e;
-  for (d = 0;d < c / 8;d++) {
-    0 === (d & 3) && (e = a[d / 4]), b += String.fromCharCode(e >>> 24), e <<= 8;
-  }
-  return decodeURIComponent(escape(b));
-}, toBits:function(a) {
-  a = unescape(encodeURIComponent(a));
-  var b = [], c, d = 0;
-  for (c = 0;c < a.length;c++) {
-    d = d << 8 | a.charCodeAt(c), 3 === (c & 3) && (b.push(d), d = 0);
-  }
-  c & 3 && b.push(sjcl.bitArray.partial(8 * (c & 3), d));
-  return b;
-}};
-sjcl.codec.base64 = {d:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/", fromBits:function(a, b, c) {
-  var d = "", e = 0, g = sjcl.codec.base64.d, f = 0, h = sjcl.bitArray.bitLength(a);
-  c && (g = g.substr(0, 62) + "-_");
-  for (c = 0;6 * d.length < h;) {
-    d += g.charAt((f ^ a[c] >>> e) >>> 26), 6 > e ? (f = a[c] << 6 - e, e += 26, c++) : (f <<= 6, e -= 6);
-  }
-  for (;d.length & 3 && !b;) {
-    d += "=";
-  }
-  return d;
-}, toBits:function(a, b) {
-  a = a.replace(/\s|=/g, "");
-  var c = [], d, e = 0, g = sjcl.codec.base64.d, f = 0, h;
-  b && (g = g.substr(0, 62) + "-_");
-  for (d = 0;d < a.length;d++) {
-    h = g.indexOf(a.charAt(d));
-    if (0 > h) {
-      throw new sjcl.exception.invalid("this isn't base64!");
-    }
-    26 < e ? (e -= 26, c.push(f ^ h >>> e), f = h << 32 - e) : (e += 6, f ^= h << 32 - e);
-  }
-  e & 56 && c.push(sjcl.bitArray.partial(e & 56, f, 1));
-  return c;
-}};
-sjcl.codec.base64url = {fromBits:function(a) {
-  return sjcl.codec.base64.fromBits(a, 1, 1);
-}, toBits:function(a) {
-  return sjcl.codec.base64.toBits(a, 1);
-}};
-sjcl.hash.sha1 = function(a) {
-  a ? (this.c = a.c.slice(0), this.b = a.b.slice(0), this.a = a.a) : this.reset();
-};
-sjcl.hash.sha1.hash = function(a) {
-  return(new sjcl.hash.sha1).update(a).finalize();
-};
-sjcl.hash.sha1.prototype = {blockSize:512, reset:function() {
-  this.c = this.f.slice(0);
-  this.b = [];
-  this.a = 0;
-  return this;
-}, update:function(a) {
-  "string" === typeof a && (a = sjcl.codec.utf8String.toBits(a));
-  var b, c = this.b = sjcl.bitArray.concat(this.b, a);
-  b = this.a;
-  a = this.a = b + sjcl.bitArray.bitLength(a);
-  for (b = this.blockSize + b & -this.blockSize;b <= a;b += this.blockSize) {
-    n(this, c.splice(0, 16));
-  }
-  return this;
-}, finalize:function() {
-  var a, b = this.b, c = this.c, b = sjcl.bitArray.concat(b, [sjcl.bitArray.partial(1, 1)]);
-  for (a = b.length + 2;a & 15;a++) {
-    b.push(0);
-  }
-  b.push(Math.floor(this.a / 4294967296));
-  for (b.push(this.a | 0);b.length;) {
-    n(this, b.splice(0, 16));
-  }
-  this.reset();
-  return c;
-}, f:[1732584193, 4023233417, 2562383102, 271733878, 3285377520], g:[1518500249, 1859775393, 2400959708, 3395469782]};
-function n(a, b) {
-  var c, d, e, g, f, h, m, l = b.slice(0), k = a.c;
-  e = k[0];
-  g = k[1];
-  f = k[2];
-  h = k[3];
-  m = k[4];
-  for (c = 0;79 >= c;c++) {
-    16 <= c && (l[c] = (l[c - 3] ^ l[c - 8] ^ l[c - 14] ^ l[c - 16]) << 1 | (l[c - 3] ^ l[c - 8] ^ l[c - 14] ^ l[c - 16]) >>> 31), d = 19 >= c ? g & f | ~g & h : 39 >= c ? g ^ f ^ h : 59 >= c ? g & f | g & h | f & h : 79 >= c ? g ^ f ^ h : void 0, d = (e << 5 | e >>> 27) + d + m + l[c] + a.g[Math.floor(c / 20)] | 0, m = h, h = f, f = g << 30 | g >>> 2, g = e, e = d;
-  }
-  k[0] = k[0] + e | 0;
-  k[1] = k[1] + g | 0;
-  k[2] = k[2] + f | 0;
-  k[3] = k[3] + h | 0;
-  k[4] = k[4] + m | 0;
-}
-;goog.provide("goog.dom.NodeType");
+goog.provide("goog.dom.NodeType");
 goog.dom.NodeType = {ELEMENT:1, ATTRIBUTE:2, TEXT:3, CDATA_SECTION:4, ENTITY_REFERENCE:5, ENTITY:6, PROCESSING_INSTRUCTION:7, COMMENT:8, DOCUMENT:9, DOCUMENT_TYPE:10, DOCUMENT_FRAGMENT:11, NOTATION:12};
 goog.provide("goog.debug.Error");
 goog.debug.Error = function(opt_msg) {
@@ -3521,13 +3349,15 @@ goog.crypt.base64.init_ = function() {
     }
   }
 };
+goog.provide("fb.constants");
+var NODE_CLIENT = false;
+var CLIENT_VERSION = "0.0.0";
 goog.provide("fb.core.util");
 goog.require("fb.constants");
 goog.require("fb.core.RepoInfo");
 goog.require("fb.core.storage");
 goog.require("fb.util.json");
 goog.require("goog.crypt.base64");
-goog.require("sjcl");
 fb.core.util.LUIDGenerator = function() {
   var id = 1;
   return function() {
@@ -3563,7 +3393,7 @@ fb.core.util.base64DecodeIfNativeSupport = function(str) {
   return null;
 };
 fb.core.util.sha1 = function(str) {
-  return sjcl.codec.base64.fromBits(sjcl.hash.sha1.hash(str));
+  return sjclHashToBase64(str);
 };
 fb.core.util.buildLogMessage_ = function(var_args) {
   var message = "";
@@ -4027,7 +3857,7 @@ fb.core.snap.ChildrenNode.prototype.isEmpty = function() {
 fb.core.snap.ChildrenNode.prototype.numChildren = function() {
   return this.children_.count();
 };
-fb.core.snap.ChildrenNode.INTEGER_REGEXP_ = /^\d+$/;
+fb.core.snap.ChildrenNode.INTEGER_REGEXP_ = /^(0|[1-9]\d*)$/;
 fb.core.snap.ChildrenNode.prototype.val = function(opt_exportFormat) {
   if (this.isEmpty()) {
     return null;
@@ -4510,7 +4340,7 @@ fb.core.util.OnlineMonitor.prototype.getInitialEvent = function(eventType) {
   return[this.online_];
 };
 goog.provide("fb.realtime.Constants");
-fb.realtime.Constants = {PROTOCOL_VERSION:"5", VERSION_PARAM:"v", SESSION_PARAM:"s"};
+fb.realtime.Constants = {PROTOCOL_VERSION:"5", VERSION_PARAM:"v", SESSION_PARAM:"s", REFERER_PARAM:"r", FORGE_REF:"f", FORGE_DOMAIN:"firebaseio.com"};
 goog.provide("fb.realtime.Transport");
 goog.require("fb.core.RepoInfo");
 fb.realtime.Transport = function(connId, repoInfo, sessionId) {
@@ -4961,6 +4791,9 @@ fb.realtime.WebSocketConnection = function(connId, repoInfo, sessionId) {
   this.bytesReceived = 0;
   this.stats_ = fb.core.stats.StatsManager.getCollection(repoInfo);
   this.connURL = (repoInfo.secure ? "wss://" : "ws://") + repoInfo.internalHost + "/.ws?" + fb.realtime.Constants.VERSION_PARAM + "=" + fb.realtime.Constants.PROTOCOL_VERSION;
+  if (!NODE_CLIENT && typeof location !== "undefined" && location.href && location.href.indexOf(fb.realtime.Constants.FORGE_DOMAIN) !== -1) {
+    this.connURL = this.connURL + "&" + fb.realtime.Constants.REFERER_PARAM + "=" + fb.realtime.Constants.FORGE_REF;
+  }
   if (repoInfo.needsQueryParam()) {
     this.connURL = this.connURL + "&ns=" + repoInfo.namespace;
   }
@@ -5300,6 +5133,9 @@ fb.realtime.BrowserPollConnection.prototype.open = function(onMessage, onDisconn
     urlParams[fb.realtime.Constants.VERSION_PARAM] = fb.realtime.Constants.PROTOCOL_VERSION;
     if (self.sessionId) {
       urlParams[fb.realtime.Constants.SESSION_PARAM] = self.sessionId;
+    }
+    if (!NODE_CLIENT && typeof location !== "undefined" && location.href && location.href.indexOf(fb.realtime.Constants.FORGE_DOMAIN) !== -1) {
+      urlParams[fb.realtime.Constants.REFERER_PARAM] = fb.realtime.Constants.FORGE_REF;
     }
     var connectURL = self.urlFn(urlParams);
     self.log_("Connecting via long-poll to " + connectURL);
@@ -8926,4 +8762,4 @@ Firebase.ServerValue = {"TIMESTAMP":{".sv":"timestamp"}};
 Firebase.SDK_VERSION = CLIENT_VERSION;
 Firebase.INTERNAL = fb.api.INTERNAL;
 Firebase.Context = fb.core.RepoManager;
-; Firebase.SDK_VERSION='1.0.21';
+; Firebase.SDK_VERSION='1.0.24';

@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.2
+ * @license Angular UI Tree v2.1.5
  * (c) 2010-2014. https://github.com/JimLiu/angular-ui-tree
  * License: MIT
  */
@@ -1916,7 +1916,7 @@
                     if (selectedElementScope.$$apply && !cancel) {
                       selectedElementScope.$dragInfo.apply(scope.$treeScope.copy);
 
-                      selectedElementScope.$apply(function() {
+                      scope.$treeScope.$apply(function() {
                         scope.$treeScope.$callbacks.dropped(dragInfoEventArgs);
                       });
                       dragInfoEventArgs.dest.nodesScope.$apply(function() {
