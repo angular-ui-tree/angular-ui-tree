@@ -707,7 +707,8 @@
                             selectedElementScope.moved = selectedElementScope.$dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), (targetNode.index() + 1 + index));
                           });
                         } else {
-                          var firstChild = (targetNode.childNodes().length > 0) ? targetNode.childNodes()[0] : undefined;
+                          var childNodes = targetNode.childNodes();
+                          var firstChild = (childNodes && childNodes.length > 0) ? childNodes[0] : undefined;
                           var firstChildOffset = (angular.isDefined(firstChild)) ? $uiTreeHelper.offset(firstChild.$element) : undefined;
 
                           var firstChildChildsHeight = (angular.isDefined(firstChild) && firstChild.hasChild()) ? $uiTreeHelper.offset(firstChild.$childNodesScope.$element).height : 0;
