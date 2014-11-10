@@ -131,8 +131,7 @@ describe('treeCtrl', function () {
 
         tree = createTree();
 
-        var localScope;
-        localScope = angular.element(tree.children('ol').first()).scope();
+        var localScope = angular.element(tree.children('ol').first()).isolateScope();
 
         index = 1;
         itemModelData = {
@@ -142,8 +141,11 @@ describe('treeCtrl', function () {
         };
 
         localScope.$modelValue = [{id: 1, title: 'foo'}, {id: 2, title: 'bar'}];
-        localScope.insertNode(index, itemModelData);
-        expect(localScope.$modelValue[index].title).toEqual('baz');
+        var promise = localScope.insertNode(index, itemModelData);// passes back a promise
+        promise.then(function(){
+            "use strict";
+            expect(localScope.$modelValue[index].title).toEqual('baz');
+        });
     });
 });
 
