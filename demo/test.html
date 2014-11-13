@@ -46,7 +46,7 @@
 <body ng-app="treeApp">
   <div ng-controller="treeCtrl">
     <input type="text" ng-model="search" placeholder="Search">
-      <ol ui-tree="treeOptions" ui-tree-nodes ng-model="data">
+      <ol ui-tree callbacks="treeOptions" ui-tree-nodes ng-model="data">
         <li ng-repeat="item in data | filter:search" ui-tree-node>
             {{item.title}}
         </li>

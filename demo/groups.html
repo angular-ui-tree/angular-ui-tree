@@ -17,7 +17,7 @@
     <a href="index.html"><i class="glyphicon glyphicon-chevron-left"></i> Back to overview page</a>
 
     <div class="row">
-      <div class="col-lg-6" ui-tree="options">
+      <div class="col-lg-6" ui-tree callbacks="options">
         <h3>Groups &amp; Categories</h3>
         <ol ui-tree-nodes ng-model="groups" type="group">
           <li ng-repeat="group in groups" ui-tree-node>
