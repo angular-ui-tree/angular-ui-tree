@@ -76,6 +76,7 @@
               index: node.index(),
               siblings: node.siblings().slice(0),
               parent: node.$parentNodesScope,
+              previousParent: node.$parentNodeScope,
 
               moveTo: function(parent, siblings, index) { // Move the node to a new position
                 this.parent = parent;
@@ -116,9 +117,11 @@
 
               eventArgs: function(elements, pos) {
                 return {
+                  sourceParent: this.previousParent,
                   source: this.sourceInfo,
                   dest: {
                     index: this.index,
+                    nodeScope: this.parent,
                     nodesScope: this.parent
                   },
                   elements: elements,

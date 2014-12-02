@@ -15,6 +15,7 @@
       nodeClass: 'angular-ui-tree-node',
       handleClass: 'angular-ui-tree-handle',
       placeHolderClass: 'angular-ui-tree-placeholder',
+      appendingChildClass: 'angular-ui-tree-appending-child',
       dragClass: 'angular-ui-tree-drag',
       dragThreshold: 3,
       levelThreshold: 30
@@ -100,6 +101,7 @@
               index: node.index(),
               siblings: node.siblings().slice(0),
               parent: node.$parentNodesScope,
+              previousParent: node.$parentNodeScope,
 
               moveTo: function(parent, siblings, index) { // Move the node to a new position
                 this.parent = parent;
@@ -140,9 +142,11 @@
 
               eventArgs: function(elements, pos) {
                 return {
+                  sourceParent: this.previousParent,
                   source: this.sourceInfo,
                   dest: {
                     index: this.index,
+                    nodeScope: this.parent,
                     nodesScope: this.parent
                   },
                   elements: elements,
@@ -827,6 +831,7 @@
             var dragDelaying = true;
             var dragStarted = false;
             var dragTimer = null;
+            var acceptable = false;
             var body = document.body,
                 html = document.documentElement,
                 document_height,
@@ -940,6 +945,7 @@
             };
 
             var dragMove = function(e) {
+
               if (!dragStarted) {
                 if (!dragDelaying) {
                   dragStarted = true;
@@ -1019,7 +1025,12 @@
                     if (prev && !prev.collapsed
                       && prev.accept(scope, prev.childNodesCount())) {
                       prev.$childNodesScope.$element.append(placeElm);
+
+                      acceptable = true;
                       dragInfo.moveTo(prev.$childNodesScope, prev.childNodes(), prev.childNodesCount());
+                    } else {
+                      acceptable = false;
+                      angular.element('.' + config.appendingChildClass).removeClass(config.appendingChildClass);
                     }
                   }
 
@@ -1032,7 +1043,12 @@
                       if (target
                         && target.$parentNodesScope.accept(scope, target.index() + 1)) {
                         target.$element.after(placeElm);
+
+                        acceptable = true;
                         dragInfo.moveTo(target.$parentNodesScope, target.siblings(), target.index() + 1);
+                      } else {
+                        acceptable = false;
+                        angular.element('.' + config.appendingChildClass).removeClass(config.appendingChildClass);
                       }
                     }
                   }
@@ -1071,12 +1087,20 @@
                   var targetBefore, targetNode;
                   // check it's new position
                   targetNode = targetElm.scope();
+
+                  if (targetNode && targetNode.$element && ! targetNode.$element.hasClass(config.appendingChildClass)) {
+                    angular.element('.' + config.appendingChildClass).removeClass(config.appendingChildClass);
+                  }
+
                   var isEmpty = false;
                   if (!targetNode) {
+                    acceptable = false;
+                    angular.element('.' + config.appendingChildClass).removeClass(config.appendingChildClass);
                     return;
                   }
                   if (targetNode.$type == 'uiTree' && targetNode.dragEnabled) {
                     isEmpty = targetNode.isEmpty(); // Check if it's empty tree
+                    angular.element('.' + config.appendingChildClass).removeClass(config.appendingChildClass);
                   }
                   if (targetNode.$type == 'uiTreeHandle') {
                     targetNode = targetNode.$nodeScope;
@@ -1096,8 +1120,13 @@
                     treeScope = targetNode;
                     if (targetNode.$nodesScope.accept(scope, 0)) {
                       targetNode.place(placeElm);
+                      acceptable = true;
                       dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), 0);
+                    } else {
+                      acceptable = false;
+                      angular.element('.' + config.appendingChildClass).removeClass(config.appendingChildClass);
                     }
+
                   } else if (targetNode.dragEnabled()){ // drag enabled
                     targetElm = targetNode.$element; // Get the element of ui-tree-node
                     var targetOffset = $uiTreeHelper.offset(targetElm);
@@ -1107,14 +1136,24 @@
                     if (targetNode.$parentNodesScope.accept(scope, targetNode.index())) {
                       if (targetBefore) {
                         targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
+
+                        acceptable = true;
                         dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index());
                       } else {
                         targetElm.after(placeElm);
+
+                        acceptable = true;
                         dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index() + 1);
                       }
                     }
-                    else if (!targetBefore && targetNode.accept(scope, targetNode.childNodesCount())) { // we have to check if it can add the dragging node as a child
+                    else if (targetNode.accept(scope, targetNode.childNodesCount())) { // we have to check if it can add the dragging node as a child
+                      if (targetNode.collapsed) {
+                        targetNode.$element.addClass(config.appendingChildClass);
+                      }
+
                       targetNode.$childNodesScope.$element.append(placeElm);
+
+                      acceptable = true;
                       dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), targetNode.childNodesCount());
                     }
                   }
@@ -1156,6 +1195,8 @@
 
               }
 
+              angular.element('.' + config.appendingChildClass).removeClass(config.appendingChildClass);
+
               // Restore cursor in Opera 12.16 and IE
               var oldCur = document.body.getAttribute('ui-tree-cursor');
               if (oldCur !== null) {
@@ -1182,7 +1223,10 @@
             };
 
             var dragEndEvent = function(e) {
-              scope.$$apply = true;
+              if (acceptable) {
+                scope.$$apply = true;
+                acceptable = false;
+              }
               dragEnd(e);
             };
 
