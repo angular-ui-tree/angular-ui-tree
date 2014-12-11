@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.2
+ * @license Angular UI Tree v2.1.5
  * (c) 2010-2014. https://github.com/JimLiu/angular-ui-tree
  * License: MIT
  */
@@ -1817,7 +1817,7 @@
                             selectedElementScope.moved = selectedElementScope.$dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), (targetNode.index() + 1 + index));
                           });
                         } else {
-                          var firstChild = (targetNode.childNodes().length > 0) ? targetNode.childNodes()[0] : undefined;
+                          var firstChild = (targetNode.childNodesCount() > 0) ? targetNode.childNodes()[0] : undefined;
                           var firstChildOffset = (angular.isDefined(firstChild)) ? $uiTreeHelper.offset(firstChild.$element) : undefined;
 
                           var firstChildChildsHeight = (angular.isDefined(firstChild) && firstChild.hasChild()) ? $uiTreeHelper.offset(firstChild.$childNodesScope.$element).height : 0;
@@ -1832,7 +1832,14 @@
                             angular.forEach(scope.$treeScope.$selecteds, function(selectedElement, index) {
                               var selectedElementScope = angular.element(selectedElement).scope();
 
-                              selectedElementScope.moved = selectedElementScope.$dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), index);
+                              var target = targetNode;
+                              if (!target.$childNodesScope){
+                                while (typeof(target.$childNodesScope) === "undefined"){
+                                  target = target.$parent;
+                                }
+                              }
+
+                              selectedElementScope.moved = selectedElementScope.$dragInfo.moveTo(target.$childNodesScope, target.childNodes(), index);
                             });
                           }
                         }
@@ -1916,7 +1923,7 @@
                     if (selectedElementScope.$$apply && !cancel) {
                       selectedElementScope.$dragInfo.apply(scope.$treeScope.copy);
 
-                      selectedElementScope.$apply(function() {
+                      scope.$treeScope.$apply(function() {
                         scope.$treeScope.$callbacks.dropped(dragInfoEventArgs);
                       });
                       dragInfoEventArgs.dest.nodesScope.$apply(function() {
@@ -1970,7 +1977,7 @@
               angular.element($document).unbind('touchmove', dragMoveEvent); // Mobile
               angular.element($document).unbind('mouseup', dragEndEvent);
               angular.element($document).unbind('mousemove', dragMoveEvent);
-              angular.element($window.document.body).unbind('mouseleave', dragCancelEvent);
+              angular.element($document).unbind('mouseleave', dragCancelEvent);
             };
 
             var dragStartEvent = function(e) {
@@ -2036,12 +2043,12 @@
 
             var unbind = function() {
               dragEnd();
-              angular.element($window.document.body).unbind('keydown').unbind('keyup');
+              angular.element($document).unbind('keydown').unbind('keyup');
             };
 
             bindDrag();
 
-            angular.element($window.document.body).bind("keydown", function(e) {
+            angular.element($document).bind("keydown", function(e) {
               if (e.keyCode === scope.$treeScope.cancelKey) {
                 dragCancelEvent(e);
               }
@@ -2077,7 +2084,7 @@
               }
             });
 
-            angular.element($window.document.body).bind("keyup", function(e) {
+            angular.element($document).bind("keyup", function(e) {
               if (angular.isDefined(scope.$treeScope.lockXKey)) {
                 if (e.keyCode === scope.$treeScope.lockXKey) {
                   scope.$treeScope.$apply(function() {
