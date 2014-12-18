@@ -17,30 +17,36 @@
             scope.init(controllersArr);
 
             scope.collapsed = !!$uiTreeHelper.getNodeAttribute(scope, 'collapsed');
-            scope.$watch(attrs.collapsed, function(val) {
-              if ((typeof val) === "boolean") {
-                scope.collapsed = val;
-              }
-            });
+            if (attrs && attrs.collapsed) {
+              scope.$watch(attrs.collapsed, function(val) {
+                if ((typeof val) === "boolean") {
+                  scope.collapsed = val;
+                }
+              });
+            }
             scope.$watch('collapsed', function(val) {
               $uiTreeHelper.setNodeAttribute(scope, 'collapsed', val);
               attrs.$set('collapsed', val);
             });
 
             scope.selected = !!$uiTreeHelper.getNodeAttribute(scope, 'selected');
-            scope.$watch(attrs.selected, function(val) {
-              if ((typeof val) === "boolean") {
-                scope.selected = val;
-              }
-            });
+            if (attrs && attrs.selected) {
+              scope.$watch(attrs.selected, function(val) {
+                if ((typeof val) === "boolean") {
+                  scope.selected = val;
+                }
+              });
+            }
             scope.$watch('selected', function(val) {
               $uiTreeHelper.setNodeAttribute(scope, 'selected', val);
               attrs.$set('selected', val);
             });
 
-            scope.$watch(attrs.expandOnHover, function(val) {
-              scope.expandOnHover = val;
-            });
+            if (attrs && attrs.expandOnHover) {
+              scope.$watch(attrs.expandOnHover, function(val) {
+                scope.expandOnHover = val;
+              });
+            }
 
             var hasTouch = 'ontouchstart' in window;
             // todo startPos is unused
