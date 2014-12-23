@@ -1,6 +1,6 @@
 {
   "name": "Angular-NestedSortable",
-  "version": "2.1.6",
+  "version": "2.2.0",
   "description": "An AngularJS UI component that can sort nested lists, provides drag & drop support and doesn't depend on jQuery",
   "repository": {
     "type": "git",
