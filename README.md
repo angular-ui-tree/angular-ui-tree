@@ -98,7 +98,7 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
     {{node.title}}
   </div>
   <ol ui-tree-nodes="" ng-model="node.nodes">
-    <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">
+    <li ng-repeat="node in node.nodes track by $index" ui-tree-node ng-include="'nodes_renderer.html'">
     </li>
   </ol>
 </script>
