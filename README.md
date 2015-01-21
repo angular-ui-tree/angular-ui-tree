@@ -109,6 +109,28 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
 </div>
 ```
 
+## Structure of json
+```json
+  data = [
+    {
+      "id": 1,
+      "title": "No childs, and I have an empty array in my items property so I'm nestable",
+      "items": []
+    },
+    {
+      "id": 2,
+      "title": "With childs",
+      "items": [
+        {
+          "id": 3,
+          "title": "No childs, and I have DON'T have an empty array in my items property so I'm NOT nestable"
+        }
+      ]
+    },
+    
+  ]
+```
+  
 ## Structure of angular-ui-tree
 
     ui-tree                             --> Root of tree
