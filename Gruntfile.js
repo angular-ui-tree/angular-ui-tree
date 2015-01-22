@@ -230,7 +230,7 @@ module.exports = function(grunt) {
       demo: {
         options: {
           cwd: 'demo',
-          directory: 'demo/bower_components'
+          directory: 'bower_components'
         }
       },
       test: {
