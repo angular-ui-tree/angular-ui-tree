@@ -16,3 +16,5 @@ node_modules
 # IDE files #
 .idea
 *.iml
+
+bower_components

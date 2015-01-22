@@ -11,7 +11,8 @@ module.exports = function(grunt) {
   var cfg = {
     srcDir: 'source',
     buildDir: 'dist',
-    demoDir: 'demo'
+    demoDir: 'demo',
+    testDir: 'tests'
   };
 
   // project configuration
@@ -76,14 +77,16 @@ module.exports = function(grunt) {
       },
       source: {
         files: {
-          src: ['<%= cfg.srcDir %>/**/*.js']
+          src: [
+            '<%= cfg.srcDir %>/**/*.js',
+            '<%= cfg.testDir %>/**/*.js'
+          ]
         }
       },
       demo: {
         files: {
           src: [
-            '<%= cfg.demoDir %>/**/*.js',
-            '!<%= cfg.demoDir %>/bower_components/**/*'
+            '<%= cfg.demoDir %>/js/*.js'
           ]
         }
       }
@@ -192,10 +195,10 @@ module.exports = function(grunt) {
             info: 'Build the project, watch filechanges and start a webserver'
           }, {
             name: 'test',
-            info: 'Runt tests'
+            info: 'Run tests'
           }, {
             name: 'test:continuous',
-            info: 'Runt tests continuously'
+            info: 'Run tests continuously'
           }]
         }
       }
@@ -221,13 +224,27 @@ module.exports = function(grunt) {
         src: ['source/**/*.js', '!src/**/*.spec.js'],
         title: 'API Documentation'
       }
+    },
+
+    'bower-install-simple': {
+      demo: {
+        options: {
+          cwd: 'demo',
+          directory: 'demo/bower_components'
+        }
+      },
+      test: {
+        options: {
+          directory: 'tests/bower_components'
+        }
+      }
     }
   });
 
   // default
   grunt.registerTask('default', ['tasks_list:project']);
   grunt.registerTask('build', ['jscs:src', 'jshint:source', 'clean:build', 'concat:build', 'cssmin', 'uglify:build', 'copy']);
-  grunt.registerTask('webserver', ['build', 'open', 'connect:demo', 'watch']);
-  grunt.registerTask('test', ['jscs:src', 'jshint:source', 'karma:single']);
-  grunt.registerTask('test:continuous', ['karma:continuous']);
+  grunt.registerTask('webserver', ['build', 'bower-install-simple:demo', 'open', 'connect:demo', 'watch']);
+  grunt.registerTask('test', ['bower-install-simple:test', 'jscs:src', 'jshint:source', 'karma:single']);
+  grunt.registerTask('test:continuous', ['bower-install-simple:test', 'karma:continuous']);
 };

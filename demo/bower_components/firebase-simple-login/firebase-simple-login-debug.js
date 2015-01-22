@@ -719,13 +719,22 @@ fb.simplelogin.util.misc.parseSubdomain = function(url) {
   }
   return subdomain;
 };
+fb.simplelogin.util.misc.warn = function(message) {
+  if (typeof console !== "undefined") {
+    if (typeof console.warn !== "undefined") {
+      console.warn(message);
+    } else {
+      console.log(message);
+    }
+  }
+};
 goog.provide("fb.simplelogin.transports.CordovaInAppBrowser");
 goog.provide("fb.simplelogin.transports.CordovaInAppBrowser_");
 goog.require("fb.simplelogin.transports.Popup");
 goog.require("fb.simplelogin.Vars");
 goog.require("fb.simplelogin.util.json");
 goog.require("fb.simplelogin.util.misc");
-var popupTimeout = 4E4;
+var popupTimeout = 12E4;
 fb.simplelogin.transports.CordovaInAppBrowser_ = function() {
 };
 fb.simplelogin.transports.CordovaInAppBrowser_.prototype.open = function(url, options, onComplete) {
@@ -747,10 +756,10 @@ fb.simplelogin.transports.CordovaInAppBrowser_.prototype.open = function(url, op
       }
       windowRef.close();
       try {
-        var urlHashEncoded = fb.simplelogin.util.misc.parseQuerystring(decodeURIComponent(urlObj["hash"]));
+        var urlHashEncoded = fb.simplelogin.util.misc.parseQuerystring(urlObj["hash"]);
         var temporaryResult = {};
         for (var key in urlHashEncoded) {
-          temporaryResult[key] = fb.simplelogin.util.json.parse(urlHashEncoded[key]);
+          temporaryResult[key] = fb.simplelogin.util.json.parse(decodeURIComponent(urlHashEncoded[key]));
         }
         result = temporaryResult;
       } catch (e) {
@@ -761,7 +770,7 @@ fb.simplelogin.transports.CordovaInAppBrowser_.prototype.open = function(url, op
         if (result && result["error"]) {
           callbackHandler(result["error"]);
         } else {
-          callbackHandler({code:"UNKNOWN_ERROR", message:"An unknown error occurred."});
+          callbackHandler({code:"RESPONSE_PAYLOAD_ERROR", message:"Unable to parse response payload for PhoneGap."});
         }
       }
     }
@@ -778,24 +787,30 @@ fb.simplelogin.transports.CordovaInAppBrowser_.prototype.open = function(url, op
 fb.simplelogin.transports.CordovaInAppBrowser = new fb.simplelogin.transports.CordovaInAppBrowser_;
 goog.provide("fb.simplelogin.Errors");
 var messagePrefix = "FirebaseSimpleLogin: ";
-var errors = {"UNKNOWN_ERROR":"An unknown error occurred.", "INVALID_EMAIL":"Invalid email specified.", "INVALID_PASSWORD":"Invalid password specified.", "USER_DENIED":"User cancelled the authentication request.", "TRIGGER_IO_TABS":'The "forge.tabs" module required when using Firebase Simple Login and                         Trigger.io. Without this module included and enabled, login attempts to                         OAuth authentication providers will not be able to complete.'};
+var errors = {"UNKNOWN_ERROR":"An unknown error occurred.", "INVALID_EMAIL":"Invalid email specified.", "INVALID_PASSWORD":"Invalid password specified.", "USER_DENIED":"User cancelled the authentication request.", "RESPONSE_PAYLOAD_ERROR":"Unable to parse response payload.", "TRIGGER_IO_TABS":'The "forge.tabs" module required when using Firebase Simple Login and                               Trigger.io. Without this module included and enabled, login attempts to                               OAuth authentication providers will not be able to complete.'};
 fb.simplelogin.Errors.format = function(errorCode, errorMessage) {
-  var code = errorCode || "UNKNOWN_ERROR", message = errorMessage || errors[code], data = {}, args = arguments;
+  var code, message, data = {}, args = arguments;
   if (args.length === 2) {
     code = args[0];
     message = args[1];
   } else {
     if (args.length === 1) {
       if (typeof args[0] === "object" && (args[0].code && args[0].message)) {
+        if (args[0].message.indexOf(messagePrefix) === 0) {
+          return args[0];
+        }
         code = args[0].code;
         message = args[0].message;
         data = args[0].data;
       } else {
         if (typeof args[0] === "string") {
           code = args[0];
-          message = "";
+          message = errors[code];
         }
       }
+    } else {
+      code = "UNKNOWN_ERROR";
+      message = errors[code];
     }
   }
   var error = new Error(messagePrefix + message);
@@ -804,12 +819,6 @@ fb.simplelogin.Errors.format = function(errorCode, errorMessage) {
     error.data = data;
   }
   return error;
-};
-fb.simplelogin.Errors.get = function(code) {
-  if (!errors[code]) {
-    code = "UNKNOWN_ERROR";
-  }
-  return fb.simplelogin.Errors.format(code, errors[code]);
 };
 goog.provide("fb.simplelogin.transports.WinChan");
 goog.require("fb.simplelogin.transports.Transport");
@@ -934,7 +943,7 @@ fb.simplelogin.transports.WinChan_.prototype.open = function(url, opts, cb) {
     }
   }, 500);
   var req = fb.simplelogin.util.json.stringify({a:"request", d:opts.params});
-  function cleanup() {
+  function cleanup(forceKeepWindowOpen) {
     if (iframe) {
       document.body.removeChild(iframe);
     }
@@ -944,7 +953,7 @@ fb.simplelogin.transports.WinChan_.prototype.open = function(url, opts, cb) {
     }
     removeListener(window, "message", onMessage);
     removeListener(window, "unload", cleanup);
-    if (w) {
+    if (w && !forceKeepWindowOpen) {
       try {
         w.close();
       } catch (securityViolation) {
@@ -971,7 +980,7 @@ fb.simplelogin.transports.WinChan_.prototype.open = function(url, opts, cb) {
           }
         } else {
           if (d.a === "response") {
-            cleanup();
+            cleanup(d.forceKeepWindowOpen);
             if (cb) {
               cb(null, d.d);
               cb = null;
@@ -995,6 +1004,7 @@ fb.simplelogin.transports.WinChan_.prototype.open = function(url, opts, cb) {
 fb.simplelogin.transports.WinChan_.prototype.onOpen = function(cb) {
   var o = "*";
   var msgTarget = isInternetExplorer ? findRelay() : window.opener;
+  var autoClose = true;
   if (!msgTarget) {
     throw "can't find relay frame";
   }
@@ -1019,15 +1029,16 @@ fb.simplelogin.transports.WinChan_.prototype.onOpen = function(cb) {
     o = e.origin;
     if (cb) {
       setTimeout(function() {
-        cb(o, d.d, function(r) {
+        cb(o, d.d, function(r, forceKeepWindowOpen) {
+          autoClose = !forceKeepWindowOpen;
           cb = undefined;
-          doPost({a:"response", d:r});
+          doPost({a:"response", d:r, forceKeepWindowOpen:forceKeepWindowOpen});
         });
       }, 0);
     }
   }
   function onDie(e) {
-    if (e.data === CLOSE_CMD) {
+    if (autoClose && e.data === CLOSE_CMD) {
       try {
         window.close();
       } catch (o_O) {
@@ -1095,10 +1106,10 @@ fb.simplelogin.transports.TriggerIoTab_.prototype.open = function(url, options, 
     if (data && data["url"]) {
       try {
         var urlObj = fb.simplelogin.util.misc.parseUrl(data["url"]);
-        var urlHashEncoded = fb.simplelogin.util.misc.parseQuerystring(decodeURIComponent(urlObj["hash"]));
+        var urlHashEncoded = fb.simplelogin.util.misc.parseQuerystring(urlObj["hash"]);
         var temporaryResult = {};
         for (var key in urlHashEncoded) {
-          temporaryResult[key] = fb.simplelogin.util.json.parse(urlHashEncoded[key]);
+          temporaryResult[key] = fb.simplelogin.util.json.parse(decodeURIComponent(urlHashEncoded[key]));
         }
         result = temporaryResult;
       } catch (e) {
@@ -1110,942 +1121,553 @@ fb.simplelogin.transports.TriggerIoTab_.prototype.open = function(url, options, 
       if (result && result["error"]) {
         callbackHandler(result["error"]);
       } else {
-        callbackHandler({code:"UNKNOWN_ERROR", message:"An unknown error occurred."});
+        callbackHandler({code:"RESPONSE_PAYLOAD_ERROR", message:"Unable to parse response payload for Trigger.io."});
       }
     }
   }, function(err) {
-    callbackHandler({code:"UNKNOWN_ERROR", message:"An unknown error occurred."});
+    callbackHandler({code:"UNKNOWN_ERROR", message:"An unknown error occurred for Trigger.io."});
   });
 };
 fb.simplelogin.transports.TriggerIoTab = new fb.simplelogin.transports.TriggerIoTab_;
-goog.provide("fb.simplelogin.util.sjcl");
-var sjcl = {cipher:{}, hash:{}, keyexchange:{}, mode:{}, misc:{}, codec:{}, exception:{corrupt:function(a) {
-  this.toString = function() {
-    return "CORRUPT: " + this.message;
-  };
-  this.message = a;
-}, invalid:function(a) {
-  this.toString = function() {
-    return "INVALID: " + this.message;
-  };
-  this.message = a;
-}, bug:function(a) {
-  this.toString = function() {
-    return "BUG: " + this.message;
-  };
-  this.message = a;
-}, notReady:function(a) {
-  this.toString = function() {
-    return "NOT READY: " + this.message;
-  };
-  this.message = a;
-}}};
-if (typeof module != "undefined" && module.exports) {
-  module.exports = sjcl;
-}
-sjcl.cipher.aes = function(a) {
-  this.h[0][0][0] || this.w();
-  var b, c, d, e, f = this.h[0][4], g = this.h[1];
-  b = a.length;
-  var h = 1;
-  if (b !== 4 && (b !== 6 && b !== 8)) {
-    throw new sjcl.exception.invalid("invalid aes key size");
-  }
-  this.a = [d = a.slice(0), e = []];
-  for (a = b;a < 4 * b + 28;a++) {
-    c = d[a - 1];
-    if (a % b === 0 || b === 8 && a % b === 4) {
-      c = f[c >>> 24] << 24 ^ f[c >> 16 & 255] << 16 ^ f[c >> 8 & 255] << 8 ^ f[c & 255];
-      if (a % b === 0) {
-        c = c << 8 ^ c >>> 24 ^ h << 24;
-        h = h << 1 ^ (h >> 7) * 283;
+goog.provide("fb.simplelogin.util.RSVP");
+var b, c;
+!function() {
+  var a = {}, d = {};
+  b = function(b, c, d) {
+    a[b] = {deps:c, callback:d};
+  }, c = function(b) {
+    function e(a) {
+      if ("." !== a.charAt(0)) {
+        return a;
       }
-    }
-    d[a] = d[a - b] ^ c;
-  }
-  for (b = 0;a;b++, a--) {
-    c = d[b & 3 ? a : a - 4];
-    e[b] = a <= 4 || b < 4 ? c : g[0][f[c >>> 24]] ^ g[1][f[c >> 16 & 255]] ^ g[2][f[c >> 8 & 255]] ^ g[3][f[c & 255]];
-  }
-};
-sjcl.cipher.aes.prototype = {encrypt:function(a) {
-  return this.G(a, 0);
-}, decrypt:function(a) {
-  return this.G(a, 1);
-}, h:[[[], [], [], [], []], [[], [], [], [], []]], w:function() {
-  var a = this.h[0], b = this.h[1], c = a[4], d = b[4], e, f, g, h = [], i = [], k, j, l, m;
-  for (e = 0;e < 256;e++) {
-    i[(h[e] = e << 1 ^ (e >> 7) * 283) ^ e] = e;
-  }
-  for (f = g = 0;!c[f];f ^= k || 1, g = i[g] || 1) {
-    l = g ^ g << 1 ^ g << 2 ^ g << 3 ^ g << 4;
-    l = l >> 8 ^ l & 255 ^ 99;
-    c[f] = l;
-    d[l] = f;
-    j = h[e = h[k = h[f]]];
-    m = j * 16843009 ^ e * 65537 ^ k * 257 ^ f * 16843008;
-    j = h[l] * 257 ^ l * 16843008;
-    for (e = 0;e < 4;e++) {
-      a[e][f] = j = j << 24 ^ j >>> 8;
-      b[e][l] = m = m << 24 ^ m >>> 8;
-    }
-  }
-  for (e = 0;e < 5;e++) {
-    a[e] = a[e].slice(0);
-    b[e] = b[e].slice(0);
-  }
-}, G:function(a, b) {
-  if (a.length !== 4) {
-    throw new sjcl.exception.invalid("invalid aes block size");
-  }
-  var c = this.a[b], d = a[0] ^ c[0], e = a[b ? 3 : 1] ^ c[1], f = a[2] ^ c[2];
-  a = a[b ? 1 : 3] ^ c[3];
-  var g, h, i, k = c.length / 4 - 2, j, l = 4, m = [0, 0, 0, 0];
-  g = this.h[b];
-  var n = g[0], o = g[1], p = g[2], q = g[3], r = g[4];
-  for (j = 0;j < k;j++) {
-    g = n[d >>> 24] ^ o[e >> 16 & 255] ^ p[f >> 8 & 255] ^ q[a & 255] ^ c[l];
-    h = n[e >>> 24] ^ o[f >> 16 & 255] ^ p[a >> 8 & 255] ^ q[d & 255] ^ c[l + 1];
-    i = n[f >>> 24] ^ o[a >> 16 & 255] ^ p[d >> 8 & 255] ^ q[e & 255] ^ c[l + 2];
-    a = n[a >>> 24] ^ o[d >> 16 & 255] ^ p[e >> 8 & 255] ^ q[f & 255] ^ c[l + 3];
-    l += 4;
-    d = g;
-    e = h;
-    f = i;
-  }
-  for (j = 0;j < 4;j++) {
-    m[b ? 3 & -j : j] = r[d >>> 24] << 24 ^ r[e >> 16 & 255] << 16 ^ r[f >> 8 & 255] << 8 ^ r[a & 255] ^ c[l++];
-    g = d;
-    d = e;
-    e = f;
-    f = a;
-    a = g;
-  }
-  return m;
-}};
-sjcl.bitArray = {bitSlice:function(a, b, c) {
-  a = sjcl.bitArray.N(a.slice(b / 32), 32 - (b & 31)).slice(1);
-  return c === undefined ? a : sjcl.bitArray.clamp(a, c - b);
-}, extract:function(a, b, c) {
-  var d = Math.floor(-b - c & 31);
-  return((b + c - 1 ^ b) & -32 ? a[b / 32 | 0] << 32 - d ^ a[b / 32 + 1 | 0] >>> d : a[b / 32 | 0] >>> d) & (1 << c) - 1;
-}, concat:function(a, b) {
-  if (a.length === 0 || b.length === 0) {
-    return a.concat(b);
-  }
-  var c = a[a.length - 1], d = sjcl.bitArray.getPartial(c);
-  return d === 32 ? a.concat(b) : sjcl.bitArray.N(b, d, c | 0, a.slice(0, a.length - 1));
-}, bitLength:function(a) {
-  var b = a.length;
-  if (b === 0) {
-    return 0;
-  }
-  return(b - 1) * 32 + sjcl.bitArray.getPartial(a[b - 1]);
-}, clamp:function(a, b) {
-  if (a.length * 32 < b) {
-    return a;
-  }
-  a = a.slice(0, Math.ceil(b / 32));
-  var c = a.length;
-  b &= 31;
-  if (c > 0 && b) {
-    a[c - 1] = sjcl.bitArray.partial(b, a[c - 1] & 2147483648 >> b - 1, 1);
-  }
-  return a;
-}, partial:function(a, b, c) {
-  if (a === 32) {
-    return b;
-  }
-  return(c ? b | 0 : b << 32 - a) + a * 1099511627776;
-}, getPartial:function(a) {
-  return Math.round(a / 1099511627776) || 32;
-}, equal:function(a, b) {
-  if (sjcl.bitArray.bitLength(a) !== sjcl.bitArray.bitLength(b)) {
-    return false;
-  }
-  var c = 0, d;
-  for (d = 0;d < a.length;d++) {
-    c |= a[d] ^ b[d];
-  }
-  return c === 0;
-}, N:function(a, b, c, d) {
-  var e;
-  e = 0;
-  if (d === undefined) {
-    d = [];
-  }
-  for (;b >= 32;b -= 32) {
-    d.push(c);
-    c = 0;
-  }
-  if (b === 0) {
-    return d.concat(a);
-  }
-  for (e = 0;e < a.length;e++) {
-    d.push(c | a[e] >>> b);
-    c = a[e] << 32 - b;
-  }
-  e = a.length ? a[a.length - 1] : 0;
-  a = sjcl.bitArray.getPartial(e);
-  d.push(sjcl.bitArray.partial(b + a & 31, b + a > 32 ? c : d.pop(), 1));
-  return d;
-}, O:function(a, b) {
-  return[a[0] ^ b[0], a[1] ^ b[1], a[2] ^ b[2], a[3] ^ b[3]];
-}};
-sjcl.codec.utf8String = {fromBits:function(a) {
-  var b = "", c = sjcl.bitArray.bitLength(a), d, e;
-  for (d = 0;d < c / 8;d++) {
-    if ((d & 3) === 0) {
-      e = a[d / 4];
-    }
-    b += String.fromCharCode(e >>> 24);
-    e <<= 8;
-  }
-  return decodeURIComponent(escape(b));
-}, toBits:function(a) {
-  a = unescape(encodeURIComponent(a));
-  var b = [], c, d = 0;
-  for (c = 0;c < a.length;c++) {
-    d = d << 8 | a.charCodeAt(c);
-    if ((c & 3) === 3) {
-      b.push(d);
-      d = 0;
-    }
-  }
-  c & 3 && b.push(sjcl.bitArray.partial(8 * (c & 3), d));
-  return b;
-}};
-sjcl.codec.base64 = {C:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/", fromBits:function(a, b, c) {
-  var d = "", e = 0, f = sjcl.codec.base64.C, g = 0, h = sjcl.bitArray.bitLength(a);
-  if (c) {
-    f = f.substr(0, 62) + "-_";
-  }
-  for (c = 0;d.length * 6 < h;) {
-    d += f.charAt((g ^ a[c] >>> e) >>> 26);
-    if (e < 6) {
-      g = a[c] << 6 - e;
-      e += 26;
-      c++;
-    } else {
-      g <<= 6;
-      e -= 6;
-    }
-  }
-  for (;d.length & 3 && !b;) {
-    d += "=";
-  }
-  return d;
-}, toBits:function(a, b) {
-  a = a.replace(/\s|=/g, "");
-  var c = [], d = 0, e = sjcl.codec.base64.C, f = 0, g;
-  if (b) {
-    e = e.substr(0, 62) + "-_";
-  }
-  for (b = 0;b < a.length;b++) {
-    g = e.indexOf(a.charAt(b));
-    if (g < 0) {
-      throw new sjcl.exception.invalid("this isn't base64!");
-    }
-    if (d > 26) {
-      d -= 26;
-      c.push(f ^ g >>> d);
-      f = g << 32 - d;
-    } else {
-      d += 6;
-      f ^= g << 32 - d;
-    }
-  }
-  d & 56 && c.push(sjcl.bitArray.partial(d & 56, f, 1));
-  return c;
-}};
-sjcl.codec.base64url = {fromBits:function(a) {
-  return sjcl.codec.base64.fromBits(a, 1, 1);
-}, toBits:function(a) {
-  return sjcl.codec.base64.toBits(a, 1);
-}};
-sjcl.hash.sha256 = function(a) {
-  this.a[0] || this.w();
-  if (a) {
-    this.m = a.m.slice(0);
-    this.i = a.i.slice(0);
-    this.e = a.e;
-  } else {
-    this.reset();
-  }
-};
-sjcl.hash.sha256.hash = function(a) {
-  return(new sjcl.hash.sha256).update(a).finalize();
-};
-sjcl.hash.sha256.prototype = {blockSize:512, reset:function() {
-  this.m = this.L.slice(0);
-  this.i = [];
-  this.e = 0;
-  return this;
-}, update:function(a) {
-  if (typeof a === "string") {
-    a = sjcl.codec.utf8String.toBits(a);
-  }
-  var b, c = this.i = sjcl.bitArray.concat(this.i, a);
-  b = this.e;
-  a = this.e = b + sjcl.bitArray.bitLength(a);
-  for (b = 512 + b & -512;b <= a;b += 512) {
-    this.B(c.splice(0, 16));
-  }
-  return this;
-}, finalize:function() {
-  var a, b = this.i, c = this.m;
-  b = sjcl.bitArray.concat(b, [sjcl.bitArray.partial(1, 1)]);
-  for (a = b.length + 2;a & 15;a++) {
-    b.push(0);
-  }
-  b.push(Math.floor(this.e / 4294967296));
-  for (b.push(this.e | 0);b.length;) {
-    this.B(b.splice(0, 16));
-  }
-  this.reset();
-  return c;
-}, L:[], a:[], w:function() {
-  function a(e) {
-    return(e - Math.floor(e)) * 4294967296 | 0;
-  }
-  var b = 0, c = 2, d;
-  a: for (;b < 64;c++) {
-    for (d = 2;d * d <= c;d++) {
-      if (c % d === 0) {
-        continue a;
-      }
-    }
-    if (b < 8) {
-      this.L[b] = a(Math.pow(c, 0.5));
-    }
-    this.a[b] = a(Math.pow(c, 1 / 3));
-    b++;
-  }
-}, B:function(a) {
-  var b, c, d = a.slice(0), e = this.m, f = this.a, g = e[0], h = e[1], i = e[2], k = e[3], j = e[4], l = e[5], m = e[6], n = e[7];
-  for (a = 0;a < 64;a++) {
-    if (a < 16) {
-      b = d[a];
-    } else {
-      b = d[a + 1 & 15];
-      c = d[a + 14 & 15];
-      b = d[a & 15] = (b >>> 7 ^ b >>> 18 ^ b >>> 3 ^ b << 25 ^ b << 14) + (c >>> 17 ^ c >>> 19 ^ c >>> 10 ^ c << 15 ^ c << 13) + d[a & 15] + d[a + 9 & 15] | 0;
-    }
-    b = b + n + (j >>> 6 ^ j >>> 11 ^ j >>> 25 ^ j << 26 ^ j << 21 ^ j << 7) + (m ^ j & (l ^ m)) + f[a];
-    n = m;
-    m = l;
-    l = j;
-    j = k + b | 0;
-    k = i;
-    i = h;
-    h = g;
-    g = b + (h & i ^ k & (h ^ i)) + (h >>> 2 ^ h >>> 13 ^ h >>> 22 ^ h << 30 ^ h << 19 ^ h << 10) | 0;
-  }
-  e[0] = e[0] + g | 0;
-  e[1] = e[1] + h | 0;
-  e[2] = e[2] + i | 0;
-  e[3] = e[3] + k | 0;
-  e[4] = e[4] + j | 0;
-  e[5] = e[5] + l | 0;
-  e[6] = e[6] + m | 0;
-  e[7] = e[7] + n | 0;
-}};
-sjcl.mode.ccm = {name:"ccm", encrypt:function(a, b, c, d, e) {
-  var f, g = b.slice(0), h = sjcl.bitArray, i = h.bitLength(c) / 8, k = h.bitLength(g) / 8;
-  e = e || 64;
-  d = d || [];
-  if (i < 7) {
-    throw new sjcl.exception.invalid("ccm: iv must be at least 7 bytes");
-  }
-  for (f = 2;f < 4 && k >>> 8 * f;f++) {
-  }
-  if (f < 15 - i) {
-    f = 15 - i;
-  }
-  c = h.clamp(c, 8 * (15 - f));
-  b = sjcl.mode.ccm.F(a, b, c, d, e, f);
-  g = sjcl.mode.ccm.H(a, g, c, b, e, f);
-  return h.concat(g.data, g.tag);
-}, decrypt:function(a, b, c, d, e) {
-  e = e || 64;
-  d = d || [];
-  var f = sjcl.bitArray, g = f.bitLength(c) / 8, h = f.bitLength(b), i = f.clamp(b, h - e), k = f.bitSlice(b, h - e);
-  h = (h - e) / 8;
-  if (g < 7) {
-    throw new sjcl.exception.invalid("ccm: iv must be at least 7 bytes");
-  }
-  for (b = 2;b < 4 && h >>> 8 * b;b++) {
-  }
-  if (b < 15 - g) {
-    b = 15 - g;
-  }
-  c = f.clamp(c, 8 * (15 - b));
-  i = sjcl.mode.ccm.H(a, i, c, k, e, b);
-  a = sjcl.mode.ccm.F(a, i.data, c, d, e, b);
-  if (!f.equal(i.tag, a)) {
-    throw new sjcl.exception.corrupt("ccm: tag doesn't match");
-  }
-  return i.data;
-}, F:function(a, b, c, d, e, f) {
-  var g = [], h = sjcl.bitArray, i = h.O;
-  e /= 8;
-  if (e % 2 || (e < 4 || e > 16)) {
-    throw new sjcl.exception.invalid("ccm: invalid tag length");
-  }
-  if (d.length > 4294967295 || b.length > 4294967295) {
-    throw new sjcl.exception.bug("ccm: can't deal with 4GiB or more data");
-  }
-  f = [h.partial(8, (d.length ? 64 : 0) | e - 2 << 2 | f - 1)];
-  f = h.concat(f, c);
-  f[3] |= h.bitLength(b) / 8;
-  f = a.encrypt(f);
-  if (d.length) {
-    c = h.bitLength(d) / 8;
-    if (c <= 65279) {
-      g = [h.partial(16, c)];
-    } else {
-      if (c <= 4294967295) {
-        g = h.concat([h.partial(16, 65534)], [c]);
-      }
-    }
-    g = h.concat(g, d);
-    for (d = 0;d < g.length;d += 4) {
-      f = a.encrypt(i(f, g.slice(d, d + 4).concat([0, 0, 0])));
-    }
-  }
-  for (d = 0;d < b.length;d += 4) {
-    f = a.encrypt(i(f, b.slice(d, d + 4).concat([0, 0, 0])));
-  }
-  return h.clamp(f, e * 8);
-}, H:function(a, b, c, d, e, f) {
-  var g, h = sjcl.bitArray;
-  g = h.O;
-  var i = b.length, k = h.bitLength(b);
-  c = h.concat([h.partial(8, f - 1)], c).concat([0, 0, 0]).slice(0, 4);
-  d = h.bitSlice(g(d, a.encrypt(c)), 0, e);
-  if (!i) {
-    return{tag:d, data:[]};
-  }
-  for (g = 0;g < i;g += 4) {
-    c[3]++;
-    e = a.encrypt(c);
-    b[g] ^= e[0];
-    b[g + 1] ^= e[1];
-    b[g + 2] ^= e[2];
-    b[g + 3] ^= e[3];
-  }
-  return{tag:d, data:h.clamp(b, k)};
-}};
-sjcl.misc.hmac = function(a, b) {
-  this.K = b = b || sjcl.hash.sha256;
-  var c = [[], []], d = b.prototype.blockSize / 32;
-  this.k = [new b, new b];
-  if (a.length > d) {
-    a = b.hash(a);
-  }
-  for (b = 0;b < d;b++) {
-    c[0][b] = a[b] ^ 909522486;
-    c[1][b] = a[b] ^ 1549556828;
-  }
-  this.k[0].update(c[0]);
-  this.k[1].update(c[1]);
-};
-sjcl.misc.hmac.prototype.encrypt = sjcl.misc.hmac.prototype.mac = function(a) {
-  a = (new this.K(this.k[0])).update(a).finalize();
-  return(new this.K(this.k[1])).update(a).finalize();
-};
-sjcl.misc.pbkdf2 = function(a, b, c, d, e) {
-  c = c || 1E3;
-  if (d < 0 || c < 0) {
-    throw sjcl.exception.invalid("invalid params to pbkdf2");
-  }
-  if (typeof a === "string") {
-    a = sjcl.codec.utf8String.toBits(a);
-  }
-  e = e || sjcl.misc.hmac;
-  a = new e(a);
-  var f, g, h, i, k = [], j = sjcl.bitArray;
-  for (i = 1;32 * k.length < (d || 1);i++) {
-    e = f = a.encrypt(j.concat(b, [i]));
-    for (g = 1;g < c;g++) {
-      f = a.encrypt(f);
-      for (h = 0;h < f.length;h++) {
-        e[h] ^= f[h];
-      }
-    }
-    k = k.concat(e);
-  }
-  if (d) {
-    k = j.clamp(k, d);
-  }
-  return k;
-};
-sjcl.random = {randomWords:function(a, b) {
-  var c = [];
-  b = this.isReady(b);
-  var d;
-  if (b === 0) {
-    throw new sjcl.exception.notReady("generator isn't seeded");
-  } else {
-    b & 2 && this.T(!(b & 1));
-  }
-  for (b = 0;b < a;b += 4) {
-    (b + 1) % 65536 === 0 && this.J();
-    d = this.u();
-    c.push(d[0], d[1], d[2], d[3]);
-  }
-  this.J();
-  return c.slice(0, a);
-}, setDefaultParanoia:function(a) {
-  this.s = a;
-}, addEntropy:function(a, b, c) {
-  c = c || "user";
-  var d, e, f = (new Date).valueOf(), g = this.p[c], h = this.isReady(), i = 0;
-  d = this.D[c];
-  if (d === undefined) {
-    d = this.D[c] = this.Q++;
-  }
-  if (g === undefined) {
-    g = this.p[c] = 0;
-  }
-  this.p[c] = (this.p[c] + 1) % this.b.length;
-  switch(typeof a) {
-    case "number":
-      if (b === undefined) {
-        b = 1;
-      }
-      this.b[g].update([d, this.t++, 1, b, f, 1, a | 0]);
-      break;
-    case "object":
-      c = Object.prototype.toString.call(a);
-      if (c === "[object Uint32Array]") {
-        e = [];
-        for (c = 0;c < a.length;c++) {
-          e.push(a[c]);
-        }
-        a = e;
-      } else {
-        if (c !== "[object Array]") {
-          i = 1;
-        }
-        for (c = 0;c < a.length && !i;c++) {
-          if (typeof a[c] != "number") {
-            i = 1;
+      for (var c = a.split("/"), d = b.split("/").slice(0, -1), e = 0, f = c.length;f > e;e++) {
+        var g = c[e];
+        if (".." === g) {
+          d.pop();
+        } else {
+          if ("." === g) {
+            continue;
           }
+          d.push(g);
         }
       }
-      if (!i) {
-        if (b === undefined) {
-          for (c = b = 0;c < a.length;c++) {
-            for (e = a[c];e > 0;) {
-              b++;
-              e >>>= 1;
+      return d.join("/");
+    }
+    if (d[b]) {
+      return d[b];
+    }
+    if (d[b] = {}, !a[b]) {
+      throw new Error("Could not find module " + b);
+    }
+    for (var f, g = a[b], h = g.deps, i = g.callback, j = [], k = 0, l = h.length;l > k;k++) {
+      j.push("exports" === h[k] ? f = {} : c(e(h[k])));
+    }
+    var m = i.apply(this, j);
+    return d[b] = f || m;
+  }, c.entries = a;
+}(), b("rsvp/all-settled", ["./promise", "./utils", "exports"], function(a, b, c) {
+  function d(a) {
+    return{state:"fulfilled", value:a};
+  }
+  function e(a) {
+    return{state:"rejected", reason:a};
+  }
+  var f = a["default"], g = b.isArray, h = b.isNonThenable;
+  c["default"] = function(a, b) {
+    return new f(function(b) {
+      function c(a) {
+        return function(b) {
+          j(a, d(b));
+        };
+      }
+      function i(a) {
+        return function(b) {
+          j(a, e(b));
+        };
+      }
+      function j(a, c) {
+        m[a] = c, 0 === --l && b(m);
+      }
+      if (!g(a)) {
+        throw new TypeError("You must pass an array to allSettled.");
+      }
+      var k, l = a.length;
+      if (0 === l) {
+        return void b([]);
+      }
+      for (var m = new Array(l), n = 0;n < a.length;n++) {
+        k = a[n], h(k) ? j(n, d(k)) : f.resolve(k).then(c(n), i(n));
+      }
+    }, b);
+  };
+}), b("rsvp/all", ["./promise", "exports"], function(a, b) {
+  var c = a["default"];
+  b["default"] = function(a, b) {
+    return c.all(a, b);
+  };
+}), b("rsvp/asap", ["exports"], function(a) {
+  function b() {
+    return function() {
+      process.nextTick(e);
+    };
+  }
+  function c() {
+    var a = 0, b = new h(e), c = document.createTextNode("");
+    return b.observe(c, {characterData:!0}), function() {
+      c.data = a = ++a % 2;
+    };
+  }
+  function d() {
+    return function() {
+      setTimeout(e, 1);
+    };
+  }
+  function e() {
+    for (var a = 0;a < i.length;a++) {
+      var b = i[a], c = b[0], d = b[1];
+      c(d);
+    }
+    i.length = 0;
+  }
+  a["default"] = function(a, b) {
+    var c = i.push([a, b]);
+    1 === c && f();
+  };
+  var f, g = "undefined" != typeof window ? window : {}, h = g.MutationObserver || g.WebKitMutationObserver, i = [];
+  f = "undefined" != typeof process && "[object process]" === {}.toString.call(process) ? b() : h ? c() : d();
+}), b("rsvp/config", ["./events", "exports"], function(a, b) {
+  function c(a, b) {
+    return "onerror" === a ? void e.on("error", b) : 2 !== arguments.length ? e[a] : void(e[a] = b);
+  }
+  var d = a["default"], e = {instrument:!1};
+  d.mixin(e), b.config = e, b.configure = c;
+}), b("rsvp/defer", ["./promise", "exports"], function(a, b) {
+  var c = a["default"];
+  b["default"] = function(a) {
+    var b = {};
+    return b.promise = new c(function(a, c) {
+      b.resolve = a, b.reject = c;
+    }, a), b;
+  };
+}), b("rsvp/events", ["exports"], function(a) {
+  function b(a, b) {
+    for (var c = 0, d = a.length;d > c;c++) {
+      if (a[c] === b) {
+        return c;
+      }
+    }
+    return-1;
+  }
+  function c(a) {
+    var b = a._promiseCallbacks;
+    return b || (b = a._promiseCallbacks = {}), b;
+  }
+  a["default"] = {mixin:function(a) {
+    return a.on = this.on, a.off = this.off, a.trigger = this.trigger, a._promiseCallbacks = void 0, a;
+  }, on:function(a, d) {
+    var e, f = c(this);
+    e = f[a], e || (e = f[a] = []), -1 === b(e, d) && e.push(d);
+  }, off:function(a, d) {
+    var e, f, g = c(this);
+    return d ? (e = g[a], f = b(e, d), void(-1 !== f && e.splice(f, 1))) : void(g[a] = []);
+  }, trigger:function(a, b) {
+    var d, e, f = c(this);
+    if (d = f[a]) {
+      for (var g = 0;g < d.length;g++) {
+        (e = d[g])(b);
+      }
+    }
+  }};
+}), b("rsvp/filter", ["./promise", "./utils", "exports"], function(a, b, c) {
+  var d = a["default"], e = b.isFunction;
+  c["default"] = function(a, b, c) {
+    return d.all(a, c).then(function(a) {
+      if (!e(b)) {
+        throw new TypeError("You must pass a function as filter's second argument.");
+      }
+      for (var f = a.length, g = new Array(f), h = 0;f > h;h++) {
+        g[h] = b(a[h]);
+      }
+      return d.all(g, c).then(function(b) {
+        for (var c = new Array(f), d = 0, e = 0;f > e;e++) {
+          b[e] === !0 && (c[d] = a[e], d++);
+        }
+        return c.length = d, c;
+      });
+    });
+  };
+}), b("rsvp/hash-settled", ["./promise", "./utils", "exports"], function(a, b, c) {
+  function d(a) {
+    return{state:"fulfilled", value:a};
+  }
+  function e(a) {
+    return{state:"rejected", reason:a};
+  }
+  var f = a["default"], g = b.isNonThenable, h = b.keysOf;
+  c["default"] = function(a) {
+    return new f(function(b) {
+      function c(a) {
+        return function(b) {
+          j(a, d(b));
+        };
+      }
+      function i(a) {
+        return function(b) {
+          j(a, e(b));
+        };
+      }
+      function j(a, c) {
+        m[a] = c, 0 === --o && b(m);
+      }
+      var k, l, m = {}, n = h(a), o = n.length;
+      if (0 === o) {
+        return void b(m);
+      }
+      for (var p = 0;p < n.length;p++) {
+        l = n[p], k = a[l], g(k) ? j(l, d(k)) : f.resolve(k).then(c(l), i(l));
+      }
+    });
+  };
+}), b("rsvp/hash", ["./promise", "./utils", "exports"], function(a, b, c) {
+  var d = a["default"], e = b.isNonThenable, f = b.keysOf;
+  c["default"] = function(a) {
+    return new d(function(b, c) {
+      function g(a) {
+        return function(c) {
+          k[a] = c, 0 === --m && b(k);
+        };
+      }
+      function h(a) {
+        m = 0, c(a);
+      }
+      var i, j, k = {}, l = f(a), m = l.length;
+      if (0 === m) {
+        return void b(k);
+      }
+      for (var n = 0;n < l.length;n++) {
+        j = l[n], i = a[j], e(i) ? (k[j] = i, 0 === --m && b(k)) : d.resolve(i).then(g(j), h);
+      }
+    });
+  };
+}), b("rsvp/instrument", ["./config", "./utils", "exports"], function(a, b, c) {
+  var d = a.config, e = b.now;
+  c["default"] = function(a, b, c) {
+    try {
+      d.trigger(a, {guid:b._guidKey + b._id, eventName:a, detail:b._detail, childGuid:c && b._guidKey + c._id, label:b._label, timeStamp:e(), stack:(new Error(b._label)).stack});
+    } catch (f) {
+      setTimeout(function() {
+        throw f;
+      }, 0);
+    }
+  };
+}), b("rsvp/map", ["./promise", "./utils", "exports"], function(a, b, c) {
+  var d = a["default"], e = (b.isArray, b.isFunction);
+  c["default"] = function(a, b, c) {
+    return d.all(a, c).then(function(a) {
+      if (!e(b)) {
+        throw new TypeError("You must pass a function as map's second argument.");
+      }
+      for (var f = a.length, g = new Array(f), h = 0;f > h;h++) {
+        g[h] = b(a[h]);
+      }
+      return d.all(g, c);
+    });
+  };
+}), b("rsvp/node", ["./promise", "./utils", "exports"], function(a, b, c) {
+  var d = a["default"], e = b.isArray;
+  c["default"] = function(a, b) {
+    function c() {
+      for (var c = arguments.length, e = new Array(c), h = 0;c > h;h++) {
+        e[h] = arguments[h];
+      }
+      var i;
+      return f || (g || !b) ? i = this : (console.warn('Deprecation: RSVP.denodeify() doesn\'t allow setting the "this" binding anymore. Use yourFunction.bind(yourThis) instead.'), i = b), d.all(e).then(function(c) {
+        function e(d, e) {
+          function h() {
+            for (var a = arguments.length, c = new Array(a), h = 0;a > h;h++) {
+              c[h] = arguments[h];
+            }
+            var i = c[0], j = c[1];
+            if (i) {
+              e(i);
+            } else {
+              if (f) {
+                d(c.slice(1));
+              } else {
+                if (g) {
+                  var k, l, m = {}, n = c.slice(1);
+                  for (l = 0;l < b.length;l++) {
+                    k = b[l], m[k] = n[l];
+                  }
+                  d(m);
+                } else {
+                  d(j);
+                }
+              }
             }
           }
+          c.push(h), a.apply(i, c);
         }
-        this.b[g].update([d, this.t++, 2, b, f, a.length].concat(a));
+        return new d(e);
+      });
+    }
+    var f = b === !0, g = e(b);
+    return c.__proto__ = a, c;
+  };
+}), b("rsvp/promise", ["./config", "./events", "./instrument", "./utils", "./promise/cast", "./promise/all", "./promise/race", "./promise/resolve", "./promise/reject", "exports"], function(a, b, c, d, e, f, g, h, i, j) {
+  function k() {
+  }
+  function l(a, b) {
+    if (!z(a)) {
+      throw new TypeError("You must pass a resolver function as the first argument to the promise constructor");
+    }
+    if (!(this instanceof l)) {
+      throw new TypeError("Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.");
+    }
+    this._id = H++, this._label = b, this._subscribers = [], w.instrument && x("created", this), k !== a && m(a, this);
+  }
+  function m(a, b) {
+    function c(a) {
+      r(b, a);
+    }
+    function d(a) {
+      t(b, a);
+    }
+    try {
+      a(c, d);
+    } catch (e) {
+      d(e);
+    }
+  }
+  function n(a, b, c, d) {
+    var e = a._subscribers, f = e.length;
+    e[f] = b, e[f + K] = c, e[f + L] = d;
+  }
+  function o(a, b) {
+    var c, d, e = a._subscribers, f = a._detail;
+    w.instrument && x(b === K ? "fulfilled" : "rejected", a);
+    for (var g = 0;g < e.length;g += 3) {
+      c = e[g], d = e[g + b], p(b, c, d, f);
+    }
+    a._subscribers = null;
+  }
+  function p(a, b, c, d) {
+    var e, f, g, h, i = z(c);
+    if (i) {
+      try {
+        e = c(d), g = !0;
+      } catch (j) {
+        h = !0, f = j;
       }
-      break;
-    case "string":
-      if (b === undefined) {
-        b = a.length;
-      }
-      this.b[g].update([d, this.t++, 3, b, f, a.length]);
-      this.b[g].update(a);
-      break;
-    default:
-      i = 1;
-  }
-  if (i) {
-    throw new sjcl.exception.bug("random: addEntropy only supports number, array of numbers or string");
-  }
-  this.j[g] += b;
-  this.f += b;
-  if (h === 0) {
-    this.isReady() !== 0 && this.I("seeded", Math.max(this.g, this.f));
-    this.I("progress", this.getProgress());
-  }
-}, isReady:function(a) {
-  a = this.A[a !== undefined ? a : this.s];
-  return this.g && this.g >= a ? this.j[0] > 80 && (new Date).valueOf() > this.M ? 3 : 1 : this.f >= a ? 2 : 0;
-}, getProgress:function(a) {
-  a = this.A[a ? a : this.s];
-  return this.g >= a ? 1 : this.f > a ? 1 : this.f / a;
-}, startCollectors:function() {
-  if (!this.l) {
-    if (window.addEventListener) {
-      window.addEventListener("load", this.n, false);
-      window.addEventListener("mousemove", this.o, false);
     } else {
-      if (document.attachEvent) {
-        document.attachEvent("onload", this.n);
-        document.attachEvent("onmousemove", this.o);
-      } else {
-        throw new sjcl.exception.bug("can't attach event");
-      }
+      e = d, g = !0;
     }
-    this.l = true;
+    q(b, e) || (i && g ? r(b, e) : h ? t(b, f) : a === K ? r(b, e) : a === L && t(b, e));
   }
-}, stopCollectors:function() {
-  if (this.l) {
-    if (window.removeEventListener) {
-      window.removeEventListener("load", this.n, false);
-      window.removeEventListener("mousemove", this.o, false);
+  function q(a, b) {
+    var c, d = null;
+    try {
+      if (a === b) {
+        throw new TypeError("A promises callback cannot return that same promise.");
+      }
+      if (y(b) && (d = b.then, z(d))) {
+        return d.call(b, function(d) {
+          return c ? !0 : (c = !0, void(b !== d ? r(a, d) : s(a, d)));
+        }, function(b) {
+          return c ? !0 : (c = !0, void t(a, b));
+        }, "Settle: " + (a._label || " unknown promise")), !0;
+      }
+    } catch (e) {
+      return c ? !0 : (t(a, e), !0);
+    }
+    return!1;
+  }
+  function r(a, b) {
+    a === b ? s(a, b) : q(a, b) || s(a, b);
+  }
+  function s(a, b) {
+    a._state === I && (a._state = J, a._detail = b, w.async(u, a));
+  }
+  function t(a, b) {
+    a._state === I && (a._state = J, a._detail = b, w.async(v, a));
+  }
+  function u(a) {
+    o(a, a._state = K);
+  }
+  function v(a) {
+    a._onerror && a._onerror(a._detail), o(a, a._state = L);
+  }
+  var w = a.config, x = (b["default"], c["default"]), y = d.objectOrFunction, z = d.isFunction, A = d.now, B = e["default"], C = f["default"], D = g["default"], E = h["default"], F = i["default"], G = "rsvp_" + A() + "-", H = 0;
+  j["default"] = l, l.cast = B, l.all = C, l.race = D, l.resolve = E, l.reject = F;
+  var I = void 0, J = 0, K = 1, L = 2;
+  l.prototype = {constructor:l, _id:void 0, _guidKey:G, _label:void 0, _state:void 0, _detail:void 0, _subscribers:void 0, _onerror:function(a) {
+    w.trigger("error", a);
+  }, then:function(a, b, c) {
+    var d = this;
+    this._onerror = null;
+    var e = new this.constructor(k, c);
+    if (this._state) {
+      var f = arguments;
+      w.async(function() {
+        p(d._state, e, f[d._state - 1], d._detail);
+      });
     } else {
-      if (window.detachEvent) {
-        window.detachEvent("onload", this.n);
-        window.detachEvent("onmousemove", this.o);
+      n(this, e, a, b);
+    }
+    return w.instrument && x("chained", d, e), e;
+  }, "catch":function(a, b) {
+    return this.then(null, a, b);
+  }, "finally":function(a, b) {
+    var c = this.constructor;
+    return this.then(function(b) {
+      return c.resolve(a()).then(function() {
+        return b;
+      });
+    }, function(b) {
+      return c.resolve(a()).then(function() {
+        throw b;
+      });
+    }, b);
+  }};
+}), b("rsvp/promise/all", ["../utils", "exports"], function(a, b) {
+  var c = a.isArray, d = a.isNonThenable;
+  b["default"] = function(a, b) {
+    var e = this;
+    return new e(function(b, f) {
+      function g(a) {
+        return function(c) {
+          k[a] = c, 0 === --j && b(k);
+        };
       }
-    }
-    this.l = false;
-  }
-}, addEventListener:function(a, b) {
-  this.q[a][this.P++] = b;
-}, removeEventListener:function(a, b) {
-  var c;
-  a = this.q[a];
-  var d = [];
-  for (c in a) {
-    a.hasOwnProperty(c) && (a[c] === b && d.push(c));
-  }
-  for (b = 0;b < d.length;b++) {
-    c = d[b];
-    delete a[c];
-  }
-}, b:[new sjcl.hash.sha256], j:[0], z:0, p:{}, t:0, D:{}, Q:0, g:0, f:0, M:0, a:[0, 0, 0, 0, 0, 0, 0, 0], d:[0, 0, 0, 0], r:undefined, s:6, l:false, q:{progress:{}, seeded:{}}, P:0, A:[0, 48, 64, 96, 128, 192, 256, 384, 512, 768, 1024], u:function() {
-  for (var a = 0;a < 4;a++) {
-    this.d[a] = this.d[a] + 1 | 0;
-    if (this.d[a]) {
-      break;
-    }
-  }
-  return this.r.encrypt(this.d);
-}, J:function() {
-  this.a = this.u().concat(this.u());
-  this.r = new sjcl.cipher.aes(this.a);
-}, S:function(a) {
-  this.a = sjcl.hash.sha256.hash(this.a.concat(a));
-  this.r = new sjcl.cipher.aes(this.a);
-  for (a = 0;a < 4;a++) {
-    this.d[a] = this.d[a] + 1 | 0;
-    if (this.d[a]) {
-      break;
-    }
-  }
-}, T:function(a) {
-  var b = [], c = 0, d;
-  this.M = b[0] = (new Date).valueOf() + 3E4;
-  for (d = 0;d < 16;d++) {
-    b.push(Math.random() * 4294967296 | 0);
-  }
-  for (d = 0;d < this.b.length;d++) {
-    b = b.concat(this.b[d].finalize());
-    c += this.j[d];
-    this.j[d] = 0;
-    if (!a && this.z & 1 << d) {
-      break;
-    }
-  }
-  if (this.z >= 1 << this.b.length) {
-    this.b.push(new sjcl.hash.sha256);
-    this.j.push(0);
-  }
-  this.f -= c;
-  if (c > this.g) {
-    this.g = c;
-  }
-  this.z++;
-  this.S(b);
-}, o:function(a) {
-  sjcl.random.addEntropy([a.x || (a.clientX || (a.offsetX || 0)), a.y || (a.clientY || (a.offsetY || 0))], 2, "mouse");
-}, n:function() {
-  sjcl.random.addEntropy((new Date).valueOf(), 2, "loadtime");
-}, I:function(a, b) {
-  var c;
-  a = sjcl.random.q[a];
-  var d = [];
-  for (c in a) {
-    a.hasOwnProperty(c) && d.push(a[c]);
-  }
-  for (c = 0;c < d.length;c++) {
-    d[c](b);
-  }
-}};
-try {
-  var s = new Uint32Array(32);
-  crypto.getRandomValues(s);
-  sjcl.random.addEntropy(s, 1024, "crypto['getRandomValues']");
-} catch (t) {
-}
-sjcl.json = {defaults:{v:1, iter:1E3, ks:128, ts:64, mode:"ccm", adata:"", cipher:"aes"}, encrypt:function(a, b, c, d) {
-  c = c || {};
-  d = d || {};
-  var e = sjcl.json, f = e.c({iv:sjcl.random.randomWords(4, 0)}, e.defaults), g;
-  e.c(f, c);
-  c = f.adata;
-  if (typeof f.salt === "string") {
-    f.salt = sjcl.codec.base64.toBits(f.salt);
-  }
-  if (typeof f.iv === "string") {
-    f.iv = sjcl.codec.base64.toBits(f.iv);
-  }
-  if (!sjcl.mode[f.mode] || (!sjcl.cipher[f.cipher] || (typeof a === "string" && f.iter <= 100 || (f.ts !== 64 && (f.ts !== 96 && f.ts !== 128) || (f.ks !== 128 && (f.ks !== 192 && f.ks !== 256) || (f.iv.length < 2 || f.iv.length > 4)))))) {
-    throw new sjcl.exception.invalid("json encrypt: invalid parameters");
-  }
-  if (typeof a === "string") {
-    g = sjcl.misc.cachedPbkdf2(a, f);
-    a = g.key.slice(0, f.ks / 32);
-    f.salt = g.salt;
-  }
-  if (typeof b === "string") {
-    b = sjcl.codec.utf8String.toBits(b);
-  }
-  if (typeof c === "string") {
-    c = sjcl.codec.utf8String.toBits(c);
-  }
-  g = new sjcl.cipher[f.cipher](a);
-  e.c(d, f);
-  d.key = a;
-  f.ct = sjcl.mode[f.mode].encrypt(g, b, f.iv, c, f.ts);
-  return e.encode(f);
-}, decrypt:function(a, b, c, d) {
-  c = c || {};
-  d = d || {};
-  var e = sjcl.json;
-  b = e.c(e.c(e.c({}, e.defaults), e.decode(b)), c, true);
-  var f;
-  c = b.adata;
-  if (typeof b.salt === "string") {
-    b.salt = sjcl.codec.base64.toBits(b.salt);
-  }
-  if (typeof b.iv === "string") {
-    b.iv = sjcl.codec.base64.toBits(b.iv);
-  }
-  if (!sjcl.mode[b.mode] || (!sjcl.cipher[b.cipher] || (typeof a === "string" && b.iter <= 100 || (b.ts !== 64 && (b.ts !== 96 && b.ts !== 128) || (b.ks !== 128 && (b.ks !== 192 && b.ks !== 256) || (!b.iv || (b.iv.length < 2 || b.iv.length > 4))))))) {
-    throw new sjcl.exception.invalid("json decrypt: invalid parameters");
-  }
-  if (typeof a === "string") {
-    f = sjcl.misc.cachedPbkdf2(a, b);
-    a = f.key.slice(0, b.ks / 32);
-    b.salt = f.salt;
-  }
-  if (typeof c === "string") {
-    c = sjcl.codec.utf8String.toBits(c);
-  }
-  f = new sjcl.cipher[b.cipher](a);
-  c = sjcl.mode[b.mode].decrypt(f, b.ct, b.iv, c, b.ts);
-  e.c(d, b);
-  d.key = a;
-  return sjcl.codec.utf8String.fromBits(c);
-}, encode:function(a) {
-  var b, c = "{", d = "";
-  for (b in a) {
-    if (a.hasOwnProperty(b)) {
-      if (!b.match(/^[a-z0-9]+$/i)) {
-        throw new sjcl.exception.invalid("json encode: invalid property name");
+      function h(a) {
+        j = 0, f(a);
       }
-      c += d + '"' + b + '":';
-      d = ",";
-      switch(typeof a[b]) {
-        case "number":
-        ;
-        case "boolean":
-          c += a[b];
-          break;
-        case "string":
-          c += '"' + escape(a[b]) + '"';
-          break;
-        case "object":
-          c += '"' + sjcl.codec.base64.fromBits(a[b], 0) + '"';
-          break;
-        default:
-          throw new sjcl.exception.bug("json encode: unsupported type");;
+      if (!c(a)) {
+        throw new TypeError("You must pass an array to all.");
       }
-    }
-  }
-  return c + "}";
-}, decode:function(a) {
-  a = a.replace(/\s/g, "");
-  if (!a.match(/^\{.*\}$/)) {
-    throw new sjcl.exception.invalid("json decode: this isn't json!");
-  }
-  a = a.replace(/^\{|\}$/g, "").split(/,/);
-  var b = {}, c, d;
-  for (c = 0;c < a.length;c++) {
-    if (!(d = a[c].match(/^(?:(["']?)([a-z][a-z0-9]*)\1):(?:(\d+)|"([a-z0-9+\/%*_.@=\-]*)")$/i))) {
-      throw new sjcl.exception.invalid("json decode: this isn't json!");
-    }
-    b[d[2]] = d[3] ? parseInt(d[3], 10) : d[2].match(/^(ct|salt|iv)$/) ? sjcl.codec.base64.toBits(d[4]) : unescape(d[4]);
-  }
-  return b;
-}, c:function(a, b, c) {
-  if (a === undefined) {
-    a = {};
-  }
-  if (b === undefined) {
-    return a;
-  }
-  var d;
-  for (d in b) {
-    if (b.hasOwnProperty(d)) {
-      if (c && (a[d] !== undefined && a[d] !== b[d])) {
-        throw new sjcl.exception.invalid("required parameter overridden");
+      var i, j = a.length, k = new Array(j);
+      if (0 === j) {
+        return void b(k);
       }
-      a[d] = b[d];
+      for (var l = 0;l < a.length;l++) {
+        i = a[l], d(i) ? (k[l] = i, 0 === --j && b(k)) : e.resolve(i).then(g(l), h);
+      }
+    }, b);
+  };
+}), b("rsvp/promise/cast", ["exports"], function(a) {
+  a["default"] = function(a, b) {
+    var c = this;
+    return a && ("object" == typeof a && a.constructor === c) ? a : new c(function(b) {
+      b(a);
+    }, b);
+  };
+}), b("rsvp/promise/race", ["../utils", "exports"], function(a, b) {
+  var c = a.isArray, d = (a.isFunction, a.isNonThenable);
+  b["default"] = function(a, b) {
+    var e, f = this;
+    return new f(function(b, g) {
+      function h(a) {
+        j && (j = !1, b(a));
+      }
+      function i(a) {
+        j && (j = !1, g(a));
+      }
+      if (!c(a)) {
+        throw new TypeError("You must pass an array to race.");
+      }
+      for (var j = !0, k = 0;k < a.length;k++) {
+        if (e = a[k], d(e)) {
+          return j = !1, void b(e);
+        }
+        f.resolve(e).then(h, i);
+      }
+    }, b);
+  };
+}), b("rsvp/promise/reject", ["exports"], function(a) {
+  a["default"] = function(a, b) {
+    var c = this;
+    return new c(function(b, c) {
+      c(a);
+    }, b);
+  };
+}), b("rsvp/promise/resolve", ["exports"], function(a) {
+  a["default"] = function(a, b) {
+    var c = this;
+    return a && ("object" == typeof a && a.constructor === c) ? a : new c(function(b) {
+      b(a);
+    }, b);
+  };
+}), b("rsvp/race", ["./promise", "exports"], function(a, b) {
+  var c = a["default"];
+  b["default"] = function(a, b) {
+    return c.race(a, b);
+  };
+}), b("rsvp/reject", ["./promise", "exports"], function(a, b) {
+  var c = a["default"];
+  b["default"] = function(a, b) {
+    return c.reject(a, b);
+  };
+}), b("rsvp/resolve", ["./promise", "exports"], function(a, b) {
+  var c = a["default"];
+  b["default"] = function(a, b) {
+    return c.resolve(a, b);
+  };
+}), b("rsvp/rethrow", ["exports"], function(a) {
+  a["default"] = function(a) {
+    throw setTimeout(function() {
+      throw a;
+    }), a;
+  };
+}), b("rsvp/utils", ["exports"], function(a) {
+  function b(a) {
+    return "function" == typeof a || "object" == typeof a && null !== a;
+  }
+  function c(a) {
+    return "function" == typeof a;
+  }
+  function d(a) {
+    return!b(a);
+  }
+  a.objectOrFunction = b, a.isFunction = c, a.isNonThenable = d;
+  var e;
+  e = Array.isArray ? Array.isArray : function(a) {
+    return "[object Array]" === Object.prototype.toString.call(a);
+  };
+  var f = e;
+  a.isArray = f;
+  var g = Date.now || function() {
+    return(new Date).getTime();
+  };
+  a.now = g;
+  var h = Object.keys || function(a) {
+    var b = [];
+    for (var c in a) {
+      b.push(c);
+    }
+    return b;
+  };
+  a.keysOf = h;
+}), b("rsvp", ["./rsvp/promise", "./rsvp/events", "./rsvp/node", "./rsvp/all", "./rsvp/all-settled", "./rsvp/race", "./rsvp/hash", "./rsvp/hash-settled", "./rsvp/rethrow", "./rsvp/defer", "./rsvp/config", "./rsvp/map", "./rsvp/resolve", "./rsvp/reject", "./rsvp/filter", "./rsvp/asap", "exports"], function(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q) {
+  function r(a, b) {
+    E.async(a, b);
+  }
+  function s() {
+    E.on.apply(E, arguments);
+  }
+  function t() {
+    E.off.apply(E, arguments);
+  }
+  var u = a["default"], v = b["default"], w = c["default"], x = d["default"], y = e["default"], z = f["default"], A = g["default"], B = h["default"], C = i["default"], D = j["default"], E = k.config, F = k.configure, G = l["default"], H = m["default"], I = n["default"], J = o["default"], K = p["default"];
+  if (E.async = K, "undefined" != typeof window && "object" == typeof window.__PROMISE_INSTRUMENTATION__) {
+    var L = window.__PROMISE_INSTRUMENTATION__;
+    F("instrument", !0);
+    for (var M in L) {
+      L.hasOwnProperty(M) && s(M, L[M]);
     }
   }
-  return a;
-}, V:function(a, b) {
-  var c = {}, d;
-  for (d in a) {
-    if (a.hasOwnProperty(d) && a[d] !== b[d]) {
-      c[d] = a[d];
-    }
-  }
-  return c;
-}, U:function(a, b) {
-  var c = {}, d;
-  for (d = 0;d < b.length;d++) {
-    if (a[b[d]] !== undefined) {
-      c[b[d]] = a[b[d]];
-    }
-  }
-  return c;
-}};
-sjcl.encrypt = sjcl.json.encrypt;
-sjcl.decrypt = sjcl.json.decrypt;
-sjcl.misc.R = {};
-sjcl.misc.cachedPbkdf2 = function(a, b) {
-  var c = sjcl.misc.R, d;
-  b = b || {};
-  d = b.iter || 1E3;
-  c = c[a] = c[a] || {};
-  d = c[d] = c[d] || {firstSalt:b.salt && b.salt.length ? b.salt.slice(0) : sjcl.random.randomWords(2, 0)};
-  c = b.salt === undefined ? d.firstSalt : b.salt;
-  d[c] = d[c] || sjcl.misc.pbkdf2(a, c, b.iter);
-  return{key:d[c].slice(0), salt:c.slice(0)};
-};
-goog.provide("goog.net.Cookies");
-goog.provide("goog.net.cookies");
-goog.net.Cookies = function(context) {
-  this.document_ = context;
-};
-goog.net.Cookies.MAX_COOKIE_LENGTH = 3950;
-goog.net.Cookies.SPLIT_RE_ = /\s*;\s*/;
-goog.net.Cookies.prototype.isEnabled = function() {
-  return navigator.cookieEnabled;
-};
-goog.net.Cookies.prototype.isValidName = function(name) {
-  return!/[;=\s]/.test(name);
-};
-goog.net.Cookies.prototype.isValidValue = function(value) {
-  return!/[;\r\n]/.test(value);
-};
-goog.net.Cookies.prototype.set = function(name, value, opt_maxAge, opt_path, opt_domain, opt_secure) {
-  if (!this.isValidName(name)) {
-    throw Error('Invalid cookie name "' + name + '"');
-  }
-  if (!this.isValidValue(value)) {
-    throw Error('Invalid cookie value "' + value + '"');
-  }
-  if (!goog.isDef(opt_maxAge)) {
-    opt_maxAge = -1;
-  }
-  var domainStr = opt_domain ? ";domain=" + opt_domain : "";
-  var pathStr = opt_path ? ";path=" + opt_path : "";
-  var secureStr = opt_secure ? ";secure" : "";
-  var expiresStr;
-  if (opt_maxAge < 0) {
-    expiresStr = "";
-  } else {
-    if (opt_maxAge == 0) {
-      var pastDate = new Date(1970, 1, 1);
-      expiresStr = ";expires=" + pastDate.toUTCString();
-    } else {
-      var futureDate = new Date(goog.now() + opt_maxAge * 1E3);
-      expiresStr = ";expires=" + futureDate.toUTCString();
-    }
-  }
-  this.setCookie_(name + "=" + value + domainStr + pathStr + expiresStr + secureStr);
-};
-goog.net.Cookies.prototype.get = function(name, opt_default) {
-  var nameEq = name + "=";
-  var parts = this.getParts_();
-  for (var i = 0, part;part = parts[i];i++) {
-    if (part.lastIndexOf(nameEq, 0) == 0) {
-      return part.substr(nameEq.length);
-    }
-    if (part == name) {
-      return "";
-    }
-  }
-  return opt_default;
-};
-goog.net.Cookies.prototype.remove = function(name, opt_path, opt_domain) {
-  var rv = this.containsKey(name);
-  this.set(name, "", 0, opt_path, opt_domain);
-  return rv;
-};
-goog.net.Cookies.prototype.getKeys = function() {
-  return this.getKeyValues_().keys;
-};
-goog.net.Cookies.prototype.getValues = function() {
-  return this.getKeyValues_().values;
-};
-goog.net.Cookies.prototype.isEmpty = function() {
-  return!this.getCookie_();
-};
-goog.net.Cookies.prototype.getCount = function() {
-  var cookie = this.getCookie_();
-  if (!cookie) {
-    return 0;
-  }
-  return this.getParts_().length;
-};
-goog.net.Cookies.prototype.containsKey = function(key) {
-  return goog.isDef(this.get(key));
-};
-goog.net.Cookies.prototype.containsValue = function(value) {
-  var values = this.getKeyValues_().values;
-  for (var i = 0;i < values.length;i++) {
-    if (values[i] == value) {
-      return true;
-    }
-  }
-  return false;
-};
-goog.net.Cookies.prototype.clear = function() {
-  var keys = this.getKeyValues_().keys;
-  for (var i = keys.length - 1;i >= 0;i--) {
-    this.remove(keys[i]);
-  }
-};
-goog.net.Cookies.prototype.setCookie_ = function(s) {
-  this.document_.cookie = s;
-};
-goog.net.Cookies.prototype.getCookie_ = function() {
-  return this.document_.cookie;
-};
-goog.net.Cookies.prototype.getParts_ = function() {
-  return(this.getCookie_() || "").split(goog.net.Cookies.SPLIT_RE_);
-};
-goog.net.Cookies.prototype.getKeyValues_ = function() {
-  var parts = this.getParts_();
-  var keys = [], values = [], index, part;
-  for (var i = 0;part = parts[i];i++) {
-    index = part.indexOf("=");
-    if (index == -1) {
-      keys.push("");
-      values.push(part);
-    } else {
-      keys.push(part.substring(0, index));
-      values.push(part.substring(index + 1));
-    }
-  }
-  return{keys:keys, values:values};
-};
-goog.net.cookies = new goog.net.Cookies(document);
-goog.net.cookies.MAX_COOKIE_LENGTH = goog.net.Cookies.MAX_COOKIE_LENGTH;
+  q.Promise = u, q.EventTarget = v, q.all = x, q.allSettled = y, q.race = z, q.hash = A, q.hashSettled = B, q.rethrow = C, q.defer = D, q.denodeify = w, q.configure = F, q.on = s, q.off = t, q.resolve = H, q.reject = I, q.async = r, q.map = G, q.filter = J;
+});
+fb.simplelogin.util.RSVP = c("rsvp");
 goog.provide("fb.simplelogin.util.env");
 fb.simplelogin.util.env.hasLocalStorage = function(str) {
   try {
@@ -2098,6 +1720,21 @@ fb.simplelogin.util.env.isStandaloneiOS = function() {
 fb.simplelogin.util.env.isPhantomJS = function() {
   return!!navigator.userAgent.match(/PhantomJS/);
 };
+fb.simplelogin.util.env.isIeLT10 = function() {
+  var re, match, rv = -1;
+  var ua = navigator["userAgent"];
+  if (navigator["appName"] === "Microsoft Internet Explorer") {
+    re = /MSIE ([0-9]{1,}[\.0-9]{0,})/;
+    match = ua.match(re);
+    if (match && match.length > 1) {
+      rv = parseFloat(match[1]);
+    }
+    if (rv < 10) {
+      return true;
+    }
+  }
+  return false;
+};
 fb.simplelogin.util.env.isFennec = function() {
   try {
     var userAgent = navigator["userAgent"];
@@ -2106,53 +1743,6 @@ fb.simplelogin.util.env.isFennec = function() {
   }
   return false;
 };
-goog.provide("fb.simplelogin.SessionStore");
-goog.provide("fb.simplelogin.SessionStore_");
-goog.require("fb.simplelogin.util.env");
-goog.require("fb.simplelogin.util.sjcl");
-goog.require("goog.net.cookies");
-var cookieStoragePath = "/";
-var encryptionStorageKey = "firebaseSessionKey";
-var sessionPersistentStorageKey = "firebaseSession";
-var hasLocalStorage = fb.simplelogin.util.env.hasLocalStorage();
-fb.simplelogin.SessionStore_ = function() {
-};
-fb.simplelogin.SessionStore_.prototype.set = function(session, opt_sessionLengthDays) {
-  if (!hasLocalStorage) {
-    return;
-  }
-  try {
-    var sessionEncryptionKey = session["sessionKey"];
-    var payload = sjcl.encrypt(sessionEncryptionKey, fb.simplelogin.util.json.stringify(session));
-    localStorage.setItem(sessionPersistentStorageKey, fb.simplelogin.util.json.stringify(payload));
-    var maxAgeSeconds = opt_sessionLengthDays ? opt_sessionLengthDays * 86400 : -1;
-    goog.net.cookies.set(encryptionStorageKey, sessionEncryptionKey, maxAgeSeconds, cookieStoragePath, null, false);
-  } catch (e) {
-  }
-};
-fb.simplelogin.SessionStore_.prototype.get = function() {
-  if (!hasLocalStorage) {
-    return;
-  }
-  try {
-    var sessionEncryptionKey = goog.net.cookies.get(encryptionStorageKey);
-    var payload = localStorage.getItem(sessionPersistentStorageKey);
-    if (sessionEncryptionKey && payload) {
-      var session = fb.simplelogin.util.json.parse(sjcl.decrypt(sessionEncryptionKey, fb.simplelogin.util.json.parse(payload)));
-      return session;
-    }
-  } catch (e) {
-  }
-  return null;
-};
-fb.simplelogin.SessionStore_.prototype.clear = function() {
-  if (!hasLocalStorage) {
-    return;
-  }
-  localStorage.removeItem(sessionPersistentStorageKey);
-  goog.net.cookies.remove(encryptionStorageKey, cookieStoragePath, null);
-};
-fb.simplelogin.SessionStore = new fb.simplelogin.SessionStore_;
 goog.provide("fb.simplelogin.transports.XHR");
 goog.provide("fb.simplelogin.transports.XHR_");
 goog.require("fb.simplelogin.transports.Transport");
@@ -2166,19 +1756,20 @@ fb.simplelogin.transports.XHR_.prototype.open = function(url, data, onComplete) 
   var xhr = new XMLHttpRequest, method = (options.method || "GET").toUpperCase(), contentType = options.contentType || "application/x-www-form-urlencoded", callbackInvoked = false, key;
   var callbackHandler = function() {
     if (!callbackInvoked && xhr.readyState === 4) {
-      callbackInvoked = true;
       var data, error;
-      try {
-        data = fb.simplelogin.util.json.parse(xhr.responseText);
-        error = data["error"] || null;
-        delete data["error"];
-      } catch (e) {
-      }
-      if (!data || error) {
-        return onComplete && onComplete(self.formatError_(error));
+      callbackInvoked = true;
+      if (xhr.status >= 200 && xhr.status < 300 || (xhr.status == 304 || xhr.status == 1223)) {
+        try {
+          data = fb.simplelogin.util.json.parse(xhr.responseText);
+          error = data["error"] || null;
+          delete data["error"];
+        } catch (e) {
+          error = "UNKNOWN_ERROR";
+        }
       } else {
-        return onComplete && onComplete(error, data);
+        error = "RESPONSE_PAYLOAD_ERROR";
       }
+      return onComplete && onComplete(error, data);
     }
   };
   xhr.onreadystatechange = callbackHandler;
@@ -2210,7 +1801,7 @@ fb.simplelogin.transports.XHR_.prototype.open = function(url, data, onComplete) 
   xhr.send(data);
 };
 fb.simplelogin.transports.XHR_.prototype.isAvailable = function() {
-  return window["XMLHttpRequest"] && typeof window["XMLHttpRequest"] === "function";
+  return window["XMLHttpRequest"] && (typeof window["XMLHttpRequest"] === "function" && !fb.simplelogin.util.env.isIeLT10());
 };
 fb.simplelogin.transports.XHR_.prototype.formatQueryString = function(data) {
   if (!data) {
@@ -2221,13 +1812,6 @@ fb.simplelogin.transports.XHR_.prototype.formatQueryString = function(data) {
     tokens.push(encodeURIComponent(key) + "=" + encodeURIComponent(data[key]));
   }
   return tokens.join("&");
-};
-fb.simplelogin.transports.XHR_.prototype.formatError_ = function(error) {
-  if (error) {
-    return fb.simplelogin.Errors.format(error);
-  } else {
-    return fb.simplelogin.Errors.get("UNKNOWN_ERROR");
-  }
 };
 fb.simplelogin.transports.XHR = new fb.simplelogin.transports.XHR_;
 goog.provide("fb.simplelogin.util.validation");
@@ -2366,8 +1950,7 @@ fb.simplelogin.transports.JSONP_.prototype.writeScriptTag_ = function(id, url, c
         }
         cb && cb(self.formatError_({code:"SERVER_ERROR", message:"An unknown server error occurred."}));
       };
-      var ref = document.getElementsByTagName("script")[0];
-      ref.parentNode.insertBefore(js, ref);
+      document.getElementsByTagName("head")[0].appendChild(js);
     } catch (e) {
       cb && cb(self.formatError_({code:"SERVER_ERROR", message:"An unknown server error occurred."}));
     }
@@ -2404,56 +1987,56 @@ fb.simplelogin.providers.Password_.prototype.getTransport_ = function() {
 fb.simplelogin.providers.Password_.prototype.login = function(data, onComplete) {
   var url = fb.simplelogin.Vars.getApiHost() + "/auth/firebase";
   if (!fb.simplelogin.util.validation.isValidNamespace(data["firebase"])) {
-    return onComplete && onComplete(fb.simplelogin.Errors.get("INVALID_FIREBASE"));
+    return onComplete && onComplete("INVALID_FIREBASE");
   }
   this.getTransport_().open(url, data, onComplete);
 };
 fb.simplelogin.providers.Password_.prototype.createUser = function(data, onComplete) {
   var url = fb.simplelogin.Vars.getApiHost() + "/auth/firebase/create";
   if (!fb.simplelogin.util.validation.isValidNamespace(data["firebase"])) {
-    return onComplete && onComplete(fb.simplelogin.Errors.get("INVALID_FIREBASE"));
+    return onComplete && onComplete("INVALID_FIREBASE");
   }
   if (!fb.simplelogin.util.validation.isValidEmail(data["email"])) {
-    return onComplete && onComplete(fb.simplelogin.Errors.get("INVALID_EMAIL"));
+    return onComplete && onComplete("INVALID_EMAIL");
   }
   if (!fb.simplelogin.util.validation.isValidPassword(data["password"])) {
-    return onComplete && onComplete(fb.simplelogin.Errors.get("INVALID_PASSWORD"));
+    return onComplete && onComplete("INVALID_PASSWORD");
   }
   this.getTransport_().open(url, data, onComplete);
 };
 fb.simplelogin.providers.Password_.prototype.changePassword = function(data, onComplete) {
   var url = fb.simplelogin.Vars.getApiHost() + "/auth/firebase/update";
   if (!fb.simplelogin.util.validation.isValidNamespace(data["firebase"])) {
-    return onComplete && onComplete(fb.simplelogin.Errors.get("INVALID_FIREBASE"));
+    return onComplete && onComplete("INVALID_FIREBASE");
   }
   if (!fb.simplelogin.util.validation.isValidEmail(data["email"])) {
-    return onComplete && onComplete(fb.simplelogin.Errors.get("INVALID_EMAIL"));
+    return onComplete && onComplete("INVALID_EMAIL");
   }
   if (!fb.simplelogin.util.validation.isValidPassword(data["newPassword"])) {
-    return onComplete && onComplete(fb.simplelogin.Errors.get("INVALID_PASSWORD"));
+    return onComplete && onComplete("INVALID_PASSWORD");
   }
   this.getTransport_().open(url, data, onComplete);
 };
 fb.simplelogin.providers.Password_.prototype.removeUser = function(data, onComplete) {
   var url = fb.simplelogin.Vars.getApiHost() + "/auth/firebase/remove";
   if (!fb.simplelogin.util.validation.isValidNamespace(data["firebase"])) {
-    return onComplete && onComplete(fb.simplelogin.Errors.get("INVALID_FIREBASE"));
+    return onComplete && onComplete("INVALID_FIREBASE");
   }
   if (!fb.simplelogin.util.validation.isValidEmail(data["email"])) {
-    return onComplete && onComplete(fb.simplelogin.Errors.get("INVALID_EMAIL"));
+    return onComplete && onComplete("INVALID_EMAIL");
   }
   if (!fb.simplelogin.util.validation.isValidPassword(data["password"])) {
-    return onComplete && onComplete(fb.simplelogin.Errors.get("INVALID_PASSWORD"));
+    return onComplete && onComplete("INVALID_PASSWORD");
   }
   this.getTransport_().open(url, data, onComplete);
 };
 fb.simplelogin.providers.Password_.prototype.sendPasswordResetEmail = function(data, onComplete) {
   var url = fb.simplelogin.Vars.getApiHost() + "/auth/firebase/reset_password";
   if (!fb.simplelogin.util.validation.isValidNamespace(data["firebase"])) {
-    return onComplete && onComplete(fb.simplelogin.Errors.get("INVALID_FIREBASE"));
+    return onComplete && onComplete("INVALID_FIREBASE");
   }
   if (!fb.simplelogin.util.validation.isValidEmail(data["email"])) {
-    return onComplete && onComplete(fb.simplelogin.Errors.get("INVALID_EMAIL"));
+    return onComplete && onComplete("INVALID_EMAIL");
   }
   this.getTransport_().open(url, data, onComplete);
 };
@@ -2491,10 +2074,10 @@ fb.simplelogin.transports.WindowsMetroAuthBroker_.prototype.open = function(url,
     if (data && data["responseData"]) {
       try {
         var urlObj = fb.simplelogin.util.misc.parseUrl(data["responseData"]);
-        var urlHashEncoded = fb.simplelogin.util.misc.parseQuerystring(decodeURIComponent(urlObj["hash"]));
+        var urlHashEncoded = fb.simplelogin.util.misc.parseQuerystring(urlObj["hash"]);
         var temporaryResult = {};
         for (var key in urlHashEncoded) {
-          temporaryResult[key] = fb.simplelogin.util.json.parse(urlHashEncoded[key]);
+          temporaryResult[key] = fb.simplelogin.util.json.parse(decodeURIComponent(urlHashEncoded[key]));
         }
         result = temporaryResult;
       } catch (e) {
@@ -2506,11 +2089,11 @@ fb.simplelogin.transports.WindowsMetroAuthBroker_.prototype.open = function(url,
       if (result && result["error"]) {
         callbackHandler(result["error"]);
       } else {
-        callbackHandler({code:"UNKNOWN_ERROR", message:"An unknown error occurred."});
+        callbackHandler({code:"RESPONSE_PAYLOAD_ERROR", message:"Unable to parse response payload for Windows."});
       }
     }
   }, function(err) {
-    callbackHandler({code:"UNKNOWN_ERROR", message:"An unknown error occurred."});
+    callbackHandler({code:"UNKNOWN_ERROR", message:"An unknown error occurred for Windows."});
   });
 };
 fb.simplelogin.transports.WindowsMetroAuthBroker = new fb.simplelogin.transports.WindowsMetroAuthBroker_;
@@ -2992,31 +2575,51 @@ goog.string.splitLimit = function(str, separator, limit) {
   }
   return returnVal;
 };
-goog.provide("fb.simplelogin.providers.Persona");
-goog.provide("fb.simplelogin.providers.Persona_");
-goog.require("fb.simplelogin.util.validation");
-fb.simplelogin.providers.Persona_ = function() {
+goog.provide("fb.simplelogin.SessionStore");
+goog.provide("fb.simplelogin.SessionStore_");
+goog.require("fb.simplelogin.util.env");
+var sessionPersistentStorageKey = "firebaseSession";
+var hasLocalStorage = fb.simplelogin.util.env.hasLocalStorage();
+fb.simplelogin.SessionStore_ = function() {
 };
-fb.simplelogin.providers.Persona_.prototype.login = function(options, onComplete) {
-  navigator["id"]["watch"]({"onlogin":function(assertion) {
-    onComplete(assertion);
-  }, "onlogout":function() {
-  }});
-  options = options || {};
-  options["oncancel"] = function() {
-    onComplete(null);
-  };
-  navigator["id"]["request"](options);
+fb.simplelogin.SessionStore_.prototype.set = function(session, opt_sessionLengthDays) {
+  if (!hasLocalStorage) {
+    return;
+  }
+  try {
+    localStorage.setItem(sessionPersistentStorageKey, fb.simplelogin.util.json.stringify(session));
+  } catch (e) {
+  }
 };
-fb.simplelogin.providers.Persona = new fb.simplelogin.providers.Persona_;
+fb.simplelogin.SessionStore_.prototype.get = function() {
+  if (!hasLocalStorage) {
+    return;
+  }
+  try {
+    var payload = localStorage.getItem(sessionPersistentStorageKey);
+    if (payload) {
+      var session = fb.simplelogin.util.json.parse(payload);
+      return session;
+    }
+  } catch (e) {
+  }
+  return null;
+};
+fb.simplelogin.SessionStore_.prototype.clear = function() {
+  if (!hasLocalStorage) {
+    return;
+  }
+  localStorage.removeItem(sessionPersistentStorageKey);
+};
+fb.simplelogin.SessionStore = new fb.simplelogin.SessionStore_;
 goog.provide("fb.simplelogin.client");
 goog.require("fb.simplelogin.util.env");
 goog.require("fb.simplelogin.util.json");
+goog.require("fb.simplelogin.util.RSVP");
 goog.require("fb.simplelogin.util.validation");
 goog.require("fb.simplelogin.Vars");
 goog.require("fb.simplelogin.Errors");
 goog.require("fb.simplelogin.SessionStore");
-goog.require("fb.simplelogin.providers.Persona");
 goog.require("fb.simplelogin.providers.Password");
 goog.require("fb.simplelogin.transports.JSONP");
 goog.require("fb.simplelogin.transports.CordovaInAppBrowser");
@@ -3024,7 +2627,7 @@ goog.require("fb.simplelogin.transports.TriggerIoTab");
 goog.require("fb.simplelogin.transports.WinChan");
 goog.require("fb.simplelogin.transports.WindowsMetroAuthBroker");
 goog.require("goog.string");
-var CLIENT_VERSION = "1.3.1";
+var CLIENT_VERSION = "1.6.4";
 fb.simplelogin.client = function(ref, callback, context, apiHost) {
   var self = this;
   this.mRef = ref;
@@ -3034,11 +2637,11 @@ fb.simplelogin.client = function(ref, callback, context, apiHost) {
   window[globalNamespace] = window[globalNamespace] || {};
   window[globalNamespace]["callbacks"] = window[globalNamespace]["callbacks"] || [];
   window[globalNamespace]["callbacks"].push({"cb":callback, "ctx":context});
-  var warnTestingLocally = window.location.protocol === "file:" && (!fb.simplelogin.util.env.isPhantomJS() && (!fb.simplelogin.util.env.isMobileCordovaInAppBrowser() && (console && console.log)));
+  var warnTestingLocally = window.location.protocol === "file:" && (!fb.simplelogin.util.env.isPhantomJS() && !fb.simplelogin.util.env.isMobileCordovaInAppBrowser());
   if (warnTestingLocally) {
     var message = "FirebaseSimpleLogin(): Due to browser security restrictions, " + "loading applications via `file://*` URLs will prevent popup-based authentication " + "providers from working properly. When testing locally, you'll need to run a " + "barebones webserver on your machine rather than loading your test files via " + "`file://*`. The easiest way to run a barebones server on your local machine is to " + "`cd` to the root directory of your code and run `python -m SimpleHTTPServer`, " + 
     "which will allow you to access your content via `http://127.0.0.1:8000/*`.";
-    console.log(message);
+    fb.simplelogin.util.misc.warn(message);
   }
   if (apiHost) {
     fb.simplelogin.Vars.setApiHost(apiHost);
@@ -3110,7 +2713,7 @@ fb.simplelogin.client.prototype.resumeSession = function() {
     }
   }
 };
-fb.simplelogin.client.prototype.attemptAuth = function(token, user, saveSession) {
+fb.simplelogin.client.prototype.attemptAuth = function(token, user, saveSession, resolveCb, rejectCb) {
   var self = this;
   this.mRef["auth"](token, function(error, dummy) {
     if (!error) {
@@ -3123,13 +2726,22 @@ fb.simplelogin.client.prototype.attemptAuth = function(token, user, saveSession)
       delete user["sessionKey"];
       user["firebaseAuthToken"] = token;
       self.mLoginStateChange(null, user);
+      if (resolveCb) {
+        resolveCb(user);
+      }
     } else {
       fb.simplelogin.SessionStore.clear();
       self.mLoginStateChange(null, null);
+      if (rejectCb) {
+        rejectCb();
+      }
     }
   }, function(error) {
     fb.simplelogin.SessionStore.clear();
     self.mLoginStateChange(null, null);
+    if (rejectCb) {
+      rejectCb();
+    }
   });
 };
 fb.simplelogin.client.prototype.login = function() {
@@ -3149,8 +2761,6 @@ fb.simplelogin.client.prototype.login = function() {
       return this.loginWithGoogleToken(options);
     case "password":
       return this.loginWithPassword(options);
-    case "persona":
-      return this.loginWithPersona(options);
     case "twitter-token":
       return this.loginWithTwitterToken(options);
     case "facebook":
@@ -3173,81 +2783,69 @@ fb.simplelogin.client.prototype.login = function() {
   }
 };
 fb.simplelogin.client.prototype.loginAnonymously = function(options) {
-  var self = this;
-  var provider = "anonymous";
-  options.firebase = this.mNamespace;
-  options.v = CLIENT_VERSION;
-  fb.simplelogin.transports.JSONP.open(fb.simplelogin.Vars.getApiHost() + "/auth/anonymous", options, function(error, response) {
-    if (error || !response["token"]) {
-      self.mLoginStateChange(fb.simplelogin.Errors.format(error), null);
-    } else {
-      var token = response["token"];
-      var user = response["user"];
-      self.attemptAuth(token, user, true);
-    }
+  var self = this, provider = "anonymous";
+  var promise = new fb.simplelogin.util.RSVP.Promise(function(resolve, reject) {
+    options.firebase = self.mNamespace;
+    options.v = CLIENT_VERSION;
+    fb.simplelogin.transports.JSONP.open(fb.simplelogin.Vars.getApiHost() + "/auth/anonymous", options, function(error, response) {
+      if (error || !response["token"]) {
+        var errorObj = fb.simplelogin.Errors.format(error);
+        self.mLoginStateChange(errorObj, null);
+        reject(errorObj);
+      } else {
+        var token = response["token"];
+        var user = response["user"];
+        self.attemptAuth(token, user, true, resolve, reject);
+      }
+    });
   });
+  return promise;
 };
 fb.simplelogin.client.prototype.loginWithPassword = function(options) {
   var self = this;
-  options.firebase = this.mNamespace;
-  options.v = CLIENT_VERSION;
-  fb.simplelogin.providers.Password.login(options, function(error, response) {
-    if (error || !response["token"]) {
-      self.mLoginStateChange(fb.simplelogin.Errors.format(error));
-    } else {
-      var token = response["token"];
-      var user = response["user"];
-      self.attemptAuth(token, user, true);
-    }
+  var promise = new fb.simplelogin.util.RSVP.Promise(function(resolve, reject) {
+    options.firebase = self.mNamespace;
+    options.v = CLIENT_VERSION;
+    fb.simplelogin.providers.Password.login(options, function(error, response) {
+      if (error || !response["token"]) {
+        var errorObj = fb.simplelogin.Errors.format(error);
+        self.mLoginStateChange(errorObj, null);
+        reject(errorObj);
+      } else {
+        var token = response["token"];
+        var user = response["user"];
+        self.attemptAuth(token, user, true, resolve, reject);
+      }
+    });
   });
+  return promise;
 };
 fb.simplelogin.client.prototype.loginWithGithub = function(options) {
   options["height"] = 850;
   options["width"] = 950;
-  this.loginViaOAuth("github", options);
+  return this.loginViaOAuth("github", options);
 };
 fb.simplelogin.client.prototype.loginWithGoogle = function(options) {
   options["height"] = 650;
   options["width"] = 575;
-  this.loginViaOAuth("google", options);
+  return this.loginViaOAuth("google", options);
 };
 fb.simplelogin.client.prototype.loginWithFacebook = function(options) {
   options["height"] = 400;
   options["width"] = 535;
-  this.loginViaOAuth("facebook", options);
+  return this.loginViaOAuth("facebook", options);
 };
 fb.simplelogin.client.prototype.loginWithTwitter = function(options) {
-  this.loginViaOAuth("twitter", options);
+  return this.loginViaOAuth("twitter", options);
 };
 fb.simplelogin.client.prototype.loginWithFacebookToken = function(options) {
-  this.loginViaToken("facebook", options);
+  return this.loginViaToken("facebook", options);
 };
 fb.simplelogin.client.prototype.loginWithGoogleToken = function(options) {
-  this.loginViaToken("google", options);
+  return this.loginViaToken("google", options);
 };
 fb.simplelogin.client.prototype.loginWithTwitterToken = function(options) {
-  this.loginViaToken("twitter", options);
-};
-fb.simplelogin.client.prototype.loginWithPersona = function(options) {
-  var self = this;
-  if (!navigator["id"]) {
-    throw new Error("FirebaseSimpleLogin.login(persona): Unable to find Persona include.js");
-  }
-  fb.simplelogin.providers.Persona.login(options, function(assertion) {
-    if (assertion === null) {
-      callback(fb.simplelogin.Errors.get("UNKNOWN_ERROR"));
-    } else {
-      fb.simplelogin.transports.JSONP.open(fb.simplelogin.Vars.getApiHost() + "/auth/persona/token", {"firebase":self.mNamespace, "assertion":assertion, "v":CLIENT_VERSION}, function(err, res) {
-        if (err || (!res["token"] || !res["user"])) {
-          self.mLoginStateChange(fb.simplelogin.Errors.format(err), null);
-        } else {
-          var token = res["token"];
-          var user = res["user"];
-          self.attemptAuth(token, user, true);
-        }
-      });
-    }
-  });
+  return this.loginViaToken("twitter", options);
 };
 fb.simplelogin.client.prototype.logout = function() {
   fb.simplelogin.SessionStore.clear();
@@ -3258,25 +2856,27 @@ fb.simplelogin.client.prototype.loginViaToken = function(provider, options, cb) 
   options = options || {};
   options.v = CLIENT_VERSION;
   var self = this, url = fb.simplelogin.Vars.getApiHost() + "/auth/" + provider + "/token?firebase=" + self.mNamespace;
-  fb.simplelogin.transports.JSONP.open(url, options, function(err, res) {
-    if (err || (!res["token"] || !res["user"])) {
-      self.mLoginStateChange(fb.simplelogin.Errors.format(err), null);
-    } else {
-      var token = res["token"];
-      var user = res["user"];
-      self.attemptAuth(token, user, true);
-    }
+  var promise = new fb.simplelogin.util.RSVP.Promise(function(resolve, reject) {
+    fb.simplelogin.transports.JSONP.open(url, options, function(error, res) {
+      if (error || (!res["token"] || !res["user"])) {
+        var errorObj = fb.simplelogin.Errors.format(error);
+        self.mLoginStateChange(errorObj);
+        reject(errorObj);
+      } else {
+        var token = res["token"];
+        var user = res["user"];
+        self.attemptAuth(token, user, true, resolve, reject);
+      }
+    });
   });
+  return promise;
 };
 fb.simplelogin.client.prototype.loginViaOAuth = function(provider, options, cb) {
   options = options || {};
   var self = this;
-  var url = fb.simplelogin.Vars.getApiHost() + "/auth/" + provider + "?firebase=" + this.mNamespace;
+  var url = fb.simplelogin.Vars.getApiHost() + "/auth/" + provider + "?firebase=" + self.mNamespace;
   if (options["scope"]) {
     url += "&scope=" + options["scope"];
-  }
-  if (options["debug"]) {
-    url += "&debug=" + options["debug"];
   }
   url += "&v=" + encodeURIComponent(CLIENT_VERSION);
   var window_features = {"menubar":0, "location":0, "resizable":0, "scrollbars":1, "status":0, "dialog":1, "width":700, "height":375};
@@ -3336,52 +2936,66 @@ fb.simplelogin.client.prototype.loginViaOAuth = function(provider, options, cb) 
     window.location = url;
     return;
   }
-  transport.open(url, options, function(error, res) {
-    if (res && (res.token && res.user)) {
-      self.attemptAuth(res.token, res.user, true);
-    } else {
-      var errObj = error || {code:"UNKNOWN_ERROR", message:"An unknown error occurred."};
-      if (error === "unknown closed window") {
-        errObj = {code:"USER_DENIED", message:"User cancelled the authentication request."};
+  var promise = new fb.simplelogin.util.RSVP.Promise(function(resolve, reject) {
+    transport.open(url, options, function(error, res) {
+      if (res && (res.token && res.user)) {
+        self.attemptAuth(res.token, res.user, true, resolve, reject);
       } else {
-        if (res && res.error) {
-          errObj = res.error;
+        var errorObj = error || {code:"UNKNOWN_ERROR", message:"An unknown error occurred."};
+        if (error === "unknown closed window") {
+          errorObj = {code:"USER_DENIED", message:"User cancelled the authentication request."};
+        } else {
+          if (res && res.error) {
+            errorObj = res.error;
+          }
         }
+        errorObj = fb.simplelogin.Errors.format(errorObj);
+        self.mLoginStateChange(errorObj);
+        reject(errorObj);
       }
-      self.mLoginStateChange(fb.simplelogin.Errors.format(errObj), null);
-    }
+    });
   });
+  return promise;
 };
 fb.simplelogin.client.prototype.manageFirebaseUsers = function(method, data, cb) {
   data["firebase"] = this.mNamespace;
-  fb.simplelogin.providers.Password[method](data, function(error, result) {
-    if (error) {
-      return cb && cb(fb.simplelogin.Errors.format(error), null);
-    } else {
-      return cb && cb(null, result);
-    }
+  var promise = new fb.simplelogin.util.RSVP.Promise(function(resolve, reject) {
+    fb.simplelogin.providers.Password[method](data, function(error, result) {
+      if (error) {
+        var errorObj = fb.simplelogin.Errors.format(error);
+        reject(errorObj);
+        return cb && cb(errorObj, null);
+      } else {
+        resolve(result);
+        return cb && cb(null, result);
+      }
+    });
   });
+  return promise;
 };
 fb.simplelogin.client.prototype.createUser = function(email, password, cb) {
-  this.manageFirebaseUsers("createUser", {"email":email, "password":password}, cb);
+  return this.manageFirebaseUsers("createUser", {"email":email, "password":password}, cb);
 };
 fb.simplelogin.client.prototype.changePassword = function(email, oldPassword, newPassword, cb) {
-  this.manageFirebaseUsers("changePassword", {"email":email, "oldPassword":oldPassword, "newPassword":newPassword}, function(error) {
+  return this.manageFirebaseUsers("changePassword", {"email":email, "oldPassword":oldPassword, "newPassword":newPassword}, function(error) {
     return cb && cb(error);
   });
 };
 fb.simplelogin.client.prototype.removeUser = function(email, password, cb) {
-  this.manageFirebaseUsers("removeUser", {"email":email, "password":password}, function(error) {
+  return this.manageFirebaseUsers("removeUser", {"email":email, "password":password}, function(error) {
     return cb && cb(error);
   });
 };
 fb.simplelogin.client.prototype.sendPasswordResetEmail = function(email, cb) {
-  this.manageFirebaseUsers("sendPasswordResetEmail", {"email":email}, function(error) {
+  return this.manageFirebaseUsers("sendPasswordResetEmail", {"email":email}, function(error) {
     return cb && cb(error);
   });
 };
 fb.simplelogin.client.onOpen = function(cb) {
   fb.simplelogin.transports.WinChan.onOpen(cb);
+};
+fb.simplelogin.client.VERSION = function() {
+  return CLIENT_VERSION;
 };
 goog.provide("FirebaseSimpleLogin");
 goog.require("fb.simplelogin.client");
@@ -3401,36 +3015,37 @@ FirebaseSimpleLogin = function(ref, cb, context, apiHost) {
   return{"setApiHost":function(apiHost) {
     var method = "FirebaseSimpleLogin.setApiHost";
     fb.simplelogin.util.validation.validateArgCount(method, 1, 1, arguments.length);
-    client_.setApiHost(apiHost);
+    return client_.setApiHost(apiHost);
   }, "login":function() {
-    client_.login.apply(client_, arguments);
+    return client_.login.apply(client_, arguments);
   }, "logout":function() {
     var methodId = "FirebaseSimpleLogin.logout";
     fb.simplelogin.util.validation.validateArgCount(methodId, 0, 0, arguments.length);
-    client_.logout();
+    return client_.logout();
   }, "createUser":function(email, password, cb) {
     var method = "FirebaseSimpleLogin.createUser";
-    fb.simplelogin.util.validation.validateArgCount(method, 3, 3, arguments.length);
-    fb.simplelogin.util.validation.validateCallback(method, 3, cb, false);
-    client_.createUser(email, password, cb);
+    fb.simplelogin.util.validation.validateArgCount(method, 2, 3, arguments.length);
+    fb.simplelogin.util.validation.validateCallback(method, 3, cb, true);
+    return client_.createUser(email, password, cb);
   }, "changePassword":function(email, oldPassword, newPassword, cb) {
     var method = "FirebaseSimpleLogin.changePassword";
-    fb.simplelogin.util.validation.validateArgCount(method, 4, 4, arguments.length);
-    fb.simplelogin.util.validation.validateCallback(method, 4, cb, false);
-    client_.changePassword(email, oldPassword, newPassword, cb);
+    fb.simplelogin.util.validation.validateArgCount(method, 3, 4, arguments.length);
+    fb.simplelogin.util.validation.validateCallback(method, 4, cb, true);
+    return client_.changePassword(email, oldPassword, newPassword, cb);
   }, "removeUser":function(email, password, cb) {
     var method = "FirebaseSimpleLogin.removeUser";
-    fb.simplelogin.util.validation.validateArgCount(method, 3, 3, arguments.length);
-    fb.simplelogin.util.validation.validateCallback(method, 3, cb, false);
-    client_.removeUser(email, password, cb);
+    fb.simplelogin.util.validation.validateArgCount(method, 2, 3, arguments.length);
+    fb.simplelogin.util.validation.validateCallback(method, 3, cb, true);
+    return client_.removeUser(email, password, cb);
   }, "sendPasswordResetEmail":function(email, cb) {
     var method = "FirebaseSimpleLogin.sendPasswordResetEmail";
-    fb.simplelogin.util.validation.validateArgCount(method, 2, 2, arguments.length);
-    fb.simplelogin.util.validation.validateCallback(method, 2, cb, false);
-    client_.sendPasswordResetEmail(email, cb);
+    fb.simplelogin.util.validation.validateArgCount(method, 1, 2, arguments.length);
+    fb.simplelogin.util.validation.validateCallback(method, 2, cb, true);
+    return client_.sendPasswordResetEmail(email, cb);
   }};
 };
 FirebaseSimpleLogin.onOpen = function(cb) {
   fb.simplelogin.client.onOpen(cb);
 };
+FirebaseSimpleLogin.VERSION = fb.simplelogin.client.VERSION();
 
