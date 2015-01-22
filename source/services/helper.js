@@ -12,8 +12,8 @@
     * @description
     * angular-ui-tree.
     */
-    .factory('$uiTreeHelper', ['$document', '$window',
-      function ($document, $window) {
+    .factory('$uiTreeHelper', ['$document', '$window', 'treeConfig',
+      function ($document, $window, treeConfig) {
         return {
 
           /**
@@ -249,8 +249,11 @@
             pos.nowY  = e.pageY;
 
             // distance mouse moved between events
-            pos.distX = pos.nowX - pos.lastX;
-            pos.distY = pos.nowY - pos.lastY;
+            if (treeConfig.rtl) {
+              pos.distX = pos.nowX - pos.lastX;
+            } else {
+              pos.distY = pos.nowY - pos.lastY;
+            }
 
             // direction mouse was moving
             pos.lastDirX = pos.dirX;

@@ -19,6 +19,7 @@
       dragClass: 'angular-ui-tree-drag',
       dragWrapperClass: 'angular-ui-tree-drag-wrapper',
       dragUpThreshold: 10,
+      rtl: false,
       levelThreshold: 30
     })
     .constant('keys', {
