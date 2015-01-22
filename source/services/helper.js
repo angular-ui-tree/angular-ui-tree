@@ -249,7 +249,7 @@
             pos.nowY  = e.pageY;
 
             // distance mouse moved between events
-            if (treeConfig.rtl) {
+            if (treeConfig.dir == 'rtl') {
               pos.distX = pos.nowX - pos.lastX;
             } else {
               pos.distY = pos.nowY - pos.lastY;
