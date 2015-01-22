@@ -48,8 +48,8 @@
           });
         }, true);
 
-        $scope.$watch('$nodesScope.$modelValue.length', function() {
-          if ($scope.$nodesScope.$modelValue) {
+        $scope.$watch('$nodesScope.$modelValue.length', function(val) {
+          if ((typeof val) != 'undefined' && $scope.$nodesScope.$modelValue) {
             $scope.resetEmptyElement();
           }
         }, true);
