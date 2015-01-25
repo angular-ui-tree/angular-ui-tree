@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "angular-mocks": ">= 1.2.0",
-    "jasmine-jquery": "~2.0.5",
+    "jasmine-jquery": "~1.7.0",
     "jquery": "~2.1.1"
   },
   "ignore": [
