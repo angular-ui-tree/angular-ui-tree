@@ -21,10 +21,7 @@ module.exports = function(config) {
 
       // source files
       'source/main.js',
-      'source/**/*.js',
-
-      // tests
-      'tests/**/*.spec.js'
+      'source/**/*.js'
     ],
 
     plugins: [
