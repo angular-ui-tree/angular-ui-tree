@@ -2,12 +2,14 @@ module.exports = function(config) {
   'use strict';
 
   var cfg = {
-    bowerComponents: 'demo/bower_components'
+    bowerComponents: 'bower_components'
   };
 
   config.set({
     basePath: '',
     frameworks: ['jasmine'],
+    autoWatch: false,
+    browsers: ['PhantomJS'],
 
     // files to load in the browser
     files: [
@@ -23,6 +25,11 @@ module.exports = function(config) {
 
       // tests
       'tests/**/*.spec.js'
+    ],
+
+    plugins: [
+      'karma-phantomjs-launcher',
+      'karma-jasmine'
     ],
 
     // generate js files from html templates to expose them during testing
@@ -44,6 +51,7 @@ module.exports = function(config) {
     logLevel: config.LOG_INFO,
 
     port: 9876,
-    reporters: 'dots'
+    reporters: 'dots',
+    singleRun: true
   });
 };

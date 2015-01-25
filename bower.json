@@ -15,7 +15,6 @@
   },
   "main": [
     "dist/angular-ui-tree.js",
-    "dist/angular-ui-tree.min.js",
     "dist/angular-ui-tree.min.css"
   ],
   "keywords": [
@@ -29,22 +28,24 @@
     "node"
   ],
   "dependencies": {
-    "angular": ">= 1.2.0",
-    "es5-shim": "2.3.0"
+    "angular": "~1.2.0"
   },
   "devDependencies": {
-    "angular": ">= 1.2.0",
-    "bootstrap": "~3.1.0",
-    "jquery": ">=1.10.x",
-    "jasmine-jquery": "~1.0.0",
-    "angular-mocks": "~1.2.11",
-    "firebase": "~1.0.11",
-    "angularfire": "~0.7.1"
+    "angular-mocks": ">= 1.2.0",
+    "jasmine-jquery": "~2.0.5",
+    "jquery": "~2.1.1"
   },
   "ignore": [
     "node_modules",
     "bower_components",
-    "test",
-    "tests"
+    "tests",
+    "build",
+    "demo",
+    "guide",
+    "source",
+    "**/.*",
+    "Gruntfile.js",
+    "karma.conf.js",
+    "package.json"
   ]
 }
