@@ -20,10 +20,10 @@
     "devel": true,
     "jquery": true,
     "globals": {
-        "_": true,
-        "angular": true,
-        "module": true,
-        "require": true,
-        "IE": true
+      "_": true,
+      "angular": true,
+      "module": true,
+      "require": true,
+      "IE": true
     }
 }
