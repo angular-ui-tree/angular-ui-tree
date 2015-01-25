@@ -32,15 +32,13 @@
     "jquery": "~2.1.1"
   },
   "ignore": [
-    "node_modules",
-    "bower_components",
-    "tests",
-    "build",
-    "demo",
+    "examples",
     "guide",
+    "node_modules",
     "source",
-    "**/.*",
-    "Gruntfile.js",
+    "tasks",
+    "tests",
+    "gulpfile.js",
     "karma.conf.js",
     "package.json"
   ]
