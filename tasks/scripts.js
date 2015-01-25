@@ -30,7 +30,7 @@ module.exports = function (gulp, $) {
       .pipe(gulp.dest('dist'));
   });
 
-  gulp.task('uglify', function () {
+  gulp.task('uglify', ['concat'], function () {
     return gulp.src('dist/angular-ui-tree.js')
       .pipe($.uglify({
         preserveComments: 'some'
