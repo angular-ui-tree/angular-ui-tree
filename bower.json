@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "angular-mocks": ">= 1.2.0",
+    "angular-route": ">= 1.2.0",
     "angularfire": "~0.8.2",
     "bootstrap-css": "~3.2.0",
     "jasmine-jquery": "~1.7.0",
