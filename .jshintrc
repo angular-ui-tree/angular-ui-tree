@@ -10,7 +10,6 @@
     "boss": true,
     "eqnull": true,
     "expr": true,
-    "globalstrict": true,
     "laxbreak": true,
     "loopfunc": true,
     "sub": false,
@@ -18,14 +17,13 @@
     "curly": true,
     "browser": true,
     "indent": 2,
+    "devel": true,
+    "jquery": true,
     "globals": {
-        "jQuery": true,
-        "$": true,
-        "_": true,
-        "angular": true,
-        "module": true,
-        "require": true,
-        "IE": true,
-        "console": true
+      "_": true,
+      "angular": true,
+      "module": true,
+      "require": true,
+      "IE": true
     }
 }

@@ -2,7 +2,11 @@
 
 module.exports = function (gulp, $) {
 
-  gulp.task('connect', function () {
+  gulp.task('connect', [
+    'clean:examples',
+    'scripts:setup',
+    'styles'
+  ], function () {
     var livereloadPort = 35729;
 
     $.connect.server({
@@ -10,6 +14,7 @@ module.exports = function (gulp, $) {
       livereload: {
         port: livereloadPort
       },
+      root: 'examples',
       middleware: function (connect) {
         function mountFolder(connect, dir) {
           return connect.static(require('path').resolve(dir));
@@ -17,7 +22,9 @@ module.exports = function (gulp, $) {
 
         return [
           require('connect-livereload')({ port: livereloadPort }),
+          mountFolder(connect, 'source'),
           mountFolder(connect, 'dist'),
+          mountFolder(connect, 'bower_components'),
           mountFolder(connect, 'examples')
         ];
       }
@@ -26,6 +33,7 @@ module.exports = function (gulp, $) {
 
   gulp.task('watch', ['connect'], function () {
     gulp.watch([
+      '.jshintrc',
       'source/**/*.js',
       'examples/**/*.html'
     ], function (event) {
@@ -34,12 +42,17 @@ module.exports = function (gulp, $) {
     });
 
     gulp.watch([
+      '.jshintrc',
       'source/**/*.js'
     ], ['jshint', 'jscs']);
 
     gulp.watch([
       'source/**/*.scss'
     ], ['styles']);
+
+    gulp.watch([
+      'examples/**/*.scss'
+    ], ['styles:examples']);
   });
 
   gulp.task('open', ['connect'], function () {

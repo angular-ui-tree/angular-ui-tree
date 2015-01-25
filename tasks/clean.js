@@ -5,4 +5,9 @@ module.exports = function (gulp, $) {
     return gulp.src('dist', { read: false })
       .pipe($.clean());
   });
+
+  gulp.task('clean:examples', function () {
+    return gulp.src('examples/source', { read: false })
+      .pipe($.clean());
+  });
 };
