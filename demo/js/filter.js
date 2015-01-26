@@ -18,11 +18,24 @@
     };
 
     $scope.visible = function(item) {
-      if ($scope.query && $scope.query.length > 0
-        && item.title.indexOf($scope.query) == -1) {
-        return false;
-      }
-      return true;
+        if ($scope.query && $scope.query.length > 0){
+            return getSubMenuItem(item, $scope.query);
+        }
+        return true;
+    };
+    
+    //http://stackoverflow.com/questions/14559286/find-an-element-in-an-array-recursively
+    //http://jsfiddle.net/dystroy/MDsyr/
+    var getSubMenuItem = function (node, title) {
+        if (node) {
+            if (node.title.indexOf(title) > -1) {
+                return true;
+            };
+            for (var i = 0; i < node.nodes.length; i++) {
+                var found = getSubMenuItem(node.nodes[i], title);
+                if (found) return found;
+            }
+        }
     };
 
     $scope.findNodes = function(){
