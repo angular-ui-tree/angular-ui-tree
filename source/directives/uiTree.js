@@ -33,7 +33,7 @@
           var config = {};
 
           if (attrs.uiTreeDir) {
-            treeConfig.dir = attrs.uiTreeDir
+            treeConfig.dir = attrs.uiTreeDir;
           }
 
           angular.extend(config, treeConfig);
