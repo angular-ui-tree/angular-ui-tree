@@ -250,10 +250,11 @@
 
             // distance mouse moved between events
             if (treeConfig.dir == 'rtl') {
-              pos.distX = pos.nowX - pos.lastX;
+              pos.distX = pos.lastX - pos.nowX;
             } else {
-              pos.distY = pos.nowY - pos.lastY;
+              pos.distX = pos.nowX - pos.lastX;
             }
+            pos.distY = pos.nowY - pos.lastY;
 
             // direction mouse was moving
             pos.lastDirX = pos.dirX;
