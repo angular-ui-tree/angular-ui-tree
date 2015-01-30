@@ -17,4 +17,5 @@ node_modules
 .idea
 *.iml
 
-bower_components
+examples/bower_components
+examples/source

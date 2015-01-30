@@ -595,7 +595,7 @@
                   }
 
                   // check it's new position
-                  isEmpty = false,
+                  isEmpty = false;
                   isTree = false;
 
                   if (targetNode.$type == 'uiTree' && targetNode.dragEnabled) {

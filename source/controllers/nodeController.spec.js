@@ -1,4 +1,4 @@
-describe('treeCtrl', function () {
+describe('TreeNodesController', function () {
   'use strict';
 
   var scope, $compile, $controller;

@@ -429,15 +429,15 @@ Use the `ui-tree-handle` to specify an element used to drag the object. If you d
 
 #### Dependencies
 
-* [Grunt](http://gruntjs.com/) (task automation)
+* [Gulp](http://gulpjs.com/) (task automation)
 * [Bower](http://bower.io/) (package management)
 
 #### Installation
 Run the commands below in the project root directory.
 
-#####1. Install Grunt and Bower
+#####1. Install Gulp and Bower
 
-    $ sudo npm install -g grunt-cli bower
+    $ sudo npm install -g gulp bower
 
 #####2. Install project dependencies
 
@@ -451,24 +451,23 @@ To debug code and run end-to-end tests, it is often useful to have a local HTTP 
 
 To start the web server, run:
 
-    $ grunt webserver
+    $ gulp serve
 
 To access the local server, enter the following URL into your web browser:
 
-    http://localhost:8080/demo/
+    http://localhost:9000
 
-By default, it serves the contents of the demo project.
+By default, it serves the contents of the `examples` directory.
 
 
 ####Building angular-ui-tree
 To build angular-ui-tree, you use the following command.
 
-    $ grunt build
+    $ gulp build
 
 This will generate non-minified and minified JavaScript files in the `dist` directory.
 
 ####Run tests
-You can run the tests once or continuous.
+You can run the unit test using a separate task.
 
-    $ grunt test
-    $ grunt test:continuous
+    $ gulp test
