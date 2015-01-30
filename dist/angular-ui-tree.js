@@ -19,6 +19,7 @@
       dragClass: 'angular-ui-tree-drag',
       dragWrapperClass: 'angular-ui-tree-drag-wrapper',
       dragUpThreshold: 10,
+      dir: 'ltr',
       levelThreshold: 30
     })
     .constant('keys', {
@@ -72,651 +73,14 @@
 
   angular.module('ui.tree')
 
-   /**
-    * @ngdoc service
-    * @name ui.tree.service:$helper
-    * @requires ng.$document
-    * @requires ng.$window
-    *
-    * @description
-    * angular-ui-tree.
-    */
-    .factory('$uiTreeHelper', ['$document', '$window',
-      function ($document, $window) {
-        return {
-
-          /**
-           * A hashtable used to storage data of nodes
-           * @type {Object}
-           */
-          nodesData: {
-          },
-
-          setNodeAttribute: function(scope, attrName, val) {
-            if (!scope.$modelValue) {
-              return undefined;
-            }
-            var data = this.nodesData[scope.$modelValue.$$hashKey];
-            if (!data) {
-              data = {};
-              this.nodesData[scope.$modelValue.$$hashKey] = data;
-            }
-            data[attrName] = val;
-          },
-
-          getNodeAttribute: function(scope, attrName) {
-            if (!scope.$modelValue) {
-              return undefined;
-            }
-            var data = this.nodesData[scope.$modelValue.$$hashKey];
-            if (data) {
-              return data[attrName];
-            }
-            return undefined;
-          },
-
-          /**
-           * @ngdoc method
-           * @methodOf ui.tree.service:$nodrag
-           * @param  {Object} targetElm angular element
-           * @return {Bool} check if the node can be dragged.
-           */
-          nodrag: function (targetElm) {
-            return (typeof targetElm.attr('nodrag')) != "undefined";
-          },
-
-          /**
-           * get the event object for touchs
-           * @param  {[type]} e [description]
-           * @return {[type]}   [description]
-           */
-          eventObj: function(e) {
-            var obj = e;
-            if (e.targetTouches !== undefined) {
-              obj = e.targetTouches.item(0);
-            } else if (e.originalEvent !== undefined && e.originalEvent.targetTouches !== undefined) {
-              obj = e.originalEvent.targetTouches.item(0);
-            }
-            return obj;
-          },
-
-          dragInfo: function(node) {
-            if (angular.isDefined(node)) {
-              return {
-                source: node,
-                sourceInfo: {
-                  nodeScope: node,
-                  index: (angular.isFunction(node.index)) ? node.index() : 0,
-                  nodesScope: node.$parentNodesScope
-                },
-                index: (angular.isFunction(node.index)) ? node.index() : 0,
-                siblings: (angular.isFunction(node.siblings)) ? node.siblings().slice(0) : [],
-                parent: node.$parentNodesScope,
-
-                moveTo: function(parent, siblings, index) { // Move the node to a new position
-                  if (parent.accept(node, index) === true)
-                  {
-                    this.parent = parent;
-                    this.siblings = siblings.slice(0);
-                    var i = this.siblings.indexOf(this.source); // If source node is in the target nodes
-
-                    if (i > -1) {
-                      this.siblings.splice(i, 1);
-                      if (this.source.index() < index) {
-                        index--;
-                      }
-                    }
-
-                    this.siblings.splice(index, 0, this.source);
-                    this.index = index;
-
-                    return true;
-                  }
-
-                  return false;
-                },
-
-                parentNode: function() {
-                  return this.parent.$nodeScope;
-                },
-
-                prev: function() {
-                  if (this.index > 0) {
-                    return this.siblings[this.index - 1];
-                  }
-                  return undefined;
-                },
-
-                next: function() {
-                  if (this.index < this.siblings.length - 1) {
-                    return this.siblings[this.index + 1];
-                  }
-                  return undefined;
-                },
-
-                isDirty: function() {
-                  return this.source.$parentNodesScope != this.parent ||
-                          this.source.index() != this.index;
-                },
-
-                eventArgs: function(elements, pos) {
-                  return {
-                    source: this.sourceInfo,
-                    dest: {
-                      index: this.index,
-                      nodesScope: this.parent
-                    },
-                    elements: elements,
-                    pos: pos
-                  };
-                },
-
-                apply: function(copy) {
-                  var nodeData = this.source.$modelValue;
-                  if (!copy) {
-                    this.source.remove();
-                  }
-
-                  if (angular.isDefined(this.parent))
-                  {
-                    var data = (copy) ? angular.copy(nodeData) : nodeData;
-                    var index = this.index;
-                    if (copy && this.sourceInfo.index < this.index && this.sourceInfo.nodesScope === this.parent) {
-                      index = this.index + 1;
-                    }
-                    this.parent.insertNode(index, data);
-                  }
-                }
-              };
-            } else {
-              return undefined;
-            }
-          },
-
-          /**
-          * @ngdoc method
-          * @name hippo.theme#height
-          * @methodOf ui.tree.service:$helper
-          *
-          * @description
-          * Get the height of an element.
-          *
-          * @param {Object} element Angular element.
-          * @returns {String} Height
-          */
-          height: function (element) {
-            return element.prop('scrollHeight');
-          },
-
-          /**
-          * @ngdoc method
-          * @name hippo.theme#width
-          * @methodOf ui.tree.service:$helper
-          *
-          * @description
-          * Get the width of an element.
-          *
-          * @param {Object} element Angular element.
-          * @returns {String} Width
-          */
-          width: function (element) {
-            return element.prop('scrollWidth');
-          },
-
-          /**
-          * @ngdoc method
-          * @name hippo.theme#offset
-          * @methodOf ui.nestedSortable.service:$helper
-          *
-          * @description
-          * Get the offset values of an element.
-          *
-          * @param {Object} element Angular element.
-          * @returns {Object} Object with properties width, height, top and left
-          */
-          offset: function (element) {
-            var boundingClientRect = element[0].getBoundingClientRect();
-
-            return {
-                width: element.prop('offsetWidth'),
-                height: element.prop('offsetHeight'),
-                top: boundingClientRect.top + ($window.pageYOffset || $document[0].body.scrollTop || $document[0].documentElement.scrollTop),
-                left: boundingClientRect.left + ($window.pageXOffset || $document[0].body.scrollLeft  || $document[0].documentElement.scrollLeft)
-              };
-          },
-
-          /**
-          * @ngdoc method
-          * @name hippo.theme#positionStarted
-          * @methodOf ui.tree.service:$helper
-          *
-          * @description
-          * Get the start position of the target element according to the provided event properties.
-          *
-          * @param {Object} e Event
-          * @param {Object} target Target element
-          * @returns {Object} Object with properties offsetX, offsetY, startX, startY, nowX and dirX.
-          */
-          positionStarted: function (e, target) {
-            var pos = {};
-            pos.offsetX = e.pageX - this.offset(target).left;
-            pos.offsetY = e.pageY - this.offset(target).top;
-            pos.startX = pos.lastX = e.pageX;
-            pos.startY = pos.lastY = e.pageY;
-            pos.nowX = pos.nowY = pos.distX = pos.distY = pos.dirAx = 0;
-            pos.dirX = pos.dirY = pos.lastDirX = pos.lastDirY = pos.distAxX = pos.distAxY = 0;
-            return pos;
-          },
-
-          positionMoved: function (e, pos, firstMoving) {
-            // mouse position last events
-            pos.lastX = pos.nowX;
-            pos.lastY = pos.nowY;
-
-            // mouse position this events
-            pos.nowX  = e.pageX;
-            pos.nowY  = e.pageY;
-
-            // distance mouse moved between events
-            pos.distX = pos.nowX - pos.lastX;
-            pos.distY = pos.nowY - pos.lastY;
-
-            // direction mouse was moving
-            pos.lastDirX = pos.dirX;
-            pos.lastDirY = pos.dirY;
-
-            // direction mouse is now moving (on both axis)
-            pos.dirX = pos.distX === 0 ? 0 : pos.distX > 0 ? 1 : -1;
-            pos.dirY = pos.distY === 0 ? 0 : pos.distY > 0 ? 1 : -1;
-
-            // axis mouse is now moving on
-            var newAx   = Math.abs(pos.distX) > Math.abs(pos.distY) ? 1 : 0;
-
-            // do nothing on first move
-            if (firstMoving) {
-              pos.dirAx  = newAx;
-              pos.moving = true;
-              return;
-            }
-
-            // calc distance moved on this axis (and direction)
-            if (pos.dirAx !== newAx) {
-              pos.distAxX = 0;
-              pos.distAxY = 0;
-            } else {
-              pos.distAxX += Math.abs(pos.distX);
-              if (pos.dirX !== 0 && pos.dirX !== pos.lastDirX) {
-                pos.distAxX = 0;
-              }
-
-              pos.distAxY += Math.abs(pos.distY);
-              if (pos.dirY !== 0 && pos.dirY !== pos.lastDirY) {
-                pos.distAxY = 0;
-              }
-            }
-
-            pos.dirAx = newAx;
-          },
-
-          findIntersect: function(elmPos, nodes, collideWith, direction, horizontal) {
-            var self = this;
-            var intersectWith;
-            for (var nodeIdx = 0; nodeIdx < nodes.length; nodeIdx++) {
-              var intersectWithChild;
-              var nodeElement = angular.element(nodes[nodeIdx]);
-
-              if (angular.isDefined(nodeElement[0])) {
-                if (nodeElement.hasClass('angular-ui-tree-node')) {
-                  intersectWithChild = self.findIntersect(elmPos, nodeElement.children(), collideWith, direction, horizontal);
-
-                  if (angular.isUndefined(intersectWithChild)) {
-                    var nodeOffset = self.offset(nodeElement);
-                    var nodePos = {
-                      left: nodeOffset.left,
-                      width: nodeOffset.width,
-                      right: nodeOffset.left + nodeOffset.width,
-                      top: nodeOffset.top,
-                      height: nodeOffset.height,
-                      bottom: nodeOffset.top + nodeOffset.height
-                    };
-
-                    var isOverElementWidth;
-                    var isOverElementHeight;
-                    if (horizontal) {
-                      if (direction < 0) {
-                        isOverElementWidth = (collideWith === 'bottom') ? (elmPos.left <= nodePos.right && elmPos.right >= nodePos.left)
-                                                                         : (elmPos.right <= nodePos.right && elmPos.right >= nodePos.left);
-                      } else if (direction > 0) {
-                        isOverElementWidth = (collideWith === 'bottom') ? (elmPos.right >= nodePos.left && elmPos.left <= nodePos.right)
-                                                                        : (elmPos.left >= nodePos.left && elmPos.left <= nodePos.right);
-                      }
-                    }
-
-                    if (direction < 0) {
-                      isOverElementHeight = (collideWith === 'bottom') ? (elmPos.top <= nodePos.bottom && elmPos.bottom >= nodePos.top)
-                                                                       : (elmPos.bottom <= nodePos.bottom && elmPos.bottom >= nodePos.top);
-                    } else if (direction > 0) {
-                      isOverElementHeight = (collideWith === 'bottom') ? (elmPos.bottom >= nodePos.top && elmPos.top <= nodePos.bottom)
-                                                                       : (elmPos.top >= nodePos.top && elmPos.top <= nodePos.bottom);
-                    }
-
-                    if ((horizontal && (isOverElementWidth && isOverElementHeight)) || (!horizontal && isOverElementHeight)) {
-                      intersectWith = nodes[nodeIdx];
-                    }
-                  } else {
-                    intersectWith = intersectWithChild;
-                  }
-                } else {
-                  if (angular.isDefined(nodeElement.children()) && nodeElement.children().length > 0) {
-                    intersectWith = self.findIntersect(elmPos, nodeElement.children(), collideWith, direction, horizontal);
-                  }
-                }
-              }
-
-              if (angular.isDefined(intersectWith))
-              {
-                break;
-              }
-            }
-
-            return intersectWith;
-          }
-        };
-      }
-    ]);
-})();
-
-(function() {
-  'use strict';
-
-  angular.module('ui.tree')
-    .controller('TreeController', ['$scope', '$element', '$window', '$attrs', 'treeConfig', 'keys',
-      function ($scope, $element, $window, $attrs, treeConfig, keys) {
+    .controller('TreeHandleController', ['$scope', '$element', '$attrs', 'treeConfig',
+      function ($scope, $element, $attrs, treeConfig) {
         this.scope = $scope;
 
         $scope.$element = $element;
-        $scope.$treeElement = $element;
-        $scope.$nodesScope = undefined; // root nodes
-        $scope.$type = 'uiTree';
-        $scope.$emptyElm = undefined;
-        $scope.$callbacks = undefined;
-
-        $scope.$selecteds = [];
-
-        $scope.dragEnabled = (angular.isUndefined($scope.dragEnabled)) ? true : $scope.dragEnabled;
-        $scope.emptyPlaceholderEnabled = (angular.isUndefined($scope.emptyPlaceholderEnabled)) ? false : $scope.emptyPlaceholderEnabled;
-        $scope.maxDepth = (angular.isUndefined($scope.maxDepth)) ? 10 : $scope.maxDepth;
-        $scope.dragDelay = (angular.isUndefined($scope.dragDelay)) ? 0 : $scope.dragDelay;
-        $scope.dragDistance = (angular.isUndefined($scope.dragDistance)) ? 0 : $scope.dragDistance;
-        $scope.cancelKey = keys.escape;
-        $scope.lockXKey = undefined;
-        $scope.lockX = false;
-        $scope.lockYKey = undefined;
-        $scope.lockY = false;
-        $scope.boundTo = (angular.isUndefined($scope.boundTo)) ? '' : $scope.boundTo;
-        $scope.collideWith = 'bottom';
-        $scope.coverage = 0.5;
-        $scope.spacing = (angular.isUndefined($scope.spacing)) ? 50 : $scope.spacing;
-        $scope.spacingThreshold = Math.floor($scope.spacing / 4);
-
-        $scope.copyKey = undefined;
-        $scope.copy = false;
-        $scope.multiSelectKey = undefined;
-        $scope.multiSelect = false;
-
-        $scope.expandOnHover = (angular.isUndefined($scope.expandOnHover)) ? 500 : $scope.expandOnHover;
-
-        $scope.$watch('callbacks', function(newOptions) {
-          angular.forEach(newOptions, function(value, key) {
-            if ($scope.$callbacks[key]) {
-              if (angular.isFunction(value)) {
-                $scope.$callbacks[key] = value;
-              }
-            }
-          });
-        }, true);
-
-        $scope.$watch('$nodesScope.$modelValue.length', function(val) {
-          if ((typeof val) != 'undefined' && $scope.$nodesScope.$modelValue) {
-            $scope.resetEmptyElement();
-          }
-        }, true);
-
-        $scope.$watch('lockXKeyString', function(val) {
-          if (angular.isString(val)) {
-            val = val.toLowerCase();
-            if (val.length > 0) {
-              $scope.lockXKey = (angular.isDefined(keys[val])) ? keys[val] : (val.length === 1) ? (val.charCodeAt(0) - 32) : undefined;
-            }
-          }
-
-          $scope.lockX = (angular.isUndefined($scope.lockXKey) && ((typeof val) === 'boolean')) ? val : false;
-        });
-
-        $scope.$watch('lockYKeyString', function(val) {
-          if (angular.isString(val)) {
-            val = val.toLowerCase();
-            if (val.length > 0) {
-              $scope.lockYKey = (angular.isDefined(keys[val])) ? keys[val] : (val.length === 1) ? (val.charCodeAt(0) - 32) : undefined;
-            }
-          }
-
-          $scope.lockY = (angular.isUndefined($scope.lockXKey) && ((typeof val) === 'boolean')) ? val : false;
-        });
-
-        $scope.$watch('boundToString', function(val) {
-          if (angular.isString(val) && val.length > 0) {
-            try {
-              $scope.boundTo = angular.element($window.document.querySelectorAll(val));
-            } catch (exception) {
-              $scope.boundTo = '';
-            }
-          }
-        });
-
-        $scope.$watch('spacing', function(val) {
-          if (angular.isNumber(val) && val > 0) {
-            $scope.spacingThreshold = Math.floor($scope.spacing / 4);
-          }
-        });
-
-        $scope.$watch('coveragePercent', function(val) {
-          if (angular.isNumber(val) && val >= -100 && val <= 100) {
-            $scope.collideWith = (val < 0) ? 'top' : 'bottom';
-            $scope.coverage = Math.abs((val / 100));
-          }
-        });
-
-        $scope.$watch('cancelKeyString', function(val) {
-          if (angular.isString(val)) {
-            val = val.toLowerCase();
-            if (val.length > 0) {
-              $scope.cancelKey = (angular.isDefined(keys[val])) ? keys[val] : (val.charCodeAt(0) - 32);
-            }
-          }
-        });
-
-        $scope.$watch('copyKeyString', function(val) {
-          if (angular.isString(val)) {
-            val = val.toLowerCase();
-            if (val.length > 0) {
-              $scope.copyKey = (angular.isDefined(keys[val])) ? keys[val] : (val.charCodeAt(0) - 32);
-            }
-          }
-        });
-
-        $scope.$watch('selectKeyString', function(val) {
-          if (angular.isString(val)) {
-            val = val.toLowerCase();
-            if (val.length > 0) {
-              $scope.multiSelectKey = (angular.isDefined(keys[val])) ? keys[val] : (val.charCodeAt(0) - 32);
-            }
-          }
-        });
-
-        // Check if it's a empty tree
-        $scope.isEmpty = function() {
-          return ($scope.$nodesScope && $scope.$nodesScope.$modelValue && $scope.$nodesScope.$modelValue.length === 0);
-        };
-
-        // add placeholder to empty tree
-        $scope.place = function(placeElm) {
-          $scope.$nodesScope.$element.append(placeElm);
-          $scope.$emptyElm.remove();
-        };
-
-        $scope.resetEmptyElement = function() {
-          if ($scope.$nodesScope.$modelValue.length === 0 && $scope.emptyPlaceholderEnabled) {
-            $element.append($scope.$emptyElm);
-          } else {
-            $scope.$emptyElm.remove();
-          }
-        };
-
-        var collapseOrExpand = function(scope, collapsed) {
-          var nodes = scope.childNodes();
-          for (var i = 0; i < nodes.length; i++) {
-            if (nodes[i]) {
-              (collapsed) ? nodes[i].collapse(true) : nodes[i].expand(true);
-
-              var subScope = nodes[i].$childNodesScope;
-              if (subScope) {
-                collapseOrExpand(subScope, collapsed);
-              }
-            }
-          }
-        };
-
-        $scope.collapseAll = function() {
-          collapseOrExpand($scope.$nodesScope, true);
-        };
-        $scope.$on('collapseAll', $scope.collapseAll);
-
-        $scope.expandAll = function() {
-          collapseOrExpand($scope.$nodesScope, false);
-        };
-        $scope.$on('expandAll', $scope.expandAll);
-      }
-    ]);
-})();
-
-(function() {
-  'use strict';
-
-  angular.module('ui.tree')
-
-    .controller('TreeNodesController', ['$scope', '$element', '$q', 'treeConfig',
-      function ($scope, $element, $q, treeConfig) {
-        this.scope = $scope;
-
-        $scope.$element = $element;
-        $scope.$nodesElement = $element;
-        $scope.$modelValue = undefined;
-        $scope.$nodeScope = undefined; // the scope of node which the nodes belongs to
-        $scope.$treeScope = undefined;
-        $scope.$type = 'uiTreeNodes';
-        $scope.$nodesMap = {};
-
-        $scope.nodrop = false;
-        $scope.maxDepth = 0;
-
-        $scope.expandOnHover = undefined;
-
-        $scope.initSubNode = function(subNode) {
-          if (!subNode.$modelValue) {
-            return undefined;
-          }
-          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = subNode;
-        };
-
-        $scope.destroySubNode = function(subNode) {
-          if (!subNode.$modelValue) {
-            return undefined;
-          }
-          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = undefined;
-        };
-
-        $scope.accept = function(sourceNode, destIndex) {
-          return $scope.$treeScope.$callbacks.accept(sourceNode, $scope, destIndex);
-        };
-
-        $scope.beforeDrag = function(sourceNode, event) {
-          return $scope.$treeScope.$callbacks.beforeDrag(sourceNode, event);
-        };
-
-        $scope.isParent = function(node) {
-          return node.$parentNodesScope == $scope;
-        };
-
-        $scope.hasChild = function() {
-          return $scope.$modelValue.length > 0;
-        };
-
-        $scope.safeApply = function(fn) {
-          var phase = this.$root.$$phase;
-          if (phase == '$apply' || phase == '$digest') {
-            if (fn && (typeof(fn) === 'function')) {
-              fn();
-            }
-          } else {
-            this.$apply(fn);
-          }
-        };
-
-        $scope.removeNode = function(node) {
-          var deferred = $q.defer();
-
-          var index = $scope.$modelValue.indexOf(node.$modelValue);
-          if (index > -1) {
-            $scope.safeApply(function() {
-              $scope.$modelValue.splice(index, 1)[0];
-
-              deferred.resolve(node);
-            });
-          } else {
-            deferred.reject('not found');
-          }
-
-          return deferred.promise;
-        };
-
-        $scope.insertNode = function(index, nodeData) {
-          var deferred = $q.defer();
-
-          $scope.safeApply(function() {
-            $scope.$modelValue.splice(index, 0, nodeData);
-            deferred.resolve('inserted');
-          });
-
-          return deferred.promise;
-        };
-
-        $scope.childNodes = function() {
-          var nodes = [];
-          if ($scope.$modelValue) {
-            for (var i = 0; i < $scope.$modelValue.length; i++) {
-              nodes.push($scope.$nodesMap[$scope.$modelValue[i].$$hashKey]);
-            }
-          }
-          return nodes;
-        };
-
-        $scope.depth = function() {
-          if ($scope.$nodeScope) {
-            return $scope.$nodeScope.depth();
-          }
-          return 0; // if it has no $nodeScope, it's root
-        };
-
-        // check if depth limit has reached
-        $scope.outOfDepth = function(sourceNode) {
-          var maxDepth = $scope.maxDepth || $scope.$treeScope.maxDepth;
-          if (maxDepth > 0) {
-            return $scope.depth() + sourceNode.maxSubDepth() + 1 > maxDepth;
-          }
-          return false;
-        };
-
+        $scope.$handleElement = $element;
+        $scope.$nodeScope = undefined;
+        $scope.$type = 'uiTreeHandle';
       }
     ]);
 })();
@@ -906,14 +270,292 @@
 
   angular.module('ui.tree')
 
-    .controller('TreeHandleController', ['$scope', '$element', '$attrs', 'treeConfig',
-      function ($scope, $element, $attrs, treeConfig) {
+    .controller('TreeNodesController', ['$scope', '$element', '$q', 'treeConfig',
+      function ($scope, $element, $q, treeConfig) {
         this.scope = $scope;
 
         $scope.$element = $element;
-        $scope.$handleElement = $element;
-        $scope.$nodeScope = undefined;
-        $scope.$type = 'uiTreeHandle';
+        $scope.$nodesElement = $element;
+        $scope.$modelValue = undefined;
+        $scope.$nodeScope = undefined; // the scope of node which the nodes belongs to
+        $scope.$treeScope = undefined;
+        $scope.$type = 'uiTreeNodes';
+        $scope.$nodesMap = {};
+
+        $scope.nodrop = false;
+        $scope.maxDepth = 0;
+
+        $scope.expandOnHover = undefined;
+
+        $scope.initSubNode = function(subNode) {
+          if (!subNode.$modelValue) {
+            return undefined;
+          }
+          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = subNode;
+        };
+
+        $scope.destroySubNode = function(subNode) {
+          if (!subNode.$modelValue) {
+            return undefined;
+          }
+          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = undefined;
+        };
+
+        $scope.accept = function(sourceNode, destIndex) {
+          return $scope.$treeScope.$callbacks.accept(sourceNode, $scope, destIndex);
+        };
+
+        $scope.beforeDrag = function(sourceNode, event) {
+          return $scope.$treeScope.$callbacks.beforeDrag(sourceNode, event);
+        };
+
+        $scope.isParent = function(node) {
+          return node.$parentNodesScope == $scope;
+        };
+
+        $scope.hasChild = function() {
+          return $scope.$modelValue.length > 0;
+        };
+
+        $scope.safeApply = function(fn) {
+          var phase = this.$root.$$phase;
+          if (phase == '$apply' || phase == '$digest') {
+            if (fn && (typeof(fn) === 'function')) {
+              fn();
+            }
+          } else {
+            this.$apply(fn);
+          }
+        };
+
+        $scope.removeNode = function(node) {
+          var deferred = $q.defer();
+
+          var index = $scope.$modelValue.indexOf(node.$modelValue);
+          if (index > -1) {
+            $scope.safeApply(function() {
+              $scope.$modelValue.splice(index, 1)[0];
+
+              deferred.resolve(node);
+            });
+          } else {
+            deferred.reject('not found');
+          }
+
+          return deferred.promise;
+        };
+
+        $scope.insertNode = function(index, nodeData) {
+          var deferred = $q.defer();
+
+          $scope.safeApply(function() {
+            $scope.$modelValue.splice(index, 0, nodeData);
+            deferred.resolve('inserted');
+          });
+
+          return deferred.promise;
+        };
+
+        $scope.childNodes = function() {
+          var nodes = [];
+          if ($scope.$modelValue) {
+            for (var i = 0; i < $scope.$modelValue.length; i++) {
+              nodes.push($scope.$nodesMap[$scope.$modelValue[i].$$hashKey]);
+            }
+          }
+          return nodes;
+        };
+
+        $scope.depth = function() {
+          if ($scope.$nodeScope) {
+            return $scope.$nodeScope.depth();
+          }
+          return 0; // if it has no $nodeScope, it's root
+        };
+
+        // check if depth limit has reached
+        $scope.outOfDepth = function(sourceNode) {
+          var maxDepth = $scope.maxDepth || $scope.$treeScope.maxDepth;
+          if (maxDepth > 0) {
+            return $scope.depth() + sourceNode.maxSubDepth() + 1 > maxDepth;
+          }
+          return false;
+        };
+
+      }
+    ]);
+})();
+
+(function() {
+  'use strict';
+
+  angular.module('ui.tree')
+    .controller('TreeController', ['$scope', '$element', '$window', '$attrs', 'treeConfig', 'keys',
+      function ($scope, $element, $window, $attrs, treeConfig, keys) {
+        this.scope = $scope;
+
+        $scope.$element = $element;
+        $scope.$treeElement = $element;
+        $scope.$nodesScope = undefined; // root nodes
+        $scope.$type = 'uiTree';
+        $scope.$emptyElm = undefined;
+        $scope.$callbacks = undefined;
+
+        $scope.$selecteds = [];
+
+        $scope.dragEnabled = (angular.isUndefined($scope.dragEnabled)) ? true : $scope.dragEnabled;
+        $scope.emptyPlaceholderEnabled = (angular.isUndefined($scope.emptyPlaceholderEnabled)) ? false : $scope.emptyPlaceholderEnabled;
+        $scope.maxDepth = (angular.isUndefined($scope.maxDepth)) ? 10 : $scope.maxDepth;
+        $scope.dragDelay = (angular.isUndefined($scope.dragDelay)) ? 0 : $scope.dragDelay;
+        $scope.dragDistance = (angular.isUndefined($scope.dragDistance)) ? 0 : $scope.dragDistance;
+        $scope.cancelKey = keys.escape;
+        $scope.lockXKey = undefined;
+        $scope.lockX = false;
+        $scope.lockYKey = undefined;
+        $scope.lockY = false;
+        $scope.boundTo = (angular.isUndefined($scope.boundTo)) ? '' : $scope.boundTo;
+        $scope.collideWith = 'bottom';
+        $scope.coverage = 0.5;
+        $scope.spacing = (angular.isUndefined($scope.spacing)) ? 50 : $scope.spacing;
+        $scope.spacingThreshold = Math.floor($scope.spacing / 4);
+
+        $scope.copyKey = undefined;
+        $scope.copy = false;
+        $scope.multiSelectKey = undefined;
+        $scope.multiSelect = false;
+
+        $scope.expandOnHover = (angular.isUndefined($scope.expandOnHover)) ? 500 : $scope.expandOnHover;
+
+        $scope.$watch('callbacks', function(newOptions) {
+          angular.forEach(newOptions, function(value, key) {
+            if ($scope.$callbacks[key]) {
+              if (angular.isFunction(value)) {
+                $scope.$callbacks[key] = value;
+              }
+            }
+          });
+        }, true);
+
+        $scope.$watch('$nodesScope.$modelValue.length', function(val) {
+          if ((typeof val) != 'undefined' && $scope.$nodesScope.$modelValue) {
+            $scope.resetEmptyElement();
+          }
+        }, true);
+
+        $scope.$watch('lockXKeyString', function(val) {
+          if (angular.isString(val)) {
+            val = val.toLowerCase();
+            if (val.length > 0) {
+              $scope.lockXKey = (angular.isDefined(keys[val])) ? keys[val] : (val.length === 1) ? (val.charCodeAt(0) - 32) : undefined;
+            }
+          }
+
+          $scope.lockX = (angular.isUndefined($scope.lockXKey) && ((typeof val) === 'boolean')) ? val : false;
+        });
+
+        $scope.$watch('lockYKeyString', function(val) {
+          if (angular.isString(val)) {
+            val = val.toLowerCase();
+            if (val.length > 0) {
+              $scope.lockYKey = (angular.isDefined(keys[val])) ? keys[val] : (val.length === 1) ? (val.charCodeAt(0) - 32) : undefined;
+            }
+          }
+
+          $scope.lockY = (angular.isUndefined($scope.lockXKey) && ((typeof val) === 'boolean')) ? val : false;
+        });
+
+        $scope.$watch('boundToString', function(val) {
+          if (angular.isString(val) && val.length > 0) {
+            try {
+              $scope.boundTo = angular.element($window.document.querySelectorAll(val));
+            } catch (exception) {
+              $scope.boundTo = '';
+            }
+          }
+        });
+
+        $scope.$watch('spacing', function(val) {
+          if (angular.isNumber(val) && val > 0) {
+            $scope.spacingThreshold = Math.floor($scope.spacing / 4);
+          }
+        });
+
+        $scope.$watch('coveragePercent', function(val) {
+          if (angular.isNumber(val) && val >= -100 && val <= 100) {
+            $scope.collideWith = (val < 0) ? 'top' : 'bottom';
+            $scope.coverage = Math.abs((val / 100));
+          }
+        });
+
+        $scope.$watch('cancelKeyString', function(val) {
+          if (angular.isString(val)) {
+            val = val.toLowerCase();
+            if (val.length > 0) {
+              $scope.cancelKey = (angular.isDefined(keys[val])) ? keys[val] : (val.charCodeAt(0) - 32);
+            }
+          }
+        });
+
+        $scope.$watch('copyKeyString', function(val) {
+          if (angular.isString(val)) {
+            val = val.toLowerCase();
+            if (val.length > 0) {
+              $scope.copyKey = (angular.isDefined(keys[val])) ? keys[val] : (val.charCodeAt(0) - 32);
+            }
+          }
+        });
+
+        $scope.$watch('selectKeyString', function(val) {
+          if (angular.isString(val)) {
+            val = val.toLowerCase();
+            if (val.length > 0) {
+              $scope.multiSelectKey = (angular.isDefined(keys[val])) ? keys[val] : (val.charCodeAt(0) - 32);
+            }
+          }
+        });
+
+        // Check if it's a empty tree
+        $scope.isEmpty = function() {
+          return ($scope.$nodesScope && $scope.$nodesScope.$modelValue && $scope.$nodesScope.$modelValue.length === 0);
+        };
+
+        // add placeholder to empty tree
+        $scope.place = function(placeElm) {
+          $scope.$nodesScope.$element.append(placeElm);
+          $scope.$emptyElm.remove();
+        };
+
+        $scope.resetEmptyElement = function() {
+          if ($scope.$nodesScope.$modelValue.length === 0 && $scope.emptyPlaceholderEnabled) {
+            $element.append($scope.$emptyElm);
+          } else {
+            $scope.$emptyElm.remove();
+          }
+        };
+
+        var collapseOrExpand = function(scope, collapsed) {
+          var nodes = scope.childNodes();
+          for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i]) {
+              (collapsed) ? nodes[i].collapse(true) : nodes[i].expand(true);
+
+              var subScope = nodes[i].$childNodesScope;
+              if (subScope) {
+                collapseOrExpand(subScope, collapsed);
+              }
+            }
+          }
+        };
+
+        $scope.collapseAll = function() {
+          collapseOrExpand($scope.$nodesScope, true);
+        };
+        $scope.$on('collapseAll', $scope.collapseAll);
+
+        $scope.expandAll = function() {
+          collapseOrExpand($scope.$nodesScope, false);
+        };
+        $scope.$on('expandAll', $scope.expandAll);
       }
     ]);
 })();
@@ -951,6 +593,11 @@
           };
 
           var config = {};
+
+          if (attrs.uiTreeDir) {
+            treeConfig.dir = attrs.uiTreeDir;
+          }
+
           angular.extend(config, treeConfig);
           if (config.treeClass) {
             element.addClass(config.treeClass);
@@ -1065,44 +712,23 @@
   'use strict';
 
   angular.module('ui.tree')
-  .directive('uiTreeNodes', [ 'treeConfig',
+  .directive('uiTreeHandle', [ 'treeConfig',
     function(treeConfig) {
       return {
-        require: ['ngModel', '?^uiTreeNode', '^uiTree'],
-        restrict: 'EA',
-        scope: {
-          maxDepth: '=?',
-          expandOnHover: '=?',
-          noDrop: '=?',
-          horizontal: '=?'
-        },
-        controller: 'TreeNodesController',
-        link: function(scope, element, attrs, controllersArr) {
+        require: '^uiTreeNode',
+        restrict: 'A',
+        scope: true,
+        controller: 'TreeHandleController',
+        link: function(scope, element, attrs, treeNodeCtrl) {
           var config = {};
           angular.extend(config, treeConfig);
-          if (config.nodesClass) {
-            element.addClass(config.nodesClass);
+          if (config.handleClass) {
+            element.addClass(config.handleClass);
           }
-
-          var ngModel = controllersArr[0];
-          var treeNodeCtrl = controllersArr[1];
-          var treeCtrl = controllersArr[2];
-
-          if (treeNodeCtrl) {
-            treeNodeCtrl.scope.$childNodesScope = scope;
+          // connect with the tree node.
+          if (scope != treeNodeCtrl.scope) {
             scope.$nodeScope = treeNodeCtrl.scope;
-          } else { // find the root nodes if there is no parent node and have a parent ui-tree
-            treeCtrl.scope.$nodesScope = scope;
-          }
-          scope.$treeScope = treeCtrl.scope;
-
-          if (ngModel) {
-            ngModel.$render = function() {
-              if (!ngModel.$modelValue || !angular.isArray(ngModel.$modelValue)) {
-                scope.$modelValue = [];
-              }
-              scope.$modelValue = ngModel.$modelValue;
-            };
+            treeNodeCtrl.scope.$handleScope = scope;
           }
         }
       };
@@ -1129,30 +755,36 @@
             scope.init(controllersArr);
 
             scope.collapsed = !!$uiTreeHelper.getNodeAttribute(scope, 'collapsed');
-            scope.$watch(attrs.collapsed, function(val) {
-              if ((typeof val) === "boolean") {
-                scope.collapsed = val;
-              }
-            });
+            if (attrs && attrs.collapsed) {
+              scope.$watch(attrs.collapsed, function (val) {
+                if ((typeof val) === "boolean") {
+                  scope.collapsed = val;
+                }
+              });
+            }
             scope.$watch('collapsed', function(val) {
               $uiTreeHelper.setNodeAttribute(scope, 'collapsed', val);
               attrs.$set('collapsed', val);
             });
 
             scope.selected = !!$uiTreeHelper.getNodeAttribute(scope, 'selected');
-            scope.$watch(attrs.selected, function(val) {
-              if ((typeof val) === "boolean") {
-                scope.selected = val;
-              }
-            });
+            if (attrs && attrs.selected) {
+              scope.$watch(attrs.selected, function (val) {
+                if ((typeof val) === "boolean") {
+                  scope.selected = val;
+                }
+              });
+            }
             scope.$watch('selected', function(val) {
               $uiTreeHelper.setNodeAttribute(scope, 'selected', val);
               attrs.$set('selected', val);
             });
 
-            scope.$watch(attrs.expandOnHover, function(val) {
-              scope.expandOnHover = val;
-            });
+            if (attrs && attrs.expandOnHover) {
+              scope.$watch(attrs.expandOnHover, function (val) {
+                scope.expandOnHover = val;
+              });
+            }
 
             var hasTouch = 'ontouchstart' in window;
             // todo startPos is unused
@@ -1707,7 +1339,7 @@
                   }
 
                   // check it's new position
-                  isEmpty = false,
+                  isEmpty = false;
                   isTree = false;
 
                   if (targetNode.$type == 'uiTree' && targetNode.dragEnabled) {
@@ -2129,26 +1761,410 @@
   'use strict';
 
   angular.module('ui.tree')
-  .directive('uiTreeHandle', [ 'treeConfig',
+  .directive('uiTreeNodes', [ 'treeConfig',
     function(treeConfig) {
       return {
-        require: '^uiTreeNode',
-        restrict: 'A',
-        scope: true,
-        controller: 'TreeHandleController',
-        link: function(scope, element, attrs, treeNodeCtrl) {
+        require: ['ngModel', '?^uiTreeNode', '^uiTree'],
+        restrict: 'EA',
+        scope: {
+          maxDepth: '=?',
+          expandOnHover: '=?',
+          noDrop: '=?',
+          horizontal: '=?'
+        },
+        controller: 'TreeNodesController',
+        link: function(scope, element, attrs, controllersArr) {
           var config = {};
           angular.extend(config, treeConfig);
-          if (config.handleClass) {
-            element.addClass(config.handleClass);
+          if (config.nodesClass) {
+            element.addClass(config.nodesClass);
           }
-          // connect with the tree node.
-          if (scope != treeNodeCtrl.scope) {
+
+          var ngModel = controllersArr[0];
+          var treeNodeCtrl = controllersArr[1];
+          var treeCtrl = controllersArr[2];
+
+          if (treeNodeCtrl) {
+            treeNodeCtrl.scope.$childNodesScope = scope;
             scope.$nodeScope = treeNodeCtrl.scope;
-            treeNodeCtrl.scope.$handleScope = scope;
+          } else { // find the root nodes if there is no parent node and have a parent ui-tree
+            treeCtrl.scope.$nodesScope = scope;
+          }
+          scope.$treeScope = treeCtrl.scope;
+
+          if (ngModel) {
+            ngModel.$render = function() {
+              if (!ngModel.$modelValue || !angular.isArray(ngModel.$modelValue)) {
+                scope.$modelValue = [];
+              }
+              scope.$modelValue = ngModel.$modelValue;
+            };
           }
         }
       };
     }
   ]);
+})();
+
+(function() {
+  'use strict';
+
+  angular.module('ui.tree')
+
+   /**
+    * @ngdoc service
+    * @name ui.tree.service:$helper
+    * @requires ng.$document
+    * @requires ng.$window
+    *
+    * @description
+    * angular-ui-tree.
+    */
+    .factory('$uiTreeHelper', ['$document', '$window', 'treeConfig',
+      function ($document, $window, treeConfig) {
+        return {
+
+          /**
+           * A hashtable used to storage data of nodes
+           * @type {Object}
+           */
+          nodesData: {
+          },
+
+          setNodeAttribute: function(scope, attrName, val) {
+            if (!scope.$modelValue) {
+              return undefined;
+            }
+            var data = this.nodesData[scope.$modelValue.$$hashKey];
+            if (!data) {
+              data = {};
+              this.nodesData[scope.$modelValue.$$hashKey] = data;
+            }
+            data[attrName] = val;
+          },
+
+          getNodeAttribute: function(scope, attrName) {
+            if (!scope.$modelValue) {
+              return undefined;
+            }
+            var data = this.nodesData[scope.$modelValue.$$hashKey];
+            if (data) {
+              return data[attrName];
+            }
+            return undefined;
+          },
+
+          /**
+           * @ngdoc method
+           * @methodOf ui.tree.service:$nodrag
+           * @param  {Object} targetElm angular element
+           * @return {Bool} check if the node can be dragged.
+           */
+          nodrag: function (targetElm) {
+            return (typeof targetElm.attr('nodrag')) != "undefined";
+          },
+
+          /**
+           * get the event object for touchs
+           * @param  {[type]} e [description]
+           * @return {[type]}   [description]
+           */
+          eventObj: function(e) {
+            var obj = e;
+            if (e.targetTouches !== undefined) {
+              obj = e.targetTouches.item(0);
+            } else if (e.originalEvent !== undefined && e.originalEvent.targetTouches !== undefined) {
+              obj = e.originalEvent.targetTouches.item(0);
+            }
+            return obj;
+          },
+
+          dragInfo: function(node) {
+            if (angular.isDefined(node)) {
+              return {
+                source: node,
+                sourceInfo: {
+                  nodeScope: node,
+                  index: (angular.isFunction(node.index)) ? node.index() : 0,
+                  nodesScope: node.$parentNodesScope
+                },
+                index: (angular.isFunction(node.index)) ? node.index() : 0,
+                siblings: (angular.isFunction(node.siblings)) ? node.siblings().slice(0) : [],
+                parent: node.$parentNodesScope,
+
+                moveTo: function(parent, siblings, index) { // Move the node to a new position
+                  if (parent.accept(node, index) === true)
+                  {
+                    this.parent = parent;
+                    this.siblings = siblings.slice(0);
+                    var i = this.siblings.indexOf(this.source); // If source node is in the target nodes
+
+                    if (i > -1) {
+                      this.siblings.splice(i, 1);
+                      if (this.source.index() < index) {
+                        index--;
+                      }
+                    }
+
+                    this.siblings.splice(index, 0, this.source);
+                    this.index = index;
+
+                    return true;
+                  }
+
+                  return false;
+                },
+
+                parentNode: function() {
+                  return this.parent.$nodeScope;
+                },
+
+                prev: function() {
+                  if (this.index > 0) {
+                    return this.siblings[this.index - 1];
+                  }
+                  return undefined;
+                },
+
+                next: function() {
+                  if (this.index < this.siblings.length - 1) {
+                    return this.siblings[this.index + 1];
+                  }
+                  return undefined;
+                },
+
+                isDirty: function() {
+                  return this.source.$parentNodesScope != this.parent ||
+                          this.source.index() != this.index;
+                },
+
+                eventArgs: function(elements, pos) {
+                  return {
+                    source: this.sourceInfo,
+                    dest: {
+                      index: this.index,
+                      nodesScope: this.parent
+                    },
+                    elements: elements,
+                    pos: pos
+                  };
+                },
+
+                apply: function(copy) {
+                  var nodeData = this.source.$modelValue;
+                  if (!copy) {
+                    this.source.remove();
+                  }
+
+                  if (angular.isDefined(this.parent))
+                  {
+                    var data = (copy) ? angular.copy(nodeData) : nodeData;
+                    var index = this.index;
+                    if (copy && this.sourceInfo.index < this.index && this.sourceInfo.nodesScope === this.parent) {
+                      index = this.index + 1;
+                    }
+                    this.parent.insertNode(index, data);
+                  }
+                }
+              };
+            } else {
+              return undefined;
+            }
+          },
+
+          /**
+          * @ngdoc method
+          * @name hippo.theme#height
+          * @methodOf ui.tree.service:$helper
+          *
+          * @description
+          * Get the height of an element.
+          *
+          * @param {Object} element Angular element.
+          * @returns {String} Height
+          */
+          height: function (element) {
+            return element.prop('scrollHeight');
+          },
+
+          /**
+          * @ngdoc method
+          * @name hippo.theme#width
+          * @methodOf ui.tree.service:$helper
+          *
+          * @description
+          * Get the width of an element.
+          *
+          * @param {Object} element Angular element.
+          * @returns {String} Width
+          */
+          width: function (element) {
+            return element.prop('scrollWidth');
+          },
+
+          /**
+          * @ngdoc method
+          * @name hippo.theme#offset
+          * @methodOf ui.nestedSortable.service:$helper
+          *
+          * @description
+          * Get the offset values of an element.
+          *
+          * @param {Object} element Angular element.
+          * @returns {Object} Object with properties width, height, top and left
+          */
+          offset: function (element) {
+            var boundingClientRect = element[0].getBoundingClientRect();
+
+            return {
+                width: element.prop('offsetWidth'),
+                height: element.prop('offsetHeight'),
+                top: boundingClientRect.top + ($window.pageYOffset || $document[0].body.scrollTop || $document[0].documentElement.scrollTop),
+                left: boundingClientRect.left + ($window.pageXOffset || $document[0].body.scrollLeft  || $document[0].documentElement.scrollLeft)
+              };
+          },
+
+          /**
+          * @ngdoc method
+          * @name hippo.theme#positionStarted
+          * @methodOf ui.tree.service:$helper
+          *
+          * @description
+          * Get the start position of the target element according to the provided event properties.
+          *
+          * @param {Object} e Event
+          * @param {Object} target Target element
+          * @returns {Object} Object with properties offsetX, offsetY, startX, startY, nowX and dirX.
+          */
+          positionStarted: function (e, target) {
+            var pos = {};
+            pos.offsetX = e.pageX - this.offset(target).left;
+            pos.offsetY = e.pageY - this.offset(target).top;
+            pos.startX = pos.lastX = e.pageX;
+            pos.startY = pos.lastY = e.pageY;
+            pos.nowX = pos.nowY = pos.distX = pos.distY = pos.dirAx = 0;
+            pos.dirX = pos.dirY = pos.lastDirX = pos.lastDirY = pos.distAxX = pos.distAxY = 0;
+            return pos;
+          },
+
+          positionMoved: function (e, pos, firstMoving) {
+            // mouse position last events
+            pos.lastX = pos.nowX;
+            pos.lastY = pos.nowY;
+
+            // mouse position this events
+            pos.nowX  = e.pageX;
+            pos.nowY  = e.pageY;
+
+            // distance mouse moved between events
+            if (treeConfig.dir == 'rtl') {
+              pos.distX = pos.lastX - pos.nowX;
+            } else {
+              pos.distX = pos.nowX - pos.lastX;
+            }
+            pos.distY = pos.nowY - pos.lastY;
+
+            // direction mouse was moving
+            pos.lastDirX = pos.dirX;
+            pos.lastDirY = pos.dirY;
+
+            // direction mouse is now moving (on both axis)
+            pos.dirX = pos.distX === 0 ? 0 : pos.distX > 0 ? 1 : -1;
+            pos.dirY = pos.distY === 0 ? 0 : pos.distY > 0 ? 1 : -1;
+
+            // axis mouse is now moving on
+            var newAx   = Math.abs(pos.distX) > Math.abs(pos.distY) ? 1 : 0;
+
+            // do nothing on first move
+            if (firstMoving) {
+              pos.dirAx  = newAx;
+              pos.moving = true;
+              return;
+            }
+
+            // calc distance moved on this axis (and direction)
+            if (pos.dirAx !== newAx) {
+              pos.distAxX = 0;
+              pos.distAxY = 0;
+            } else {
+              pos.distAxX += Math.abs(pos.distX);
+              if (pos.dirX !== 0 && pos.dirX !== pos.lastDirX) {
+                pos.distAxX = 0;
+              }
+
+              pos.distAxY += Math.abs(pos.distY);
+              if (pos.dirY !== 0 && pos.dirY !== pos.lastDirY) {
+                pos.distAxY = 0;
+              }
+            }
+
+            pos.dirAx = newAx;
+          },
+
+          findIntersect: function(elmPos, nodes, collideWith, direction, horizontal) {
+            var self = this;
+            var intersectWith;
+            for (var nodeIdx = 0; nodeIdx < nodes.length; nodeIdx++) {
+              var intersectWithChild;
+              var nodeElement = angular.element(nodes[nodeIdx]);
+
+              if (angular.isDefined(nodeElement[0])) {
+                if (nodeElement.hasClass('angular-ui-tree-node')) {
+                  intersectWithChild = self.findIntersect(elmPos, nodeElement.children(), collideWith, direction, horizontal);
+
+                  if (angular.isUndefined(intersectWithChild)) {
+                    var nodeOffset = self.offset(nodeElement);
+                    var nodePos = {
+                      left: nodeOffset.left,
+                      width: nodeOffset.width,
+                      right: nodeOffset.left + nodeOffset.width,
+                      top: nodeOffset.top,
+                      height: nodeOffset.height,
+                      bottom: nodeOffset.top + nodeOffset.height
+                    };
+
+                    var isOverElementWidth;
+                    var isOverElementHeight;
+                    if (horizontal) {
+                      if (direction < 0) {
+                        isOverElementWidth = (collideWith === 'bottom') ? (elmPos.left <= nodePos.right && elmPos.right >= nodePos.left)
+                                                                         : (elmPos.right <= nodePos.right && elmPos.right >= nodePos.left);
+                      } else if (direction > 0) {
+                        isOverElementWidth = (collideWith === 'bottom') ? (elmPos.right >= nodePos.left && elmPos.left <= nodePos.right)
+                                                                        : (elmPos.left >= nodePos.left && elmPos.left <= nodePos.right);
+                      }
+                    }
+
+                    if (direction < 0) {
+                      isOverElementHeight = (collideWith === 'bottom') ? (elmPos.top <= nodePos.bottom && elmPos.bottom >= nodePos.top)
+                                                                       : (elmPos.bottom <= nodePos.bottom && elmPos.bottom >= nodePos.top);
+                    } else if (direction > 0) {
+                      isOverElementHeight = (collideWith === 'bottom') ? (elmPos.bottom >= nodePos.top && elmPos.top <= nodePos.bottom)
+                                                                       : (elmPos.top >= nodePos.top && elmPos.top <= nodePos.bottom);
+                    }
+
+                    if ((horizontal && (isOverElementWidth && isOverElementHeight)) || (!horizontal && isOverElementHeight)) {
+                      intersectWith = nodes[nodeIdx];
+                    }
+                  } else {
+                    intersectWith = intersectWithChild;
+                  }
+                } else {
+                  if (angular.isDefined(nodeElement.children()) && nodeElement.children().length > 0) {
+                    intersectWith = self.findIntersect(elmPos, nodeElement.children(), collideWith, direction, horizontal);
+                  }
+                }
+              }
+
+              if (angular.isDefined(intersectWith))
+              {
+                break;
+              }
+            }
+
+            return intersectWith;
+          }
+        };
+      }
+    ]);
 })();
