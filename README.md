@@ -153,6 +153,12 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
 `ui-tree` is the root scope for a tree
 
 #### Attributes
+##### ui-tree-dir
+Set the direction of the tree for nesting
+- `ltr` (default)
+- `rtl`
+note: The default value is configured at the ui.tree module, in the treeConfig constants
+
 ##### data-drag-enabled
 Turn on dragging and dropping of nodes.
 - `true` (default): allow drag and drop
