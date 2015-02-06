@@ -72,498 +72,6 @@
   'use strict';
 
   angular.module('ui.tree')
-
-    .controller('TreeHandleController', ['$scope', '$element', '$attrs', 'treeConfig',
-      function ($scope, $element, $attrs, treeConfig) {
-        this.scope = $scope;
-
-        $scope.$element = $element;
-        $scope.$handleElement = $element;
-        $scope.$nodeScope = undefined;
-        $scope.$type = 'uiTreeHandle';
-      }
-    ]);
-})();
-
-(function() {
-  'use strict';
-
-  angular.module('ui.tree')
-
-    .controller('TreeNodeController', ['$scope', '$element', '$attrs', 'treeConfig',
-      function ($scope, $element, $attrs, treeConfig) {
-        this.scope = $scope;
-
-        $scope.$element = $element;
-        $scope.$nodeElement = $element;
-        $scope.$modelValue = undefined; // Model value for node;
-        $scope.$parentNodeScope = undefined; // uiTreeNode Scope of parent node;
-        $scope.$childNodesScope = undefined; // uiTreeNodes Scope of child nodes.
-        $scope.$parentNodesScope = undefined; // uiTreeNodes Scope of parent nodes.
-        $scope.$treeScope = undefined; // uiTree scope
-        $scope.$handleScope = undefined; // it's handle scope
-        $scope.$type = 'uiTreeNode';
-        $scope.$$apply = false; //
-        $scope.$dragInfo = undefined;
-
-        $scope.collapsed = false;
-        $scope.expandOnHover = false;
-
-        $scope.selected = false;
-
-        $scope.init = function(controllersArr) {
-          var treeNodesCtrl = controllersArr[0];
-          $scope.$treeScope = controllersArr[1] ? controllersArr[1].scope : undefined;
-
-          // find the scope of it's parent node
-          $scope.$parentNodeScope = treeNodesCtrl.scope.$nodeScope;
-          // modelValue for current node
-          $scope.$modelValue = treeNodesCtrl.scope.$modelValue[$scope.$index];
-          $scope.$parentNodesScope = treeNodesCtrl.scope;
-          treeNodesCtrl.scope.initSubNode($scope); // init sub nodes
-
-          $element.on('$destroy', function() {
-            treeNodesCtrl.scope.destroySubNode($scope); // destroy sub nodes
-          });
-        };
-
-        $scope.toggleSelected = function() {
-          if ($scope.selected) {
-            $scope.unselect();
-          } else {
-            $scope.select();
-          }
-        };
-
-        $scope.select = function() {
-          if (!$scope.selected && $scope.$treeScope.$callbacks.select($scope)) {
-            $scope.selected = true;
-
-            $scope.$treeScope.$selecteds.push($scope.$element);
-          }
-        };
-
-        $scope.unselect = function() {
-          if ($scope.selected && $scope.$treeScope.$callbacks.unselect($scope)) {
-            $scope.selected = false;
-
-            var indexOf = $scope.$treeScope.$selecteds.indexOf($scope.$element);
-            if (angular.isDefined(indexOf) && indexOf > -1) {
-              $scope.$treeScope.$selecteds.splice(indexOf, 1);
-            }
-          }
-        };
-
-        $scope.index = function() {
-          return $scope.$parentNodesScope.$modelValue.indexOf($scope.$modelValue);
-        };
-
-        $scope.dragEnabled = function() {
-          return !($scope.$treeScope && !$scope.$treeScope.dragEnabled);
-        };
-
-        $scope.isSibling = function(targetNode) {
-          return $scope.$parentNodesScope === targetNode.$parentNodesScope;
-        };
-
-        $scope.isChild = function(targetNode) {
-          var nodes = $scope.childNodes();
-          return nodes && nodes.indexOf(targetNode) > -1;
-        };
-
-        $scope.prev = function() {
-          var index = $scope.index();
-          if (index > 0) {
-            return $scope.siblings()[index - 1];
-          }
-
-          return undefined;
-        };
-
-        $scope.siblings = function() {
-          return $scope.$parentNodesScope.childNodes();
-        };
-
-        $scope.childNodesCount = function() {
-          return (angular.isDefined($scope.childNodes())) ? $scope.childNodes().length : 0;
-        };
-
-        $scope.hasChild = function() {
-          return $scope.childNodesCount() > 0;
-        };
-
-        $scope.childNodes = function() {
-          return (angular.isDefined($scope.$childNodesScope) && angular.isDefined($scope.$childNodesScope.$modelValue)) ?
-                 $scope.$childNodesScope.childNodes() : undefined;
-        };
-
-        $scope.accept = function(sourceNode, destIndex) {
-          return angular.isDefined($scope.$childNodesScope) &&
-                  angular.isDefined($scope.$childNodesScope.$modelValue) &&
-                  $scope.$childNodesScope.accept(sourceNode, destIndex);
-        };
-
-        $scope.removeNode = function() {
-          if ($scope.$treeScope.$callbacks.remove(node)) {
-            var node = $scope.remove();
-
-            return node;
-          }
-
-          return undefined;
-        };
-
-        $scope.remove = function() {
-          return $scope.$parentNodesScope.removeNode($scope);
-        };
-
-        $scope.toggle = function() {
-          $scope.collapsed = !$scope.collapsed;
-        };
-
-        $scope.collapse = function(all) {
-          $scope.collapsed = $scope.$treeScope.$callbacks.collapse($scope, all);
-        };
-
-        $scope.expand = function(all) {
-          $scope.collapsed = !$scope.$treeScope.$callbacks.expand($scope, all);
-        };
-
-        $scope.depth = function() {
-          var parentNode = $scope.$parentNodeScope;
-          if (parentNode) {
-            return parentNode.depth() + 1;
-          }
-
-          return 1;
-        };
-
-        var subDepth = 0;
-        var countSubDepth = function(scope) {
-          var count = 0;
-          var nodes = scope.childNodes();
-          for (var i = 0; i < nodes.length; i++) {
-            var childNodes = nodes[i].$childNodesScope;
-            if (childNodes) {
-              count = 1;
-              countSubDepth(childNodes);
-            }
-          }
-          subDepth += count;
-        };
-
-        $scope.maxSubDepth = function() {
-          subDepth = 0;
-          if ($scope.$childNodesScope) {
-            countSubDepth($scope.$childNodesScope);
-          }
-
-          return subDepth;
-        };
-
-      }
-    ]);
-})();
-
-(function() {
-  'use strict';
-
-  angular.module('ui.tree')
-
-    .controller('TreeNodesController', ['$scope', '$element', '$q', 'treeConfig',
-      function ($scope, $element, $q, treeConfig) {
-        this.scope = $scope;
-
-        $scope.$element = $element;
-        $scope.$nodesElement = $element;
-        $scope.$modelValue = undefined;
-        $scope.$nodeScope = undefined; // the scope of node which the nodes belongs to
-        $scope.$treeScope = undefined;
-        $scope.$type = 'uiTreeNodes';
-        $scope.$nodesMap = {};
-
-        $scope.nodrop = false;
-        $scope.maxDepth = 0;
-
-        $scope.expandOnHover = undefined;
-
-        $scope.initSubNode = function(subNode) {
-          if (!subNode.$modelValue) {
-            return undefined;
-          }
-          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = subNode;
-        };
-
-        $scope.destroySubNode = function(subNode) {
-          if (!subNode.$modelValue) {
-            return undefined;
-          }
-          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = undefined;
-        };
-
-        $scope.accept = function(sourceNode, destIndex) {
-          return $scope.$treeScope.$callbacks.accept(sourceNode, $scope, destIndex);
-        };
-
-        $scope.beforeDrag = function(sourceNode, event) {
-          return $scope.$treeScope.$callbacks.beforeDrag(sourceNode, event);
-        };
-
-        $scope.isParent = function(node) {
-          return node.$parentNodesScope == $scope;
-        };
-
-        $scope.hasChild = function() {
-          return $scope.$modelValue.length > 0;
-        };
-
-        $scope.safeApply = function(fn) {
-          var phase = this.$root.$$phase;
-          if (phase == '$apply' || phase == '$digest') {
-            if (fn && (typeof(fn) === 'function')) {
-              fn();
-            }
-          } else {
-            this.$apply(fn);
-          }
-        };
-
-        $scope.removeNode = function(node) {
-          var deferred = $q.defer();
-
-          var index = $scope.$modelValue.indexOf(node.$modelValue);
-          if (index > -1) {
-            $scope.safeApply(function() {
-              $scope.$modelValue.splice(index, 1)[0];
-
-              deferred.resolve(node);
-            });
-          } else {
-            deferred.reject('not found');
-          }
-
-          return deferred.promise;
-        };
-
-        $scope.insertNode = function(index, nodeData) {
-          var deferred = $q.defer();
-
-          $scope.safeApply(function() {
-            $scope.$modelValue.splice(index, 0, nodeData);
-            deferred.resolve('inserted');
-          });
-
-          return deferred.promise;
-        };
-
-        $scope.childNodes = function() {
-          var nodes = [];
-          if ($scope.$modelValue) {
-            for (var i = 0; i < $scope.$modelValue.length; i++) {
-              nodes.push($scope.$nodesMap[$scope.$modelValue[i].$$hashKey]);
-            }
-          }
-          return nodes;
-        };
-
-        $scope.depth = function() {
-          if ($scope.$nodeScope) {
-            return $scope.$nodeScope.depth();
-          }
-          return 0; // if it has no $nodeScope, it's root
-        };
-
-        // check if depth limit has reached
-        $scope.outOfDepth = function(sourceNode) {
-          var maxDepth = $scope.maxDepth || $scope.$treeScope.maxDepth;
-          if (maxDepth > 0) {
-            return $scope.depth() + sourceNode.maxSubDepth() + 1 > maxDepth;
-          }
-          return false;
-        };
-
-      }
-    ]);
-})();
-
-(function() {
-  'use strict';
-
-  angular.module('ui.tree')
-    .controller('TreeController', ['$scope', '$element', '$window', '$attrs', 'treeConfig', 'keys',
-      function ($scope, $element, $window, $attrs, treeConfig, keys) {
-        this.scope = $scope;
-
-        $scope.$element = $element;
-        $scope.$treeElement = $element;
-        $scope.$nodesScope = undefined; // root nodes
-        $scope.$type = 'uiTree';
-        $scope.$emptyElm = undefined;
-        $scope.$callbacks = undefined;
-
-        $scope.$selecteds = [];
-
-        $scope.dragEnabled = (angular.isUndefined($scope.dragEnabled)) ? true : $scope.dragEnabled;
-        $scope.emptyPlaceholderEnabled = (angular.isUndefined($scope.emptyPlaceholderEnabled)) ? false : $scope.emptyPlaceholderEnabled;
-        $scope.maxDepth = (angular.isUndefined($scope.maxDepth)) ? 10 : $scope.maxDepth;
-        $scope.dragDelay = (angular.isUndefined($scope.dragDelay)) ? 0 : $scope.dragDelay;
-        $scope.dragDistance = (angular.isUndefined($scope.dragDistance)) ? 0 : $scope.dragDistance;
-        $scope.cancelKey = keys.escape;
-        $scope.lockXKey = undefined;
-        $scope.lockX = false;
-        $scope.lockYKey = undefined;
-        $scope.lockY = false;
-        $scope.boundTo = (angular.isUndefined($scope.boundTo)) ? '' : $scope.boundTo;
-        $scope.collideWith = 'bottom';
-        $scope.coverage = 0.5;
-        $scope.spacing = (angular.isUndefined($scope.spacing)) ? 50 : $scope.spacing;
-        $scope.spacingThreshold = Math.floor($scope.spacing / 4);
-
-        $scope.copyKey = undefined;
-        $scope.copy = false;
-        $scope.multiSelectKey = undefined;
-        $scope.multiSelect = false;
-
-        $scope.expandOnHover = (angular.isUndefined($scope.expandOnHover)) ? 500 : $scope.expandOnHover;
-
-        $scope.$watch('callbacks', function(newOptions) {
-          angular.forEach(newOptions, function(value, key) {
-            if ($scope.$callbacks[key]) {
-              if (angular.isFunction(value)) {
-                $scope.$callbacks[key] = value;
-              }
-            }
-          });
-        }, true);
-
-        $scope.$watch('$nodesScope.$modelValue.length', function(val) {
-          if ((typeof val) != 'undefined' && $scope.$nodesScope.$modelValue) {
-            $scope.resetEmptyElement();
-          }
-        }, true);
-
-        $scope.$watch('lockXKeyString', function(val) {
-          if (angular.isString(val)) {
-            val = val.toLowerCase();
-            if (val.length > 0) {
-              $scope.lockXKey = (angular.isDefined(keys[val])) ? keys[val] : (val.length === 1) ? (val.charCodeAt(0) - 32) : undefined;
-            }
-          }
-
-          $scope.lockX = (angular.isUndefined($scope.lockXKey) && ((typeof val) === 'boolean')) ? val : false;
-        });
-
-        $scope.$watch('lockYKeyString', function(val) {
-          if (angular.isString(val)) {
-            val = val.toLowerCase();
-            if (val.length > 0) {
-              $scope.lockYKey = (angular.isDefined(keys[val])) ? keys[val] : (val.length === 1) ? (val.charCodeAt(0) - 32) : undefined;
-            }
-          }
-
-          $scope.lockY = (angular.isUndefined($scope.lockXKey) && ((typeof val) === 'boolean')) ? val : false;
-        });
-
-        $scope.$watch('boundToString', function(val) {
-          if (angular.isString(val) && val.length > 0) {
-            try {
-              $scope.boundTo = angular.element($window.document.querySelectorAll(val));
-            } catch (exception) {
-              $scope.boundTo = '';
-            }
-          }
-        });
-
-        $scope.$watch('spacing', function(val) {
-          if (angular.isNumber(val) && val > 0) {
-            $scope.spacingThreshold = Math.floor($scope.spacing / 4);
-          }
-        });
-
-        $scope.$watch('coveragePercent', function(val) {
-          if (angular.isNumber(val) && val >= -100 && val <= 100) {
-            $scope.collideWith = (val < 0) ? 'top' : 'bottom';
-            $scope.coverage = Math.abs((val / 100));
-          }
-        });
-
-        $scope.$watch('cancelKeyString', function(val) {
-          if (angular.isString(val)) {
-            val = val.toLowerCase();
-            if (val.length > 0) {
-              $scope.cancelKey = (angular.isDefined(keys[val])) ? keys[val] : (val.charCodeAt(0) - 32);
-            }
-          }
-        });
-
-        $scope.$watch('copyKeyString', function(val) {
-          if (angular.isString(val)) {
-            val = val.toLowerCase();
-            if (val.length > 0) {
-              $scope.copyKey = (angular.isDefined(keys[val])) ? keys[val] : (val.charCodeAt(0) - 32);
-            }
-          }
-        });
-
-        $scope.$watch('selectKeyString', function(val) {
-          if (angular.isString(val)) {
-            val = val.toLowerCase();
-            if (val.length > 0) {
-              $scope.multiSelectKey = (angular.isDefined(keys[val])) ? keys[val] : (val.charCodeAt(0) - 32);
-            }
-          }
-        });
-
-        // Check if it's a empty tree
-        $scope.isEmpty = function() {
-          return ($scope.$nodesScope && $scope.$nodesScope.$modelValue && $scope.$nodesScope.$modelValue.length === 0);
-        };
-
-        // add placeholder to empty tree
-        $scope.place = function(placeElm) {
-          $scope.$nodesScope.$element.append(placeElm);
-          $scope.$emptyElm.remove();
-        };
-
-        $scope.resetEmptyElement = function() {
-          if ($scope.$nodesScope.$modelValue.length === 0 && $scope.emptyPlaceholderEnabled) {
-            $element.append($scope.$emptyElm);
-          } else {
-            $scope.$emptyElm.remove();
-          }
-        };
-
-        var collapseOrExpand = function(scope, collapsed) {
-          var nodes = scope.childNodes();
-          for (var i = 0; i < nodes.length; i++) {
-            if (nodes[i]) {
-              (collapsed) ? nodes[i].collapse(true) : nodes[i].expand(true);
-
-              var subScope = nodes[i].$childNodesScope;
-              if (subScope) {
-                collapseOrExpand(subScope, collapsed);
-              }
-            }
-          }
-        };
-
-        $scope.collapseAll = function() {
-          collapseOrExpand($scope.$nodesScope, true);
-        };
-        $scope.$on('collapseAll', $scope.collapseAll);
-
-        $scope.expandAll = function() {
-          collapseOrExpand($scope.$nodesScope, false);
-        };
-        $scope.$on('expandAll', $scope.expandAll);
-      }
-    ]);
-})();
-
-(function() {
-  'use strict';
-
-  angular.module('ui.tree')
   .directive('uiTree', [ 'treeConfig', 'keys', '$window',
     function(treeConfig, keys, $window) {
       return {
@@ -1811,6 +1319,498 @@
 
   angular.module('ui.tree')
 
+    .controller('TreeHandleController', ['$scope', '$element', '$attrs', 'treeConfig',
+      function ($scope, $element, $attrs, treeConfig) {
+        this.scope = $scope;
+
+        $scope.$element = $element;
+        $scope.$handleElement = $element;
+        $scope.$nodeScope = undefined;
+        $scope.$type = 'uiTreeHandle';
+      }
+    ]);
+})();
+
+(function() {
+  'use strict';
+
+  angular.module('ui.tree')
+
+    .controller('TreeNodeController', ['$scope', '$element', '$attrs', 'treeConfig',
+      function ($scope, $element, $attrs, treeConfig) {
+        this.scope = $scope;
+
+        $scope.$element = $element;
+        $scope.$nodeElement = $element;
+        $scope.$modelValue = undefined; // Model value for node;
+        $scope.$parentNodeScope = undefined; // uiTreeNode Scope of parent node;
+        $scope.$childNodesScope = undefined; // uiTreeNodes Scope of child nodes.
+        $scope.$parentNodesScope = undefined; // uiTreeNodes Scope of parent nodes.
+        $scope.$treeScope = undefined; // uiTree scope
+        $scope.$handleScope = undefined; // it's handle scope
+        $scope.$type = 'uiTreeNode';
+        $scope.$$apply = false; //
+        $scope.$dragInfo = undefined;
+
+        $scope.collapsed = false;
+        $scope.expandOnHover = false;
+
+        $scope.selected = false;
+
+        $scope.init = function(controllersArr) {
+          var treeNodesCtrl = controllersArr[0];
+          $scope.$treeScope = controllersArr[1] ? controllersArr[1].scope : undefined;
+
+          // find the scope of it's parent node
+          $scope.$parentNodeScope = treeNodesCtrl.scope.$nodeScope;
+          // modelValue for current node
+          $scope.$modelValue = treeNodesCtrl.scope.$modelValue[$scope.$index];
+          $scope.$parentNodesScope = treeNodesCtrl.scope;
+          treeNodesCtrl.scope.initSubNode($scope); // init sub nodes
+
+          $element.on('$destroy', function() {
+            treeNodesCtrl.scope.destroySubNode($scope); // destroy sub nodes
+          });
+        };
+
+        $scope.toggleSelected = function() {
+          if ($scope.selected) {
+            $scope.unselect();
+          } else {
+            $scope.select();
+          }
+        };
+
+        $scope.select = function() {
+          if (!$scope.selected && $scope.$treeScope.$callbacks.select($scope)) {
+            $scope.selected = true;
+
+            $scope.$treeScope.$selecteds.push($scope.$element);
+          }
+        };
+
+        $scope.unselect = function() {
+          if ($scope.selected && $scope.$treeScope.$callbacks.unselect($scope)) {
+            $scope.selected = false;
+
+            var indexOf = $scope.$treeScope.$selecteds.indexOf($scope.$element);
+            if (angular.isDefined(indexOf) && indexOf > -1) {
+              $scope.$treeScope.$selecteds.splice(indexOf, 1);
+            }
+          }
+        };
+
+        $scope.index = function() {
+          return $scope.$parentNodesScope.$modelValue.indexOf($scope.$modelValue);
+        };
+
+        $scope.dragEnabled = function() {
+          return !($scope.$treeScope && !$scope.$treeScope.dragEnabled);
+        };
+
+        $scope.isSibling = function(targetNode) {
+          return $scope.$parentNodesScope === targetNode.$parentNodesScope;
+        };
+
+        $scope.isChild = function(targetNode) {
+          var nodes = $scope.childNodes();
+          return nodes && nodes.indexOf(targetNode) > -1;
+        };
+
+        $scope.prev = function() {
+          var index = $scope.index();
+          if (index > 0) {
+            return $scope.siblings()[index - 1];
+          }
+
+          return undefined;
+        };
+
+        $scope.siblings = function() {
+          return $scope.$parentNodesScope.childNodes();
+        };
+
+        $scope.childNodesCount = function() {
+          return (angular.isDefined($scope.childNodes())) ? $scope.childNodes().length : 0;
+        };
+
+        $scope.hasChild = function() {
+          return $scope.childNodesCount() > 0;
+        };
+
+        $scope.childNodes = function() {
+          return (angular.isDefined($scope.$childNodesScope) && angular.isDefined($scope.$childNodesScope.$modelValue)) ?
+                 $scope.$childNodesScope.childNodes() : undefined;
+        };
+
+        $scope.accept = function(sourceNode, destIndex) {
+          return angular.isDefined($scope.$childNodesScope) &&
+                  angular.isDefined($scope.$childNodesScope.$modelValue) &&
+                  $scope.$childNodesScope.accept(sourceNode, destIndex);
+        };
+
+        $scope.removeNode = function() {
+          if ($scope.$treeScope.$callbacks.remove(node)) {
+            var node = $scope.remove();
+
+            return node;
+          }
+
+          return undefined;
+        };
+
+        $scope.remove = function() {
+          return $scope.$parentNodesScope.removeNode($scope);
+        };
+
+        $scope.toggle = function() {
+          $scope.collapsed = !$scope.collapsed;
+        };
+
+        $scope.collapse = function(all) {
+          $scope.collapsed = $scope.$treeScope.$callbacks.collapse($scope, all);
+        };
+
+        $scope.expand = function(all) {
+          $scope.collapsed = !$scope.$treeScope.$callbacks.expand($scope, all);
+        };
+
+        $scope.depth = function() {
+          var parentNode = $scope.$parentNodeScope;
+          if (parentNode) {
+            return parentNode.depth() + 1;
+          }
+
+          return 1;
+        };
+
+        var subDepth = 0;
+        var countSubDepth = function(scope) {
+          var count = 0;
+          var nodes = scope.childNodes();
+          for (var i = 0; i < nodes.length; i++) {
+            var childNodes = nodes[i].$childNodesScope;
+            if (childNodes) {
+              count = 1;
+              countSubDepth(childNodes);
+            }
+          }
+          subDepth += count;
+        };
+
+        $scope.maxSubDepth = function() {
+          subDepth = 0;
+          if ($scope.$childNodesScope) {
+            countSubDepth($scope.$childNodesScope);
+          }
+
+          return subDepth;
+        };
+
+      }
+    ]);
+})();
+
+(function() {
+  'use strict';
+
+  angular.module('ui.tree')
+
+    .controller('TreeNodesController', ['$scope', '$element', '$q', 'treeConfig',
+      function ($scope, $element, $q, treeConfig) {
+        this.scope = $scope;
+
+        $scope.$element = $element;
+        $scope.$nodesElement = $element;
+        $scope.$modelValue = undefined;
+        $scope.$nodeScope = undefined; // the scope of node which the nodes belongs to
+        $scope.$treeScope = undefined;
+        $scope.$type = 'uiTreeNodes';
+        $scope.$nodesMap = {};
+
+        $scope.nodrop = false;
+        $scope.maxDepth = 0;
+
+        $scope.expandOnHover = undefined;
+
+        $scope.initSubNode = function(subNode) {
+          if (!subNode.$modelValue) {
+            return undefined;
+          }
+          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = subNode;
+        };
+
+        $scope.destroySubNode = function(subNode) {
+          if (!subNode.$modelValue) {
+            return undefined;
+          }
+          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = undefined;
+        };
+
+        $scope.accept = function(sourceNode, destIndex) {
+          return $scope.$treeScope.$callbacks.accept(sourceNode, $scope, destIndex);
+        };
+
+        $scope.beforeDrag = function(sourceNode, event) {
+          return $scope.$treeScope.$callbacks.beforeDrag(sourceNode, event);
+        };
+
+        $scope.isParent = function(node) {
+          return node.$parentNodesScope == $scope;
+        };
+
+        $scope.hasChild = function() {
+          return $scope.$modelValue.length > 0;
+        };
+
+        $scope.safeApply = function(fn) {
+          var phase = this.$root.$$phase;
+          if (phase == '$apply' || phase == '$digest') {
+            if (fn && (typeof(fn) === 'function')) {
+              fn();
+            }
+          } else {
+            this.$apply(fn);
+          }
+        };
+
+        $scope.removeNode = function(node) {
+          var deferred = $q.defer();
+
+          var index = $scope.$modelValue.indexOf(node.$modelValue);
+          if (index > -1) {
+            $scope.safeApply(function() {
+              $scope.$modelValue.splice(index, 1)[0];
+
+              deferred.resolve(node);
+            });
+          } else {
+            deferred.reject('not found');
+          }
+
+          return deferred.promise;
+        };
+
+        $scope.insertNode = function(index, nodeData) {
+          var deferred = $q.defer();
+
+          $scope.safeApply(function() {
+            $scope.$modelValue.splice(index, 0, nodeData);
+            deferred.resolve('inserted');
+          });
+
+          return deferred.promise;
+        };
+
+        $scope.childNodes = function() {
+          var nodes = [];
+          if ($scope.$modelValue) {
+            for (var i = 0; i < $scope.$modelValue.length; i++) {
+              nodes.push($scope.$nodesMap[$scope.$modelValue[i].$$hashKey]);
+            }
+          }
+          return nodes;
+        };
+
+        $scope.depth = function() {
+          if ($scope.$nodeScope) {
+            return $scope.$nodeScope.depth();
+          }
+          return 0; // if it has no $nodeScope, it's root
+        };
+
+        // check if depth limit has reached
+        $scope.outOfDepth = function(sourceNode) {
+          var maxDepth = $scope.maxDepth || $scope.$treeScope.maxDepth;
+          if (maxDepth > 0) {
+            return $scope.depth() + sourceNode.maxSubDepth() + 1 > maxDepth;
+          }
+          return false;
+        };
+
+      }
+    ]);
+})();
+
+(function() {
+  'use strict';
+
+  angular.module('ui.tree')
+    .controller('TreeController', ['$scope', '$element', '$window', '$attrs', 'treeConfig', 'keys',
+      function ($scope, $element, $window, $attrs, treeConfig, keys) {
+        this.scope = $scope;
+
+        $scope.$element = $element;
+        $scope.$treeElement = $element;
+        $scope.$nodesScope = undefined; // root nodes
+        $scope.$type = 'uiTree';
+        $scope.$emptyElm = undefined;
+        $scope.$callbacks = undefined;
+
+        $scope.$selecteds = [];
+
+        $scope.dragEnabled = (angular.isUndefined($scope.dragEnabled)) ? true : $scope.dragEnabled;
+        $scope.emptyPlaceholderEnabled = (angular.isUndefined($scope.emptyPlaceholderEnabled)) ? false : $scope.emptyPlaceholderEnabled;
+        $scope.maxDepth = (angular.isUndefined($scope.maxDepth)) ? 10 : $scope.maxDepth;
+        $scope.dragDelay = (angular.isUndefined($scope.dragDelay)) ? 0 : $scope.dragDelay;
+        $scope.dragDistance = (angular.isUndefined($scope.dragDistance)) ? 0 : $scope.dragDistance;
+        $scope.cancelKey = keys.escape;
+        $scope.lockXKey = undefined;
+        $scope.lockX = false;
+        $scope.lockYKey = undefined;
+        $scope.lockY = false;
+        $scope.boundTo = (angular.isUndefined($scope.boundTo)) ? '' : $scope.boundTo;
+        $scope.collideWith = 'bottom';
+        $scope.coverage = 0.5;
+        $scope.spacing = (angular.isUndefined($scope.spacing)) ? 50 : $scope.spacing;
+        $scope.spacingThreshold = Math.floor($scope.spacing / 4);
+
+        $scope.copyKey = undefined;
+        $scope.copy = false;
+        $scope.multiSelectKey = undefined;
+        $scope.multiSelect = false;
+
+        $scope.expandOnHover = (angular.isUndefined($scope.expandOnHover)) ? 500 : $scope.expandOnHover;
+
+        $scope.$watch('callbacks', function(newOptions) {
+          angular.forEach(newOptions, function(value, key) {
+            if ($scope.$callbacks[key]) {
+              if (angular.isFunction(value)) {
+                $scope.$callbacks[key] = value;
+              }
+            }
+          });
+        }, true);
+
+        $scope.$watch('$nodesScope.$modelValue.length', function(val) {
+          if ((typeof val) != 'undefined' && $scope.$nodesScope.$modelValue) {
+            $scope.resetEmptyElement();
+          }
+        }, true);
+
+        $scope.$watch('lockXKeyString', function(val) {
+          if (angular.isString(val)) {
+            val = val.toLowerCase();
+            if (val.length > 0) {
+              $scope.lockXKey = (angular.isDefined(keys[val])) ? keys[val] : (val.length === 1) ? (val.charCodeAt(0) - 32) : undefined;
+            }
+          }
+
+          $scope.lockX = (angular.isUndefined($scope.lockXKey) && ((typeof val) === 'boolean')) ? val : false;
+        });
+
+        $scope.$watch('lockYKeyString', function(val) {
+          if (angular.isString(val)) {
+            val = val.toLowerCase();
+            if (val.length > 0) {
+              $scope.lockYKey = (angular.isDefined(keys[val])) ? keys[val] : (val.length === 1) ? (val.charCodeAt(0) - 32) : undefined;
+            }
+          }
+
+          $scope.lockY = (angular.isUndefined($scope.lockXKey) && ((typeof val) === 'boolean')) ? val : false;
+        });
+
+        $scope.$watch('boundToString', function(val) {
+          if (angular.isString(val) && val.length > 0) {
+            try {
+              $scope.boundTo = angular.element($window.document.querySelectorAll(val));
+            } catch (exception) {
+              $scope.boundTo = '';
+            }
+          }
+        });
+
+        $scope.$watch('spacing', function(val) {
+          if (angular.isNumber(val) && val > 0) {
+            $scope.spacingThreshold = Math.floor($scope.spacing / 4);
+          }
+        });
+
+        $scope.$watch('coveragePercent', function(val) {
+          if (angular.isNumber(val) && val >= -100 && val <= 100) {
+            $scope.collideWith = (val < 0) ? 'top' : 'bottom';
+            $scope.coverage = Math.abs((val / 100));
+          }
+        });
+
+        $scope.$watch('cancelKeyString', function(val) {
+          if (angular.isString(val)) {
+            val = val.toLowerCase();
+            if (val.length > 0) {
+              $scope.cancelKey = (angular.isDefined(keys[val])) ? keys[val] : (val.charCodeAt(0) - 32);
+            }
+          }
+        });
+
+        $scope.$watch('copyKeyString', function(val) {
+          if (angular.isString(val)) {
+            val = val.toLowerCase();
+            if (val.length > 0) {
+              $scope.copyKey = (angular.isDefined(keys[val])) ? keys[val] : (val.charCodeAt(0) - 32);
+            }
+          }
+        });
+
+        $scope.$watch('selectKeyString', function(val) {
+          if (angular.isString(val)) {
+            val = val.toLowerCase();
+            if (val.length > 0) {
+              $scope.multiSelectKey = (angular.isDefined(keys[val])) ? keys[val] : (val.charCodeAt(0) - 32);
+            }
+          }
+        });
+
+        // Check if it's a empty tree
+        $scope.isEmpty = function() {
+          return ($scope.$nodesScope && $scope.$nodesScope.$modelValue && $scope.$nodesScope.$modelValue.length === 0);
+        };
+
+        // add placeholder to empty tree
+        $scope.place = function(placeElm) {
+          $scope.$nodesScope.$element.append(placeElm);
+          $scope.$emptyElm.remove();
+        };
+
+        $scope.resetEmptyElement = function() {
+          if ($scope.$nodesScope.$modelValue.length === 0 && $scope.emptyPlaceholderEnabled) {
+            $element.append($scope.$emptyElm);
+          } else {
+            $scope.$emptyElm.remove();
+          }
+        };
+
+        var collapseOrExpand = function(scope, collapsed) {
+          var nodes = scope.childNodes();
+          for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i]) {
+              (collapsed) ? nodes[i].collapse(true) : nodes[i].expand(true);
+
+              var subScope = nodes[i].$childNodesScope;
+              if (subScope) {
+                collapseOrExpand(subScope, collapsed);
+              }
+            }
+          }
+        };
+
+        $scope.collapseAll = function() {
+          collapseOrExpand($scope.$nodesScope, true);
+        };
+        $scope.$on('collapseAll', $scope.collapseAll);
+
+        $scope.expandAll = function() {
+          collapseOrExpand($scope.$nodesScope, false);
+        };
+        $scope.$on('expandAll', $scope.expandAll);
+      }
+    ]);
+})();
+
+(function() {
+  'use strict';
+
+  angular.module('ui.tree')
+
    /**
     * @ngdoc service
     * @name ui.tree.service:$helper
@@ -1861,7 +1861,7 @@
            * @return {Bool} check if the node can be dragged.
            */
           nodrag: function (targetElm) {
-            return (typeof targetElm.attr('nodrag')) != "undefined";
+            return (typeof targetElm.attr('nodrag')) != "undefined" || typeof targetElm.attr('data-nodrag') != "undefined";
           },
 
           /**

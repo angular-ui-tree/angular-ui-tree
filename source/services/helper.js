@@ -53,7 +53,7 @@
            * @return {Bool} check if the node can be dragged.
            */
           nodrag: function (targetElm) {
-            return (typeof targetElm.attr('nodrag')) != "undefined";
+            return (typeof targetElm.attr('nodrag')) != "undefined" || typeof targetElm.attr('data-nodrag') != "undefined";
           },
 
           /**
