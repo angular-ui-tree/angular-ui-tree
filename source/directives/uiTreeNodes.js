@@ -1,20 +1,16 @@
-(function() {
+(function () {
   'use strict';
 
   angular.module('ui.tree')
-  .directive('uiTreeNodes', [ 'treeConfig',
+  .directive('uiTreeNodes', [ 'treeConfig', '$window',
     function(treeConfig) {
       return {
         require: ['ngModel', '?^uiTreeNode', '^uiTree'],
-        restrict: 'EA',
-        scope: {
-          maxDepth: '=?',
-          expandOnHover: '=?',
-          noDrop: '=?',
-          horizontal: '=?'
-        },
+        restrict: 'A',
+        scope: true,
         controller: 'TreeNodesController',
         link: function(scope, element, attrs, controllersArr) {
+
           var config = {};
           angular.extend(config, treeConfig);
           if (config.nodesClass) {
@@ -24,11 +20,11 @@
           var ngModel = controllersArr[0];
           var treeNodeCtrl = controllersArr[1];
           var treeCtrl = controllersArr[2];
-
           if (treeNodeCtrl) {
             treeNodeCtrl.scope.$childNodesScope = scope;
             scope.$nodeScope = treeNodeCtrl.scope;
-          } else { // find the root nodes if there is no parent node and have a parent ui-tree
+          }
+          else { // find the root nodes if there is no parent node and have a parent ui-tree
             treeCtrl.scope.$nodesScope = scope;
           }
           scope.$treeScope = treeCtrl.scope;
@@ -41,6 +37,21 @@
               scope.$modelValue = ngModel.$modelValue;
             };
           }
+
+          scope.$watch(attrs.maxDepth, function(val) {
+            if((typeof val) == "number") {
+              scope.maxDepth = val;
+            }
+          });
+
+          attrs.$observe('nodrop', function(val) {
+            scope.nodrop = ((typeof val) != "undefined");
+          });
+
+          attrs.$observe('horizontal', function(val) {
+            scope.horizontal = ((typeof val) != "undefined");
+          });
+
         }
       };
     }

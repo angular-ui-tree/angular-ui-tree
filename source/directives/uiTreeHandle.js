@@ -1,8 +1,8 @@
-(function() {
+(function () {
   'use strict';
 
   angular.module('ui.tree')
-  .directive('uiTreeHandle', [ 'treeConfig',
+  .directive('uiTreeHandle', [ 'treeConfig', '$window',
     function(treeConfig) {
       return {
         require: '^uiTreeNode',

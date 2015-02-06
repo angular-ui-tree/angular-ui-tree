@@ -1,0 +1,39 @@
+{
+  "name": "firebase-simple-login",
+  "version": "1.3.2",
+  "description": "Firebase Simple Login Web Client",
+  "authors": "Firebase <operations@firebase.com>",
+  "homepage": "http://firebase.github.io/firebase-simple-login",
+  "main": "firebase-simple-login.js",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "firebase": "~1.0.6",
+    "jasmine": "~1.3.1",
+    "jquery": "~2.1.0"
+  },
+  "keywords": [
+    "Firebase",
+    "synchronization",
+    "real-time",
+    "websocket",
+    "authentication",
+    "login"
+  ],
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "node_modules",
+    "js",
+    "lib"
+  ],
+  "_release": "1.3.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.3.2",
+    "commit": "e4893fda1cae9eb048db26ec31ee81bb3b2f89d9"
+  },
+  "_source": "git://github.com/firebase/firebase-simple-login.git",
+  "_target": "~1.3.0",
+  "_originalSource": "firebase-simple-login"
+}

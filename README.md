@@ -1,7 +1,7 @@
 Angular UI Tree
 ======================
 
-[![Build Status](https://travis-ci.org/angular-ui-tree/angular-ui-tree.svg)](https://travis-ci.org/angular-ui-tree/angular-ui-tree)
+[![Build Status](https://travis-ci.org/JimLiu/angular-ui-tree.svg?branch=master)](https://travis-ci.org/JimLiu/angular-ui-tree)
 
 Angular UI Tree is an AngularJS UI component that can sort nested lists, provides drag & drop support and doesn't depend on jQuery. If you are a user who uses `angular-nestedSortable`, this is [How to migrate From v1.x to v2.0](https://github.com/JimLiu/angular-ui-tree/wiki/Migrate-From-v1.x-to-v2.0).
 
@@ -109,28 +109,6 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
 </div>
 ```
 
-## Structure of json
-```json
-  data = [
-    {
-      "id": 1,
-      "title": "No childs, and I have an empty array in my items property so I'm nestable",
-      "items": []
-    },
-    {
-      "id": 2,
-      "title": "With childs",
-      "items": [
-        {
-          "id": 3,
-          "title": "No childs, and I have DON'T have an empty array in my items property so I'm NOT nestable"
-        }
-      ]
-    },
-    
-  ]
-```
-  
 ## Structure of angular-ui-tree
 
     ui-tree                             --> Root of tree
@@ -153,12 +131,6 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
 `ui-tree` is the root scope for a tree
 
 #### Attributes
-##### ui-tree-dir
-Set the direction of the tree for nesting
-- `ltr` (default)
-- `rtl`
-note: The default value is configured at the ui.tree module, in the treeConfig constants
-
 ##### data-drag-enabled
 Turn on dragging and dropping of nodes.
 - `true` (default): allow drag and drop
@@ -207,7 +179,7 @@ myAppModule.controller('MyController', function($scope) {
 });
 ```
 ```html
-<div ui-tree callbacks="treeOptions">
+<div ui-tree="treeOptions">
   <ol ui-tree-nodes ng-model="nodes">
     <li ng-repeat="node in nodes" ui-tree-node>{{node.title}}</li>
   </ol>
@@ -435,15 +407,15 @@ Use the `ui-tree-handle` to specify an element used to drag the object. If you d
 
 #### Dependencies
 
-* [Gulp](http://gulpjs.com/) (task automation)
+* [Grunt](http://gruntjs.com/) (task automation)
 * [Bower](http://bower.io/) (package management)
 
 #### Installation
 Run the commands below in the project root directory.
 
-#####1. Install Gulp and Bower
+#####1. Install Grunt and Bower
 
-    $ sudo npm install -g gulp bower
+    $ sudo npm install -g grunt-cli bower
 
 #####2. Install project dependencies
 
@@ -457,23 +429,24 @@ To debug code and run end-to-end tests, it is often useful to have a local HTTP 
 
 To start the web server, run:
 
-    $ gulp serve
+    $ grunt webserver
 
 To access the local server, enter the following URL into your web browser:
 
-    http://localhost:9000
+    http://localhost:8080/demo/
 
-By default, it serves the contents of the `examples` directory.
+By default, it serves the contents of the demo project.
 
 
 ####Building angular-ui-tree
 To build angular-ui-tree, you use the following command.
 
-    $ gulp build
+    $ grunt build
 
 This will generate non-minified and minified JavaScript files in the `dist` directory.
 
 ####Run tests
-You can run the unit test using a separate task.
+You can run the tests once or continuous.
 
-    $ gulp test
+    $ grunt test
+    $ grunt test:continuous

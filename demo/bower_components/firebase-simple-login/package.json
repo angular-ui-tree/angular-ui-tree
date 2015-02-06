@@ -1,0 +1,39 @@
+{
+  "name": "firebase-simple-login",
+  "version": "1.3.0",
+  "description": "Firebase Simple Login Web Client",
+  "author": "Firebase <operations@firebase.com>",
+  "homepage": "http://firebase.github.io/firebase-simple-login",
+  "main": "firebase-simple-login.js",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "^0.4.3",
+    "grunt-closure-tools": "^0.9.6",
+    "grunt-concurrent": "^0.5.0",
+    "grunt-exec": "^0.4.3",
+    "load-grunt-tasks": "^0.4.0",
+    "grunt-contrib-jasmine": "~0.5.3",
+    "grunt-contrib-jshint": "~0.8.0",
+    "grunt-contrib-connect": "^0.7.1",
+    "grunt-bump": "^0.0.13"
+  },
+  "keywords": [
+    "Firebase",
+    "synchronization",
+    "real-time",
+    "websocket",
+    "authentication",
+    "login"
+  ],
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/firebase/firebase-simple-login.git"
+  },
+  "bugs": {
+    "url": "https://github.com/firebase/firebase-simple-login/issues"
+  }
+}

@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>AngularJS UI Tree demo</title>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="dist/angular-ui-tree.min.css">
+  <link rel="stylesheet" href="css/demo.css">
+</head>
+<body ng-app="groupsApp">
+
+  <div class="container" ng-controller="groupsCtrl">
+    <h1 class="page-header">Angular UI Tree - Groups &amp; Categories</h1>
+    <a href="index.html"><i class="glyphicon glyphicon-chevron-left"></i> Back to overview page</a>
+
+    <div class="row">
+      <div class="col-lg-6" ui-tree="options">
+        <h3>Groups &amp; Categories</h3>
+        <ol ui-tree-nodes ng-model="groups" data-type="group">
+          <li ng-repeat="group in groups" ui-tree-node>
+            <div class="group-title angular-ui-tree-handle" ng-show="!group.editing">
+              <a href="" class="btn btn-danger btn-xs pull-right" data-nodrag ng-click="removeGroup(group)"><i class="glyphicon glyphicon-remove"></i></a>
+              <a href="" class="btn btn-primary btn-xs pull-right" data-nodrag ng-click="editGroup(group)"><i class="glyphicon glyphicon-pencil"></i></a>
+              <div>&nbsp;{{group.name}}</div>
+            </div>
+            <div class="group-title angular-ui-tree-handle" data-nodrag ng-show="group.editing">
+              <form class="form-inline" role="form">
+                <div class="form-group">
+                  <label class="sr-only" for="groupName">Group name</label>
+                  <input type="text" class="form-control" placeholder="Group name" ng-model="group.name">
+                </div>
+                <button type="submit" class="btn btn-default" ng-click="saveGroup(group)">Save</button>
+                <button type="submit" class="btn btn-default" ng-click="cancelEditingGroup(group)">Cancel</button>
+              </form>
+            </div>
+            <ol ui-tree-nodes ng-model="group.categories" data-type="category">
+              <li ng-repeat="category in group.categories" ui-tree-node>
+                <div class="category-title angular-ui-tree-handle">
+                  <a href="" class="btn btn-danger btn-xs pull-right" data-nodrag ng-click="removeCategory(group, category)"><i class="glyphicon glyphicon-remove"></i></a>
+                  <div>
+                    &nbsp;{{category.name}}
+                  </div>
+                </div>
+              </li>
+            </ol>
+            <ol class="angular-ui-tree-nodes" data-nodrag>
+              <li class="angular-ui-tree-node">
+                <div class="category-title angular-ui-tree-handle">
+                  <form class="form-inline" role="form">
+                    <div class="form-group">
+                      <label class="sr-only" for="categoryName">Category name</label>
+                      <input type="text" class="form-control" ng-model="group.newCategoryName" placeholder="Category name">
+                    </div>
+                    <button type="submit" class="btn btn-default" ng-click="addCategory(group)">Add Category</button>
+                  </form>
+                </div>
+              </li>
+            </ol>
+          </li>
+        </ol>
+        <ol class="angular-ui-tree-nodes">
+          <li class="angular-ui-tree-node">
+            <div class="group-title angular-ui-tree-handle">
+              <form class="form-inline" role="form">
+                <div class="form-group">
+                  <label class="sr-only" for="groupName">Group name</label>
+                  <input type="text" class="form-control" id="groupName" placeholder="Group name">
+                </div>
+                <button type="submit" class="btn btn-default" ng-click="addGroup()">Add Group</button>
+              </form>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="col-lg-6">
+        <h3>Data binding</h3>
+        <div class="info">
+          {{ info }}
+        </div>
+        <pre class="code">{{ groups | json }}</pre>
+      </div>
+    </div>
+
+  </div>
+
+  <!--[if IE 8]>
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/3.4.0/es5-shim.min.js"></script>
+  <![endif]-->
+  <script src="bower_components/angular/angular.min.js"></script>
+  <script src="bower_components/firebase/firebase.js"></script>
+  <script src="bower_components/angularfire/angularfire.min.js"></script>
+  <script type="text/javascript" src="dist/angular-ui-tree.js"></script>
+  <script type="text/javascript" src="js/groups.js"></script>
+</body>
+</html>

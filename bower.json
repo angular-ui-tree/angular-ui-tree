@@ -1,13 +1,12 @@
 {
   "name": "angular-ui-tree",
-  "version": "2.2.0",
-  "homepage": "https://github.com/angular-ui-tree/angular-ui-tree",
+  "version": "2.1.5",
+  "homepage": "https://github.com/JimLiu/angular-ui-tree",
   "authors": [
     "Jim Liu <https://github.com/JimLiu>",
-    "Voles <https://github.com/Voles>",
-    "Clément Prévot <https://github.com/clementprevot>"
+    "Voles <https://github.com/Voles>"
   ],
-  "description": "Tree directive for AngularJS",
+  "description": "Tree directive for the angular.js",
   "main": [
     "dist/angular-ui-tree.js",
     "dist/angular-ui-tree.min.css"
@@ -23,25 +22,22 @@
     "node"
   ],
   "dependencies": {
-    "angular": ">= 1.2.0"
+    "angular": ">= 1.2.0",
+    "es5-shim": "2.3.0"
   },
   "devDependencies": {
-    "angular-mocks": ">= 1.2.0",
-    "angular-route": ">= 1.2.0",
-    "angularfire": "~0.8.2",
-    "bootstrap-css": "~3.2.0",
-    "jasmine-jquery": "~1.7.0",
-    "jquery": "~2.1.1"
+    "angular": ">= 1.2.0",
+    "bootstrap": "~3.1.0",
+    "jquery": ">=1.10.x",
+    "jasmine-jquery": "~1.0.0",
+    "angular-mocks": "~1.2.11",
+    "firebase": "~1.0.11",
+    "angularfire": "~0.7.1"
   },
   "ignore": [
-    "examples",
-    "guide",
     "node_modules",
-    "source",
-    "tasks",
-    "tests",
-    "gulpfile.js",
-    "karma.conf.js",
-    "package.json"
+    "bower_components",
+    "test",
+    "tests"
   ]
 }

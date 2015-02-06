@@ -1,45 +1,42 @@
-(function() {
+(function () {
   'use strict';
 
   angular.module('ui.tree')
 
-    .controller('TreeNodesController', ['$scope', '$element', '$q', 'treeConfig',
-      function ($scope, $element, $q, treeConfig) {
+    .controller('TreeNodesController', ['$scope', '$element', 'treeConfig',
+      function ($scope, $element, treeConfig) {
         this.scope = $scope;
 
         $scope.$element = $element;
-        $scope.$nodesElement = $element;
-        $scope.$modelValue = undefined;
-        $scope.$nodeScope = undefined; // the scope of node which the nodes belongs to
-        $scope.$treeScope = undefined;
+        $scope.$modelValue = null;
+        $scope.$nodeScope = null; // the scope of node which the nodes belongs to
+        $scope.$treeScope = null;
         $scope.$type = 'uiTreeNodes';
         $scope.$nodesMap = {};
 
         $scope.nodrop = false;
         $scope.maxDepth = 0;
 
-        $scope.expandOnHover = undefined;
-
         $scope.initSubNode = function(subNode) {
-          if (!subNode.$modelValue) {
-            return undefined;
+          if(!subNode.$modelValue) {
+            return null;
           }
           $scope.$nodesMap[subNode.$modelValue.$$hashKey] = subNode;
         };
 
         $scope.destroySubNode = function(subNode) {
-          if (!subNode.$modelValue) {
-            return undefined;
+          if(!subNode.$modelValue) {
+            return null;
           }
-          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = undefined;
+          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = null;
         };
 
         $scope.accept = function(sourceNode, destIndex) {
           return $scope.$treeScope.$callbacks.accept(sourceNode, $scope, destIndex);
         };
 
-        $scope.beforeDrag = function(sourceNode, event) {
-          return $scope.$treeScope.$callbacks.beforeDrag(sourceNode, event);
+        $scope.beforeDrag = function(sourceNode) {
+          return $scope.$treeScope.$callbacks.beforeDrag(sourceNode);
         };
 
         $scope.isParent = function(node) {
@@ -52,8 +49,8 @@
 
         $scope.safeApply = function(fn) {
           var phase = this.$root.$$phase;
-          if (phase == '$apply' || phase == '$digest') {
-            if (fn && (typeof(fn) === 'function')) {
+          if(phase == '$apply' || phase == '$digest') {
+            if(fn && (typeof(fn) === 'function')) {
               fn();
             }
           } else {
@@ -62,31 +59,20 @@
         };
 
         $scope.removeNode = function(node) {
-          var deferred = $q.defer();
-
           var index = $scope.$modelValue.indexOf(node.$modelValue);
           if (index > -1) {
             $scope.safeApply(function() {
               $scope.$modelValue.splice(index, 1)[0];
-
-              deferred.resolve(node);
             });
-          } else {
-            deferred.reject('not found');
+            return node;
           }
-
-          return deferred.promise;
+          return null;
         };
 
         $scope.insertNode = function(index, nodeData) {
-          var deferred = $q.defer();
-
           $scope.safeApply(function() {
             $scope.$modelValue.splice(index, 0, nodeData);
-            deferred.resolve('inserted');
           });
-
-          return deferred.promise;
         };
 
         $scope.childNodes = function() {

@@ -3,17 +3,18 @@
 }
 
 .angular-ui-tree-empty {
-	border: 1px dashed #bbb;
-	min-height: 100px;
-	background-color: #e5e5e5;
-	background-image: -webkit-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -webkit-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
-	background-image: -moz-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -moz-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
-	background-image: linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
-	background-size: 60px 60px;
-	background-position: 0 0, 30px 30px;
+    border: 1px dashed #bbb;
+    min-height: 100px;
+    background-color: #e5e5e5;
+    background-image: -webkit-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -webkit-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+    background-image: -moz-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -moz-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+    background-image: linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+    background-size: 60px 60px;
+    background-position: 0 0, 30px 30px;
 }
 
 .angular-ui-tree-nodes {
+	display: block;
 	position: relative;
 	margin: 0px;
 	padding: 0px;
@@ -21,67 +22,42 @@
 }
 
 .angular-ui-tree-nodes .angular-ui-tree-nodes {
-	padding-left: 20px;
+    padding-left: 20px;
 }
-
-.angular-ui-tree-node .angular-ui-tree-nodes {
-	margin-top: 5px;
-}
-
 .angular-ui-tree-node, .angular-ui-tree-placeholder {
+	display: block;
 	position: relative;
 	margin: 0px;
-	margin-bottom: 5px;
 	padding: 0px;
 	min-height: 20px;
-	min-width: 200px;
 	line-height: 20px;
-}
-
-.angular-ui-tree-node.selected > .angular-ui-tree-handle, .angular-ui-tree-node.selected .angular-ui-tree-node > .angular-ui-tree-handle {
-	background: #DDE7FF;
-	border: 1px solid black;
-}
-
-.angular-ui-tree-node.original > .angular-ui-tree-handle {
-	background: #E2E2E2;
-	border: 1px solid lightgrey;
 }
 
 .angular-ui-tree-hidden {
-	display: none;
+    display: none;
 }
 
 .angular-ui-tree-placeholder {
-	margin: 5px 0;
-	padding: 0;
-	min-height: 30px;
-}
-
-.angular-ui-tree-placeholders-wrapper {
-	margin-bottom: 5px;
+    margin: 5px 0;
+    padding: 0;
+    min-height: 30px;
 }
 
 .angular-ui-tree-handle {
-	cursor: move;
-	text-decoration: none;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-	min-height: 20px;
-	line-height: 20px;
+    cursor: move;
+    text-decoration: none;
+    font-weight: bold;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    min-height: 20px;
+    line-height: 20px;
 }
 
-.angular-ui-tree-handle.select {
-	cursor: cell;
-}
-.angular-ui-tree-handle.copy {
-	cursor: copy;
-}
 
 .angular-ui-tree-drag {
-	position: absolute;
-	pointer-events: none;
-	z-index: 999;
-	opacity: .8;
+    position: absolute;
+    pointer-events: none;
+    z-index: 999;
+    opacity: .8;    
 }
