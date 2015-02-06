@@ -1,14 +1,21 @@
 {
   "name": "angular-ui-tree",
   "version": "2.1.5",
-  "homepage": "https://github.com/JimLiu/angular-ui-tree",
+  "homepage": "http://angular-ui-tree.github.io/website",
   "authors": [
     "Jim Liu <https://github.com/JimLiu>",
-    "Voles <https://github.com/Voles>"
+    "Voles <https://github.com/Voles>",
+    "Clément Prévot <https://github.com/clementprevot>",
+    "More: https://github.com/angular-ui-tree/angular-ui-tree/graphs/contributors"
   ],
-  "description": "Tree directive for the angular.js",
+  "description": "An AngularJS UI component that can sort nested lists, provides drag & drop support and doesn't depend on jQuery",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/angular-ui-tree/angular-ui-tree"
+  },
   "main": [
     "dist/angular-ui-tree.js",
+    "dist/angular-ui-tree.min.js",
     "dist/angular-ui-tree.min.css"
   ],
   "keywords": [
