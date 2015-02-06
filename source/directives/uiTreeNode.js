@@ -58,6 +58,7 @@
             var dragStarted = false;
             var dragTimer;
             var body = document.body,
+                $body = angular.element(document.body),
                 html = document.documentElement,
                 documentHeight,
                 documentWidth;
@@ -292,8 +293,8 @@
                       // Prevents cursor to change rapidly in Opera 12.16 and IE when dragging an element
                       var hStyle = (scope.$element[0].querySelector('.angular-ui-tree-handle') || scope.$element[0]).currentStyle;
                       if (hStyle) {
-                        document.body.setAttribute('ui-tree-cursor', $document.find('body').css('cursor') || '');
-                        $document.find('body').css({ cursor: hStyle.cursor + '!important' });
+                        $body.attr('ui-tree-cursor', $body.css('cursor') || '');
+                        $body.css({ cursor: hStyle.cursor + '!important' });
                       }
 
                       selectedElementScope.$apply(function() {
@@ -307,7 +308,7 @@
                     firstElement.parent()[0].insertBefore(placeElm[0], firstElement[0]);
                     firstElement.parent()[0].insertBefore(hiddenPlaceElm[0], firstElement[0]);
 
-                    $document.find('body').append(dragElm);
+                    $body.append(dragElm);
                     dragElm.css({
                       left: firstElementOffset.left + 'px',
                       top: firstElementOffset.top + 'px'
@@ -862,9 +863,9 @@
               }
 
               // Restore cursor in Opera 12.16 and IE
-              var oldCur = document.body.getAttribute('ui-tree-cursor');
+              var oldCur = body.getAttribute('ui-tree-cursor');
               if (oldCur !== null) {
-                $document.find('body').css({ cursor: oldCur });
+                $body.css({ cursor: oldCur });
                 document.body.removeAttribute('ui-tree-cursor');
               }
 
