@@ -60,7 +60,7 @@
           "title": "node1.2",
           "nodes": []
         }
-      ],
+      ]
     }, {
       "id": 2,
       "title": "node2",
