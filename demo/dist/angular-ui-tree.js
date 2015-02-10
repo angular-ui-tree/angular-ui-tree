@@ -784,9 +784,13 @@
             }
           });
 
-          attrs.$observe('nodrop', function(val) {
-            scope.nodrop = ((typeof val) != "undefined");
-          });
+          scope.$watch(function () {
+            return attrs.nodrop;
+          }, function (newVal) {
+            if((typeof newVal) != "undefined") {
+              scope.nodrop = true;
+            }
+          }, true);
 
           attrs.$observe('horizontal', function(val) {
             scope.horizontal = ((typeof val) != "undefined");
@@ -1006,8 +1010,9 @@
                 var parentElement = scope.$parent.$element[0];
                 var parentOverflow = parentElement.style.overflow;
                 var parentOverflowY = parentElement.style.overflowY;
+                
                 while(parentOverflowY !== 'auto' && parentOverflowY !== 'scroll' && parentElement != $window.document.body) {
-                  // I must be crazy, fixed for IE.
+                  // Fixed for IE.
                   if((parentOverflow === 'scroll' || parentOverflow === 'auto') && parentOverflowY !== 'hidden') {
                     break;
                   }
@@ -1015,6 +1020,7 @@
                   parentOverflow = parentElement.style.overflow;
                   parentOverflowY = parentElement.style.overflowY;
                 }
+
                 if(parentElement) {
                   var parent_top = parentElement.getBoundingClientRect().top;
                   var parent_bottom = parent_top + parentElement.offsetHeight;
