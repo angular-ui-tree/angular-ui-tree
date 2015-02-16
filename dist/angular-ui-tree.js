@@ -1071,11 +1071,7 @@
                   dragElm[0].style.display = "none";
                 }
 
-                // when using elementFromPoint() inside an iframe, you have to call
-                // elementFromPoint() twice to make sure IE8 returns the correct value
-                $window.document.elementFromPoint(targetX, targetY);
-
-                var targetElm = angular.element($window.document.elementFromPoint(targetX, targetY));
+                var targetElm = angular.element(findTargetElement(targetX, targetY));
                 if (angular.isFunction(dragElm.show)) {
                   dragElm.show();
                 }else{
@@ -1216,6 +1212,48 @@
               element.bind('touchend touchcancel mouseup',function(){$timeout.cancel(dragTimer);});
             };
             bindDrag();
+
+            var findTargetElement = function (targetX, targetY) {
+              var minDistance = 0xffffffff;
+              var nearestElem = null;
+
+              var elem = document.querySelectorAll(".angular-ui-tree-node");
+              for (var i = 0; i < elem.length; i++) {
+                var e = elem[i];
+                var dist = distanceTo(e, targetX, targetY);
+
+                if (minDistance > dist) {
+                  minDistance = dist;
+                  nearestElem = e;
+                }
+              }
+
+              return nearestElem;
+            };
+
+            var distanceTo = function (elem, targetX, targetY) {
+              var rec = elem.getClientRects()[0];
+              if (!rec) {
+                return 0xffffffff;
+              }
+
+              var bounds = {
+                x1: rec.left,
+                x2: rec.right,
+                y1: rec.top,
+                y2: rec.bottom
+              };
+
+              return distanceToPoint(targetX, targetY, bounds.x1, bounds.y2);
+            };
+
+            var distanceToPoint = function (x, y, pointX, pointY) {
+              var sqr = function (x) {
+                return x * x;
+              };
+
+              return Math.sqrt(sqr(x - pointX) + sqr(y - pointY));
+            };
 
             angular.element($window.document.body).bind("keydown", function(e) {
               if (e.keyCode == 27) {
