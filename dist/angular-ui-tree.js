@@ -1216,13 +1216,34 @@
             var findTargetElement = function (targetX, targetY) {
               var minDistance = 0xffffffff;
               var nearestElem = null;
+              var elemTop = 0xffffffff;
 
               var elem = document.querySelectorAll(".angular-ui-tree-node");
               for (var i = 0; i < elem.length; i++) {
                 var e = elem[i];
-                var dist = distanceTo(e, targetX, targetY);
 
-                if (minDistance > dist) {
+                var rec = e.getClientRects()[0];
+                if (!rec) {
+                  continue;
+                }
+
+                var bounds = {
+                  x1: rec.left,
+                  x2: rec.right,
+                  y1: rec.top,
+                  y2: rec.bottom
+                };
+
+                var dist = distanceToPoint(targetX, targetY, bounds.x1, bounds.y2);
+
+                if (minDistance >= dist) {
+                  if (minDistance === dist) {
+                    if (bounds.y1 < elemTop) {
+                      continue;
+                    }
+                  }
+
+                  elemTop = bounds.y1;
                   minDistance = dist;
                   nearestElem = e;
                 }
@@ -1231,21 +1252,6 @@
               return nearestElem;
             };
 
-            var distanceTo = function (elem, targetX, targetY) {
-              var rec = elem.getClientRects()[0];
-              if (!rec) {
-                return 0xffffffff;
-              }
-
-              var bounds = {
-                x1: rec.left,
-                x2: rec.right,
-                y1: rec.top,
-                y2: rec.bottom
-              };
-
-              return distanceToPoint(targetX, targetY, bounds.x1, bounds.y2);
-            };
 
             var distanceToPoint = function (x, y, pointX, pointY) {
               var sqr = function (x) {
