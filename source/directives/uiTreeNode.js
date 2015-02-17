@@ -267,7 +267,7 @@
                   dragElm[0].style.display = "none";
                 }
 
-                var targetElm = angular.element(findTargetElement(targetX, targetY));
+                var targetElm = angular.element(findTargetElement(leftElmPos, topElmPos));
                 if (angular.isFunction(dragElm.show)) {
                   dragElm.show();
                 }else{
