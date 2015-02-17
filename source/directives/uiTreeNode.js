@@ -267,7 +267,7 @@
                   dragElm[0].style.display = "none";
                 }
 
-                var targetElm = angular.element(findTargetElement(leftElmPos, topElmPos));
+                var targetElm = angular.element(findTargetElement(targetX, targetY, leftElmPos, topElmPos));
                 if (angular.isFunction(dragElm.show)) {
                   dragElm.show();
                 }else{
@@ -409,7 +409,17 @@
             };
             bindDrag();
 
-            var findTargetElement = function (targetX, targetY) {
+            var findTargetElement = function (targetX, targetY, placeholderX, placeholderY) {
+              // when using elementFromPoint() inside an iframe, you have to call
+              // elementFromPoint() twice to make sure IE8 returns the correct value
+              $window.document.elementFromPoint(targetX, targetY);
+              var targetElement = $window.document.elementFromPoint(targetX, targetY);
+
+              if (isUiTreeElement(targetElement)) {
+                return targetElement;
+              }
+
+
               var minDistance = 0xffffffff;
               var nearestElem = null;
               var elemTop = 0xffffffff;
@@ -430,7 +440,7 @@
                   y2: rec.bottom
                 };
 
-                var dist = distanceToPoint(targetX, targetY, bounds.x1, bounds.y2);
+                var dist = distanceToPoint(placeholderX, placeholderY, bounds.x1, bounds.y2);
 
                 if (minDistance >= dist) {
                   if (minDistance === dist) {
@@ -447,6 +457,30 @@
 
               return nearestElem;
             };
+
+            var isUiTreeElement = function (element) {
+              if (!element) {
+                return false;
+              }
+
+              var el = angular.element(element);
+              if (el == null || !el.scope) {
+                return false;
+              }
+
+              var scope = el.scope();
+              if (!scope) {
+                return false;
+              }
+
+              if (scope.$type == 'uiTree') {
+                return true;
+              }
+
+              return isUiTreeElement(element.parentElement);
+            };
+
+            window.isUiTreeElement = isUiTreeElement;
 
 
             var distanceToPoint = function (x, y, pointX, pointY) {
