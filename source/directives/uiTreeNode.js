@@ -424,7 +424,7 @@
               var nearestElem = null;
               var elemTop = 0xffffffff;
 
-              var elem = document.querySelectorAll(".angular-ui-tree-node");
+              var elem = document.querySelectorAll(".angular-ui-tree-node, .angular-ui-tree");
               for (var i = 0; i < elem.length; i++) {
                 var e = elem[i];
 
