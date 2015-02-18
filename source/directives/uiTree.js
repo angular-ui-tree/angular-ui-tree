@@ -25,6 +25,8 @@
             scope.$emptyElm.addClass(config.emptyTreeClass);
           }
 
+          scope.$treeId = attrs.id;
+
           scope.$watch('$nodesScope.$modelValue.length', function() {
             if (scope.$nodesScope.$modelValue) {
               scope.resetEmptyElement();
@@ -54,7 +56,7 @@
               scope.dragDelay = val;
             }
           });
-
+          
           // check if the dest node can accept the dragging node
           // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`
           // and the 'max-depth' attribute in `ui-tree` or `ui-tree-nodes`.
