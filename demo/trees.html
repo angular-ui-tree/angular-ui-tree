@@ -51,7 +51,7 @@
     <div class="row">
       <div class="col-sm-6">
         <h3>Tree 1</h3>
-        <div ui-tree id="tree1-root">
+        <div ui-tree id="tree-{{tree1id}}">
           <ol ui-tree-nodes="" ng-model="tree1">
             <li ng-repeat="node in tree1" ui-tree-node ng-include="'nodes_renderer1.html'"></li>
           </ol>
@@ -60,7 +60,7 @@
 
       <div class="col-sm-6">
         <h3>Tree 2</h3>
-        <div ui-tree id="tree2-root">
+        <div ui-tree id="tree-{{tree2id}}">
           <ol ui-tree-nodes="" ng-model="tree2">
             <li ng-repeat="node in tree2" ui-tree-node ng-include="'nodes_renderer2.html'"></li>
           </ol>

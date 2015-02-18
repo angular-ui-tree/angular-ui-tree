@@ -101,7 +101,8 @@
               sourceInfo: {
                 nodeScope: node,
                 index: node.index(),
-                nodesScope: node.$parentNodesScope
+                nodesScope: node.$parentNodesScope,
+                treeId: node.$treeId
               },
               index: node.index(),
               siblings: node.siblings().slice(0),
@@ -149,7 +150,8 @@
                   source: this.sourceInfo,
                   dest: {
                     index: this.index,
-                    nodesScope: this.parent
+                    nodesScope: this.parent,
+                    treeId: this.parent.$treeId
                   },
                   elements: elements,
                   pos: pos
@@ -649,6 +651,8 @@
             scope.$emptyElm.addClass(config.emptyTreeClass);
           }
 
+          scope.$treeId = attrs.id;
+
           scope.$watch('$nodesScope.$modelValue.length', function() {
             if (scope.$nodesScope.$modelValue) {
               scope.resetEmptyElement();
@@ -678,7 +682,7 @@
               scope.dragDelay = val;
             }
           });
-
+          
           // check if the dest node can accept the dragging node
           // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`
           // and the 'max-depth' attribute in `ui-tree` or `ui-tree-nodes`.
