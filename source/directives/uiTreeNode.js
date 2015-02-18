@@ -98,6 +98,8 @@
               firstMoving = true;
               dragInfo = $uiTreeHelper.dragInfo(scope);
 
+              console.log(dragInfo);
+
               var tagName = scope.$element.prop('tagName');
               if (tagName.toLowerCase() === 'tr') {
                 placeElm = angular.element($window.document.createElement(tagName));

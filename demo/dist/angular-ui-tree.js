@@ -106,6 +106,7 @@
               index: node.index(),
               siblings: node.siblings().slice(0),
               parent: node.$parentNodesScope,
+              sourceTreeId: node.$treeId,
 
               moveTo: function(parent, siblings, index) { // Move the node to a new position
                 this.parent = parent;
@@ -152,7 +153,9 @@
                     nodesScope: this.parent
                   },
                   elements: elements,
-                  pos: pos
+                  pos: pos,
+                  destTreeId: this.parent.$treeId,
+                  sourceTreeId: this.sourceTreeId
                 };
               },
 
@@ -649,6 +652,8 @@
             scope.$emptyElm.addClass(config.emptyTreeClass);
           }
 
+          scope.$treeId = element[0].id;
+
           scope.$watch('$nodesScope.$modelValue.length', function() {
             if (scope.$nodesScope.$modelValue) {
               scope.resetEmptyElement();
@@ -901,6 +906,8 @@
 
               firstMoving = true;
               dragInfo = $uiTreeHelper.dragInfo(scope);
+
+              console.log(dragInfo);
 
               var tagName = scope.$element.prop('tagName');
               if (tagName.toLowerCase() === 'tr') {
