@@ -106,7 +106,6 @@
               index: node.index(),
               siblings: node.siblings().slice(0),
               parent: node.$parentNodesScope,
-              sourceTreeId: node.$treeId,
 
               moveTo: function(parent, siblings, index) { // Move the node to a new position
                 this.parent = parent;
@@ -153,9 +152,7 @@
                     nodesScope: this.parent
                   },
                   elements: elements,
-                  pos: pos,
-                  destTreeId: this.parent.$treeId,
-                  sourceTreeId: this.sourceTreeId
+                  pos: pos
                 };
               },
 
@@ -651,8 +648,6 @@
           if (config.emptyTreeClass) {
             scope.$emptyElm.addClass(config.emptyTreeClass);
           }
-
-          scope.$treeId = element[0].id;
 
           scope.$watch('$nodesScope.$modelValue.length', function() {
             if (scope.$nodesScope.$modelValue) {
