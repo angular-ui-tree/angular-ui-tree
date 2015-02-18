@@ -267,11 +267,7 @@
                   dragElm[0].style.display = "none";
                 }
 
-                // when using elementFromPoint() inside an iframe, you have to call
-                // elementFromPoint() twice to make sure IE8 returns the correct value
-                $window.document.elementFromPoint(targetX, targetY);
-
-                var targetElm = angular.element($window.document.elementFromPoint(targetX, targetY));
+                var targetElm = angular.element(findTargetElement(targetX, targetY, leftElmPos, topElmPos));
                 if (angular.isFunction(dragElm.show)) {
                   dragElm.show();
                 }else{
@@ -412,6 +408,88 @@
               element.bind('touchend touchcancel mouseup',function(){$timeout.cancel(dragTimer);});
             };
             bindDrag();
+
+            var findTargetElement = function (targetX, targetY, placeholderX, placeholderY) {
+              // when using elementFromPoint() inside an iframe, you have to call
+              // elementFromPoint() twice to make sure IE8 returns the correct value
+              $window.document.elementFromPoint(targetX, targetY);
+              var targetElement = $window.document.elementFromPoint(targetX, targetY);
+
+              if (isUiTreeElement(targetElement)) {
+                return targetElement;
+              }
+
+
+              var minDistance = 0xffffffff;
+              var nearestElem = null;
+              var elemTop = 0xffffffff;
+
+              var elem = document.querySelectorAll(".angular-ui-tree-node, .angular-ui-tree");
+              for (var i = 0; i < elem.length; i++) {
+                var e = elem[i];
+
+                var rec = e.getClientRects()[0];
+                if (!rec) {
+                  continue;
+                }
+
+                var bounds = {
+                  x1: rec.left,
+                  x2: rec.right,
+                  y1: rec.top,
+                  y2: rec.bottom
+                };
+
+                var dist = distanceToPoint(placeholderX, placeholderY, bounds.x1, bounds.y2);
+
+                if (minDistance >= dist) {
+                  if (minDistance === dist) {
+                    if (bounds.y1 < elemTop) {
+                      continue;
+                    }
+                  }
+
+                  elemTop = bounds.y1;
+                  minDistance = dist;
+                  nearestElem = e;
+                }
+              }
+
+              return nearestElem;
+            };
+
+            var isUiTreeElement = function (element) {
+              if (!element) {
+                return false;
+              }
+
+              var el = angular.element(element);
+              if (el == null || !el.scope) {
+                return false;
+              }
+
+              var scope = el.scope();
+              if (!scope) {
+                return false;
+              }
+
+              if (scope.$type == 'uiTree') {
+                return true;
+              }
+
+              return isUiTreeElement(element.parentElement);
+            };
+
+            window.isUiTreeElement = isUiTreeElement;
+
+
+            var distanceToPoint = function (x, y, pointX, pointY) {
+              var sqr = function (x) {
+                return x * x;
+              };
+
+              return Math.sqrt(sqr(x - pointX) + sqr(y - pointY));
+            };
 
             angular.element($window.document.body).bind("keydown", function(e) {
               if (e.keyCode == 27) {
