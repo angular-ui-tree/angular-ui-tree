@@ -121,7 +121,7 @@
           for (i = 0; i < nodes.length; i++) {
             childNodes = nodes[i].$childNodesScope;
 
-            if (childNodes) {
+            if (childNodes && childNodes.childNodesCount() > 0) {
               count = 1;
               countSubDepth(childNodes);
             }
