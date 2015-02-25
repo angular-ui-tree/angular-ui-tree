@@ -36,13 +36,11 @@
             var placeElm, hiddenPlaceElm, dragElm;
             var treeScope = null;
             var elements; // As a parameter for callbacks
-            var dragDelaying = true;
-            var dragStarted = false;
-            var dragTimer = null;
             var body = document.body,
                 html = document.documentElement,
                 document_height,
                 document_width;
+
 
             var dragStart = function(e) {
               if (!hasTouch && (e.button == 2 || e.which == 3)) {
@@ -152,16 +150,6 @@
             };
 
             var dragMove = function(e) {
-              if (!dragStarted) {
-                if (!dragDelaying) {
-                  dragStarted = true;
-                  scope.$apply(function() {
-                    scope.$callbacks.dragStart(dragInfo.eventArgs(elements, pos));
-                  });
-                }
-                return;
-              }
-
               var eventObj = $uiTreeHelper.eventObj(e);
               var prev, leftElmPos, topElmPos;
 
@@ -402,14 +390,32 @@
               dragEnd(e);
             };
 
+            var dragDelay = (function() {
+              var to;
+
+              return {
+                exec: function(fn, ms) {
+                  if (!ms) {
+                    ms = 0;
+                  }
+                  this.cancel();
+                  to = $timeout(fn, ms);
+                },
+                cancel: function() {
+                  $timeout.cancel(to);
+                }
+              };
+            })();
+
             var bindDrag = function() {
               element.bind('touchstart mousedown', function (e) {
-                dragDelaying = true;
-                dragStarted = false;
-                dragStartEvent(e);
-                dragTimer = $timeout(function(){dragDelaying = false;}, scope.dragDelay);
+                dragDelay.exec(function() {
+                  dragStartEvent(e);
+                }, scope.dragDelay || 0);
               });
-              element.bind('touchend touchcancel mouseup',function(){$timeout.cancel(dragTimer);});
+              element.bind('touchend touchcancel mouseup',function() {
+                dragDelay.cancel();
+              });
             };
             bindDrag();
 
