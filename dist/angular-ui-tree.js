@@ -1157,8 +1157,8 @@
                 dragElm.remove();
                 dragElm = null;
                 if (scope.$$apply) {
-                  dragInfo.apply();
                   scope.$treeScope.$apply(function() {
+                    dragInfo.apply();
                     scope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
                   });
                 } else {
