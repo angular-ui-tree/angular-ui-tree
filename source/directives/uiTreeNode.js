@@ -129,6 +129,7 @@
 
               scope.$element.after(placeElm);
               scope.$element.after(hiddenPlaceElm);
+
               dragElm.append(scope.$element);
               $document.find('body').append(dragElm);
               dragElm.css({
@@ -454,17 +455,12 @@
             };
 
             var findTargetElement = function (targetX, targetY, placeholderX, placeholderY) {
-
-              var targetElement = elementFromPoint(targetX, targetY);
-              if (isUiTreeElement(targetElement)) {
-                return targetElement;
-              }
-
+              
               var minDistance = 0xffffffff;
               var nearestElem = null;
               var elemTop = 0xffffffff;
 
-              var elem = document.querySelectorAll(".angular-ui-tree-node, .angular-ui-tree");
+              var elem = document.querySelectorAll(".angular-ui-tree-handle, .angular-ui-tree");
               for (var i = 0; i < elem.length; i++) {
                 var e = elem[i];
 
@@ -499,28 +495,36 @@
             };
 
             var isUiTreeElement = function (element) {
-              if (!element) {
+              return closestNode(element, function (element) {
+                var el = angular.element(element);
+                if (el == null || !el.scope) {
+                  return false;
+                }
+
+                var scope = el.scope();
+                if (!scope) {
+                  return false;
+                }
+
+                if (scope.$type == 'uiTree') {
+                  return true;
+                }
+
                 return false;
-              }
-
-              var el = angular.element(element);
-              if (el == null || !el.scope) {
-                return false;
-              }
-
-              var scope = el.scope();
-              if (!scope) {
-                return false;
-              }
-
-              if (scope.$type == 'uiTree') {
-                return true;
-              }
-
-              return isUiTreeElement(element.parentElement);
+              }) != null;
             };
 
-            window.isUiTreeElement = isUiTreeElement;
+            var closestNode = function (element, predicate) {
+              if (!element) {
+                return null;
+              }
+
+              if (predicate(element)) {
+                return element;
+              }
+
+              return closestNode(element.parentElement, predicate);
+            };
 
 
             var distanceToPoint = function (x, y, pointX, pointY) {
