@@ -1076,7 +1076,7 @@
                   dragElm[0].style.display = "none";
                 }
 
-                var targetElm = angular.element(findTargetElement(targetX, targetY, leftElmPos, topElmPos));
+                var targetElm = angular.element(findTargetElement(targetX, targetY));
                 if (angular.isFunction(dragElm.show)) {
                   dragElm.show();
                 } else {
@@ -1262,78 +1262,58 @@
               return $window.document.elementFromPoint(targetX, targetY);
             };
 
-            var findTargetElement = function (targetX, targetY, placeholderX, placeholderY) {
-              
-              var minDistance = 0xffffffff;
-              var nearestElem = null;
-              var elemTop = 0xffffffff;
+            var findTargetElement = function (targetX, targetY) {
 
-              var elem = document.querySelectorAll(".angular-ui-tree-handle, .angular-ui-tree");
-              for (var i = 0; i < elem.length; i++) {
-                var e = elem[i];
+              var targetPoint = {
+                x: targetX,
+                y: targetY
+              };
 
-                var rec = e.getClientRects()[0];
-                if (!rec) {
-                  continue;
+              var nearest = function (node) {
+                var nodeRec = node.getClientRects()[0];
+                if (!nodeRec) {
+                  return 0xffffffff;
                 }
+                var dist = distanceToPoint(targetPoint.x, targetPoint.y, nodeRec.left, nodeRec.top);
+                return dist;
+              };
 
-                var bounds = {
-                  x1: rec.left,
-                  x2: rec.right,
-                  y1: rec.top,
-                  y2: rec.bottom
-                };
+              $("*").removeClass("test-outline");
 
-                var dist = distanceToPoint(placeholderX, placeholderY, bounds.x1, bounds.y2);
+              var result = elementFromPoint(targetX, targetY);
+              if (!isInUiTree(result)) {
+                var trees = Array.from(document.querySelectorAll(".angular-ui-tree"));
 
-                if (minDistance >= dist) {
-                  if (minDistance === dist) {
-                    if (bounds.y1 < elemTop) {
-                      continue;
-                    }
-                  }
-
-                  elemTop = bounds.y1;
-                  minDistance = dist;
-                  nearestElem = e;
-                }
+                result = trees.min(nearest);
               }
 
-              return nearestElem;
+              $(result).addClass("test-outline");
+
+              return result;
             };
 
-            var isUiTreeElement = function (element) {
-              return closestNode(element, function (element) {
-                var el = angular.element(element);
-                if (el == null || !el.scope) {
-                  return false;
-                }
+            Array.prototype.min = function (callback) {
+              var result = this.reduce(function (acc, current) {
+                var val = callback(current);
+                return val < acc.val ? { val: val, elm: current } : acc;
+              }, { val: 0xffffffff, elm: null });
 
-                var scope = el.scope();
-                if (!scope) {
-                  return false;
-                }
-
-                if (scope.$type == 'uiTree') {
-                  return true;
-                }
-
-                return false;
-              }) != null;
+              return result.elm;
             };
 
-            var closestNode = function (element, predicate) {
+            if (!Array.from) {
+              Array.from = function (arrLikeObj) {
+                return Array.prototype.slice.call(arrLikeObj);
+              };
+            }
+
+            var isInUiTree = function (element) {
               if (!element) {
-                return null;
+                return false;
               }
 
-              if (predicate(element)) {
-                return element;
-              }
-
-              return closestNode(element.parentElement, predicate);
+              return element.hasAttribute("ui-tree") || isInUiTree(element.parentElement);
             };
-
 
             var distanceToPoint = function (x, y, pointX, pointY) {
               var sqr = function (x) {
