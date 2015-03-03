@@ -223,6 +223,7 @@
                 }
 
                 // move horizontal
+                // var inTree = isInUiTree(elementFromPoint(e.pageX, e.pageY));
                 if (pos.dirAx && pos.distAxX >= config.levelThreshold) {
                   pos.distAxX = 0;
 
@@ -269,6 +270,7 @@
                 }
 
                 var targetElm = angular.element(findTargetElement(targetX, targetY, e));
+
                 if (angular.isFunction(dragElm.show)) {
                   dragElm.show();
                 } else {
@@ -367,43 +369,14 @@
               }
             };
 
-            var elementFromPoint = function (targetX, targetY) {
+            var elementFromPoint = function (x, y) {
               // when using elementFromPoint() inside an iframe, you have to call
               // elementFromPoint() twice to make sure IE8 returns the correct value
-              $window.document.elementFromPoint(targetX, targetY);
-              return $window.document.elementFromPoint(targetX, targetY);
+              $window.document.elementFromPoint(x, y);
+              return $window.document.elementFromPoint(x, y);
             };
 
-
-            var findTargetNodeDefault = function (targetX, targetY, e) {
-
-              var targetPoint = {
-                x: targetX,
-                y: targetY
-              };
-
-              var nearest = function (node) {
-                var nodeRec = geometry.rect(node);
-                if (!nodeRec) {
-                  return 0xffffffff;
-                }
-                var dist = geometry.distanceToPoint(targetPoint.x, targetPoint.y, nodeRec.left, nodeRec.top);
-                return dist;
-              };
-
-              var result = elementFromPoint(targetX, targetY);
-              if (!isInUiTree(result)) {
-                var trees = Array.from(document.querySelectorAll(".angular-ui-tree"));
-
-                result = trees.min(nearest);
-              }
-
-              return result;
-            };
-
-            // Searching algorithm: 
-            // Drag element rect is not overlapped with any node - looking for nearest node or empty tree
-            var findTargetNodeByOverlapping = function (targetX, targetY, e) {
+            var findTargetElement = function (targetX, targetY, e) {
               var dragElmRect = geometry.translateRect(dragInfo.originalRect, geometry.offset(dragInfo.originalPoint, { x: e.pageX, y: e.pageY }));
               var dragElmRectArea = geometry.rectArea(dragElmRect);
               var dragElmCenter = geometry.rectCenter(dragElmRect);
@@ -435,31 +408,43 @@
               // If overlapping tree found, fallback to default behaviour
               if (trees.length) {
                 // FALLBACK
-                // when using elementFromPoint() inside an iframe, you have to call
-                // elementFromPoint() twice to make sure IE8 returns the correct value
-                $window.document.elementFromPoint(targetX, targetY);
-                return $window.document.elementFromPoint(targetX, targetY);
+                return elementFromPoint(targetX, targetY);
               }
               else {
                 // Find nearest node or tree
                 // 
-                var potentialTargets = Array.from(document.querySelectorAll(".tree-node-content, .angular-ui-tree"))
+                var potentialTargets = Array.from(document.querySelectorAll(".angular-ui-tree"))
                                             .sortBy(function (node) {
                                               var rec = geometry.rect(node);
-                                              if (!rec) {
-                                                return 0xffffffff;
-                                              }
                                               return geometry.distanceToPoint(rec.left, rec.top, dragElmRect.left, dragElmRect.top);
                                             });
                 if (potentialTargets.length) {
-                  return potentialTargets[0];
+                  var tree = potentialTargets[0];
+                  var nodes = Array.from(tree.querySelectorAll(".angular-ui-tree > .tree-panel > .tree-node"));
+                  if (!nodes.length) {
+                    return tree;
+                  }
+
+                  var node = nodes.map(function (n) {
+                                return {
+                                  node: n,
+                                  rec: geometry.rect(n)
+                                };
+                              })
+                              .filter(function (a) {
+                                return a.rec != null;
+                              })
+                              .sort(function (a) {
+                                var dist = geometry.distanceToPoint(a.rec.left, a.rec.top, dragElmRect.left, dragElmRect.top);
+                                return dist;
+                              })[0].node;
+
+                  return node;
                 }
 
                 return null;
               }
             };
-
-            var findTargetElement = findTargetNodeByOverlapping;
 
             var isInUiTree = function (element) {
               if (!element) {
