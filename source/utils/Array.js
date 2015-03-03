@@ -45,21 +45,30 @@
     return result;
   };
 
-  Array.prototype.sortBy = function (valueSelector) {
+  Array.prototype.sortBy = function () {
+    var sortByFunc = Array.from(arguments);
+
     var copy = this.map(function (element) {
       return {
         element: element,
-        sortingValue: valueSelector(element)
+        sortingValues: sortByFunc.map(function (func) {
+          return func(element);
+        })
       };
     });
 
     copy.sort(function (a, b) {
-      if (a.sortingValue < b.sortingValue) {
-        return -1;
-      }
+      for (var i = 0; i < a.sortingValues.length; i++) {
+        var aVal = a.sortingValues[i];
+        var bVal = b.sortingValues[i];
 
-      if (a.sortingValue > b.sortingValue) {
-        return 1;
+        if (aVal < bVal) {
+          return -1;
+        }
+
+        if (aVal > bVal) {
+          return 1;
+        }
       }
 
       return 0;

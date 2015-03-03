@@ -69,21 +69,30 @@
     return result;
   };
 
-  Array.prototype.sortBy = function (valueSelector) {
+  Array.prototype.sortBy = function () {
+    var sortByFunc = Array.from(arguments);
+
     var copy = this.map(function (element) {
       return {
         element: element,
-        sortingValue: valueSelector(element)
+        sortingValues: sortByFunc.map(function (func) {
+          return func(element);
+        })
       };
     });
 
     copy.sort(function (a, b) {
-      if (a.sortingValue < b.sortingValue) {
-        return -1;
-      }
+      for (var i = 0; i < a.sortingValues.length; i++) {
+        var aVal = a.sortingValues[i];
+        var bVal = b.sortingValues[i];
 
-      if (a.sortingValue > b.sortingValue) {
-        return 1;
+        if (aVal < bVal) {
+          return -1;
+        }
+
+        if (aVal > bVal) {
+          return 1;
+        }
       }
 
       return 0;
@@ -1411,7 +1420,7 @@
 
               var overlapPercent = function (rec) {
                 var overlapArea = geometry.overlapArea(dragElmRect, rec);
-                var percent = Math.floor((overlapArea / dragElmRectArea) * 5);
+                var percent = Math.floor((overlapArea / dragElmRectArea) * 100);
                 return percent;
               };
 
@@ -1433,92 +1442,31 @@
                                   return a.area;
                                 });
 
-              // If overlapping tree found
+              // If overlapping tree found, fallback to default behaviour
               if (trees.length) {
-                console.log("Overlapping tree found");
-                var tree = trees[trees.length - 1].node;
-                var overlappingNodes = Array.from(tree.querySelectorAll(".tree-node-content"))
-                                            .map(function (node) {
-                                              var nodeRec = geometry.rect(node);
-                                              return {
-                                                node: node,
-                                                nodeRec: nodeRec,
-                                                dragElmRec: dragElmRect,
-                                                area: overlapPercent(nodeRec)
-                                              };
-                                            })
-                                            .filter(function (a) {
-                                              return a.area > 0;
-                                            })
-                                            .sortBy(function (a) {
-                                              return a.area;
-                                            });
-
-                if (overlappingNodes.length) {
-                  var result = overlappingNodes[overlappingNodes.length - 1].node;
-                  return result;
-                }
-
                 // FALLBACK
                 // when using elementFromPoint() inside an iframe, you have to call
                 // elementFromPoint() twice to make sure IE8 returns the correct value
-                console.log("Fallback to default");
                 $window.document.elementFromPoint(targetX, targetY);
                 return $window.document.elementFromPoint(targetX, targetY);
               }
               else {
+                // Find nearest node or tree
                 // 
-                var potentialTargets = Array.from(document.querySelectorAll(".tree-node-content, .angular-ui-tree"));
+                var potentialTargets = Array.from(document.querySelectorAll(".tree-node-content, .angular-ui-tree"))
+                                            .sortBy(function (node) {
+                                              var rec = geometry.rect(node);
+                                              if (!rec) {
+                                                return 0xffffffff;
+                                              }
+                                              return geometry.distanceToPoint(rec.left, rec.top, dragElmRect.left, dragElmRect.top);
+                                            });
+                if (potentialTargets.length) {
+                  return potentialTargets[0];
+                }
+
+                return null;
               }
-
-
-
-              //var trees = Array.from(document.querySelectorAll(".angular-ui-tree"));
-
-              //var targetTrees = trees.map(function (node) {
-              //  var nodeRec = geometry.rect(node);
-              //  return {
-              //    node: node,
-              //    nodeRec: nodeRec,
-              //    overlappingArea: geometry.overlapArea(dragElmRect, nodeRec)
-              //  };
-              //})
-              //.filter(function (a) {
-              //  return a.overlappingArea > 0;
-              //})
-              //.map(function (a) {
-              //  return a.node;
-              //});
-
-              //if (!targetTrees.length) {
-              //  targetTrees = trees.sortBy(function (node) {
-              //    return geometry.pointsDistance(dragElmCenter, geometry.rectCenter(geometry.rect(node)));
-              //  });
-              //}
-
-              //// Search between nodes
-              //var tree = targetTrees.sortBy(function (tree) {
-              //  return geometry.isPointInRect(geometry.rect(tree), { x: dragElmRect.left, y: dragElmRect.top }) ? 0 : 1;
-              //})[0];
-
-              //var nodes = Array.from(tree.querySelectorAll(".tree-node-content"));
-
-              //return nodes.sortBy(function (node) {
-              //  return geometry.overlapArea(dragElmRect, geometry.rect(node));
-              //})[0];
-
-              //else {
-              //  // Search between nearest trees
-              //  var dragElmCenter = geometry.rectCenter(dragElmRect);
-              //  var nearest = trees.sortBy(function (node) {
-              //    return geometry.pointsDistance(dragElmCenter, geometry.rectCenter(geometry.rect(node)));
-              //  })[0];
-
-              //  window.isOutOfTree = true;
-              //  console.log("go out of trees, nearest is ", nearest);
-
-              //  return nearest;
-              //}
             };
 
             var findTargetElement = findTargetNodeByOverlapping;
