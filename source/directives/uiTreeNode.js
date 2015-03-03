@@ -405,40 +405,72 @@
             // Drag element rect is not overlapped with any node - looking for nearest node or empty tree
             var findTargetNodeByOverlapping = function (targetX, targetY, e) {
               var dragElmRect = geometry.translateRect(dragInfo.originalRect, geometry.offset(dragInfo.originalPoint, { x: e.pageX, y: e.pageY }));
+              var dragElmRectArea = geometry.rectArea(dragElmRect);
               var dragElmCenter = geometry.rectCenter(dragElmRect);
 
-              var overlappingNodes = Array.from(document.querySelectorAll(".angular-ui-tree .tree-node-content"))
-                                          .map(function (node) {
-                                            var nodeRec = geometry.rect(node);
-                                            var area = geometry.overlapArea(dragElmRect, nodeRec);
-                                            return {
-                                              node: node,
-                                              nodeRec: nodeRec,
-                                              dragElmRec: dragElmRect,
-                                              area: area
-                                            };
-                                          })
-                                          .filter(function (a) {
-                                            if (a.area > 0) {
-                                              console.log(a);
-                                            }
-                                            return a.area > 0;
-                                          })
-                                          .sortBy(function (a) {
-                                            return a.area;
-                                          });
+              var overlapPercent = function (rec) {
+                var overlapArea = geometry.overlapArea(dragElmRect, rec);
+                var percent = Math.floor((overlapArea / dragElmRectArea) * 5);
+                return percent;
+              };
 
-              if (overlappingNodes.length) {
-                var result = overlappingNodes[overlappingNodes.length - 1].node;
-                return result;
+              // Looking for tree overlapped by drag elm
+              var trees = Array.from(document.querySelectorAll(".angular-ui-tree"))
+                                .map(function (tree) {
+                                  var rec = geometry.rect(tree);
+                                  return {
+                                    node: tree,
+                                    nodeRec: rec,
+                                    dragElmRec: dragElmRect,
+                                    area: overlapPercent(rec)
+                                  };
+                                })
+                                .filter(function (a) {
+                                  return a.area > 0;
+                                })
+                                .sortBy(function (a) {
+                                  return a.area;
+                                });
+
+              // If overlapping tree found
+              if (trees.length) {
+                console.log("Overlapping tree found");
+                var tree = trees[trees.length - 1].node;
+                var overlappingNodes = Array.from(tree.querySelectorAll(".tree-node-content"))
+                                            .map(function (node) {
+                                              var nodeRec = geometry.rect(node);
+                                              return {
+                                                node: node,
+                                                nodeRec: nodeRec,
+                                                dragElmRec: dragElmRect,
+                                                area: overlapPercent(nodeRec)
+                                              };
+                                            })
+                                            .filter(function (a) {
+                                              return a.area > 0;
+                                            })
+                                            .sortBy(function (a) {
+                                              return a.area;
+                                            });
+
+                if (overlappingNodes.length) {
+                  var result = overlappingNodes[overlappingNodes.length - 1].node;
+                  return result;
+                }
+
+                // FALLBACK
+                // when using elementFromPoint() inside an iframe, you have to call
+                // elementFromPoint() twice to make sure IE8 returns the correct value
+                console.log("Fallback to default");
+                $window.document.elementFromPoint(targetX, targetY);
+                return $window.document.elementFromPoint(targetX, targetY);
+              }
+              else {
+                // 
+                var potentialTargets = Array.from(document.querySelectorAll(".tree-node-content, .angular-ui-tree"));
               }
 
-              // FALLBACK
-              // when using elementFromPoint() inside an iframe, you have to call
-              // elementFromPoint() twice to make sure IE8 returns the correct value
-              console.log("Fallback to default");
-              $window.document.elementFromPoint(targetX, targetY);
-              return $window.document.elementFromPoint(targetX, targetY);
+
 
               //var trees = Array.from(document.querySelectorAll(".angular-ui-tree"));
 
