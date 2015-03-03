@@ -94,6 +94,8 @@ module.exports = function(grunt) {
       build: {
         src: [
           '<%= cfg.srcDir %>/main.js',
+		  '<%= cfg.srcDir %>/utils/Array.js',
+		  '<%= cfg.srcDir %>/services/geometry.js',
           '<%= cfg.srcDir %>/services/helper.js',
           '<%= cfg.srcDir %>/controllers/treeCtrl.js',
           '<%= cfg.srcDir %>/controllers/nodesCtrl.js',

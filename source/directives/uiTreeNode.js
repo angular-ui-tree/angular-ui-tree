@@ -3,8 +3,8 @@
 
   angular.module('ui.tree')
 
-    .directive('uiTreeNode', ['treeConfig', '$uiTreeHelper', '$window', '$document', '$timeout',
-      function (treeConfig, $uiTreeHelper, $window, $document, $timeout) {
+    .directive('uiTreeNode', ['treeConfig', '$uiTreeHelper', '$window', '$document', '$timeout', 'geometry',
+      function (treeConfig, $uiTreeHelper, $window, $document, $timeout, geometry) {
         return {
           require: ['^uiTreeNodes', '^uiTree'],
           restrict: 'A',
@@ -96,7 +96,7 @@
               var eventObj = $uiTreeHelper.eventObj(e);
 
               firstMoving = true;
-              dragInfo = $uiTreeHelper.dragInfo(scope);
+              dragInfo = $uiTreeHelper.dragInfo(scope, e);
 
               var tagName = scope.$element.prop('tagName');
               if (tagName.toLowerCase() === 'tr') {
@@ -268,7 +268,7 @@
                   dragElm[0].style.display = "none";
                 }
 
-                var targetElm = angular.element(findTargetElement(targetX, targetY));
+                var targetElm = angular.element(findTargetElement(targetX, targetY, e));
                 if (angular.isFunction(dragElm.show)) {
                   dragElm.show();
                 } else {
@@ -299,7 +299,7 @@
                   }
                   else {
                     if (dragInfo.$standingTimeout && (dragInfo.$expandingNode != targetElmScope ||
-                        distanceToPoint(targetX, targetY, dragInfo.$standingPoint.x, dragInfo.$standingPoint.y) > 10)) {
+                        geometry.distanceToPoint(targetX, targetY, dragInfo.$standingPoint.x, dragInfo.$standingPoint.y) > 10)) {
                       resetExpandingTimeout();
                     }
                   }
@@ -365,6 +365,106 @@
                   scope.$callbacks.dragMove(dragInfo.eventArgs(elements, pos));
                 });
               }
+            };
+
+            var elementFromPoint = function (targetX, targetY) {
+              // when using elementFromPoint() inside an iframe, you have to call
+              // elementFromPoint() twice to make sure IE8 returns the correct value
+              $window.document.elementFromPoint(targetX, targetY);
+              return $window.document.elementFromPoint(targetX, targetY);
+            };
+
+
+            var findTargetNodeDefault = function (targetX, targetY, e) {
+
+              var targetPoint = {
+                x: targetX,
+                y: targetY
+              };
+
+              var nearest = function (node) {
+                var nodeRec = geometry.rect(node);
+                if (!nodeRec) {
+                  return 0xffffffff;
+                }
+                var dist = geometry.distanceToPoint(targetPoint.x, targetPoint.y, nodeRec.left, nodeRec.top);
+                return dist;
+              };
+
+              var result = elementFromPoint(targetX, targetY);
+              if (!isInUiTree(result)) {
+                var trees = Array.from(document.querySelectorAll(".angular-ui-tree"));
+
+                result = trees.min(nearest);
+              }
+
+              return result;
+            };
+
+            // Searching algorithm: 
+            // Drag 
+            var findTargetNodeByOverlapping = function (targetX, targetY, e) {
+              var currentCursorPoint = { x: e.pageX, y: e.pageY };
+              var offsetPoint = geometry.offset(dragInfo.originalPoint, currentCursorPoint);
+              var dragElmRect = geometry.translateRect(dragInfo.originalRect, offsetPoint);
+              var dragElmCenter = geometry.rectCenter(dragElmRect);
+
+              var trees = Array.from(document.querySelectorAll(".angular-ui-tree"));
+
+              var targetTrees = trees.map(function (node) {
+                var nodeRec = geometry.rect(node);
+                return {
+                  node: node,
+                  nodeRec: nodeRec,
+                  overlappingArea: geometry.overlapArea(dragElmRect, nodeRec)
+                };
+              })
+              .filter(function (a) {
+                return a.overlappingArea > 0;
+              })
+              .map(function (a) {
+                return a.node;
+              });
+
+              if (!targetTrees.length) {
+                targetTrees = trees.sortBy(function (node) {
+                  return geometry.pointsDistance(dragElmCenter, geometry.rectCenter(geometry.rect(node)));
+                });
+              }
+
+              // Search between nodes
+              var tree = targetTrees.sortBy(function (tree) {
+                return geometry.isPointInRect(geometry.rect(tree), { x: dragElmRect.left, y: dragElmRect.top }) ? 0 : 1;
+              })[0];
+
+              var nodes = Array.from(tree.querySelectorAll(".tree-node-content"));
+
+              return nodes.sortBy(function (node) {
+                return geometry.overlapArea(dragElmRect, geometry.rect(node));
+              })[0];
+
+              //else {
+              //  // Search between nearest trees
+              //  var dragElmCenter = geometry.rectCenter(dragElmRect);
+              //  var nearest = trees.sortBy(function (node) {
+              //    return geometry.pointsDistance(dragElmCenter, geometry.rectCenter(geometry.rect(node)));
+              //  })[0];
+
+              //  window.isOutOfTree = true;
+              //  console.log("go out of trees, nearest is ", nearest);
+
+              //  return nearest;
+              //}
+            };
+
+            var findTargetElement = findTargetNodeByOverlapping;
+
+            var isInUiTree = function (element) {
+              if (!element) {
+                return false;
+              }
+
+              return element.hasAttribute("ui-tree") || isInUiTree(element.parentElement);
             };
 
             var dragEnd = function (e) {
@@ -446,74 +546,6 @@
               element.bind('touchend touchcancel mouseup', function () { $timeout.cancel(dragTimer); });
             };
             bindDrag();
-
-            var elementFromPoint = function (targetX, targetY) {
-              // when using elementFromPoint() inside an iframe, you have to call
-              // elementFromPoint() twice to make sure IE8 returns the correct value
-              $window.document.elementFromPoint(targetX, targetY);
-              return $window.document.elementFromPoint(targetX, targetY);
-            };
-
-            var findTargetElement = function (targetX, targetY) {
-
-              var targetPoint = {
-                x: targetX,
-                y: targetY
-              };
-
-              var nearest = function (node) {
-                var nodeRec = node.getClientRects()[0];
-                if (!nodeRec) {
-                  return 0xffffffff;
-                }
-                var dist = distanceToPoint(targetPoint.x, targetPoint.y, nodeRec.left, nodeRec.top);
-                return dist;
-              };
-
-              $("*").removeClass("test-outline");
-
-              var result = elementFromPoint(targetX, targetY);
-              if (!isInUiTree(result)) {
-                var trees = Array.from(document.querySelectorAll(".angular-ui-tree"));
-
-                result = trees.min(nearest);
-              }
-
-              $(result).addClass("test-outline");
-
-              return result;
-            };
-
-            Array.prototype.min = function (callback) {
-              var result = this.reduce(function (acc, current) {
-                var val = callback(current);
-                return val < acc.val ? { val: val, elm: current } : acc;
-              }, { val: 0xffffffff, elm: null });
-
-              return result.elm;
-            };
-
-            if (!Array.from) {
-              Array.from = function (arrLikeObj) {
-                return Array.prototype.slice.call(arrLikeObj);
-              };
-            }
-
-            var isInUiTree = function (element) {
-              if (!element) {
-                return false;
-              }
-
-              return element.hasAttribute("ui-tree") || isInUiTree(element.parentElement);
-            };
-
-            var distanceToPoint = function (x, y, pointX, pointY) {
-              var sqr = function (x) {
-                return x * x;
-              };
-
-              return Math.sqrt(sqr(x - pointX) + sqr(y - pointY));
-            };
 
             var resetExpandingTimeout = function () {
               if (dragInfo.$standingTimeout) {

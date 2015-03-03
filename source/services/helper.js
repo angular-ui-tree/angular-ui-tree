@@ -71,8 +71,10 @@
             return obj;
           },
 
-          dragInfo: function(node) {
+          dragInfo: function(node, e) {
             return {
+              originalRect: node.$element[0].getClientRects()[0],
+              originalPoint: { x: e.pageX, y: e.pageY },
               source: node,
               sourceInfo: {
                 nodeScope: node,

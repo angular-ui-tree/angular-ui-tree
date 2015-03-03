@@ -23,6 +23,162 @@
 })();
 
 (function () {
+  "use strict";
+
+  Array.prototype.min = function (callback) {
+    var result = this.reduce(function (acc, current) {
+      var val = callback(current);
+      return val < acc.val ? { val: val, elm: current } : acc;
+    }, { val: 0xffffffff, elm: null });
+
+    return result.elm;
+  };
+
+  Array.prototype.minElements = function (callback) {
+    if (!this.length) {
+      return this.slice();
+    }
+
+    var minMap = this.map(function (val) {
+      return {
+        val: callback(val),
+        element: val
+      };
+    });
+
+    minMap.sort(function (a, b) {
+      return a.val - b.val;
+    });
+
+    var minVal = minMap[0].val;
+
+    return minMap.filter(function (elem) {
+      return elem.val === minVal;
+    }).map(function (elem) {
+      return elem.element;
+    });
+  };
+
+  Array.prototype.sortBy = function (valueSelector) {
+    var copy = this.map(function (element) {
+      return {
+        element: element,
+        sortingValue: valueSelector(element)
+      };
+    });
+
+    copy.sort(function (a, b) {
+      if (a.sortingValue < b.sortingValue) {
+        return -1;
+      }
+
+      if (a.sortingValue > b.sortingValue) {
+        return 1;
+      }
+
+      return 0;
+    });
+
+    return copy.map(function (a) {
+      return a.element;
+    });
+  };
+
+  if (!Array.from) {
+    Array.from = function (arrLikeObj) {
+      return Array.prototype.slice.call(arrLikeObj);
+    };
+  }
+})();
+(function () {
+  "use strict";
+
+  var sqr = function (x) {
+    return x * x;
+  };
+
+  var overlapLeft = function (leftRec, rightRec) {
+    if (rightRec.left >= leftRec.left &&
+        rightRec.left <= leftRec.right &&
+        rightRec.top >= leftRec.top &&
+        rightRec.top <= leftRec.bottom) {
+      var overlapRect = {
+        left: rightRec.left,
+        right: leftRec.right,
+        top: rightRec.top,
+        bottom: leftRec.bottom
+      };
+
+      return geometry.rectArea(overlapRect);
+    }
+    else {
+      return 0;
+    }
+  };
+  
+  var geometry = {};
+
+  geometry.distanceToPoint = function (x, y, pointX, pointY) {
+    return Math.sqrt(sqr(x - pointX) + sqr(y - pointY));
+  };
+
+  geometry.pointsDistance = function (point1, point2) {
+    return geometry.distanceToPoint(point1.x, point1.y, point2.x, point2.y);
+  };
+
+  geometry.rect = function (element) {
+    var rects = element.getClientRects();
+    if (rects.length) {
+      return rects[0];
+    }
+
+    return null;
+  };
+
+  geometry.translateRect = function (rect, offset) {
+    return {
+      left: rect.left + offset.x,
+      right: rect.right + offset.x,
+      top: rect.top + offset.y,
+      bottom: rect.bottom + offset.y,
+      width: rect.width,
+      height: rect.height
+    };
+  };
+
+  geometry.offset = function (fromPoint, toPoint) {
+    return {
+      x: toPoint.x - fromPoint.x,
+      y: toPoint.y - fromPoint.y
+    };
+  };
+
+  geometry.overlapArea = function (rec1, rec2) {
+    return Math.max(overlapLeft(rec1, rec2), overlapLeft(rec2, rec1));
+  };
+
+  geometry.rectCenter = function (rec) {
+    return {
+      x: rec.left + (rec.right - rec.left) / 2,
+      y: rec.top + (rec.bottom - rec.top) / 2
+    };
+  };
+
+  geometry.rectArea = function (rect) {
+    return Math.sqrt(sqr(rect.left - rect.right)) * Math.sqrt(sqr(rect.top - rect.bottom));
+  };
+
+  geometry.isPointInRect = function (rect, point) {
+    return rect.left <= point.x && rect.right >= point.x &&
+           rect.top <= point.y && rect.bottom >= point.y;
+  };
+
+  angular.module("ui.tree")
+         .service("geometry", function () {
+              return geometry;
+            });
+})();
+(function () {
   'use strict';
 
   angular.module('ui.tree')
@@ -95,8 +251,10 @@
             return obj;
           },
 
-          dragInfo: function(node) {
+          dragInfo: function(node, e) {
             return {
+              originalRect: node.$element[0].getClientRects()[0],
+              originalPoint: { x: e.pageX, y: e.pageY },
               source: node,
               sourceInfo: {
                 nodeScope: node,
@@ -811,8 +969,8 @@
 
   angular.module('ui.tree')
 
-    .directive('uiTreeNode', ['treeConfig', '$uiTreeHelper', '$window', '$document', '$timeout',
-      function (treeConfig, $uiTreeHelper, $window, $document, $timeout) {
+    .directive('uiTreeNode', ['treeConfig', '$uiTreeHelper', '$window', '$document', '$timeout', 'geometry',
+      function (treeConfig, $uiTreeHelper, $window, $document, $timeout, geometry) {
         return {
           require: ['^uiTreeNodes', '^uiTree'],
           restrict: 'A',
@@ -904,7 +1062,7 @@
               var eventObj = $uiTreeHelper.eventObj(e);
 
               firstMoving = true;
-              dragInfo = $uiTreeHelper.dragInfo(scope);
+              dragInfo = $uiTreeHelper.dragInfo(scope, e);
 
               var tagName = scope.$element.prop('tagName');
               if (tagName.toLowerCase() === 'tr') {
@@ -1076,7 +1234,7 @@
                   dragElm[0].style.display = "none";
                 }
 
-                var targetElm = angular.element(findTargetElement(targetX, targetY));
+                var targetElm = angular.element(findTargetElement(targetX, targetY, e));
                 if (angular.isFunction(dragElm.show)) {
                   dragElm.show();
                 } else {
@@ -1107,7 +1265,7 @@
                   }
                   else {
                     if (dragInfo.$standingTimeout && (dragInfo.$expandingNode != targetElmScope ||
-                        distanceToPoint(targetX, targetY, dragInfo.$standingPoint.x, dragInfo.$standingPoint.y) > 10)) {
+                        geometry.distanceToPoint(targetX, targetY, dragInfo.$standingPoint.x, dragInfo.$standingPoint.y) > 10)) {
                       resetExpandingTimeout();
                     }
                   }
@@ -1173,6 +1331,106 @@
                   scope.$callbacks.dragMove(dragInfo.eventArgs(elements, pos));
                 });
               }
+            };
+
+            var elementFromPoint = function (targetX, targetY) {
+              // when using elementFromPoint() inside an iframe, you have to call
+              // elementFromPoint() twice to make sure IE8 returns the correct value
+              $window.document.elementFromPoint(targetX, targetY);
+              return $window.document.elementFromPoint(targetX, targetY);
+            };
+
+
+            var findTargetNodeDefault = function (targetX, targetY, e) {
+
+              var targetPoint = {
+                x: targetX,
+                y: targetY
+              };
+
+              var nearest = function (node) {
+                var nodeRec = geometry.rect(node);
+                if (!nodeRec) {
+                  return 0xffffffff;
+                }
+                var dist = geometry.distanceToPoint(targetPoint.x, targetPoint.y, nodeRec.left, nodeRec.top);
+                return dist;
+              };
+
+              var result = elementFromPoint(targetX, targetY);
+              if (!isInUiTree(result)) {
+                var trees = Array.from(document.querySelectorAll(".angular-ui-tree"));
+
+                result = trees.min(nearest);
+              }
+
+              return result;
+            };
+
+            // Searching algorithm: 
+            // Drag 
+            var findTargetNodeByOverlapping = function (targetX, targetY, e) {
+              var currentCursorPoint = { x: e.pageX, y: e.pageY };
+              var offsetPoint = geometry.offset(dragInfo.originalPoint, currentCursorPoint);
+              var dragElmRect = geometry.translateRect(dragInfo.originalRect, offsetPoint);
+              var dragElmCenter = geometry.rectCenter(dragElmRect);
+
+              var trees = Array.from(document.querySelectorAll(".angular-ui-tree"));
+
+              var targetTrees = trees.map(function (node) {
+                var nodeRec = geometry.rect(node);
+                return {
+                  node: node,
+                  nodeRec: nodeRec,
+                  overlappingArea: geometry.overlapArea(dragElmRect, nodeRec)
+                };
+              })
+              .filter(function (a) {
+                return a.overlappingArea > 0;
+              })
+              .map(function (a) {
+                return a.node;
+              });
+
+              if (!targetTrees.length) {
+                targetTrees = trees.sortBy(function (node) {
+                  return geometry.pointsDistance(dragElmCenter, geometry.rectCenter(geometry.rect(node)));
+                });
+              }
+
+              // Search between nodes
+              var tree = targetTrees.sortBy(function (tree) {
+                return geometry.isPointInRect(geometry.rect(tree), { x: dragElmRect.left, y: dragElmRect.top }) ? 0 : 1;
+              })[0];
+
+              var nodes = Array.from(tree.querySelectorAll(".tree-node-content"));
+
+              return nodes.sortBy(function (node) {
+                return geometry.overlapArea(dragElmRect, geometry.rect(node));
+              })[0];
+
+              //else {
+              //  // Search between nearest trees
+              //  var dragElmCenter = geometry.rectCenter(dragElmRect);
+              //  var nearest = trees.sortBy(function (node) {
+              //    return geometry.pointsDistance(dragElmCenter, geometry.rectCenter(geometry.rect(node)));
+              //  })[0];
+
+              //  window.isOutOfTree = true;
+              //  console.log("go out of trees, nearest is ", nearest);
+
+              //  return nearest;
+              //}
+            };
+
+            var findTargetElement = findTargetNodeByOverlapping;
+
+            var isInUiTree = function (element) {
+              if (!element) {
+                return false;
+              }
+
+              return element.hasAttribute("ui-tree") || isInUiTree(element.parentElement);
             };
 
             var dragEnd = function (e) {
@@ -1254,74 +1512,6 @@
               element.bind('touchend touchcancel mouseup', function () { $timeout.cancel(dragTimer); });
             };
             bindDrag();
-
-            var elementFromPoint = function (targetX, targetY) {
-              // when using elementFromPoint() inside an iframe, you have to call
-              // elementFromPoint() twice to make sure IE8 returns the correct value
-              $window.document.elementFromPoint(targetX, targetY);
-              return $window.document.elementFromPoint(targetX, targetY);
-            };
-
-            var findTargetElement = function (targetX, targetY) {
-
-              var targetPoint = {
-                x: targetX,
-                y: targetY
-              };
-
-              var nearest = function (node) {
-                var nodeRec = node.getClientRects()[0];
-                if (!nodeRec) {
-                  return 0xffffffff;
-                }
-                var dist = distanceToPoint(targetPoint.x, targetPoint.y, nodeRec.left, nodeRec.top);
-                return dist;
-              };
-
-              $("*").removeClass("test-outline");
-
-              var result = elementFromPoint(targetX, targetY);
-              if (!isInUiTree(result)) {
-                var trees = Array.from(document.querySelectorAll(".angular-ui-tree"));
-
-                result = trees.min(nearest);
-              }
-
-              $(result).addClass("test-outline");
-
-              return result;
-            };
-
-            Array.prototype.min = function (callback) {
-              var result = this.reduce(function (acc, current) {
-                var val = callback(current);
-                return val < acc.val ? { val: val, elm: current } : acc;
-              }, { val: 0xffffffff, elm: null });
-
-              return result.elm;
-            };
-
-            if (!Array.from) {
-              Array.from = function (arrLikeObj) {
-                return Array.prototype.slice.call(arrLikeObj);
-              };
-            }
-
-            var isInUiTree = function (element) {
-              if (!element) {
-                return false;
-              }
-
-              return element.hasAttribute("ui-tree") || isInUiTree(element.parentElement);
-            };
-
-            var distanceToPoint = function (x, y, pointX, pointY) {
-              var sqr = function (x) {
-                return x * x;
-              };
-
-              return Math.sqrt(sqr(x - pointX) + sqr(y - pointY));
-            };
 
             var resetExpandingTimeout = function () {
               if (dragInfo.$standingTimeout) {
