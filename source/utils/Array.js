@@ -35,6 +35,16 @@
     });
   };
 
+  Array.prototype.flattern = function (selector) {
+    var result = [];
+    for (var i = 0; i < this.length; i++) {
+      var element = selector ? selector(this[i]) : this[i];
+      result = result.concat(element);
+    }
+
+    return result;
+  };
+
   Array.prototype.sortBy = function (valueSelector) {
     var copy = this.map(function (element) {
       return {
