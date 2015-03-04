@@ -1233,8 +1233,8 @@
                 }
 
                 // move horizontal
-                // var inTree = isInUiTree(elementFromPoint(e.pageX, e.pageY));
-                if (pos.dirAx && pos.distAxX >= config.levelThreshold) {
+                var inTree = isInUiTree(elementFromPoint(e.pageX, e.pageY));
+                if (inTree && pos.dirAx && pos.distAxX >= config.levelThreshold) {
                   pos.distAxX = 0;
 
                   // increase horizontal level if previous sibling exists and is not collapsed
@@ -1318,7 +1318,7 @@
                 }
 
                 // move vertical
-                if (!pos.dirAx) {
+                if (!pos.dirAx || !inTree) {
                   var targetBefore, targetNode;
                   // check it's new position
                   targetNode = targetElm.scope();
