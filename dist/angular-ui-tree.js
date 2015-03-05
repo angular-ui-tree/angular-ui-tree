@@ -1358,7 +1358,7 @@
                                                          : eventObj.pageY < targetMidY;
 
                     if (targetNode.$parentNodesScope.accept(scope, targetNode.index())) {
-                      if (addAsChild(e, targetElm) && targetNode.accept(scope, targetNode.childNodesCount())) {
+                      if (addAsChild(e, targetElm) && targetNode.accept(targetNode, targetNode.childNodesCount())) {
                         targetNode.$childNodesScope.$element.append(placeElm);
                         dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), targetNode.childNodesCount());
                       }
@@ -1377,7 +1377,6 @@
                       dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), targetNode.childNodesCount());
                     }
                   }
-
                 }
 
 
