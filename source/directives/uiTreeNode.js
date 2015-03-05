@@ -420,7 +420,7 @@
                                             });
                 if (potentialTargets.length) {
                   var tree = potentialTargets[0];
-                  var nodes = Array.from(tree.querySelectorAll(".angular-ui-tree > .tree-panel > .tree-node"));
+                  var nodes = Array.from(tree.querySelectorAll("[ui-tree] > [ui-tree-nodes] > [ui-tree-node]"));
                   if (!nodes.length) {
                     return tree;
                   }
