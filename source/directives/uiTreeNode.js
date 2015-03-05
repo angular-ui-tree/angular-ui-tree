@@ -341,17 +341,25 @@
                     }
                   } else if (targetNode.dragEnabled()) { // drag enabled
                     targetElm = targetNode.$element; // Get the element of ui-tree-node
+
                     var targetOffset = $uiTreeHelper.offset(targetElm);
+                    var targetMidY = (targetOffset.top + $uiTreeHelper.height(targetElm) / 2);
                     targetBefore = targetNode.horizontal ? eventObj.pageX < (targetOffset.left + $uiTreeHelper.width(targetElm) / 2)
-                                                         : eventObj.pageY < (targetOffset.top + $uiTreeHelper.height(targetElm) / 2);
+                                                         : eventObj.pageY < targetMidY;
 
                     if (targetNode.$parentNodesScope.accept(scope, targetNode.index())) {
-                      if (targetBefore) {
-                        targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
-                        dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index());
-                      } else {
-                        targetElm.after(placeElm);
-                        dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index() + 1);
+                      if (addAsChild(e, targetElm)) {
+                        targetNode.$childNodesScope.$element.append(placeElm);
+                        dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), targetNode.childNodesCount());
+                      }
+                      else {
+                        if (targetBefore) {
+                          targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
+                          dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index());
+                        } else {
+                          targetElm.after(placeElm);
+                          dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index() + 1);
+                        }
                       }
                     }
                     else if (!targetBefore && targetNode.accept(scope, targetNode.childNodesCount())) { // we have to check if it can add the dragging node as a child
@@ -444,6 +452,23 @@
 
                 return null;
               }
+            };
+
+            // Returns true if dragging element should be added as child of target element.
+            var addAsChild = function (e, targetElement) {
+              var targetNode= angular.element(targetElement).scope();
+              if(targetNode.childNodesCount() !== 0) {
+                return false;
+              }
+
+              var dragElmRect = geometry.translateRect(dragInfo.originalRect, geometry.offset(dragInfo.originalPoint, { x: e.pageX, y: e.pageY }));
+              var targetElmRect = geometry.rect(targetElement[0].children[0]);
+              var overlapRectArea = geometry.overlapArea(dragElmRect, targetElmRect);
+              var dragElmRectArea = geometry.rectArea(dragElmRect);
+              var targetElmRectArea = geometry.rectArea(targetElmRect);
+              var overlappingPercent = (Math.max(1, overlapRectArea) / Math.min(dragElmRectArea, targetElmRectArea)) * 100;
+
+              return overlappingPercent > 60;
             };
 
             var isInUiTree = function (element) {
