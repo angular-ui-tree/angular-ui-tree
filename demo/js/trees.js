@@ -20,6 +20,9 @@
         nodes: []
       });
     };
+	
+	$scope.tree1id = "tree1";
+	$scope.tree2id = "tree2";
 
     $scope.tree1 = [{
       "id": 1,

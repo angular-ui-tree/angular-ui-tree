@@ -71,13 +71,16 @@
             return obj;
           },
 
-          dragInfo: function(node) {
+          dragInfo: function(node, e) {
             return {
+              originalRect: node.$element[0].getClientRects()[0],
+              originalPoint: { x: e.pageX, y: e.pageY },
               source: node,
               sourceInfo: {
                 nodeScope: node,
                 index: node.index(),
-                nodesScope: node.$parentNodesScope
+                nodesScope: node.$parentNodesScope,
+                treeId: node.$treeId
               },
               index: node.index(),
               siblings: node.siblings().slice(0),
@@ -125,7 +128,8 @@
                   source: this.sourceInfo,
                   dest: {
                     index: this.index,
-                    nodesScope: this.parent
+                    nodesScope: this.parent,
+                    treeId: this.parent.$treeId
                   },
                   elements: elements,
                   pos: pos
