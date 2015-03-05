@@ -1467,7 +1467,7 @@
             // Returns true if dragging element should be added as child of target element.
             var addAsChild = function (e, targetElement) {
               var targetNode= angular.element(targetElement).scope();
-              if(targetNode.childNodesCount() !== 0) {
+              if(targetNode.childNodesCount() !== 0 || targetNode.collapsed) {
                 return false;
               }
 
