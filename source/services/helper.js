@@ -53,7 +53,13 @@
            * @return {Bool} check if the node can be dragged.
            */
           nodrag: function (targetElm) {
-            return (typeof targetElm.attr('data-nodrag')) != "undefined";
+            if (typeof targetElm.attr('data-nodrag') != "undefined") {
+              if (targetElm.attr('data-nodrag') === 'false') {
+                return false;
+              }
+              return true;
+            }
+            return false;
           },
 
           /**
@@ -133,9 +139,21 @@
               },
 
               apply: function() {
-                var nodeData = this.source.$modelValue;
-                this.source.remove();
-                this.parent.insertNode(this.index, nodeData);
+                //no drop so no changes
+                if (this.parent.$treeScope.nodrop !== true) {
+                  var nodeData = this.source.$modelValue;
+
+                  //clone so do not remove from source
+                  if (this.source.$treeScope.clone !== true) {
+                    this.source.remove();
+                  }
+
+                  //if the tree is set to clone and source === dest do not insert node or it will cause a duplicate in the repeater
+                  if ((this.source.$treeScope.clone === true) && (this.source.$treeScope ===  this.parent.$treeScope)) {
+                    return false;
+                  }
+                  this.parent.insertNode(this.index, nodeData);
+                }
               }
             };
           },

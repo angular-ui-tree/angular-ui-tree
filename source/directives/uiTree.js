@@ -43,6 +43,18 @@
             }
           });
 
+          scope.$watch(attrs.nodrop, function(val) {
+            if((typeof val) == "boolean") {
+              scope.nodrop = val;
+            }
+          });
+
+          scope.$watch(attrs.clone, function(val) {
+            if((typeof val) == "boolean") {
+              scope.clone = val;
+            }
+          });
+
           scope.$watch(attrs.maxDepth, function(val) {
             if((typeof val) == "number") {
               scope.maxDepth = val;

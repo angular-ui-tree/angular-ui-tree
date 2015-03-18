@@ -16,6 +16,7 @@
 
         $scope.nodrop = false;
         $scope.maxDepth = 0;
+        $scope.clone = false;
 
         $scope.initSubNode = function(subNode) {
           if(!subNode.$modelValue) {

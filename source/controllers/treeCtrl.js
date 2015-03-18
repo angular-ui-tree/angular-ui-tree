@@ -17,6 +17,8 @@
         $scope.emptyPlaceHolderEnabled = true;
         $scope.maxDepth = 0;
         $scope.dragDelay = 0;
+        $scope.clone = false;
+        $scope.nodrop = false;
 
         // Check if it's a empty tree
         $scope.isEmpty = function() {

@@ -131,6 +131,16 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
 `ui-tree` is the root scope for a tree
 
 #### Attributes
+##### data-nodrop
+Turn on the ability to prevent dropping of nodes into this tree.
+- `false` (default): turn off
+- `true`: turn on no drop
+
+##### data-clone
+Turn on cloning of nodes. This will clone the source node to the destination when dragging between 2 trees.
+- `false` (default): turn off clone
+- `true`: turn on clone
+
 ##### data-drag-enabled
 Turn on dragging and dropping of nodes.
 - `true` (default): allow drag and drop
@@ -144,10 +154,10 @@ If you write your own [$callbacks.accept](#accept) method, you have to check `da
 ##### data-drag-delay
 Number of milliseconds a click must be held to start a drag. (default 0)
 
-##### data-empty-place-holder-enabled
-If a tree is empty, there will be an empty place hoder which is used to drop node from other trees by default.
-- `true` (default): display an empty place holder if the tree is empty
-- `false`: do not display an empty place hoder
+##### data-empty-placeholder-enabled
+If a tree is empty, there will be an empty placeholder which is used to drop node from other trees by default.
+- `true` (default): display an empty placeholder if the tree is empty
+- `false`: do not display an empty placeholder
 
 ##### Example 
 - turn on/off drag and drop.

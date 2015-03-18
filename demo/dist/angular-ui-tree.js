@@ -77,7 +77,13 @@
            * @return {Bool} check if the node can be dragged.
            */
           nodrag: function (targetElm) {
-            return (typeof targetElm.attr('data-nodrag')) != "undefined";
+            if (typeof targetElm.attr('data-nodrag') != "undefined") {
+              if (targetElm.attr('data-nodrag') === 'false') {
+                return false;
+              }
+              return true;
+            }
+            return false;
           },
 
           /**
@@ -157,9 +163,21 @@
               },
 
               apply: function() {
-                var nodeData = this.source.$modelValue;
-                this.source.remove();
-                this.parent.insertNode(this.index, nodeData);
+                //no drop so no changes
+                if (this.parent.$treeScope.nodrop !== true) {
+                  var nodeData = this.source.$modelValue;
+
+                  //clone so do not remove from source
+                  if (this.source.$treeScope.clone !== true) {
+                    this.source.remove();
+                  }
+
+                  //if the tree is set to clone and source === dest do not insert node or it will cause a duplicate in the repeater
+                  if ((this.source.$treeScope.clone === true) && (this.source.$treeScope ===  this.parent.$treeScope)) {
+                    return false;
+                  }
+                  this.parent.insertNode(this.index, nodeData);
+                }
               }
             };
           },
@@ -312,6 +330,8 @@
         $scope.emptyPlaceHolderEnabled = true;
         $scope.maxDepth = 0;
         $scope.dragDelay = 0;
+        $scope.clone = false;
+        $scope.nodrop = false;
 
         // Check if it's a empty tree
         $scope.isEmpty = function() {
@@ -375,6 +395,7 @@
 
         $scope.nodrop = false;
         $scope.maxDepth = 0;
+        $scope.clone = false;
 
         $scope.initSubNode = function(subNode) {
           if(!subNode.$modelValue) {
@@ -667,6 +688,18 @@
             }
           });
 
+          scope.$watch(attrs.nodrop, function(val) {
+            if((typeof val) == "boolean") {
+              scope.nodrop = val;
+            }
+          });
+
+          scope.$watch(attrs.clone, function(val) {
+            if((typeof val) == "boolean") {
+              scope.clone = val;
+            }
+          });
+
           scope.$watch(attrs.maxDepth, function(val) {
             if((typeof val) == "number") {
               scope.maxDepth = val;
@@ -918,7 +951,6 @@
               }
               pos = $uiTreeHelper.positionStarted(eventObj, scope.$element);
               placeElm.css('height', $uiTreeHelper.height(scope.$element) + 'px');
-              placeElm.css('width', $uiTreeHelper.width(scope.$element) + 'px');
               dragElm = angular.element($window.document.createElement(scope.$parentNodesScope.$element.prop('tagName')))
                         .addClass(scope.$parentNodesScope.$element.attr('class')).addClass(config.dragClass);
               dragElm.css('width', $uiTreeHelper.width(scope.$element) + 'px');
@@ -1157,8 +1189,8 @@
                 dragElm.remove();
                 dragElm = null;
                 if (scope.$$apply) {
-                  dragInfo.apply();
                   scope.$treeScope.$apply(function() {
+                    dragInfo.apply();
                     scope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
                   });
                 } else {
