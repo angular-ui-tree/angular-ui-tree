@@ -375,6 +375,7 @@
 
         $scope.nodrop = false;
         $scope.maxDepth = 0;
+        $scope.horizontal = false;
 
         $scope.initSubNode = function(subNode) {
           if(!subNode.$modelValue) {
@@ -463,6 +464,7 @@
       }
     ]);
 })();
+
 (function () {
   'use strict';
 
