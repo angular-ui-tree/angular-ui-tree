@@ -922,6 +922,7 @@
               dragElm = angular.element($window.document.createElement(scope.$parentNodesScope.$element.prop('tagName')))
                         .addClass(scope.$parentNodesScope.$element.attr('class')).addClass(config.dragClass);
               dragElm.css('width', $uiTreeHelper.width(scope.$element) + 'px');
+              dragElm.css('height', $uiTreeHelper.height(scope.$element) + 'px');
               dragElm.css('z-index', 9999);
 
               // Prevents cursor to change rapidly in Opera 12.16 and IE when dragging an element
