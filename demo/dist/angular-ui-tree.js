@@ -375,6 +375,7 @@
 
         $scope.nodrop = false;
         $scope.maxDepth = 0;
+        $scope.horizontal = false;
 
         $scope.initSubNode = function(subNode) {
           if(!subNode.$modelValue) {
@@ -463,6 +464,7 @@
       }
     ]);
 })();
+
 (function () {
   'use strict';
 
@@ -793,7 +795,7 @@
           }, true);
 
           attrs.$observe('horizontal', function(val) {
-            scope.horizontal = ((typeof val) != "undefined");
+            scope.horizontal = ((typeof val) != "undefined") && (val !== "false");
           });
 
         }
