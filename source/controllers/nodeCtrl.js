@@ -27,6 +27,12 @@
           $scope.$parentNodeScope = treeNodesCtrl.scope.$nodeScope;
           // modelValue for current node
           $scope.$modelValue = treeNodesCtrl.scope.$modelValue[$scope.$index];
+
+          // Update modelValue if it changes externally.
+          treeNodesCtrl.scope.$watch('$modelValue', function(newValue) {
+            $scope.$modelValue = newValue[$scope.$index];
+          });
+
           $scope.$parentNodesScope = treeNodesCtrl.scope;
           treeNodesCtrl.scope.initSubNode($scope); // init sub nodes
 
