@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html><head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Demo</title>
+<link rel="stylesheet" type="text/css" href="http://jimliu.github.io/angular-ui-tree/dist/angular-ui-tree.min.css">
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="http://code.angularjs.org/1.2.16/angular.min.js"></script>
+<script type="text/javascript" src="dist/angular-ui-tree.js"></script>
+<script type="text/javascript">
+//<![CDATA[ 
+
+  angular.module('treeApp', ['ui.tree'])
+  .controller('treeCtrl', function($scope, $timeout) {
+    $timeout(function(){
+      $scope.data = [
+        {title: 'A'},
+        {title: 'Abc'},
+        {title: 'Ab'},
+        {title: 'Ac'},
+        {title: 'bc'},
+        {title: 'B'},
+        {title: 'C'}
+      ];
+    },100);
+
+    $scope.treeOptions = {
+      dragStart: function(event) {
+        console.log('Start dragging', event);
+      },
+      dragStop: function(event) {
+              // This will be never called :(
+        console.log('Stop dragging', event);
+      },
+      dropped: function(event) {
+        console.log('dropped', event);
+      },
+    };
+  });
+
+//]]>  
+
+</script>
+
+
+<style type="text/css"></style></head>
+<body ng-app="treeApp">
+  <div ng-controller="treeCtrl">
+    <input type="text" ng-model="search" placeholder="Search">
+      <ol ui-tree="treeOptions" ui-tree-nodes ng-model="data">
+        <li ng-repeat="item in data | filter:search" ui-tree-node>
+            {{item.title}}
+        </li>
+      </ol>
+    <pre>
+{{ data | json }}
+    </pre>
+</div>
+
+</body>
+</html>
