@@ -3,15 +3,15 @@
 
   angular.module('ui.tree')
 
-   /**
-    * @ngdoc service
-    * @name ui.tree.service:$helper
-    * @requires ng.$document
-    * @requires ng.$window
-    *
-    * @description
-    * angular-ui-tree.
-    */
+  /**
+   * @ngdoc service
+   * @name ui.tree.service:$helper
+   * @requires ng.$document
+   * @requires ng.$window
+   *
+   * @description
+   * angular-ui-tree.
+   */
     .factory('$uiTreeHelper', ['$document', '$window',
       function ($document, $window) {
         return {
@@ -53,11 +53,17 @@
            * @return {Bool} check if the node can be dragged.
            */
           nodrag: function (targetElm) {
-            return (typeof targetElm.attr('data-nodrag')) != "undefined";
+            if (typeof targetElm.attr('data-nodrag') != "undefined") {
+              if (targetElm.attr('data-nodrag') === 'false') {
+                return false;
+              }
+              return true;
+            }
+            return false;
           },
 
           /**
-           * get the event object for touchs
+           * get the event object for touches
            * @param  {[type]} e [description]
            * @return {[type]}   [description]
            */
@@ -117,7 +123,7 @@
 
               isDirty: function() {
                 return this.source.$parentNodesScope != this.parent ||
-                        this.source.index() != this.index;
+                  this.source.index() != this.index;
               },
 
               eventArgs: function(elements, pos) {
@@ -133,77 +139,89 @@
               },
 
               apply: function() {
-                var nodeData = this.source.$modelValue;
-                this.source.remove();
-                this.parent.insertNode(this.index, nodeData);
+                //no drop so no changes
+                if (this.parent.$treeScope.nodropEnabled !== true) {
+                  var nodeData = this.source.$modelValue;
+
+                  //cloneEnabled so do not remove from source
+                  if (this.source.$treeScope.cloneEnabled !== true) {
+                    this.source.remove();
+                  }
+
+                  //if the tree is set to cloneEnabled and source === dest do not insert node or it will cause a duplicate in the repeater
+                  if ((this.source.$treeScope.cloneEnabled === true) && (this.source.$treeScope ===  this.parent.$treeScope)) {
+                    return false;
+                  }
+                  this.parent.insertNode(this.index, nodeData);
+                }
               }
             };
           },
 
           /**
-          * @ngdoc method
-          * @name hippo.theme#height
-          * @methodOf ui.tree.service:$helper
-          *
-          * @description
-          * Get the height of an element.
-          *
-          * @param {Object} element Angular element.
-          * @returns {String} Height
-          */
+           * @ngdoc method
+           * @name hippo.theme#height
+           * @methodOf ui.tree.service:$helper
+           *
+           * @description
+           * Get the height of an element.
+           *
+           * @param {Object} element Angular element.
+           * @returns {String} Height
+           */
           height: function (element) {
             return element.prop('scrollHeight');
           },
 
           /**
-          * @ngdoc method
-          * @name hippo.theme#width
-          * @methodOf ui.tree.service:$helper
-          *
-          * @description
-          * Get the width of an element.
-          *
-          * @param {Object} element Angular element.
-          * @returns {String} Width
-          */
+           * @ngdoc method
+           * @name hippo.theme#width
+           * @methodOf ui.tree.service:$helper
+           *
+           * @description
+           * Get the width of an element.
+           *
+           * @param {Object} element Angular element.
+           * @returns {String} Width
+           */
           width: function (element) {
             return element.prop('scrollWidth');
           },
 
           /**
-          * @ngdoc method
-          * @name hippo.theme#offset
-          * @methodOf ui.nestedSortable.service:$helper
-          *
-          * @description
-          * Get the offset values of an element.
-          *
-          * @param {Object} element Angular element.
-          * @returns {Object} Object with properties width, height, top and left
-          */
+           * @ngdoc method
+           * @name hippo.theme#offset
+           * @methodOf ui.nestedSortable.service:$helper
+           *
+           * @description
+           * Get the offset values of an element.
+           *
+           * @param {Object} element Angular element.
+           * @returns {Object} Object with properties width, height, top and left
+           */
           offset: function (element) {
             var boundingClientRect = element[0].getBoundingClientRect();
 
             return {
-                width: element.prop('offsetWidth'),
-                height: element.prop('offsetHeight'),
-                top: boundingClientRect.top + ($window.pageYOffset || $document[0].body.scrollTop || $document[0].documentElement.scrollTop),
-                left: boundingClientRect.left + ($window.pageXOffset || $document[0].body.scrollLeft  || $document[0].documentElement.scrollLeft)
-              };
+              width: element.prop('offsetWidth'),
+              height: element.prop('offsetHeight'),
+              top: boundingClientRect.top + ($window.pageYOffset || $document[0].body.scrollTop || $document[0].documentElement.scrollTop),
+              left: boundingClientRect.left + ($window.pageXOffset || $document[0].body.scrollLeft  || $document[0].documentElement.scrollLeft)
+            };
           },
 
           /**
-          * @ngdoc method
-          * @name hippo.theme#positionStarted
-          * @methodOf ui.tree.service:$helper
-          *
-          * @description
-          * Get the start position of the target element according to the provided event properties.
-          *
-          * @param {Object} e Event
-          * @param {Object} target Target element
-          * @returns {Object} Object with properties offsetX, offsetY, startX, startY, nowX and dirX.
-          */
+           * @ngdoc method
+           * @name hippo.theme#positionStarted
+           * @methodOf ui.tree.service:$helper
+           *
+           * @description
+           * Get the start position of the target element according to the provided event properties.
+           *
+           * @param {Object} e Event
+           * @param {Object} target Target element
+           * @returns {Object} Object with properties offsetX, offsetY, startX, startY, nowX and dirX.
+           */
           positionStarted: function (e, target) {
             var pos = {};
             pos.offsetX = e.pageX - this.offset(target).left;

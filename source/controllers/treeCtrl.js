@@ -17,11 +17,13 @@
         $scope.emptyPlaceHolderEnabled = true;
         $scope.maxDepth = 0;
         $scope.dragDelay = 0;
+        $scope.cloneEnabled = false;
+        $scope.nodropEnabled = false;
 
         // Check if it's a empty tree
         $scope.isEmpty = function() {
           return ($scope.$nodesScope && $scope.$nodesScope.$modelValue
-            && $scope.$nodesScope.$modelValue.length === 0);
+          && $scope.$nodesScope.$modelValue.length === 0);
         };
 
         // add placeholder to empty tree
