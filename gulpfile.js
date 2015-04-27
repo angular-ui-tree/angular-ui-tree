@@ -19,6 +19,6 @@ gulp.task('build', ['clean'], function () {
   return gulp.start('styles', 'jscs', 'jshint', 'uglify', 'styles', 'test');
 });
 
-gulp.task('serve', ['clean'], function () {
+gulp.task('serve', function () {
   return gulp.start('connect', 'watch', 'open');
 });
