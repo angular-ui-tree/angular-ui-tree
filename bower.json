@@ -34,6 +34,8 @@
   },
   "ignore": [
     "examples",
+    "demo",
+    "build",
     "guide",
     "node_modules",
     "source",
