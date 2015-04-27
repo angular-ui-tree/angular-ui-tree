@@ -9,7 +9,7 @@ module.exports = function (gulp, $) {
 
   gulp.task('jscs', function () {
     return gulp.src('source')
-      .pipe($.jscs());
+      .pipe($.jscs({}));
   });
 
   gulp.task('jshint', function () {
