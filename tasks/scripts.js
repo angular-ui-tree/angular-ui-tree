@@ -4,7 +4,7 @@ module.exports = function (gulp, $) {
 
   gulp.task('scripts:setup', function () {
     return gulp.src('source')
-      .pipe($.symlink('examples/source'));
+      .pipe($.symlink('examples/source', { force: true }));
   });
 
   gulp.task('jscs', function () {
