@@ -2,6 +2,7 @@
 
 * Add `data-clone-enabled` option + fix `data-drop-enabled` option ([#411](https://github.com/angular-ui-tree/angular-ui-tree/pull/411))
 * Replaced Grunt with Gulp for the build process ([#435](https://github.com/angular-ui-tree/angular-ui-tree/pull/435))
+* Fixed memory leak [#421](https://github.com/angular-ui-tree/angular-ui-tree/pull/421)
 
 # 2.2.0
 
