@@ -14,9 +14,9 @@
         $scope.$type = 'uiTreeNodes';
         $scope.$nodesMap = {};
 
-        $scope.nodrop = false;
+        $scope.nodropEnabled = false;
         $scope.maxDepth = 0;
-        $scope.clone = false;
+        $scope.cloneEnabled = false;
 
         $scope.initSubNode = function(subNode) {
           if(!subNode.$modelValue) {

@@ -87,7 +87,7 @@
           },
 
           /**
-           * get the event object for touchs
+           * get the event object for touches
            * @param  {[type]} e [description]
            * @return {[type]}   [description]
            */
@@ -164,16 +164,16 @@
 
               apply: function() {
                 //no drop so no changes
-                if (this.parent.$treeScope.nodrop !== true) {
+                if (this.parent.$treeScope.nodropEnabled !== true) {
                   var nodeData = this.source.$modelValue;
 
-                  //clone so do not remove from source
-                  if (this.source.$treeScope.clone !== true) {
+                  //cloneEnabled so do not remove from source
+                  if (this.source.$treeScope.cloneEnabled !== true) {
                     this.source.remove();
                   }
 
-                  //if the tree is set to clone and source === dest do not insert node or it will cause a duplicate in the repeater
-                  if ((this.source.$treeScope.clone === true) && (this.source.$treeScope ===  this.parent.$treeScope)) {
+                  //if the tree is set to cloneEnabled and source === dest do not insert node or it will cause a duplicate in the repeater
+                  if ((this.source.$treeScope.cloneEnabled === true) && (this.source.$treeScope ===  this.parent.$treeScope)) {
                     return false;
                   }
                   this.parent.insertNode(this.index, nodeData);
@@ -330,8 +330,8 @@
         $scope.emptyPlaceHolderEnabled = true;
         $scope.maxDepth = 0;
         $scope.dragDelay = 0;
-        $scope.clone = false;
-        $scope.nodrop = false;
+        $scope.cloneEnabled = false;
+        $scope.nodropEnabled = false;
 
         // Check if it's a empty tree
         $scope.isEmpty = function() {
@@ -393,9 +393,9 @@
         $scope.$type = 'uiTreeNodes';
         $scope.$nodesMap = {};
 
-        $scope.nodrop = false;
+        $scope.nodropEnabled = false;
         $scope.maxDepth = 0;
-        $scope.clone = false;
+        $scope.cloneEnabled = false;
 
         $scope.initSubNode = function(subNode) {
           if(!subNode.$modelValue) {
@@ -688,15 +688,15 @@
             }
           });
 
-          scope.$watch(attrs.nodrop, function(val) {
+          scope.$watch(attrs.nodropEnabled, function(val) {
             if((typeof val) == "boolean") {
-              scope.nodrop = val;
+              scope.nodropEnabled = val;
             }
           });
 
-          scope.$watch(attrs.clone, function(val) {
+          scope.$watch(attrs.cloneEnabled, function(val) {
             if((typeof val) == "boolean") {
-              scope.clone = val;
+              scope.cloneEnabled = val;
             }
           });
 
@@ -713,11 +713,11 @@
           });
 
           // check if the dest node can accept the dragging node
-          // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`
+          // by default, we check the 'data-nodrop-enabled' attribute in `ui-tree-nodes`
           // and the 'max-depth' attribute in `ui-tree` or `ui-tree-nodes`.
           // the method can be overrided
           callbacks.accept = function(sourceNodeScope, destNodesScope, destIndex) {
-            if (destNodesScope.nodrop || destNodesScope.outOfDepth(sourceNodeScope)) {
+            if (destNodesScope.nodropEnabled || destNodesScope.outOfDepth(sourceNodeScope)) {
               return false;
             }
             return true;
@@ -818,10 +818,10 @@
           });
 
           scope.$watch(function () {
-            return attrs.nodrop;
+            return attrs.nodropEnabled;
           }, function (newVal) {
             if((typeof newVal) != "undefined") {
-              scope.nodrop = true;
+              scope.nodropEnabled = true;
             }
           }, true);
 

@@ -63,7 +63,7 @@
           },
 
           /**
-           * get the event object for touchs
+           * get the event object for touches
            * @param  {[type]} e [description]
            * @return {[type]}   [description]
            */
@@ -140,16 +140,16 @@
 
               apply: function() {
                 //no drop so no changes
-                if (this.parent.$treeScope.nodrop !== true) {
+                if (this.parent.$treeScope.nodropEnabled !== true) {
                   var nodeData = this.source.$modelValue;
 
-                  //clone so do not remove from source
-                  if (this.source.$treeScope.clone !== true) {
+                  //cloneEnabled so do not remove from source
+                  if (this.source.$treeScope.cloneEnabled !== true) {
                     this.source.remove();
                   }
 
-                  //if the tree is set to clone and source === dest do not insert node or it will cause a duplicate in the repeater
-                  if ((this.source.$treeScope.clone === true) && (this.source.$treeScope ===  this.parent.$treeScope)) {
+                  //if the tree is set to cloneEnabled and source === dest do not insert node or it will cause a duplicate in the repeater
+                  if ((this.source.$treeScope.cloneEnabled === true) && (this.source.$treeScope ===  this.parent.$treeScope)) {
                     return false;
                   }
                   this.parent.insertNode(this.index, nodeData);
