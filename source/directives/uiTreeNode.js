@@ -411,12 +411,19 @@
               element.bind('touchend touchcancel mouseup',function(){$timeout.cancel(dragTimer);});
             };
             bindDrag();
-
-            angular.element($window.document.body).bind("keydown", function(e) {
-              if (e.keyCode == 27) {
-                scope.$$apply = false;
-                dragEnd(e);
-              }
+            
+            var keydownHandler = function(e) {
+                  if (e.keyCode == 27) {
+                      scope.$$apply = false;
+                      dragEnd(e);
+                  }
+            };
+            
+            angular.element($window.document.body).bind("keydown", keydownHandler);
+            
+            //unbind handler that retains scope
+            scope.$on('$destroy', function () {
+                  angular.element($window.document.body).unbind("keydown", keydownHandler);
             });
           }
         };
