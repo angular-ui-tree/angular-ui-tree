@@ -45,10 +45,10 @@
           });
 
           scope.$watch(function () {
-            return attrs.nodrop;
+            return attrs.nodropEnabled;
           }, function (newVal) {
             if((typeof newVal) != "undefined") {
-              scope.nodrop = true;
+              scope.nodropEnabled = true;
             }
           }, true);
 

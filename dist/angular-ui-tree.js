@@ -77,11 +77,17 @@
            * @return {Bool} check if the node can be dragged.
            */
           nodrag: function (targetElm) {
-            return (typeof targetElm.attr('data-nodrag')) != "undefined";
+            if (typeof targetElm.attr('data-nodrag') != "undefined") {
+              if (targetElm.attr('data-nodrag') === 'false') {
+                return false;
+              }
+              return true;
+            }
+            return false;
           },
 
           /**
-           * get the event object for touchs
+           * get the event object for touches
            * @param  {[type]} e [description]
            * @return {[type]}   [description]
            */
@@ -157,9 +163,21 @@
               },
 
               apply: function() {
-                var nodeData = this.source.$modelValue;
-                this.source.remove();
-                this.parent.insertNode(this.index, nodeData);
+                //no drop so no changes
+                if (this.parent.$treeScope.nodropEnabled !== true) {
+                  var nodeData = this.source.$modelValue;
+
+                  //cloneEnabled so do not remove from source
+                  if (this.source.$treeScope.cloneEnabled !== true) {
+                    this.source.remove();
+                  }
+
+                  //if the tree is set to cloneEnabled and source === dest do not insert node or it will cause a duplicate in the repeater
+                  if ((this.source.$treeScope.cloneEnabled === true) && (this.source.$treeScope ===  this.parent.$treeScope)) {
+                    return false;
+                  }
+                  this.parent.insertNode(this.index, nodeData);
+                }
               }
             };
           },
@@ -312,6 +330,8 @@
         $scope.emptyPlaceHolderEnabled = true;
         $scope.maxDepth = 0;
         $scope.dragDelay = 0;
+        $scope.cloneEnabled = false;
+        $scope.nodropEnabled = false;
 
         // Check if it's a empty tree
         $scope.isEmpty = function() {
@@ -373,8 +393,9 @@
         $scope.$type = 'uiTreeNodes';
         $scope.$nodesMap = {};
 
-        $scope.nodrop = false;
+        $scope.nodropEnabled = false;
         $scope.maxDepth = 0;
+        $scope.cloneEnabled = false;
 
         $scope.initSubNode = function(subNode) {
           if(!subNode.$modelValue) {
@@ -667,6 +688,18 @@
             }
           });
 
+          scope.$watch(attrs.nodropEnabled, function(val) {
+            if((typeof val) == "boolean") {
+              scope.nodropEnabled = val;
+            }
+          });
+
+          scope.$watch(attrs.cloneEnabled, function(val) {
+            if((typeof val) == "boolean") {
+              scope.cloneEnabled = val;
+            }
+          });
+
           scope.$watch(attrs.maxDepth, function(val) {
             if((typeof val) == "number") {
               scope.maxDepth = val;
@@ -680,11 +713,11 @@
           });
 
           // check if the dest node can accept the dragging node
-          // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`
+          // by default, we check the 'data-nodrop-enabled' attribute in `ui-tree-nodes`
           // and the 'max-depth' attribute in `ui-tree` or `ui-tree-nodes`.
           // the method can be overrided
           callbacks.accept = function(sourceNodeScope, destNodesScope, destIndex) {
-            if (destNodesScope.nodrop || destNodesScope.outOfDepth(sourceNodeScope)) {
+            if (destNodesScope.nodropEnabled || destNodesScope.outOfDepth(sourceNodeScope)) {
               return false;
             }
             return true;
@@ -785,10 +818,10 @@
           });
 
           scope.$watch(function () {
-            return attrs.nodrop;
+            return attrs.nodropEnabled;
           }, function (newVal) {
             if((typeof newVal) != "undefined") {
-              scope.nodrop = true;
+              scope.nodropEnabled = true;
             }
           }, true);
 
@@ -918,7 +951,6 @@
               }
               pos = $uiTreeHelper.positionStarted(eventObj, scope.$element);
               placeElm.css('height', $uiTreeHelper.height(scope.$element) + 'px');
-              placeElm.css('width', $uiTreeHelper.width(scope.$element) + 'px');
               dragElm = angular.element($window.document.createElement(scope.$parentNodesScope.$element.prop('tagName')))
                         .addClass(scope.$parentNodesScope.$element.attr('class')).addClass(config.dragClass);
               dragElm.css('width', $uiTreeHelper.width(scope.$element) + 'px');
@@ -1157,8 +1189,8 @@
                 dragElm.remove();
                 dragElm = null;
                 if (scope.$$apply) {
-                  dragInfo.apply();
                   scope.$treeScope.$apply(function() {
+                    dragInfo.apply();
                     scope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
                   });
                 } else {

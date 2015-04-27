@@ -114,7 +114,6 @@
               }
               pos = $uiTreeHelper.positionStarted(eventObj, scope.$element);
               placeElm.css('height', $uiTreeHelper.height(scope.$element) + 'px');
-              placeElm.css('width', $uiTreeHelper.width(scope.$element) + 'px');
               dragElm = angular.element($window.document.createElement(scope.$parentNodesScope.$element.prop('tagName')))
                         .addClass(scope.$parentNodesScope.$element.attr('class')).addClass(config.dragClass);
               dragElm.css('width', $uiTreeHelper.width(scope.$element) + 'px');
@@ -353,8 +352,8 @@
                 dragElm.remove();
                 dragElm = null;
                 if (scope.$$apply) {
-                  dragInfo.apply();
                   scope.$treeScope.$apply(function() {
+                    dragInfo.apply();
                     scope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
                   });
                 } else {

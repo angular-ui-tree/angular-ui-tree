@@ -43,6 +43,18 @@
             }
           });
 
+          scope.$watch(attrs.nodropEnabled, function(val) {
+            if((typeof val) == "boolean") {
+              scope.nodropEnabled = val;
+            }
+          });
+
+          scope.$watch(attrs.cloneEnabled, function(val) {
+            if((typeof val) == "boolean") {
+              scope.cloneEnabled = val;
+            }
+          });
+
           scope.$watch(attrs.maxDepth, function(val) {
             if((typeof val) == "number") {
               scope.maxDepth = val;
@@ -56,11 +68,11 @@
           });
 
           // check if the dest node can accept the dragging node
-          // by default, we check the 'data-nodrop' attribute in `ui-tree-nodes`
+          // by default, we check the 'data-nodrop-enabled' attribute in `ui-tree-nodes`
           // and the 'max-depth' attribute in `ui-tree` or `ui-tree-nodes`.
           // the method can be overrided
           callbacks.accept = function(sourceNodeScope, destNodesScope, destIndex) {
-            if (destNodesScope.nodrop || destNodesScope.outOfDepth(sourceNodeScope)) {
+            if (destNodesScope.nodropEnabled || destNodesScope.outOfDepth(sourceNodeScope)) {
               return false;
             }
             return true;

@@ -131,6 +131,16 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
 `ui-tree` is the root scope for a tree
 
 #### Attributes
+##### data-drop-enabled
+Turn on the ability to prevent dropping of nodes into this tree.
+- `false` (default): turn off
+- `true`: turn on no drop
+
+##### data-clone-enabled
+Turn on cloning of nodes. This will clone the source node to the destination when dragging between 2 trees.
+- `false` (default): turn off clone
+- `true`: turn on clone
+
 ##### data-drag-enabled
 Turn on dragging and dropping of nodes.
 - `true` (default): allow drag and drop
@@ -144,10 +154,10 @@ If you write your own [$callbacks.accept](#accept) method, you have to check `da
 ##### data-drag-delay
 Number of milliseconds a click must be held to start a drag. (default 0)
 
-##### data-empty-place-holder-enabled
-If a tree is empty, there will be an empty place hoder which is used to drop node from other trees by default.
-- `true` (default): display an empty place holder if the tree is empty
-- `false`: do not display an empty place hoder
+##### data-empty-placeholder-enabled
+If a tree is empty, there will be an empty placeholder which is used to drop node from other trees by default.
+- `true` (default): display an empty placeholder if the tree is empty
+- `false`: do not display an empty placeholder
 
 ##### Example 
 - turn on/off drag and drop.
@@ -255,16 +265,16 @@ Same as [Parameters](#eventParam) of dropped.
 `ui-tree-nodes` is the container of nodes. Every `ui-tree-node` should have a `ui-tree-nodes` as it's container, a `ui-tree-nodes` can have multiple child nodes.
 
 #### Attributes
-##### data-nodrop<a name="nodes_attrs_nodrop"></a>
+##### data-nodrop-enabled <a name="nodes_attrs_nodrop"></a>
 Turn off drop of nodes.
-##### data-max-depth<a name="nodes_attrs_maxDepth"></a>
+##### data-max-depth <a name="nodes_attrs_maxDepth"></a>
 Number of levels a nodes can be nested (default 0). 0 means no limit. It can override the `data-max-depth` in `ui-tree`.
 **Note**
-If you write your own [$callbacks.accept](#accept) method, you have to check `data-nodrop` and `data-max-depth` by yourself.
+If you write your own [$callbacks.accept](#accept) method, you have to check `data-nodrop-enabled` and `data-max-depth` by yourself.
 
 Example: turn off drop.
 ```html
-<ol ui-tree-nodes ng-model="nodes" data-nodrop>
+<ol ui-tree-nodes ng-model="nodes" data-nodrop-enabled="true">
   <li ng-repeat="node in nodes" ui-tree-node>{{node.title}}</li>
 </ol>
 ```
@@ -295,8 +305,8 @@ The property `$nodeScope of` `nodes 1.1` is `node 1.1`. The property `$nodes` of
 ##### maxDepth
 Number of levels a node can be nested. It bases on the attribute [data-max-depth](#nodes_attrs_maxDepth).
 
-##### nodrop
-Turn off drop on nodes. It bases on the attribute [data-nodrag](#nodes_attrs_nodrop).
+##### nodropEnabled
+Turn off drop on nodes. It bases on the attribute [data-nodrop-enabled](#nodes_attrs_nodrop).
 
 #### Methods of scope
 ##### depth()
