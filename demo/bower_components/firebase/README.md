@@ -1,4 +1,0 @@
-firebase-bower
-==============
-
-Firebase Bower
