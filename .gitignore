@@ -12,8 +12,10 @@ Thumbs.db
 # Project dependencies #
 ########################
 node_modules
-bower_components
 
 # IDE files #
 .idea
 *.iml
+
+examples/bower_components
+examples/source

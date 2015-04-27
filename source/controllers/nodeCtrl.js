@@ -74,14 +74,14 @@
 
         $scope.childNodes = function() {
           return $scope.$childNodesScope && $scope.$childNodesScope.$modelValue ?
-              $scope.$childNodesScope.childNodes() :
-              null;
+            $scope.$childNodesScope.childNodes() :
+            null;
         };
 
         $scope.accept = function(sourceNode, destIndex) {
           return $scope.$childNodesScope &&
-                  $scope.$childNodesScope.$modelValue &&
-                  $scope.$childNodesScope.accept(sourceNode, destIndex);
+            $scope.$childNodesScope.$modelValue &&
+            $scope.$childNodesScope.accept(sourceNode, destIndex);
         };
 
         $scope.removeNode = function(){

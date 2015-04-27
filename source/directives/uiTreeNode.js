@@ -40,9 +40,9 @@
             var dragStarted = false;
             var dragTimer = null;
             var body = document.body,
-                html = document.documentElement,
-                document_height,
-                document_width;
+              html = document.documentElement,
+              document_height,
+              document_width;
 
             var dragStart = function(e) {
               if (!hasTouch && (e.button == 2 || e.which == 3)) {
@@ -102,11 +102,11 @@
               if (tagName.toLowerCase() === 'tr') {
                 placeElm = angular.element($window.document.createElement(tagName));
                 var tdElm = angular.element($window.document.createElement('td'))
-                              .addClass(config.placeHolderClass);
+                  .addClass(config.placeHolderClass);
                 placeElm.append(tdElm);
               } else {
                 placeElm = angular.element($window.document.createElement(tagName))
-                              .addClass(config.placeHolderClass);
+                  .addClass(config.placeHolderClass);
               }
               hiddenPlaceElm = angular.element($window.document.createElement(tagName));
               if (config.hiddenClass) {
@@ -115,7 +115,7 @@
               pos = $uiTreeHelper.positionStarted(eventObj, scope.$element);
               placeElm.css('height', $uiTreeHelper.height(scope.$element) + 'px');
               dragElm = angular.element($window.document.createElement(scope.$parentNodesScope.$element.prop('tagName')))
-                        .addClass(scope.$parentNodesScope.$element.attr('class')).addClass(config.dragClass);
+                .addClass(scope.$parentNodesScope.$element.attr('class')).addClass(config.dragClass);
               dragElm.css('width', $uiTreeHelper.width(scope.$element) + 'px');
               dragElm.css('z-index', 9999);
 
@@ -313,7 +313,7 @@
                     targetElm = targetNode.$element; // Get the element of ui-tree-node
                     var targetOffset = $uiTreeHelper.offset(targetElm);
                     targetBefore = targetNode.horizontal ? eventObj.pageX < (targetOffset.left + $uiTreeHelper.width(targetElm) / 2)
-                                                         : eventObj.pageY < (targetOffset.top + $uiTreeHelper.height(targetElm) / 2);
+                      : eventObj.pageY < (targetOffset.top + $uiTreeHelper.height(targetElm) / 2);
 
                     if (targetNode.$parentNodesScope.accept(scope, targetNode.index())) {
                       if (targetBefore) {

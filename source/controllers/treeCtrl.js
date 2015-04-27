@@ -23,7 +23,7 @@
         // Check if it's a empty tree
         $scope.isEmpty = function() {
           return ($scope.$nodesScope && $scope.$nodesScope.$modelValue
-            && $scope.$nodesScope.$modelValue.length === 0);
+          && $scope.$nodesScope.$modelValue.length === 0);
         };
 
         // add placeholder to empty tree
