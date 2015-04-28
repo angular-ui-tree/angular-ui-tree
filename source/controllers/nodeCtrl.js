@@ -2,9 +2,8 @@
   'use strict';
 
   angular.module('ui.tree')
-
-    .controller('TreeNodeController', ['$scope', '$element', '$attrs', 'treeConfig',
-      function ($scope, $element, $attrs, treeConfig) {
+    .controller('TreeNodeController', ['$scope', '$element',
+      function ($scope, $element) {
         this.scope = $scope;
 
         $scope.$element = $element;
@@ -15,8 +14,7 @@
         $scope.$treeScope = null; // uiTree scope
         $scope.$handleScope = null; // it's handle scope
         $scope.$type = 'uiTreeNode';
-        $scope.$$apply = false; //
-
+        $scope.$$apply = false;
         $scope.collapsed = false;
 
         $scope.init = function(controllersArr) {

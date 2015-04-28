@@ -3,8 +3,8 @@
 
   angular.module('ui.tree')
 
-    .controller('TreeHandleController', ['$scope', '$element', '$attrs', 'treeConfig',
-      function ($scope, $element, $attrs, treeConfig) {
+    .controller('TreeHandleController', ['$scope', '$element',
+      function ($scope, $element) {
         this.scope = $scope;
 
         $scope.$element = $element;
