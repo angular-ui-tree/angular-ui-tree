@@ -159,7 +159,7 @@ If a tree is empty, there will be an empty placeholder which is used to drop nod
 - `true` (default): display an empty placeholder if the tree is empty
 - `false`: do not display an empty placeholder
 
-##### Example 
+##### Example
 - turn on/off drag and drop.
 - Limit depth to 5
 - 500 milliseconds delay
@@ -189,7 +189,7 @@ myAppModule.controller('MyController', function($scope) {
 });
 ```
 ```html
-<div ui-tree="treeOptions">
+<div ui-tree callbacks="treeOptions">
   <ol ui-tree-nodes ng-model="nodes">
     <li ng-repeat="node in nodes" ui-tree-node>{{node.title}}</li>
   </ol>
