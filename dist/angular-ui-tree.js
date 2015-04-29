@@ -546,6 +546,7 @@
               dragMoveEvent,
               dragEndEvent,
               dragCancelEvent,
+              dragDelay,
               bindDrag,
               keydownHandler;
             angular.extend(config, treeConfig);
@@ -578,8 +579,8 @@
 
               // the element which is clicked.
               var eventElm = angular.element(e.target),
-                  eventScope = eventElm.scope(),
-                  eventElmTagName,
+                eventScope = eventElm.scope(),
+                eventElmTagName, tagName,
                 eventObj, tdElm, hStyle;
               if (!eventScope || !eventScope.$type) {
                 return;
@@ -623,7 +624,13 @@
               firstMoving = true;
               dragInfo = $uiTreeHelper.dragInfo(scope);
 
+              // Fire dragStart callback
+              scope.$apply(function () {
+                scope.$callbacks.dragStart(dragInfo.eventArgs(elements, pos));
+              });
+
               tagName = scope.$element.prop('tagName');
+
               if (tagName.toLowerCase() === 'tr') {
                 placeElm = angular.element($window.document.createElement(tagName));
                 tdElm = angular.element($window.document.createElement('td'))
@@ -676,19 +683,23 @@
             };
 
             dragMove = function (e) {
-              if (!dragStarted) {
-                if (!dragDelaying) {
-                  dragStarted = true;
-                  scope.$apply(function () {
-                    scope.$callbacks.dragStart(dragInfo.eventArgs(elements, pos));
-                  });
-                }
-                return;
-              }
-
               var eventObj = $uiTreeHelper.eventObj(e),
-                prev, leftElmPos, topElmPos, top_scroll, bottom_scroll, next, target, decrease, targetX, targetY, displayElm,
-                targetElm, targetBefore, targetNode, isEmpty, targetOffset;
+                prev,
+                next,
+                leftElmPos,
+                topElmPos,
+                top_scroll,
+                bottom_scroll,
+                target,
+                decrease,
+                targetX,
+                targetY,
+                displayElm,
+                targetNode,
+                targetElm,
+                isEmpty,
+                targetOffset,
+                targetBefore;
 
               if (dragElm) {
                 e.preventDefault();
@@ -927,17 +938,31 @@
               dragEnd(e);
             };
 
+            dragDelay = (function () {
+              var to;
+
+              return {
+                exec: function (fn, ms) {
+                  if (!ms) {
+                    ms = 0;
+                  }
+                  this.cancel();
+                  to = $timeout(fn, ms);
+                },
+                cancel: function () {
+                  $timeout.cancel(to);
+                }
+              };
+            })();
+
             bindDrag = function () {
               element.bind('touchstart mousedown', function (e) {
-                dragDelaying = true;
-                dragStarted = false;
-                dragStartEvent(e);
-                dragTimer = $timeout(function () {
-                  dragDelaying = false;
-                }, scope.dragDelay);
+                dragDelay.exec(function () {
+                  dragStartEvent(e);
+                }, scope.dragDelay || 0);
               });
               element.bind('touchend touchcancel mouseup', function () {
-                $timeout.cancel(dragTimer);
+                dragDelay.cancel();
               });
             };
             bindDrag();
