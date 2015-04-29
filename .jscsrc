@@ -1,19 +1,5 @@
 {
-  "preset": "airbnb",
-  "requireSpaceAfterKeywords": [
-    "do",
-    "for",
-    "if",
-    "else",
-    "switch",
-    "case",
-    "try",
-    "catch",
-    "void",
-    "while",
-    "with",
-    "return",
-    "typeof",
-    "function"
-  ]
+  "preset": "crockford",
+  "validateIndentation": 2,
+  "validateQuoteMarks": "'"
 }
