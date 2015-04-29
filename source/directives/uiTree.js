@@ -12,9 +12,9 @@
             var callbacks = {
               accept: null,
               beforeDrag: null
-            };
+            },
+              config = {};
 
-            var config = {};
             angular.extend(config, treeConfig);
             if (config.treeClass) {
               element.addClass(config.treeClass);
@@ -32,37 +32,37 @@
             }, true);
 
             scope.$watch(attrs.dragEnabled, function (val) {
-              if ((typeof val) == "boolean") {
+              if ((typeof val) == 'boolean') {
                 scope.dragEnabled = val;
               }
             });
 
             scope.$watch(attrs.emptyPlaceHolderEnabled, function (val) {
-              if ((typeof val) == "boolean") {
+              if ((typeof val) == 'boolean') {
                 scope.emptyPlaceHolderEnabled = val;
               }
             });
 
             scope.$watch(attrs.nodropEnabled, function (val) {
-              if ((typeof val) == "boolean") {
+              if ((typeof val) == 'boolean') {
                 scope.nodropEnabled = val;
               }
             });
 
             scope.$watch(attrs.cloneEnabled, function (val) {
-              if ((typeof val) == "boolean") {
+              if ((typeof val) == 'boolean') {
                 scope.cloneEnabled = val;
               }
             });
 
             scope.$watch(attrs.maxDepth, function (val) {
-              if ((typeof val) == "number") {
+              if ((typeof val) == 'number') {
                 scope.maxDepth = val;
               }
             });
 
             scope.$watch(attrs.dragDelay, function (val) {
-              if ((typeof val) == "number") {
+              if ((typeof val) == 'number') {
                 scope.dragDelay = val;
               }
             });
@@ -109,7 +109,7 @@
             scope.$watch(attrs.uiTree, function (newVal, oldVal) {
               angular.forEach(newVal, function (value, key) {
                 if (callbacks[key]) {
-                  if (typeof value === "function") {
+                  if (typeof value === 'function') {
                     callbacks[key] = value;
                   }
                 }

@@ -18,40 +18,40 @@
         $scope.maxDepth = 0;
         $scope.cloneEnabled = false;
 
-        $scope.initSubNode = function(subNode) {
-          if(!subNode.$modelValue) {
+        $scope.initSubNode = function (subNode) {
+          if (!subNode.$modelValue) {
             return null;
           }
           $scope.$nodesMap[subNode.$modelValue.$$hashKey] = subNode;
         };
 
-        $scope.destroySubNode = function(subNode) {
-          if(!subNode.$modelValue) {
+        $scope.destroySubNode = function (subNode) {
+          if (!subNode.$modelValue) {
             return null;
           }
           $scope.$nodesMap[subNode.$modelValue.$$hashKey] = null;
         };
 
-        $scope.accept = function(sourceNode, destIndex) {
+        $scope.accept = function (sourceNode, destIndex) {
           return $scope.$treeScope.$callbacks.accept(sourceNode, $scope, destIndex);
         };
 
-        $scope.beforeDrag = function(sourceNode) {
+        $scope.beforeDrag = function (sourceNode) {
           return $scope.$treeScope.$callbacks.beforeDrag(sourceNode);
         };
 
-        $scope.isParent = function(node) {
+        $scope.isParent = function (node) {
           return node.$parentNodesScope == $scope;
         };
 
-        $scope.hasChild = function() {
+        $scope.hasChild = function () {
           return $scope.$modelValue.length > 0;
         };
 
-        $scope.safeApply = function(fn) {
+        $scope.safeApply = function (fn) {
           var phase = this.$root.$$phase;
-          if(phase == '$apply' || phase == '$digest') {
-            if(fn && (typeof(fn) === 'function')) {
+          if (phase == '$apply' || phase == '$digest') {
+            if (fn && (typeof (fn) === 'function')) {
               fn();
             }
           } else {
@@ -59,10 +59,10 @@
           }
         };
 
-        $scope.removeNode = function(node) {
+        $scope.removeNode = function (node) {
           var index = $scope.$modelValue.indexOf(node.$modelValue);
           if (index > -1) {
-            $scope.safeApply(function() {
+            $scope.safeApply(function () {
               $scope.$modelValue.splice(index, 1)[0];
             });
             return node;
@@ -70,23 +70,23 @@
           return null;
         };
 
-        $scope.insertNode = function(index, nodeData) {
-          $scope.safeApply(function() {
+        $scope.insertNode = function (index, nodeData) {
+          $scope.safeApply(function () {
             $scope.$modelValue.splice(index, 0, nodeData);
           });
         };
 
-        $scope.childNodes = function() {
-          var nodes = [];
+        $scope.childNodes = function () {
+          var i, nodes = [];
           if ($scope.$modelValue) {
-            for (var i = 0; i < $scope.$modelValue.length; i++) {
+            for (i = 0; i < $scope.$modelValue.length; i++) {
               nodes.push($scope.$nodesMap[$scope.$modelValue[i].$$hashKey]);
             }
           }
           return nodes;
         };
 
-        $scope.depth = function() {
+        $scope.depth = function () {
           if ($scope.$nodeScope) {
             return $scope.$nodeScope.depth();
           }
@@ -94,7 +94,7 @@
         };
 
         // check if depth limit has reached
-        $scope.outOfDepth = function(sourceNode) {
+        $scope.outOfDepth = function (sourceNode) {
           var maxDepth = $scope.maxDepth || $scope.$treeScope.maxDepth;
           if (maxDepth > 0) {
             return $scope.depth() + sourceNode.maxSubDepth() + 1 > maxDepth;

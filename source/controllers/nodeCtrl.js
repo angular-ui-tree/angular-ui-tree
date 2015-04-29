@@ -17,7 +17,7 @@
         $scope.$$apply = false;
         $scope.collapsed = false;
 
-        $scope.init = function(controllersArr) {
+        $scope.init = function (controllersArr) {
           var treeNodesCtrl = controllersArr[0];
           $scope.$treeScope = controllersArr[1] ? controllersArr[1].scope : null;
 
@@ -28,29 +28,29 @@
           $scope.$parentNodesScope = treeNodesCtrl.scope;
           treeNodesCtrl.scope.initSubNode($scope); // init sub nodes
 
-          $element.on('$destroy', function() {
+          $element.on('$destroy', function () {
             treeNodesCtrl.scope.destroySubNode($scope); // destroy sub nodes
           });
         };
 
-        $scope.index = function() {
+        $scope.index = function () {
           return $scope.$parentNodesScope.$modelValue.indexOf($scope.$modelValue);
         };
 
-        $scope.dragEnabled = function() {
+        $scope.dragEnabled = function () {
           return !($scope.$treeScope && !$scope.$treeScope.dragEnabled);
         };
 
-        $scope.isSibling = function(targetNode) {
+        $scope.isSibling = function (targetNode) {
           return $scope.$parentNodesScope == targetNode.$parentNodesScope;
         };
 
-        $scope.isChild = function(targetNode) {
+        $scope.isChild = function (targetNode) {
           var nodes = $scope.childNodes();
           return nodes && nodes.indexOf(targetNode) > -1;
         };
 
-        $scope.prev = function() {
+        $scope.prev = function () {
           var index = $scope.index();
           if (index > 0) {
             return $scope.siblings()[index - 1];
@@ -58,53 +58,53 @@
           return null;
         };
 
-        $scope.siblings = function() {
+        $scope.siblings = function () {
           return $scope.$parentNodesScope.childNodes();
         };
 
-        $scope.childNodesCount = function() {
+        $scope.childNodesCount = function () {
           return $scope.childNodes() ? $scope.childNodes().length : 0;
         };
 
-        $scope.hasChild = function() {
+        $scope.hasChild = function () {
           return $scope.childNodesCount() > 0;
         };
 
-        $scope.childNodes = function() {
+        $scope.childNodes = function () {
           return $scope.$childNodesScope && $scope.$childNodesScope.$modelValue ?
             $scope.$childNodesScope.childNodes() :
             null;
         };
 
-        $scope.accept = function(sourceNode, destIndex) {
+        $scope.accept = function (sourceNode, destIndex) {
           return $scope.$childNodesScope &&
             $scope.$childNodesScope.$modelValue &&
             $scope.$childNodesScope.accept(sourceNode, destIndex);
         };
 
-        $scope.removeNode = function(){
+        $scope.removeNode = function () {
           var node = $scope.remove();
           $scope.$callbacks.removed(node);
           return node;
         };
 
-        $scope.remove = function() {
+        $scope.remove = function () {
           return $scope.$parentNodesScope.removeNode($scope);
         };
 
-        $scope.toggle = function() {
+        $scope.toggle = function () {
           $scope.collapsed = !$scope.collapsed;
         };
 
-        $scope.collapse = function() {
+        $scope.collapse = function () {
           $scope.collapsed = true;
         };
 
-        $scope.expand = function() {
+        $scope.expand = function () {
           $scope.collapsed = false;
         };
 
-        $scope.depth = function() {
+        $scope.depth = function () {
           var parentNode = $scope.$parentNodeScope;
           if (parentNode) {
             return parentNode.depth() + 1;
@@ -113,20 +113,23 @@
         };
 
         var subDepth = 0;
-        var countSubDepth = function(scope) {
-          var count = 0;
-          var nodes = scope.childNodes();
-          for (var i = 0; i < nodes.length; i++) {
-            var childNodes = nodes[i].$childNodesScope;
+        function countSubDepth(scope) {
+          var i, childNodes,
+              count = 0,
+              nodes = scope.childNodes();
+
+          for (i = 0; i < nodes.length; i++) {
+            childNodes = nodes[i].$childNodesScope;
+
             if (childNodes) {
               count = 1;
               countSubDepth(childNodes);
             }
           }
           subDepth += count;
-        };
+        }
 
-        $scope.maxSubDepth = function() {
+        $scope.maxSubDepth = function () {
           subDepth = 0;
           if ($scope.$childNodesScope) {
             countSubDepth($scope.$childNodesScope);
