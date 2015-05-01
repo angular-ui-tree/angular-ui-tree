@@ -2,8 +2,8 @@
   'use strict';
 
   angular.module('ui.tree')
-  .directive('uiTree', [ 'treeConfig', '$window',
-    function(treeConfig, $window) {
+  .directive('uiTree', [ 'treeConfig', '$window', '$parse',
+    function(treeConfig, $window, $parse) {
       return {
         restrict: 'A',
         scope: true,
@@ -37,9 +37,13 @@
             }
           });
 
-          scope.$watch(attrs.emptyPlaceHolderEnabled, function(val) {
+          scope.$watch(attrs.emptyPlaceholderEnabled, function(val) {
+            if((typeof val) == "string") {
+              val = $parse(val)(scope);
+            }
             if((typeof val) == "boolean") {
               scope.emptyPlaceHolderEnabled = val;
+              scope.resetEmptyElement();
             }
           });
 
