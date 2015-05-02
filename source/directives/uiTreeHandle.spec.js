@@ -11,8 +11,8 @@
       $scope = $rootScope.$new();
 
       $scope.items = [{
-        "id": 42,
-        "title": "Node 42"
+        'id': 42,
+        'title': 'Node 42'
       }];
     }));
 
