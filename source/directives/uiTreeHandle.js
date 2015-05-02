@@ -2,14 +2,14 @@
   'use strict';
 
   angular.module('ui.tree')
-    .directive('uiTreeHandle', [ 'treeConfig', '$window',
-      function(treeConfig) {
+    .directive('uiTreeHandle', ['treeConfig',
+      function (treeConfig) {
         return {
           require: '^uiTreeNode',
           restrict: 'A',
           scope: true,
           controller: 'TreeHandleController',
-          link: function(scope, element, attrs, treeNodeCtrl) {
+          link: function (scope, element, attrs, treeNodeCtrl) {
             var config = {};
             angular.extend(config, treeConfig);
             if (config.handleClass) {

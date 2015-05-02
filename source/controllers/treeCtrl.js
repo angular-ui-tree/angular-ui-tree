@@ -3,8 +3,8 @@
 
   angular.module('ui.tree')
 
-    .controller('TreeController', ['$scope', '$element', '$attrs', 'treeConfig',
-      function ($scope, $element, $attrs, treeConfig) {
+    .controller('TreeController', ['$scope', '$element',
+      function ($scope, $element) {
         this.scope = $scope;
 
         $scope.$element = $element;
@@ -21,18 +21,18 @@
         $scope.nodropEnabled = false;
 
         // Check if it's a empty tree
-        $scope.isEmpty = function() {
+        $scope.isEmpty = function () {
           return ($scope.$nodesScope && $scope.$nodesScope.$modelValue
           && $scope.$nodesScope.$modelValue.length === 0);
         };
 
         // add placeholder to empty tree
-        $scope.place = function(placeElm) {
+        $scope.place = function (placeElm) {
           $scope.$nodesScope.$element.append(placeElm);
           $scope.$emptyElm.remove();
         };
 
-        $scope.resetEmptyElement = function() {
+        $scope.resetEmptyElement = function () {
           if ($scope.$nodesScope.$modelValue.length === 0 &&
             $scope.emptyPlaceHolderEnabled) {
             $element.append($scope.$emptyElm);
@@ -41,22 +41,23 @@
           }
         };
 
-        var collapseOrExpand = function(scope, collapsed) {
-          var nodes = scope.childNodes();
-          for (var i = 0; i < nodes.length; i++) {
+        var collapseOrExpand = function (scope, collapsed) {
+          var i, subScope,
+              nodes = scope.childNodes();
+          for (i = 0; i < nodes.length; i++) {
             collapsed ? nodes[i].collapse() : nodes[i].expand();
-            var subScope = nodes[i].$childNodesScope;
+            subScope = nodes[i].$childNodesScope;
             if (subScope) {
               collapseOrExpand(subScope, collapsed);
             }
           }
         };
 
-        $scope.collapseAll = function() {
+        $scope.collapseAll = function () {
           collapseOrExpand($scope.$nodesScope, true);
         };
 
-        $scope.expandAll = function() {
+        $scope.expandAll = function () {
           collapseOrExpand($scope.$nodesScope, false);
         };
 

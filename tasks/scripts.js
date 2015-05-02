@@ -8,8 +8,8 @@ module.exports = function (gulp, $) {
   });
 
   gulp.task('jscs', function () {
-    return gulp.src('source')
-      .pipe($.jscs({}));
+    return gulp.src('source/**/*.js')
+      .pipe($.jscs());
   });
 
   gulp.task('jshint', function () {

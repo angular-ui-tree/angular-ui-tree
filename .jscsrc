@@ -1,0 +1,6 @@
+{
+  "preset": "crockford",
+  "validateIndentation": 2,
+  "validateQuoteMarks": "'",
+  "disallowDanglingUnderscores": null
+}

@@ -20,10 +20,9 @@
            * A hashtable used to storage data of nodes
            * @type {Object}
            */
-          nodesData: {
-          },
+          nodesData: {},
 
-          setNodeAttribute: function(scope, attrName, val) {
+          setNodeAttribute: function (scope, attrName, val) {
             if (!scope.$modelValue) {
               return null;
             }
@@ -35,7 +34,7 @@
             data[attrName] = val;
           },
 
-          getNodeAttribute: function(scope, attrName) {
+          getNodeAttribute: function (scope, attrName) {
             if (!scope.$modelValue) {
               return null;
             }
@@ -53,7 +52,7 @@
            * @return {Bool} check if the node can be dragged.
            */
           nodrag: function (targetElm) {
-            if (typeof targetElm.attr('data-nodrag') != "undefined") {
+            if (typeof targetElm.attr('data-nodrag') != 'undefined') {
               if (targetElm.attr('data-nodrag') === 'false') {
                 return false;
               }
@@ -67,7 +66,7 @@
            * @param  {[type]} e [description]
            * @return {[type]}   [description]
            */
-          eventObj: function(e) {
+          eventObj: function (e) {
             var obj = e;
             if (e.targetTouches !== undefined) {
               obj = e.targetTouches.item(0);
@@ -77,7 +76,7 @@
             return obj;
           },
 
-          dragInfo: function(node) {
+          dragInfo: function (node) {
             return {
               source: node,
               sourceInfo: {
@@ -89,44 +88,50 @@
               siblings: node.siblings().slice(0),
               parent: node.$parentNodesScope,
 
-              moveTo: function(parent, siblings, index) { // Move the node to a new position
+              // Move the node to a new position
+              moveTo: function (parent, siblings, index) {
                 this.parent = parent;
                 this.siblings = siblings.slice(0);
-                var i = this.siblings.indexOf(this.source); // If source node is in the target nodes
+
+                // If source node is in the target nodes
+                var i = this.siblings.indexOf(this.source);
                 if (i > -1) {
                   this.siblings.splice(i, 1);
                   if (this.source.index() < index) {
                     index--;
                   }
                 }
+
                 this.siblings.splice(index, 0, this.source);
                 this.index = index;
               },
 
-              parentNode: function() {
+              parentNode: function () {
                 return this.parent.$nodeScope;
               },
 
-              prev: function() {
+              prev: function () {
                 if (this.index > 0) {
                   return this.siblings[this.index - 1];
                 }
+
                 return null;
               },
 
-              next: function() {
+              next: function () {
                 if (this.index < this.siblings.length - 1) {
                   return this.siblings[this.index + 1];
                 }
+
                 return null;
               },
 
-              isDirty: function() {
+              isDirty: function () {
                 return this.source.$parentNodesScope != this.parent ||
                   this.source.index() != this.index;
               },
 
-              eventArgs: function(elements, pos) {
+              eventArgs: function (elements, pos) {
                 return {
                   source: this.sourceInfo,
                   dest: {
@@ -138,7 +143,7 @@
                 };
               },
 
-              apply: function() {
+              apply: function () {
                 //no drop so no changes
                 if (this.parent.$treeScope.nodropEnabled !== true) {
                   var nodeData = this.source.$modelValue;
@@ -149,9 +154,10 @@
                   }
 
                   //if the tree is set to cloneEnabled and source === dest do not insert node or it will cause a duplicate in the repeater
-                  if ((this.source.$treeScope.cloneEnabled === true) && (this.source.$treeScope ===  this.parent.$treeScope)) {
+                  if ((this.source.$treeScope.cloneEnabled === true) && (this.source.$treeScope === this.parent.$treeScope)) {
                     return false;
                   }
+
                   this.parent.insertNode(this.index, nodeData);
                 }
               }
@@ -206,7 +212,7 @@
               width: element.prop('offsetWidth'),
               height: element.prop('offsetHeight'),
               top: boundingClientRect.top + ($window.pageYOffset || $document[0].body.scrollTop || $document[0].documentElement.scrollTop),
-              left: boundingClientRect.left + ($window.pageXOffset || $document[0].body.scrollLeft  || $document[0].documentElement.scrollLeft)
+              left: boundingClientRect.left + ($window.pageXOffset || $document[0].body.scrollLeft || $document[0].documentElement.scrollLeft)
             };
           },
 
@@ -239,8 +245,8 @@
             pos.lastY = pos.nowY;
 
             // mouse position this events
-            pos.nowX  = e.pageX;
-            pos.nowY  = e.pageY;
+            pos.nowX = e.pageX;
+            pos.nowY = e.pageY;
 
             // distance mouse moved between events
             pos.distX = pos.nowX - pos.lastX;
@@ -255,11 +261,11 @@
             pos.dirY = pos.distY === 0 ? 0 : pos.distY > 0 ? 1 : -1;
 
             // axis mouse is now moving on
-            var newAx   = Math.abs(pos.distX) > Math.abs(pos.distY) ? 1 : 0;
+            var newAx = Math.abs(pos.distX) > Math.abs(pos.distY) ? 1 : 0;
 
             // do nothing on first move
             if (firstMoving) {
-              pos.dirAx  = newAx;
+              pos.dirAx = newAx;
               pos.moving = true;
               return;
             }
@@ -284,6 +290,7 @@
           }
         };
       }
+
     ]);
 
 })();
