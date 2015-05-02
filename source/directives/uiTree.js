@@ -39,9 +39,9 @@
               }
             });
 
-            scope.$watch(attrs.emptyPlaceHolderEnabled, function (val) {
+            scope.$watch(attrs.emptyPlaceholderEnabled, function (val) {
               if ((typeof val) == 'boolean') {
-                scope.emptyPlaceHolderEnabled = val;
+                scope.emptyPlaceholderEnabled = val;
               }
             });
 
