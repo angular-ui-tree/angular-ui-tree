@@ -32,7 +32,7 @@
           $scope.$emptyElm.remove();
         };
 
-        $scope.resetEmptyElement = function () {
+        this.resetEmptyElement = function () {
           if ($scope.$nodesScope.$modelValue.length === 0 &&
             $scope.emptyPlaceHolderEnabled) {
             $element.append($scope.$emptyElm);
@@ -40,6 +40,8 @@
             $scope.$emptyElm.remove();
           }
         };
+
+        $scope.resetEmptyElement = this.resetEmptyElement;
 
         var collapseOrExpand = function (scope, collapsed) {
           var i, subScope,
