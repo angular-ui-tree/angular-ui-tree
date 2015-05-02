@@ -1,3 +1,8 @@
+# 2.4.0
+
+* Added JSCS validation task [#441](https://github.com/angular-ui-tree/angular-ui-tree/pull/441)
+* Bugfix `data-drag-delay` to actually delay `dragStart` [#444](https://github.com/angular-ui-tree/angular-ui-tree/pull/444)
+
 # 2.3.0
 
 * Add `data-clone-enabled` option + fix `data-drop-enabled` option ([#411](https://github.com/angular-ui-tree/angular-ui-tree/pull/411))

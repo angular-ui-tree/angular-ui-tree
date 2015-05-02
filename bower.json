@@ -1,7 +1,7 @@
 {
-  "name": "angular-ui-tree",
-  "version": "2.1.5",
-  "homepage": "https://github.com/JimLiu/angular-ui-tree",
+  "name": "AngularJS UI Tree",
+  "version": "2.4.0",
+  "homepage": "https://github.com/angular-ui-tree/angular-ui-tree",
   "authors": [
     "Jim Liu <https://github.com/JimLiu>",
     "Voles <https://github.com/Voles>"
@@ -9,6 +9,7 @@
   "description": "Tree directive for AngularJS",
   "main": [
     "dist/angular-ui-tree.js",
+    "dist/angular-ui-tree.min.js",
     "dist/angular-ui-tree.min.css"
   ],
   "keywords": [
