@@ -173,6 +173,8 @@ If a tree is empty, there will be an empty placeholder which is used to drop nod
 ##### collapseAll()
 Collapse all it's child nodes.
 
+Usage: ```angular.element('[ui-tree]').$broadcast('collapseAll');```
+
 ##### expandAll()
 Expand all it's child nodes.
 
