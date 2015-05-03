@@ -33,7 +33,7 @@
         };
 
         this.resetEmptyElement = function () {
-          if ($scope.$nodesScope.$modelValue.length === 0 &&
+          if ((!$scope.$nodesScope.$modelValue || $scope.$nodesScope.$modelValue.length === 0) &&
             $scope.emptyPlaceholderEnabled) {
             $element.append($scope.$emptyElm);
           } else {
