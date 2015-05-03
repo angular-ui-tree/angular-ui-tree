@@ -55,10 +55,10 @@
       expect(element.scope().$emptyElm.parent()).toNotEqual(element);
     });
 
-    it('should hide the empty placeholder when ui-tree, ui-tree-nodes and empty-placeholder-enabled="false" are on the same element', function() {
-       var element = createElement('<div ui-tree empty-placeholder-enabled="false" ui-tree-nodes="" ng-model="items"></div>');
-       expect(element.scope().emptyPlaceholderEnabled).toEqual(false);
-       expect(element.scope().$emptyElm.parent()).toNotEqual(element);
+    it('should hide the empty placeholder when ui-tree, ui-tree-nodes and empty-placeholder-enabled="false" are on the same element', function () {
+      var element = createElement('<div ui-tree empty-placeholder-enabled="false" ui-tree-nodes="" ng-model="items"></div>');
+      expect(element.scope().emptyPlaceholderEnabled).toEqual(false);
+      expect(element.scope().$emptyElm.parent()).toNotEqual(element);
     });
 
     it('should allow enabling / disabling dropping nodes', function () {
