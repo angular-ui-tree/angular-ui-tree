@@ -1,7 +1,6 @@
 describe('treeCtrl', function () {
 
-  var scope, $controller, $compile, attrs;
-  var element;
+  var scope, $controller, $compile, attrs, element;
 
   beforeEach(module('ui.tree'));
 
@@ -180,8 +179,9 @@ describe('treeCtrl', function () {
   }
 
   it('should not include in depth calculation child node scopes with no children', function () {
-    var tree = createTree();
-    var localScope = angular.element(tree.children('ol').first()).scope();
+    var tree, localScope;
+    tree = createTree();
+    localScope = angular.element(tree.children('ol').first()).scope();
 
     expect(localScope.childNodes()[1].maxSubDepth()).toEqual(1);
 
