@@ -42,6 +42,7 @@
             scope.$watch(attrs.emptyPlaceholderEnabled, function (val) {
               if ((typeof val) == 'boolean') {
                 scope.emptyPlaceholderEnabled = val;
+                ctrl.resetEmptyElement();
               }
             });
 
