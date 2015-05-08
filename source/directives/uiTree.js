@@ -8,7 +8,7 @@
           restrict: 'A',
           scope: true,
           controller: 'TreeController',
-          link: function (scope, element, attrs) {
+          link: function (scope, element, attrs, ctrl) {
             var callbacks = {
               accept: null,
               beforeDrag: null
@@ -26,9 +26,11 @@
             }
 
             scope.$watch('$nodesScope.$modelValue.length', function () {
-              if (scope.$nodesScope.$modelValue) {
-                scope.resetEmptyElement();
+              if (!scope.$nodesScope.$modelValue) {
+                return;
               }
+
+              ctrl.resetEmptyElement();
             }, true);
 
             scope.$watch(attrs.dragEnabled, function (val) {
@@ -37,9 +39,9 @@
               }
             });
 
-            scope.$watch(attrs.emptyPlaceHolderEnabled, function (val) {
+            scope.$watch(attrs.emptyPlaceholderEnabled, function (val) {
               if ((typeof val) == 'boolean') {
-                scope.emptyPlaceHolderEnabled = val;
+                scope.emptyPlaceholderEnabled = val;
               }
             });
 

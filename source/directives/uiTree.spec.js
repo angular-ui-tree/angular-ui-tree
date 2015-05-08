@@ -44,13 +44,13 @@
     it('should allow enabling / disabling the empty placeholder', function () {
       $scope.enableEmptyPlaceholder = true;
 
-      var element = createElement('<div ui-tree empty-place-holder-enabled="enableEmptyPlaceholder"><div ui-tree-nodes="" ng-model="items"></div></div>');
-      expect(element.scope().emptyPlaceHolderEnabled).toEqual(true);
+      var element = createElement('<div ui-tree empty-placeholder-enabled="enableEmptyPlaceholder"><div ui-tree-nodes="" ng-model="items"></div></div>');
+      expect(element.scope().emptyPlaceholderEnabled).toEqual(true);
 
       $scope.enableEmptyPlaceholder = false;
       $scope.$digest();
 
-      expect(element.scope().emptyPlaceHolderEnabled).toEqual(false);
+      expect(element.scope().emptyPlaceholderEnabled).toEqual(false);
     });
 
     it('should allow enabling / disabling dropping nodes', function () {

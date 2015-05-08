@@ -14,7 +14,7 @@
       nodesClass: 'angular-ui-tree-nodes',
       nodeClass: 'angular-ui-tree-node',
       handleClass: 'angular-ui-tree-handle',
-      placeHolderClass: 'angular-ui-tree-placeholder',
+      placeholderClass: 'angular-ui-tree-placeholder',
       dragClass: 'angular-ui-tree-drag',
       dragThreshold: 3,
       levelThreshold: 30

@@ -14,7 +14,7 @@
         $scope.$callbacks = null;
 
         $scope.dragEnabled = true;
-        $scope.emptyPlaceHolderEnabled = true;
+        $scope.emptyPlaceholderEnabled = true;
         $scope.maxDepth = 0;
         $scope.dragDelay = 0;
         $scope.cloneEnabled = false;
@@ -32,14 +32,16 @@
           $scope.$emptyElm.remove();
         };
 
-        $scope.resetEmptyElement = function () {
+        this.resetEmptyElement = function () {
           if ($scope.$nodesScope.$modelValue.length === 0 &&
-            $scope.emptyPlaceHolderEnabled) {
+            $scope.emptyPlaceholderEnabled) {
             $element.append($scope.$emptyElm);
           } else {
             $scope.$emptyElm.remove();
           }
         };
+
+        $scope.resetEmptyElement = this.resetEmptyElement;
 
         var collapseOrExpand = function (scope, collapsed) {
           var i, subScope,
