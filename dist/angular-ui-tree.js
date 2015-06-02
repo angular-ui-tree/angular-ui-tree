@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.4.0
+ * @license Angular UI Tree v2.5.0
  * (c) 2010-2015. https://github.com/angular-ui-tree/angular-ui-tree
  * License: MIT
  */
@@ -14,7 +14,7 @@
       nodesClass: 'angular-ui-tree-nodes',
       nodeClass: 'angular-ui-tree-node',
       handleClass: 'angular-ui-tree-handle',
-      placeHolderClass: 'angular-ui-tree-placeholder',
+      placeholderClass: 'angular-ui-tree-placeholder',
       dragClass: 'angular-ui-tree-drag',
       dragThreshold: 3,
       levelThreshold: 30
@@ -162,7 +162,7 @@
           for (i = 0; i < nodes.length; i++) {
             childNodes = nodes[i].$childNodesScope;
 
-            if (childNodes) {
+            if (childNodes && childNodes.childNodesCount() > 0) {
               count = 1;
               countSubDepth(childNodes);
             }
@@ -306,7 +306,7 @@
         $scope.$callbacks = null;
 
         $scope.dragEnabled = true;
-        $scope.emptyPlaceHolderEnabled = true;
+        $scope.emptyPlaceholderEnabled = true;
         $scope.maxDepth = 0;
         $scope.dragDelay = 0;
         $scope.cloneEnabled = false;
@@ -324,14 +324,16 @@
           $scope.$emptyElm.remove();
         };
 
-        $scope.resetEmptyElement = function () {
-          if ($scope.$nodesScope.$modelValue.length === 0 &&
-            $scope.emptyPlaceHolderEnabled) {
+        this.resetEmptyElement = function () {
+          if ((!$scope.$nodesScope.$modelValue || $scope.$nodesScope.$modelValue.length === 0) &&
+            $scope.emptyPlaceholderEnabled) {
             $element.append($scope.$emptyElm);
           } else {
             $scope.$emptyElm.remove();
           }
         };
+
+        $scope.resetEmptyElement = this.resetEmptyElement;
 
         var collapseOrExpand = function (scope, collapsed) {
           var i, subScope,
@@ -367,7 +369,7 @@
           restrict: 'A',
           scope: true,
           controller: 'TreeController',
-          link: function (scope, element, attrs) {
+          link: function (scope, element, attrs, ctrl) {
             var callbacks = {
               accept: null,
               beforeDrag: null
@@ -385,9 +387,11 @@
             }
 
             scope.$watch('$nodesScope.$modelValue.length', function () {
-              if (scope.$nodesScope.$modelValue) {
-                scope.resetEmptyElement();
+              if (!scope.$nodesScope.$modelValue) {
+                return;
               }
+
+              ctrl.resetEmptyElement();
             }, true);
 
             scope.$watch(attrs.dragEnabled, function (val) {
@@ -396,9 +400,10 @@
               }
             });
 
-            scope.$watch(attrs.emptyPlaceHolderEnabled, function (val) {
+            scope.$watch(attrs.emptyPlaceholderEnabled, function (val) {
               if ((typeof val) == 'boolean') {
-                scope.emptyPlaceHolderEnabled = val;
+                scope.emptyPlaceholderEnabled = val;
+                ctrl.resetEmptyElement();
               }
             });
 
@@ -634,11 +639,11 @@
               if (tagName.toLowerCase() === 'tr') {
                 placeElm = angular.element($window.document.createElement(tagName));
                 tdElm = angular.element($window.document.createElement('td'))
-                  .addClass(config.placeHolderClass);
+                  .addClass(config.placeholderClass);
                 placeElm.append(tdElm);
               } else {
                 placeElm = angular.element($window.document.createElement(tagName))
-                  .addClass(config.placeHolderClass);
+                  .addClass(config.placeholderClass);
               }
               hiddenPlaceElm = angular.element($window.document.createElement(tagName));
               if (config.hiddenClass) {

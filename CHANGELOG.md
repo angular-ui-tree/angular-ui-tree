@@ -1,3 +1,9 @@
+# 2.5.0
+
+* Prevents child node scope with no children to be counted in depth [#388](https://github.com/angular-ui-tree/angular-ui-tree/pull/388)
+* Fix callback errors when we have intermediate isolated scopes [#423](https://github.com/angular-ui-tree/angular-ui-tree/pull/423)
+* Rename API attribute for toggling the empty placeholder [#450](https://github.com/angular-ui-tree/angular-ui-tree/pull/450)
+
 # 2.4.0
 
 * Added JSCS validation task [#441](https://github.com/angular-ui-tree/angular-ui-tree/pull/441)
