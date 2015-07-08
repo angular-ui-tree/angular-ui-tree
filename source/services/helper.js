@@ -148,6 +148,10 @@
                 if (this.parent.$treeScope.nodropEnabled !== true) {
                   var nodeData = this.source.$modelValue;
 
+                  // node was dropped in the same place - do nothing
+                  if (this.index === this.sourceInfo.index && this.parent.$nodeScope.$id === this.source.$nodeScope.$id) {
+                    return;
+                  }
                   //cloneEnabled so do not remove from source
                   if (this.source.$treeScope.cloneEnabled !== true) {
                     this.source.remove();
