@@ -8,13 +8,17 @@ module.exports = function (gulp, $) {
   });
 
   gulp.task('jscs', function () {
-    return gulp.src('source/**/*.js')
+    return gulp.src([
+      'source/**/*.js',
+      'examples/js/*.js'
+    ])
       .pipe($.jscs());
   });
 
   gulp.task('jshint', function () {
     return gulp.src([
-        'source/**/*.js'
+        'source/**/*.js',
+        'examples/js/*.js'
       ])
       .pipe($.jshint())
       .pipe($.jshint.reporter('jshint-stylish'))
