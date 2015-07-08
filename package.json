@@ -6,6 +6,7 @@
     "type": "git",
     "url": "https://github.com/angular-ui-tree/angular-ui-tree"
   },
+  "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
     "connect-livereload": "^0.5.2",
     "gulp": "^3.8.10",
