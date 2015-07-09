@@ -1,3 +1,9 @@
+# 2.6.0
+
+* Use `data-nodrag` instead of `nodrag` attribute in the examples, as `$uiTreeHelper` service looks for the first one [#468](https://github.com/angular-ui-tree/angular-ui-tree/pull/468)
+* Drag-dropping a node in the same position and container no longer removes and re-adds it to its parent node array [#485](https://github.com/angular-ui-tree/angular-ui-tree/pull/485)
+* `bower.json` should reference only one copy of `angular-ui-tree.js` in main [#488](https://github.com/angular-ui-tree/angular-ui-tree/pull/488)
+
 # 2.5.0
 
 * Prevents child node scope with no children to be counted in depth [#388](https://github.com/angular-ui-tree/angular-ui-tree/pull/388)
