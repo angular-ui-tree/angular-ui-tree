@@ -53,10 +53,7 @@
            */
           nodrag: function (targetElm) {
             if (typeof targetElm.attr('data-nodrag') != 'undefined') {
-              if (targetElm.attr('data-nodrag') === 'false') {
-                return false;
-              }
-              return true;
+              return targetElm.attr('data-nodrag') !== 'false';
             }
             return false;
           },
