@@ -1202,7 +1202,7 @@
                   var nodeData = this.source.$modelValue;
 
                   // node was dropped in the same place - do nothing
-                  if (this.index === this.sourceInfo.index && this.parent.$nodeScope.$id === this.source.$nodeScope.$id) {
+                  if (!this.parent.$nodeScope || !this.source.$nodeScope || this.index === this.sourceInfo.index && this.parent.$nodeScope.$id === this.source.$nodeScope.$id) {
                     return;
                   }
                   //cloneEnabled so do not remove from source
