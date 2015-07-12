@@ -1180,9 +1180,17 @@
                 return null;
               },
 
+              isClone: function () {
+                return this.source.$treeScope.cloneEnabled === true;
+              },
+
               isDirty: function () {
                 return this.source.$parentNodesScope != this.parent ||
                   this.source.index() != this.index;
+              },
+
+              isForeign: function () {
+                return this.source.$treeScope !== this.parent.$treeScope;
               },
 
               eventArgs: function (elements, pos) {
@@ -1198,28 +1206,24 @@
               },
 
               apply: function () {
-                //no drop so no changes
-                if (this.parent.$treeScope.nodropEnabled !== true) {
-                  var nodeData = this.source.$modelValue;
 
-                  // node was dropped in the same place - do nothing
-                  if (this.index === this.sourceInfo.index) {
-                    if ((this.source.$parentNodeScope && (this.parent.$id === this.source.$parentNodeScope.$id)) ||
-                        (this.source.$parentNodesScope && (this.parent.$id === this.source.$parentNodesScope.$id))) {
-                      return;
-                    }
-                  }
+                var nodeData = this.source.$modelValue;
 
-                  //cloneEnabled so do not remove from source
-                  if (this.source.$treeScope.cloneEnabled !== true) {
-                    this.source.remove();
-                  }
+                // nodrop enabled on tree or parent
+                if (this.parent.nodropEnabled || this.parent.$treeScope.nodropEnabled) {
+                  return;
+                }
 
-                  //if the tree is set to cloneEnabled and source === dest do not insert node or it will cause a duplicate in the repeater
-                  if ((this.source.$treeScope.cloneEnabled === true) && (this.source.$treeScope === this.parent.$treeScope)) {
-                    return false;
-                  }
+                // node was dropped in the same place - do nothing
+                if (!this.isDirty()) {
+                  return;
+                }
 
+                // cloneEnabled and cross-tree so copy and do not remove from source
+                if (this.isClone() && this.isForeign()) {
+                  this.parent.insertNode(this.index, angular.copy(nodeData));
+                } else { // Any other case, remove and reinsert
+                  this.source.remove();
                   this.parent.insertNode(this.index, nodeData);
                 }
               }
