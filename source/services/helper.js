@@ -171,7 +171,7 @@
 
           /**
            * @ngdoc method
-           * @name hippo.theme#height
+           * @name ui.tree#height
            * @methodOf ui.tree.service:$helper
            *
            * @description
@@ -186,7 +186,7 @@
 
           /**
            * @ngdoc method
-           * @name hippo.theme#width
+           * @name ui.tree#width
            * @methodOf ui.tree.service:$helper
            *
            * @description
@@ -201,7 +201,7 @@
 
           /**
            * @ngdoc method
-           * @name hippo.theme#offset
+           * @name ui.tree#offset
            * @methodOf ui.nestedSortable.service:$helper
            *
            * @description
@@ -223,7 +223,7 @@
 
           /**
            * @ngdoc method
-           * @name hippo.theme#positionStarted
+           * @name ui.tree#positionStarted
            * @methodOf ui.tree.service:$helper
            *
            * @description
