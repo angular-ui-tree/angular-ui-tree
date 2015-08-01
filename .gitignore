@@ -19,3 +19,7 @@ node_modules
 
 examples/bower_components
 examples/source
+
+# Other #
+#########
+.publish
