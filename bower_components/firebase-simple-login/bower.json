@@ -1,0 +1,46 @@
+{
+  "name": "firebase-simple-login",
+  "description": "Firebase Simple Login web client",
+  "version": "1.6.4",
+  "authors": [
+    "Firebase <support@firebase.com> (https://www.firebase.com/)"
+  ],
+  "homepage": "https://github.com/firebase/firebase-simple-login/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/firebase/firebase-simple-login.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "login",
+    "email",
+    "password",
+    "realtime",
+    "Firebase",
+    "websocket",
+    "authentication",
+    "synchronization"
+  ],
+  "main": "firebase-simple-login.js",
+  "ignore": [
+    "**/.*",
+    "js/",
+    "lib/",
+    "node_modules/",
+    "bower_components/",
+    "firebase-simple-login-java/",
+    "firebase-simple-login-objc/",
+    "bower.json",
+    "Gruntfile.js",
+    "package.json",
+    "changelog.txt",
+    "CONTRIBUTING.md"
+  ],
+  "dependencies": {
+    "firebase": "1.0.x"
+  },
+  "devDependencies": {
+    "jasmine": "2.0.x",
+    "jquery": "2.1.x"
+  }
+}
