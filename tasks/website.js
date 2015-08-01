@@ -3,7 +3,11 @@
 module.exports = function (gulp, $) {
 
   gulp.task('website', function () {
-    return gulp.src('examples/**/*')
+    return gulp.src([
+      'examples/**/*',
+      '!examples/source',
+      'source'
+    ])
       .pipe($.ghPages({
         branch: 'test-website-deployment'
       }));
