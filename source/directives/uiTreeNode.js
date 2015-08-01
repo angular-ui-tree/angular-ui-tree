@@ -130,8 +130,11 @@
               if (config.hiddenClass) {
                 hiddenPlaceElm.addClass(config.hiddenClass);
               }
+
               pos = UiTreeHelper.positionStarted(eventObj, scope.$element);
               placeElm.css('height', UiTreeHelper.height(scope.$element) + 'px');
+              placeElm.css('width', UiTreeHelper.width(scope.$element) + 'px');
+
               dragElm = angular.element($window.document.createElement(scope.$parentNodesScope.$element.prop('tagName')))
                 .addClass(scope.$parentNodesScope.$element.attr('class')).addClass(config.dragClass);
               dragElm.css('width', UiTreeHelper.width(scope.$element) + 'px');

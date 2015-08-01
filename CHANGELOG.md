@@ -1,3 +1,9 @@
+# 2.7.0
+
+* Fix edge case error when you have a single node with no parents and no children and and drop the node in the same place [#510](https://github.com/angular-ui-tree/angular-ui-tree/pull/510)
+* Fix error in the `apply` function [#512](https://github.com/angular-ui-tree/angular-ui-tree/pull/512)
+* Fix calculation of the placeholder width [#526](https://github.com/angular-ui-tree/angular-ui-tree/pull/526) [#470](https://github.com/angular-ui-tree/angular-ui-tree/pull/470)
+
 # 2.6.0
 
 * Use `data-nodrag` instead of `nodrag` attribute in the examples, as `$uiTreeHelper` service looks for the first one [#468](https://github.com/angular-ui-tree/angular-ui-tree/pull/468)

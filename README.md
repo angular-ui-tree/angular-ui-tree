@@ -459,3 +459,8 @@ This will generate non-minified and minified JavaScript files in the `dist` dire
 You can run the unit test using a separate task.
 
     $ gulp test
+
+####Deploy examples
+
+    $ gulp deploy
+    
