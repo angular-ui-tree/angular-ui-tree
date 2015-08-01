@@ -1,0 +1,12 @@
+{
+  "name": "jasmine-jquery",
+  "version": "1.7.0",
+  "main": "lib/jasmine-jquery.js",
+  "ignore": [
+    "test",
+    "vendor",
+    ".*",
+    "HISTORY.md",
+    "SpecRunner.html"
+  ]
+}
