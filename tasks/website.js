@@ -8,8 +8,6 @@ module.exports = function (gulp, $) {
       '!examples/source',
       'source'
     ])
-      .pipe($.ghPages({
-        branch: 'test-website-deployment'
-      }));
+      .pipe($.ghPages());
   });
 };
