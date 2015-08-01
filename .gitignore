@@ -22,4 +22,5 @@ examples/source
 
 # Other #
 #########
+.tmp
 .publish

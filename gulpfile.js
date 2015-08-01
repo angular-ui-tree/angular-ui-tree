@@ -19,7 +19,7 @@ gulp.task('build', ['clean'], function () {
   return gulp.start('styles', 'jscs', 'jshint', 'uglify', 'styles', 'test');
 });
 
-gulp.task('deploy', function () {
+gulp.task('deploy', ['clean:deploy'], function () {
   return gulp.start('website');
 });
 

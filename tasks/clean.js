@@ -10,4 +10,8 @@ module.exports = function (gulp, $) {
   gulp.task('clean:examples', function (callback) {
     del('examples/source', callback);
   });
+
+  gulp.task('clean:deploy', function (callback) {
+    del('.tmp/website', callback);
+  });
 };
