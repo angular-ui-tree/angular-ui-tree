@@ -123,7 +123,7 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
           ui-tree-handle                --> Handle
 
 ## Migrate From v1.x to v2.0
-[Migrate From v1.x to v2.0](https://github.com/JimLiu/angular-ui-tree/wiki/Migrate-From-v1.x-to-v2.0)
+[Migrate From v1.x to v2.0](https://github.com/angular-ui-tree/angular-ui-tree/wiki/Migrate-From-v1.x-to-v2.0)
 
 ## API
 
