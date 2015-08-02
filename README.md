@@ -37,7 +37,7 @@ Watch the Tree component in action on the [demo page](http://angular-ui-tree.git
 
 ### Download
 - Using [bower](http://bower.io/) to install it. `bower install angular-ui-tree`
-- [Download](https://github.com/JimLiu/angular-ui-tree/archive/master.zip) from github.
+- [Download](https://github.com/angular-ui-tree/angular-ui-tree/archive/master.zip) from github.
 
 ### Load CSS
 Load the css file: `angular-ui-tree.min.css` in your application:
