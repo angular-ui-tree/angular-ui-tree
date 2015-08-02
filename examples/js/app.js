@@ -5,9 +5,6 @@
 
     .config(['$routeProvider', function ($routeProvider) {
       $routeProvider
-        .when('/', {
-          templateUrl: 'views/home.html'
-        })
         .when('/basic-example', {
           controller: 'BasicExampleCtrl',
           templateUrl: 'views/basic-example.html'
@@ -21,7 +18,7 @@
           templateUrl: 'views/filter-nodes.html'
         })
         .otherwise({
-          redirectTo: '/'
+          redirectTo: '/basic-example'
         });
     }]);
 })();
