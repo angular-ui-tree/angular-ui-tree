@@ -5,14 +5,14 @@
 
   /**
    * @ngdoc service
-   * @name ui.tree.service:$helper
+   * @name ui.tree.service:UiTreeHelper
    * @requires ng.$document
    * @requires ng.$window
    *
    * @description
    * angular-ui-tree.
    */
-    .factory('$uiTreeHelper', ['$document', '$window',
+    .factory('UiTreeHelper', ['$document', '$window',
       function ($document, $window) {
         return {
 
@@ -171,8 +171,8 @@
 
           /**
            * @ngdoc method
-           * @name hippo.theme#height
-           * @methodOf ui.tree.service:$helper
+           * @name ui.tree#height
+           * @methodOf ui.tree.service:UiTreeHelper
            *
            * @description
            * Get the height of an element.
@@ -186,8 +186,8 @@
 
           /**
            * @ngdoc method
-           * @name hippo.theme#width
-           * @methodOf ui.tree.service:$helper
+           * @name ui.tree#width
+           * @methodOf ui.tree.service:UiTreeHelper
            *
            * @description
            * Get the width of an element.
@@ -201,8 +201,8 @@
 
           /**
            * @ngdoc method
-           * @name hippo.theme#offset
-           * @methodOf ui.nestedSortable.service:$helper
+           * @name ui.tree#offset
+           * @methodOf ui.nestedSortable.service:UiTreeHelper
            *
            * @description
            * Get the offset values of an element.
@@ -223,8 +223,8 @@
 
           /**
            * @ngdoc method
-           * @name hippo.theme#positionStarted
-           * @methodOf ui.tree.service:$helper
+           * @name ui.tree#positionStarted
+           * @methodOf ui.tree.service:UiTreeHelper
            *
            * @description
            * Get the start position of the target element according to the provided event properties.

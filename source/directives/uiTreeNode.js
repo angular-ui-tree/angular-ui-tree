@@ -3,8 +3,8 @@
 
   angular.module('ui.tree')
 
-    .directive('uiTreeNode', ['treeConfig', '$uiTreeHelper', '$window', '$document', '$timeout',
-      function (treeConfig, $uiTreeHelper, $window, $document, $timeout) {
+    .directive('uiTreeNode', ['treeConfig', 'UiTreeHelper', '$window', '$document', '$timeout',
+      function (treeConfig, UiTreeHelper, $window, $document, $timeout) {
         return {
           require: ['^uiTreeNodes', '^uiTree'],
           restrict: 'A',
@@ -41,7 +41,7 @@
             }
             scope.init(controllersArr);
 
-            scope.collapsed = !!$uiTreeHelper.getNodeAttribute(scope, 'collapsed');
+            scope.collapsed = !!UiTreeHelper.getNodeAttribute(scope, 'collapsed');
 
             scope.$watch(attrs.collapsed, function (val) {
               if ((typeof val) == 'boolean') {
@@ -50,7 +50,7 @@
             });
 
             scope.$watch('collapsed', function (val) {
-              $uiTreeHelper.setNodeAttribute(scope, 'collapsed', val);
+              UiTreeHelper.setNodeAttribute(scope, 'collapsed', val);
               attrs.$set('collapsed', val);
             });
 
@@ -90,7 +90,7 @@
 
               // check if it or it's parents has a 'data-nodrag' attribute
               while (eventElm && eventElm[0] && eventElm[0] != element) {
-                if ($uiTreeHelper.nodrag(eventElm)) { // if the node mark as `nodrag`, DONOT drag it.
+                if (UiTreeHelper.nodrag(eventElm)) { // if the node mark as `nodrag`, DONOT drag it.
                   return;
                 }
                 eventElm = eventElm.parent();
@@ -105,10 +105,10 @@
                 e.originalEvent.uiTreeDragging = true;
               }
               e.preventDefault();
-              eventObj = $uiTreeHelper.eventObj(e);
+              eventObj = UiTreeHelper.eventObj(e);
 
               firstMoving = true;
-              dragInfo = $uiTreeHelper.dragInfo(scope);
+              dragInfo = UiTreeHelper.dragInfo(scope);
 
               // Fire dragStart callback
               scope.$apply(function () {
@@ -130,12 +130,14 @@
               if (config.hiddenClass) {
                 hiddenPlaceElm.addClass(config.hiddenClass);
               }
-              pos = $uiTreeHelper.positionStarted(eventObj, scope.$element);
-              placeElm.css('height', $uiTreeHelper.height(scope.$element) + 'px');
-              placeElm.css('width', $uiTreeHelper.width(scope.$element) + 'px');
+
+              pos = UiTreeHelper.positionStarted(eventObj, scope.$element);
+              placeElm.css('height', UiTreeHelper.height(scope.$element) + 'px');
+              placeElm.css('width', UiTreeHelper.width(scope.$element) + 'px');
+
               dragElm = angular.element($window.document.createElement(scope.$parentNodesScope.$element.prop('tagName')))
                 .addClass(scope.$parentNodesScope.$element.attr('class')).addClass(config.dragClass);
-              dragElm.css('width', $uiTreeHelper.width(scope.$element) + 'px');
+              dragElm.css('width', UiTreeHelper.width(scope.$element) + 'px');
               dragElm.css('z-index', 9999);
 
               // Prevents cursor to change rapidly in Opera 12.16 and IE when dragging an element
@@ -170,7 +172,7 @@
             };
 
             dragMove = function (e) {
-              var eventObj = $uiTreeHelper.eventObj(e),
+              var eventObj = UiTreeHelper.eventObj(e),
                 prev,
                 next,
                 leftElmPos,
@@ -238,7 +240,7 @@
                   window.scrollBy(0, -10);
                 }
 
-                $uiTreeHelper.positionMoved(e, pos, firstMoving);
+                UiTreeHelper.positionMoved(e, pos, firstMoving);
                 if (firstMoving) {
                   firstMoving = false;
                   return;
@@ -275,7 +277,7 @@
 
                 // check if add it as a child node first
                 // todo decrease is unused
-                decrease = ($uiTreeHelper.offset(dragElm).left - $uiTreeHelper.offset(placeElm).left) >= config.threshold;
+                decrease = (UiTreeHelper.offset(dragElm).left - UiTreeHelper.offset(placeElm).left) >= config.threshold;
                 targetX = eventObj.pageX - $window.document.body.scrollLeft;
                 targetY = eventObj.pageY - (window.pageYOffset || $window.document.documentElement.scrollTop);
 
@@ -336,9 +338,9 @@
                     }
                   } else if (targetNode.dragEnabled()) { // drag enabled
                     targetElm = targetNode.$element; // Get the element of ui-tree-node
-                    targetOffset = $uiTreeHelper.offset(targetElm);
-                    targetBefore = targetNode.horizontal ? eventObj.pageX < (targetOffset.left + $uiTreeHelper.width(targetElm) / 2)
-                      : eventObj.pageY < (targetOffset.top + $uiTreeHelper.height(targetElm) / 2);
+                    targetOffset = UiTreeHelper.offset(targetElm);
+                    targetBefore = targetNode.horizontal ? eventObj.pageX < (targetOffset.left + UiTreeHelper.width(targetElm) / 2)
+                      : eventObj.pageY < (targetOffset.top + UiTreeHelper.height(targetElm) / 2);
 
                     if (targetNode.$parentNodesScope.accept(scope, targetNode.index())) {
                       if (targetBefore) {
