@@ -3,7 +3,7 @@
   <div ui-tree-handle class="tree-node tree-node-content">
     <div class="tree-node-content">
       <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle(this)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
-      {{node.title}}
+      <input type="text" ng-model="node.title">
       <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
       <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
     </div>
@@ -27,7 +27,7 @@
         </span>
       </a>
 
-      {{node.title}}
+      <input type="text" ng-model="node.title">
 
       <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
       <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
@@ -41,14 +41,15 @@
 
 <div class="row">
   <div class="col-sm-12">
-    <h3>Connected Trees</h3>
+    <h3>Connected Trees Cloning</h3>
+    <p>The <code>data-clone-enabled</code> attribute can be added to a ui-tree element to allow nodes to be copied to another ui-tree rather than moved. Add <code>data-nodrop-enabled</code> to the source tree to leave the node in the tree while cloning. Note that clone uses <a href="https://docs.angularjs.org/api/ng/function/angular.copy" target="_blank">angular.copy()</a> so the original and cloned node have separate models.</p>
   </div>
 </div>
 
 <div class="row">
   <div class="col-sm-6">
-    <h3>Tree 1</h3>
-    <div ui-tree id="tree1-root">
+    <h3>Tree 1 - Source</h3>
+    <div ui-tree id="tree1-root" data-clone-enabled="true" data-nodrop-enabled="true">
       <ol ui-tree-nodes="" ng-model="tree1">
         <li ng-repeat="node in tree1" ui-tree-node ng-include="'nodes_renderer1.html'"></li>
       </ol>
@@ -56,8 +57,8 @@
   </div>
 
   <div class="col-sm-6">
-    <h3>Tree 2</h3>
-    <div ui-tree id="tree2-root">
+    <h3>Tree 2 - Destination</h3>
+    <div ui-tree id="tree2-root" data-clone-enabled="true">
       <ol ui-tree-nodes="" ng-model="tree2">
         <li ng-repeat="node in tree2" ui-tree-node ng-include="'nodes_renderer2.html'"></li>
       </ol>

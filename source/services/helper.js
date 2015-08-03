@@ -77,6 +77,7 @@
             return {
               source: node,
               sourceInfo: {
+                cloneModel: node.$treeScope.cloneEnabled === true ? angular.copy(node.$modelValue) : undefined,
                 nodeScope: node,
                 index: node.index(),
                 nodesScope: node.$parentNodesScope
@@ -125,6 +126,10 @@
 
               isClone: function () {
                 return this.source.$treeScope.cloneEnabled === true;
+              },
+
+              clonedNode: function (node) {
+                return angular.copy(node);
               },
 
               isDirty: function () {
