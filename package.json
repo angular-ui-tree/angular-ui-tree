@@ -29,6 +29,7 @@
     "karma-phantomjs-launcher": "^0.1.4",
     "load-grunt-tasks": "^0.6.0",
     "open": "0.0.5",
+    "protractor": "^2.1.0",
     "require-dir": "^0.1.0"
   },
   "engines": {
