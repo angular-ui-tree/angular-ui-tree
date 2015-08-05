@@ -190,6 +190,11 @@
                 targetOffset,
                 targetBefore;
 
+              if (dragInfo && dragInfo.$standingTimeout) {
+                $timeout.cancel(dragInfo.$standingTimeout);
+                dragInfo.$standingTimeout = null;
+              }
+
               if (dragElm) {
                 e.preventDefault();
 
@@ -330,6 +335,13 @@
                     treeScope = null;
                   }
 
+                  // Init timeout to expand node
+                  if (targetNode.$type == 'uiTreeNode') {
+                    dragInfo.$standingTimeout = $timeout(function () {
+                      targetNode.expand();
+                    }, 500);
+                  }
+
                   if (isEmpty) { // it's an empty tree
                     treeScope = targetNode;
                     if (targetNode.$nodesScope.accept(scope, 0)) {
@@ -389,6 +401,11 @@
                   scope.$treeScope.$callbacks.dragStop(dragInfo.eventArgs(elements, pos));
                 });
                 scope.$$apply = false;
+
+                if (dragInfo && dragInfo.$standingTimeout) {
+                  $timeout.cancel(dragInfo.$standingTimeout);
+                }
+
                 dragInfo = null;
 
               }
