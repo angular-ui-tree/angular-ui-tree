@@ -258,7 +258,7 @@
 
           positionMoved: function (e, pos, firstMoving) {
             var pageX = (e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) ? e.originalEvent.touches[0].pageX : e.pageX;
-              var pageY = (e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) ? e.originalEvent.touches[0].pageY : e.pageY;
+            var pageY = (e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) ? e.originalEvent.touches[0].pageY : e.pageY;
             
             // mouse position last events
             pos.lastX = pos.nowX;
