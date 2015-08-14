@@ -244,23 +244,29 @@
            */
           positionStarted: function (e, target) {
             var pos = {};
-            pos.offsetX = e.pageX - this.offset(target).left;
-            pos.offsetY = e.pageY - this.offset(target).top;
-            pos.startX = pos.lastX = e.pageX;
-            pos.startY = pos.lastY = e.pageY;
+            var pageX = (e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) ? e.originalEvent.touches[0].pageX : e.pageX;
+            var pageY = (e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) ? e.originalEvent.touches[0].pageY : e.pageY;
+
+            pos.offsetX = pageX - this.offset(target).left;
+            pos.offsetY = pageY - this.offset(target).top;
+            pos.startX = pos.lastX = pageX;
+            pos.startY = pos.lastY = pageY;
             pos.nowX = pos.nowY = pos.distX = pos.distY = pos.dirAx = 0;
             pos.dirX = pos.dirY = pos.lastDirX = pos.lastDirY = pos.distAxX = pos.distAxY = 0;
             return pos;
           },
 
           positionMoved: function (e, pos, firstMoving) {
+            var pageX = (e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) ? e.originalEvent.touches[0].pageX : e.pageX;
+              var pageY = (e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) ? e.originalEvent.touches[0].pageY : e.pageY;
+            
             // mouse position last events
             pos.lastX = pos.nowX;
             pos.lastY = pos.nowY;
 
             // mouse position this events
-            pos.nowX = e.pageX;
-            pos.nowY = e.pageY;
+            pos.nowX = pageX;
+            pos.nowY = pageY;
 
             // distance mouse moved between events
             pos.distX = pos.nowX - pos.lastX;
