@@ -898,30 +898,42 @@
               e.preventDefault();
 
               if (dragElm) {
-                scope.$treeScope.$apply(function () {
-                  scope.$treeScope.$callbacks.beforeDrop(dragInfo.eventArgs(elements, pos));
-                });
-                // roll back elements changed
-                hiddenPlaceElm.replaceWith(scope.$element);
-                placeElm.remove();
+         	     var beforeDropComplete = function () {
+                      $timeout(function() {
+                          // roll back elements changed
+                          hiddenPlaceElm.replaceWith(scope.$element);
+                          placeElm.remove();
 
-                dragElm.remove();
-                dragElm = null;
-                if (scope.$$apply) {
-                  scope.$treeScope.$apply(function () {
-                    dragInfo.apply();
-                    scope.$treeScope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
+                          dragElm.remove();
+                          dragElm = null;
+
+                          if (scope.$$apply) {
+                              dragInfo.apply();
+                              scope.$treeScope.$apply(function() {
+                                  scope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
+                              });
+                          } else {
+                              bindDrag();
+                          }
+
+                          scope.$treeScope.$apply(function() {
+                              scope.$callbacks.dragStop(dragInfo.eventArgs(elements, pos));
+                          });
+
+                          scope.$$apply = false;
+                          dragInfo = null;
+                      })
+                  };
+
+                  scope.$treeScope.$apply(function() {
+                 	 
+                 	var deferred= scope.$callbacks.beforeDrop(dragInfo.eventArgs(elements, pos));
+                 	//This way we are backwards compatible even if we don't return deferred
+                 	$.when(deferred).then(beforeDropComplete);
                   });
-                } else {
-                  bindDrag();
-                }
-                scope.$treeScope.$apply(function () {
-                  scope.$treeScope.$callbacks.dragStop(dragInfo.eventArgs(elements, pos));
-                });
-                scope.$$apply = false;
-                dragInfo = null;
-
-              }
+                
+             
+           }
 
               // Restore cursor in Opera 12.16 and IE
               var oldCur = document.body.getAttribute('ui-tree-cursor');
