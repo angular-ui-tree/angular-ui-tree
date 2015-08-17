@@ -106,7 +106,7 @@
 
             };
 
-            callbacks.confirmationDialog = function (event) { 
+            callbacks.confirmDrop = function (event) { 
               
             };
 
