@@ -10,36 +10,38 @@ describe('treeCtrl', function () {
     $compile = _$compile_;
 
     // TODO: move test element + data to a generic module so we can reuse it for other tests
-    element = angular.element('<div ui-tree="options">' +
-    '<ol ui-tree-nodes ng-model="list">' +
-    '<li ng-repeat="item in list" ui-tree-node="">' +
-    '<div ui-tree-handle>' +
-    '{{item.title}}' +
-    '</div>' +
-    '<ol ui-tree-nodes="" ng-model="item.items">' +
-    '<li ng-repeat="subItem in item.items" ui-tree-node="">' +
-    '<div ui-tree-handle>' +
-    '{{subItem.title}}' +
-    '</div>' +
-    '<ol ui-tree-nodes="" ng-model="subItem.items">' +
-    '<li ng-repeat="subItem1 in subItem.items" ui-tree-node="">' +
-    '<div ui-tree-handle>' +
-    '{{subItem.title}}' +
-    '</div>' +
-    '<ol ui-tree-nodes="" ng-model="subItem1.items">' +
-    '<li ng-repeat="subItem2 in subItem1.items" ui-tree-node="">' +
-    '<div ui-tree-handle>' +
-    '{{subItem1.title}}' +
-    '</div>' +
-    '</li>' +
-    '</ol>' +
-    '</li>' +
-    '</ol>' +
-    '</li>' +
-    '</ol>' +
-    '</li>' +
-    '</ol>' +
-    '</div>');
+    element = angular.element(
+      '<div ui-tree="options">' +
+      '  <ol ui-tree-nodes ng-model="list">' +
+      '    <li ng-repeat="item in list" ui-tree-node="">' +
+      '      <div ui-tree-handle>' +
+      '        {{item.title}}' +
+      '      </div>' +
+      '      <ol ui-tree-nodes="" ng-model="item.items">' +
+      '        <li ng-repeat="subItem in item.items" ui-tree-node="">' +
+      '          <div ui-tree-handle>' +
+      '            {{subItem.title}}' +
+      '          </div>' +
+      '          <ol ui-tree-nodes="" ng-model="subItem.items">' +
+      '            <li ng-repeat="subItem1 in subItem.items" ui-tree-node="">' +
+      '              <div ui-tree-handle>' +
+      '                {{subItem.title}}' +
+      '              </div>' +
+      '              <ol ui-tree-nodes="" ng-model="subItem1.items">' +
+      '                <li ng-repeat="subItem2 in subItem1.items" ui-tree-node="">' +
+      '                  <div ui-tree-handle>' +
+      '                    {{subItem1.title}}' +
+      '                  </div>' +
+      '                </li>' +
+      '              </ol>' +
+      '            </li>' +
+      '          </ol>' +
+      '        </li>' +
+      '      </ol>' +
+      '    </li>' +
+      '  </ol>' +
+      '</div>'
+    );
 
 
     scope.list = [
