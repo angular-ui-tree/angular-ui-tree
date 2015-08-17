@@ -382,8 +382,10 @@
               e.preventDefault();
 
               if (dragElm) {
+                var needConfirmation = false;
+
                 scope.$treeScope.$apply(function () {
-                  scope.$treeScope.$callbacks.beforeDrop(dragInfo.eventArgs(elements, pos));
+                  needConfirmation = scope.$treeScope.$callbacks.beforeDrop(dragInfo.eventArgs(elements, pos));
                 });
                 // roll back elements changed
                 hiddenPlaceElm.replaceWith(scope.$element);
@@ -391,19 +393,47 @@
 
                 dragElm.remove();
                 dragElm = null;
-                if (scope.$$apply) {
-                  scope.$treeScope.$apply(function () {
-                    dragInfo.apply();
-                    scope.$treeScope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
-                  });
+                if (needConfirmation) {
+                    scope.$treeScope.$callbacks.confirmDrop(dragInfo.eventArgs(elements, pos))
+                    .then(function (value) {
+                        // We do not need the scope in the dropped function
+                        // The previous change had no '$treeScope.'. 
+                        // But it was introduced as a correction in line 956 & 962 for v2.5.0 inside the
+                        // 'scope.$treeScope.$apply(function () {})'
+                        // It therefore seems reasonable to introduce it here also.
+                        // The previous change did have the following comment //.$treeScope. 
+                        // Why, I am uncertain about
+                        scope.$treeScope.$evalAsync(function () { 
+                            dragInfo.apply();
+                            scope.$treeScope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
+                            scope.$treeScope.$callbacks.dragStop(dragInfo.eventArgs(elements, pos));
+                            scope.$$apply = false;
+                            dragInfo = null;
+                        });
+                    })
+                    .catch(function (value) {
+                        scope.$treeScope.$evalAsync(function () { //$treeScope.
+                            bindDrag();
+                            scope.$treeScope.$callbacks.dragStop(dragInfo.eventArgs(elements, pos));
+                            scope.$$apply = false;
+                            dragInfo = null;
+                        });
+                    });
                 } else {
-                  bindDrag();
+                    if (scope.$$apply) {
+                        scope.$treeScope.$apply(function () {
+                            dragInfo.apply();
+                            scope.$treeScope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
+                        });
+                    } else {
+                        bindDrag();
+                    }
+                    scope.$treeScope.$apply(function () {
+                        scope.$treeScope.$callbacks.dragStop(dragInfo.eventArgs(elements, pos));
+                    });
+                    scope.$$apply = false;
+                    dragInfo = null;
                 }
-                scope.$treeScope.$apply(function () {
-                  scope.$treeScope.$callbacks.dragStop(dragInfo.eventArgs(elements, pos));
-                });
-                scope.$$apply = false;
-                dragInfo = null;
 
               }
 
