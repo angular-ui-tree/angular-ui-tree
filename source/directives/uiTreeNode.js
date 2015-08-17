@@ -394,7 +394,7 @@
                 dragElm.remove();
                 dragElm = null;
                 if (needConfirmation) {
-                    scope.$treeScope.$callbacks.confirmationDialog(dragInfo.eventArgs(elements, pos))
+                    scope.$treeScope.$callbacks.confirmDrop(dragInfo.eventArgs(elements, pos))
                     .then(function (value) {
                         // We do not need the scope in the dropped function
                         // The previous change had no '$treeScope.'. 
