@@ -243,9 +243,9 @@
            * @returns {Object} Object with properties offsetX, offsetY, startX, startY, nowX and dirX.
            */
           positionStarted: function (e, target) {
-            var pos = {};
-            var pageX = (e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) ? e.originalEvent.touches[0].pageX : e.pageX;
-            var pageY = (e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) ? e.originalEvent.touches[0].pageY : e.pageY;
+            var pos = {},
+            pageX = (e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) ? e.originalEvent.touches[0].pageX : e.pageX,
+            pageY = (e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) ? e.originalEvent.touches[0].pageY : e.pageY;
 
             pos.offsetX = pageX - this.offset(target).left;
             pos.offsetY = pageY - this.offset(target).top;
@@ -257,8 +257,8 @@
           },
 
           positionMoved: function (e, pos, firstMoving) {
-            var pageX = (e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) ? e.originalEvent.touches[0].pageX : e.pageX;
-            var pageY = (e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) ? e.originalEvent.touches[0].pageY : e.pageY;
+            var pageX = (e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) ? e.originalEvent.touches[0].pageX : e.pageX,
+            pageY = (e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) ? e.originalEvent.touches[0].pageY : e.pageY;
             
             // mouse position last events
             pos.lastX = pos.nowX;
