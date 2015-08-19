@@ -256,7 +256,9 @@
                 }
 
                 // move horizontal
+                var hMove = false;
                 if (pos.dirAx && pos.distAxX >= config.levelThreshold) {
+                  hMove = true;
                   pos.distAxX = 0;
 
                   // increase horizontal level if previous sibling exists and is not collapsed
@@ -312,7 +314,7 @@
                 }
 
                 // move vertical
-                if (!pos.dirAx) {
+                if (!pos.dirAx || hMove) {
                   // check it's new position
                   targetNode = targetElm.scope();
                   isEmpty = false;
