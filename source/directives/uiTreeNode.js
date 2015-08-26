@@ -34,7 +34,8 @@
               dragCancelEvent,
               dragDelay,
               bindDrag,
-              keydownHandler;
+              keydownHandler,
+              outOfBounds;
             angular.extend(config, treeConfig);
             if (config.nodeClass) {
               element.addClass(config.nodeClass);
@@ -255,6 +256,49 @@
                   return;
                 }
 
+                // check if add it as a child node first
+                // todo decrease is unused
+                decrease = (UiTreeHelper.offset(dragElm).left - UiTreeHelper.offset(placeElm).left) >= config.threshold;
+                targetX = eventObj.pageX - $window.document.body.scrollLeft;
+                targetY = eventObj.pageY - (window.pageYOffset || $window.document.documentElement.scrollTop);
+
+                // Select the drag target. Because IE does not support CSS 'pointer-events: none', it will always
+                // pick the drag element itself as the target. To prevent this, we hide the drag element while
+                // selecting the target.
+                if (angular.isFunction(dragElm.hide)) {
+                  dragElm.hide();
+                } else {
+                  displayElm = dragElm[0].style.display;
+                  dragElm[0].style.display = 'none';
+                }
+
+                // when using elementFromPoint() inside an iframe, you have to call
+                // elementFromPoint() twice to make sure IE8 returns the correct value
+                $window.document.elementFromPoint(targetX, targetY);
+
+                targetElm = angular.element($window.document.elementFromPoint(targetX, targetY));
+
+                if (angular.isFunction(dragElm.show)) {
+                  dragElm.show();
+                } else {
+                  dragElm[0].style.display = displayElm;
+                }
+
+                outOfBounds = !(targetElm.scope().$type);
+
+                // Detect out of bounds condition, update drop target display, and prevent drop
+                if (outOfBounds) {
+
+                  // Remove the placeholder
+                  placeElm.remove();
+
+                  // If the target was an empty tree, replace the emply element placeholder
+                  if (treeScope) {
+                    treeScope.resetEmptyElement();
+                    treeScope = null;
+                  }
+                }
+
                 // move horizontal
                 if (pos.dirAx && pos.distAxX >= config.levelThreshold) {
                   pos.distAxX = 0;
@@ -282,33 +326,6 @@
                       }
                     }
                   }
-                }
-
-                // check if add it as a child node first
-                // todo decrease is unused
-                decrease = (UiTreeHelper.offset(dragElm).left - UiTreeHelper.offset(placeElm).left) >= config.threshold;
-                targetX = eventObj.pageX - $window.document.body.scrollLeft;
-                targetY = eventObj.pageY - (window.pageYOffset || $window.document.documentElement.scrollTop);
-
-                // Select the drag target. Because IE does not support CSS 'pointer-events: none', it will always
-                // pick the drag element itself as the target. To prevent this, we hide the drag element while
-                // selecting the target.
-                if (angular.isFunction(dragElm.hide)) {
-                  dragElm.hide();
-                } else {
-                  displayElm = dragElm[0].style.display;
-                  dragElm[0].style.display = 'none';
-                }
-
-                // when using elementFromPoint() inside an iframe, you have to call
-                // elementFromPoint() twice to make sure IE8 returns the correct value
-                $window.document.elementFromPoint(targetX, targetY);
-
-                targetElm = angular.element($window.document.elementFromPoint(targetX, targetY));
-                if (angular.isFunction(dragElm.show)) {
-                  dragElm.show();
-                } else {
-                  dragElm[0].style.display = displayElm;
                 }
 
                 // move vertical
@@ -367,9 +384,10 @@
                     } else if (!targetBefore && targetNode.accept(scope, targetNode.childNodesCount())) { // we have to check if it can add the dragging node as a child
                       targetNode.$childNodesScope.$element.append(placeElm);
                       dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), targetNode.childNodesCount());
+                    } else {
+                      outOfBounds = true;
                     }
                   }
-
                 }
 
                 scope.$apply(function () {
@@ -379,6 +397,7 @@
             };
 
             dragEnd = function (e) {
+
               e.preventDefault();
 
               if (dragElm) {
@@ -391,7 +410,7 @@
 
                 dragElm.remove();
                 dragElm = null;
-                if (scope.$$apply) {
+                if (scope.$$apply && !outOfBounds) {
                   scope.$treeScope.$apply(function () {
                     dragInfo.apply();
                     scope.$treeScope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
@@ -404,7 +423,6 @@
                 });
                 scope.$$apply = false;
                 dragInfo = null;
-
               }
 
               // Restore cursor in Opera 12.16 and IE
