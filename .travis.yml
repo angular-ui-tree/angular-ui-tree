@@ -8,6 +8,8 @@ before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
   - ./node_modules/protractor/bin/webdriver-manager update
+  - java -jar selenium/selenium-server-standalone-2.35.0.jar -Dwebdriver.chrome.driver=./selenium/chromedriver &
+  - sleep 3
 
 script:
   - npm test
