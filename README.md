@@ -430,6 +430,7 @@ Run the commands below in the project root directory.
 #####2. Install project dependencies
 
     $ npm install
+    $ sudo ./node_modules/protractor/bin/webdriver-manager update
     $ bower install
 
 ## Useful commands
@@ -459,6 +460,12 @@ This will generate non-minified and minified JavaScript files in the `dist` dire
 You can run the unit test using a separate task.
 
     $ gulp test
+    
+The E2E-tests can be executed using
+    
+    $ gulp test:e2e
+    
+    > Note: make sure you have the example website running on port `9000` (using the `$ gulp serve` command)
 
 ####Deploy examples
 
