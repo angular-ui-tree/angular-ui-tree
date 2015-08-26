@@ -32,9 +32,6 @@
 
             if (ngModel) {
               ngModel.$render = function () {
-                if (!ngModel.$modelValue || !angular.isArray(ngModel.$modelValue)) {
-                  scope.$modelValue = [];
-                }
                 scope.$modelValue = ngModel.$modelValue;
               };
             }
