@@ -7,7 +7,7 @@ before_script:
   - bower install
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
-  - sudo ./node_modules/protractor/bin/webdriver-manager update
+  - ./node_modules/protractor/bin/webdriver-manager update
 
 script:
   - npm test
