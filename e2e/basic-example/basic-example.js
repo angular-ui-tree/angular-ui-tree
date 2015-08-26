@@ -30,4 +30,18 @@ describe('the Basic example page', function () {
       });
     });
   });
+
+  describe('the dragging and dropping of nodes', function () {
+    it('should allow moving a node below another node', function () {
+      // TODO
+    });
+
+    it('should allow adding a node to another node to make it a child-node', function () {
+      // TODO
+    });
+
+    it('should allow removing a child-node from a node to put it on the same tree level', function () {
+      // TODO
+    });
+  });
 });
