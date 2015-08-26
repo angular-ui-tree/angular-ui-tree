@@ -10,7 +10,7 @@ before_script:
   - sh -e /etc/init.d/xvfb start
   - ./node_modules/protractor/bin/webdriver-manager update
   - gulp serve &
-  - sleep 3 # give server some time to start
+  - sleep 3 # give webserver some time to start
 
 script:
   - npm test
