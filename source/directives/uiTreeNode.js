@@ -292,7 +292,7 @@
                   // Remove the placeholder
                   placeElm.remove();
 
-                  // If the target was an empty tree, replace the emply element placeholder
+                  // If the target was an empty tree, replace the empty element placeholder
                   if (treeScope) {
                     treeScope.resetEmptyElement();
                     treeScope = null;
