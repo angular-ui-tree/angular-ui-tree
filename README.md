@@ -227,6 +227,12 @@ If current node is draggable.
 - `true` Allow it to drag.
 - `false` Not allow.
 
+##### <a name="removed"></a>removed(node)
+If a node is removed, the `removed` callback will be called.
+
+**Parameters:**
+ - `node`: The node that was removed
+
 ##### <a name="dropped"></a>dropped(event)
 If a node moves it's position after dropped, the `nodeDropped` callback will be called.
 
