@@ -7,9 +7,6 @@ exports.config = {
     'browserName': 'chrome'
   },
 
-  // For speed, let's just use the Chrome browser.
-  chromeOnly: true,
-
   // Spec patterns are relative to the current working directly when
   // protractor is called.
   specs: ['e2e/**/*.js'],
