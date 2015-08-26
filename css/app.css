@@ -24,7 +24,6 @@
     box-sizing: border-box;
 }
 
-
 .group-title {
     background-color: #687074 !important;
     color: #FFF !important;
@@ -37,6 +36,11 @@
     background: #f8faff;
     color: #7c9eb2;
 }
+
+.nodrop {
+    background-color: #f2dede;
+}
+
 .tree-node-content {
     margin: 10px;
 }

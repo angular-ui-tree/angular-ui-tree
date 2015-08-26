@@ -42,6 +42,7 @@
             scope.init(controllersArr);
 
             scope.collapsed = !!UiTreeHelper.getNodeAttribute(scope, 'collapsed');
+            scope.sourceOnly = scope.nodropEnabled || scope.$treeScope.nodropEnabled;
 
             scope.$watch(attrs.collapsed, function (val) {
               if ((typeof val) == 'boolean') {
@@ -66,6 +67,7 @@
               // the element which is clicked.
               var eventElm = angular.element(e.target),
                 eventScope = eventElm.scope(),
+                cloneElm = element.clone(),
                 eventElmTagName, tagName,
                 eventObj, tdElm, hStyle;
               if (!eventScope || !eventScope.$type) {
@@ -147,9 +149,16 @@
                 $document.find('body').css({'cursor': hStyle.cursor + '!important'});
               }
 
+              if (scope.sourceOnly) {
+                placeElm.css('display', 'none');
+              }
               scope.$element.after(placeElm);
               scope.$element.after(hiddenPlaceElm);
-              dragElm.append(scope.$element);
+              if (dragInfo.isClone() && scope.sourceOnly) {
+                dragElm.append(cloneElm);
+              } else {
+                dragElm.append(scope.$element);
+              }
               $document.find('body').append(dragElm);
               dragElm.css({
                 'left': eventObj.pageX - pos.offsetX + 'px',
@@ -309,6 +318,11 @@
                   isEmpty = false;
                   if (!targetNode) {
                     return;
+                  }
+
+                  // Show the placeholder if it was hidden for nodrop-enabled and this is a new tree
+                  if (targetNode.$treeScope && !targetNode.$parent.nodropEnabled && !targetNode.$treeScope.nodropEnabled) {
+                    placeElm.css('display', 'block');
                   }
 
                   if (targetNode.$type == 'uiTree' && targetNode.dragEnabled) {

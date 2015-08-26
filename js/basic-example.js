@@ -57,6 +57,7 @@
       }, {
         'id': 2,
         'title': 'node2',
+        'nodrop': true, // An arbitrary property to check in custom template for nodrop-enabled
         'nodes': [
           {
             'id': 21,
