@@ -131,8 +131,8 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
 `ui-tree` is the root scope for a tree
 
 #### Attributes
-##### data-drop-enabled
-Turn on the ability to prevent dropping of nodes into this tree.
+##### data-nodrop-enabled
+Prevent dropping of nodes into this tree. This applies to both nodes dragged within this tree and nodes from a connected tree. Adding this attribute to the `ui-tree` effectively makes the tree a drag source only. To prevent a particular node from accepting children, add the attribute to the `ui-tree-nodes` element instead (see below).
 - `false` (default): turn off
 - `true`: turn on no drop
 
@@ -159,7 +159,7 @@ If a tree is empty, there will be an empty placeholder which is used to drop nod
 - `true` (default): display an empty placeholder if the tree is empty
 - `false`: do not display an empty placeholder
 
-##### Example 
+##### Example
 - turn on/off drag and drop.
 - Limit depth to 5
 - 500 milliseconds delay
@@ -266,7 +266,7 @@ Same as [Parameters](#eventParam) of dropped.
 
 #### Attributes
 ##### data-nodrop-enabled <a name="nodes_attrs_nodrop"></a>
-Turn off drop of nodes.
+Prevent nodes from being dropped into this node container. This prevents nodes from being dropped directly into the container with the attribute but not into children that contain additional containers. See the [demo page](http://angular-ui-tree.github.io/angular-ui-tree/) for examples.
 ##### data-max-depth <a name="nodes_attrs_maxDepth"></a>
 Number of levels a nodes can be nested (default 0). 0 means no limit. It can override the `data-max-depth` in `ui-tree`.
 **Note**
@@ -463,4 +463,3 @@ You can run the unit test using a separate task.
 ####Deploy examples
 
     $ gulp deploy
-    
