@@ -244,14 +244,13 @@
            */
           positionStarted: function (e, target) {
             var pos = {},
-            pageX = e.pageX,
-            pageY = e.pageY;
-            
+              pageX = e.pageX,
+              pageY = e.pageY;
+
             if (e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) {
               pageX = e.originalEvent.touches[0].pageX;
               pageY = e.originalEvent.touches[0].pageY;
             }
-            
             pos.offsetX = pageX - this.offset(target).left;
             pos.offsetY = pageY - this.offset(target).top;
             pos.startX = pos.lastX = pageX;
@@ -263,13 +262,12 @@
 
           positionMoved: function (e, pos, firstMoving) {
             var pageX = e.pageX,
-            pageY = e.pageY;
-            
+              pageY = e.pageY,
+              newAx;
             if (e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) {
               pageX = e.originalEvent.touches[0].pageX;
               pageY = e.originalEvent.touches[0].pageY;
             }
-            
             // mouse position last events
             pos.lastX = pos.nowX;
             pos.lastY = pos.nowY;
@@ -291,7 +289,7 @@
             pos.dirY = pos.distY === 0 ? 0 : pos.distY > 0 ? 1 : -1;
 
             // axis mouse is now moving on
-            var newAx = Math.abs(pos.distX) > Math.abs(pos.distY) ? 1 : 0;
+            newAx = Math.abs(pos.distX) > Math.abs(pos.distY) ? 1 : 0;
 
             // do nothing on first move
             if (firstMoving) {
