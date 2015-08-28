@@ -26,3 +26,11 @@ gulp.task('deploy', ['clean:deploy'], function () {
 gulp.task('serve', function () {
   return gulp.start('connect', 'watch', 'open');
 });
+
+gulp.task('test', function () {
+  return gulp.start('karma');
+});
+
+gulp.task('test:e2e', function () {
+  return gulp.start('protractor');
+});

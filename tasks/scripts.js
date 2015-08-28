@@ -43,7 +43,7 @@ module.exports = function (gulp, $) {
       .pipe(gulp.dest('dist'));
   });
 
-  gulp.task('test', function () {
+  gulp.task('karma', function () {
     return $.karma.server.start({
       configFile: __dirname + '/../karma.conf.js',
       singleRun: true
