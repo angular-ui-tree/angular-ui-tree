@@ -10,16 +10,12 @@
           restrict: 'A',
           controller: 'TreeNodeController',
           link: function (scope, element, attrs, controllersArr) {
-            // todo startPos is unused
             var config = {},
               hasTouch = 'ontouchstart' in window,
-              startPos, firstMoving, dragInfo, pos,
+              firstMoving, dragInfo, pos,
               placeElm, hiddenPlaceElm, dragElm,
               treeScope = null,
               elements, // As a parameter for callbacks
-              dragDelaying = true,
-              dragStarted = false,
-              dragTimer = null,
               body = document.body,
               html = document.documentElement,
               document_height,
