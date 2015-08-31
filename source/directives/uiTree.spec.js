@@ -113,9 +113,9 @@
       var controller;
 
       beforeEach(function () {
-        $scope.items.push("item1");
+        $scope.items.push('item1');
         createElement();
-        controller = element.controller("uiTree");
+        controller = element.controller('uiTree');
         spyOn(controller, 'resetEmptyElement');
       });
 
