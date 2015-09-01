@@ -26,6 +26,343 @@
   'use strict';
 
   angular.module('ui.tree')
+
+    .controller('TreeHandleController', ['$scope', '$element',
+      function ($scope, $element) {
+        this.scope = $scope;
+
+        $scope.$element = $element;
+        $scope.$nodeScope = null;
+        $scope.$type = 'uiTreeHandle';
+
+      }
+    ]);
+})();
+
+(function () {
+  'use strict';
+
+  angular.module('ui.tree')
+    .controller('TreeNodeController', ['$scope', '$element',
+      function ($scope, $element) {
+        this.scope = $scope;
+
+        $scope.$element = $element;
+        $scope.$modelValue = null; // Model value for node;
+        $scope.$parentNodeScope = null; // uiTreeNode Scope of parent node;
+        $scope.$childNodesScope = null; // uiTreeNodes Scope of child nodes.
+        $scope.$parentNodesScope = null; // uiTreeNodes Scope of parent nodes.
+        $scope.$treeScope = null; // uiTree scope
+        $scope.$handleScope = null; // it's handle scope
+        $scope.$type = 'uiTreeNode';
+        $scope.$$apply = false;
+        $scope.collapsed = false;
+
+        $scope.init = function (controllersArr) {
+          var treeNodesCtrl = controllersArr[0];
+          $scope.$treeScope = controllersArr[1] ? controllersArr[1].scope : null;
+
+          // find the scope of it's parent node
+          $scope.$parentNodeScope = treeNodesCtrl.scope.$nodeScope;
+          // modelValue for current node
+          $scope.$modelValue = treeNodesCtrl.scope.$modelValue[$scope.$index];
+          $scope.$parentNodesScope = treeNodesCtrl.scope;
+          treeNodesCtrl.scope.initSubNode($scope); // init sub nodes
+
+          $element.on('$destroy', function () {
+            treeNodesCtrl.scope.destroySubNode($scope); // destroy sub nodes
+          });
+        };
+
+        $scope.index = function () {
+          return $scope.$parentNodesScope.$modelValue.indexOf($scope.$modelValue);
+        };
+
+        $scope.dragEnabled = function () {
+          return !($scope.$treeScope && !$scope.$treeScope.dragEnabled);
+        };
+
+        $scope.isSibling = function (targetNode) {
+          return $scope.$parentNodesScope == targetNode.$parentNodesScope;
+        };
+
+        $scope.isChild = function (targetNode) {
+          var nodes = $scope.childNodes();
+          return nodes && nodes.indexOf(targetNode) > -1;
+        };
+
+        $scope.prev = function () {
+          var index = $scope.index();
+          if (index > 0) {
+            return $scope.siblings()[index - 1];
+          }
+          return null;
+        };
+
+        $scope.siblings = function () {
+          return $scope.$parentNodesScope.childNodes();
+        };
+
+        $scope.childNodesCount = function () {
+          return $scope.childNodes() ? $scope.childNodes().length : 0;
+        };
+
+        $scope.hasChild = function () {
+          return $scope.childNodesCount() > 0;
+        };
+
+        $scope.childNodes = function () {
+          return $scope.$childNodesScope && $scope.$childNodesScope.$modelValue ?
+            $scope.$childNodesScope.childNodes() :
+            null;
+        };
+
+        $scope.accept = function (sourceNode, destIndex) {
+          return $scope.$childNodesScope &&
+            $scope.$childNodesScope.$modelValue &&
+            $scope.$childNodesScope.accept(sourceNode, destIndex);
+        };
+
+        $scope.removeNode = function () {
+          var node = $scope.remove();
+          $scope.$callbacks.removed(node);
+          return node;
+        };
+
+        $scope.remove = function () {
+          return $scope.$parentNodesScope.removeNode($scope);
+        };
+
+        $scope.toggle = function () {
+          $scope.collapsed = !$scope.collapsed;
+        };
+
+        $scope.collapse = function () {
+          $scope.collapsed = true;
+        };
+
+        $scope.expand = function () {
+          $scope.collapsed = false;
+        };
+
+        $scope.depth = function () {
+          var parentNode = $scope.$parentNodeScope;
+          if (parentNode) {
+            return parentNode.depth() + 1;
+          }
+          return 1;
+        };
+
+        var subDepth = 0;
+        function countSubDepth(scope) {
+          var i, childNodes,
+              count = 0,
+              nodes = scope.childNodes();
+
+          for (i = 0; i < nodes.length; i++) {
+            childNodes = nodes[i].$childNodesScope;
+
+            if (childNodes && childNodes.childNodesCount() > 0) {
+              count = 1;
+              countSubDepth(childNodes);
+            }
+          }
+          subDepth += count;
+        }
+
+        $scope.maxSubDepth = function () {
+          subDepth = 0;
+          if ($scope.$childNodesScope) {
+            countSubDepth($scope.$childNodesScope);
+          }
+          return subDepth;
+        };
+
+      }
+    ]);
+})();
+
+(function () {
+  'use strict';
+
+  angular.module('ui.tree')
+
+    .controller('TreeNodesController', ['$scope', '$element',
+      function ($scope, $element) {
+        this.scope = $scope;
+
+        $scope.$element = $element;
+        $scope.$modelValue = null;
+        $scope.$nodeScope = null; // the scope of node which the nodes belongs to
+        $scope.$treeScope = null;
+        $scope.$type = 'uiTreeNodes';
+        $scope.$nodesMap = {};
+
+        $scope.nodropEnabled = false;
+        $scope.maxDepth = 0;
+        $scope.cloneEnabled = false;
+
+        $scope.initSubNode = function (subNode) {
+          if (!subNode.$modelValue) {
+            return null;
+          }
+          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = subNode;
+        };
+
+        $scope.destroySubNode = function (subNode) {
+          if (!subNode.$modelValue) {
+            return null;
+          }
+          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = null;
+        };
+
+        $scope.accept = function (sourceNode, destIndex) {
+          return $scope.$treeScope.$callbacks.accept(sourceNode, $scope, destIndex);
+        };
+
+        $scope.beforeDrag = function (sourceNode) {
+          return $scope.$treeScope.$callbacks.beforeDrag(sourceNode);
+        };
+
+        $scope.isParent = function (node) {
+          return node.$parentNodesScope == $scope;
+        };
+
+        $scope.hasChild = function () {
+          return $scope.$modelValue.length > 0;
+        };
+
+        $scope.safeApply = function (fn) {
+          var phase = this.$root.$$phase;
+          if (phase == '$apply' || phase == '$digest') {
+            if (fn && (typeof (fn) === 'function')) {
+              fn();
+            }
+          } else {
+            this.$apply(fn);
+          }
+        };
+
+        $scope.removeNode = function (node) {
+          var index = $scope.$modelValue.indexOf(node.$modelValue);
+          if (index > -1) {
+            $scope.safeApply(function () {
+              $scope.$modelValue.splice(index, 1)[0];
+            });
+            return node;
+          }
+          return null;
+        };
+
+        $scope.insertNode = function (index, nodeData) {
+          $scope.safeApply(function () {
+            $scope.$modelValue.splice(index, 0, nodeData);
+          });
+        };
+
+        $scope.childNodes = function () {
+          var i, nodes = [];
+          if ($scope.$modelValue) {
+            for (i = 0; i < $scope.$modelValue.length; i++) {
+              nodes.push($scope.$nodesMap[$scope.$modelValue[i].$$hashKey]);
+            }
+          }
+          return nodes;
+        };
+
+        $scope.depth = function () {
+          if ($scope.$nodeScope) {
+            return $scope.$nodeScope.depth();
+          }
+          return 0; // if it has no $nodeScope, it's root
+        };
+
+        // check if depth limit has reached
+        $scope.outOfDepth = function (sourceNode) {
+          var maxDepth = $scope.maxDepth || $scope.$treeScope.maxDepth;
+          if (maxDepth > 0) {
+            return $scope.depth() + sourceNode.maxSubDepth() + 1 > maxDepth;
+          }
+          return false;
+        };
+
+      }
+    ]);
+})();
+
+(function () {
+  'use strict';
+
+  angular.module('ui.tree')
+
+    .controller('TreeController', ['$scope', '$element',
+      function ($scope, $element) {
+        this.scope = $scope;
+
+        $scope.$element = $element;
+        $scope.$nodesScope = null; // root nodes
+        $scope.$type = 'uiTree';
+        $scope.$emptyElm = null;
+        $scope.$callbacks = null;
+
+        $scope.dragEnabled = true;
+        $scope.emptyPlaceholderEnabled = true;
+        $scope.maxDepth = 0;
+        $scope.dragDelay = 0;
+        $scope.cloneEnabled = false;
+        $scope.nodropEnabled = false;
+
+        // Check if it's a empty tree
+        $scope.isEmpty = function () {
+          return ($scope.$nodesScope && $scope.$nodesScope.$modelValue
+          && $scope.$nodesScope.$modelValue.length === 0);
+        };
+
+        // add placeholder to empty tree
+        $scope.place = function (placeElm) {
+          $scope.$nodesScope.$element.append(placeElm);
+          $scope.$emptyElm.remove();
+        };
+
+        this.resetEmptyElement = function () {
+          if ((!$scope.$nodesScope.$modelValue || $scope.$nodesScope.$modelValue.length === 0) &&
+            $scope.emptyPlaceholderEnabled) {
+            $element.append($scope.$emptyElm);
+          } else {
+            $scope.$emptyElm.remove();
+          }
+        };
+
+        $scope.resetEmptyElement = this.resetEmptyElement;
+
+        var collapseOrExpand = function (scope, collapsed) {
+          var i, subScope,
+              nodes = scope.childNodes();
+          for (i = 0; i < nodes.length; i++) {
+            collapsed ? nodes[i].collapse() : nodes[i].expand();
+            subScope = nodes[i].$childNodesScope;
+            if (subScope) {
+              collapseOrExpand(subScope, collapsed);
+            }
+          }
+        };
+
+        $scope.collapseAll = function () {
+          collapseOrExpand($scope.$nodesScope, true);
+        };
+
+        $scope.expandAll = function () {
+          collapseOrExpand($scope.$nodesScope, false);
+        };
+
+      }
+    ]);
+})();
+
+(function () {
+  'use strict';
+
+  angular.module('ui.tree')
     .directive('uiTree', ['treeConfig', '$window',
       function (treeConfig, $window) {
         return {
@@ -49,8 +386,8 @@
               scope.$emptyElm.addClass(config.emptyTreeClass);
             }
 
-            scope.$watch('$nodesScope.$modelValue.length', function (val) {
-              if (!angular.isNumber(val)) {
+            scope.$watch('$nodesScope.$modelValue.length', function () {
+              if (!scope.$nodesScope.$modelValue) {
                 return;
               }
 
@@ -745,338 +1082,6 @@
 
           }
         };
-      }
-    ]);
-})();
-
-(function () {
-  'use strict';
-
-  angular.module('ui.tree')
-
-    .controller('TreeHandleController', ['$scope', '$element',
-      function ($scope, $element) {
-        this.scope = $scope;
-
-        $scope.$element = $element;
-        $scope.$nodeScope = null;
-        $scope.$type = 'uiTreeHandle';
-
-      }
-    ]);
-})();
-
-(function () {
-  'use strict';
-
-  angular.module('ui.tree')
-    .controller('TreeNodeController', ['$scope', '$element',
-      function ($scope, $element) {
-        this.scope = $scope;
-
-        $scope.$element = $element;
-        $scope.$modelValue = null; // Model value for node;
-        $scope.$parentNodeScope = null; // uiTreeNode Scope of parent node;
-        $scope.$childNodesScope = null; // uiTreeNodes Scope of child nodes.
-        $scope.$parentNodesScope = null; // uiTreeNodes Scope of parent nodes.
-        $scope.$treeScope = null; // uiTree scope
-        $scope.$handleScope = null; // it's handle scope
-        $scope.$type = 'uiTreeNode';
-        $scope.$$apply = false;
-        $scope.collapsed = false;
-
-        $scope.init = function (controllersArr) {
-          var treeNodesCtrl = controllersArr[0];
-          $scope.$treeScope = controllersArr[1] ? controllersArr[1].scope : null;
-
-          // find the scope of it's parent node
-          $scope.$parentNodeScope = treeNodesCtrl.scope.$nodeScope;
-          // modelValue for current node
-          $scope.$modelValue = treeNodesCtrl.scope.$modelValue[$scope.$index];
-          $scope.$parentNodesScope = treeNodesCtrl.scope;
-          treeNodesCtrl.scope.initSubNode($scope); // init sub nodes
-
-          $element.on('$destroy', function () {
-            treeNodesCtrl.scope.destroySubNode($scope); // destroy sub nodes
-          });
-        };
-
-        $scope.index = function () {
-          return $scope.$parentNodesScope.$modelValue.indexOf($scope.$modelValue);
-        };
-
-        $scope.dragEnabled = function () {
-          return !($scope.$treeScope && !$scope.$treeScope.dragEnabled);
-        };
-
-        $scope.isSibling = function (targetNode) {
-          return $scope.$parentNodesScope == targetNode.$parentNodesScope;
-        };
-
-        $scope.isChild = function (targetNode) {
-          var nodes = $scope.childNodes();
-          return nodes && nodes.indexOf(targetNode) > -1;
-        };
-
-        $scope.prev = function () {
-          var index = $scope.index();
-          if (index > 0) {
-            return $scope.siblings()[index - 1];
-          }
-          return null;
-        };
-
-        $scope.siblings = function () {
-          return $scope.$parentNodesScope.childNodes();
-        };
-
-        $scope.childNodesCount = function () {
-          return $scope.childNodes() ? $scope.childNodes().length : 0;
-        };
-
-        $scope.hasChild = function () {
-          return $scope.childNodesCount() > 0;
-        };
-
-        $scope.childNodes = function () {
-          return $scope.$childNodesScope && $scope.$childNodesScope.$modelValue ?
-            $scope.$childNodesScope.childNodes() :
-            null;
-        };
-
-        $scope.accept = function (sourceNode, destIndex) {
-          return $scope.$childNodesScope &&
-            $scope.$childNodesScope.$modelValue &&
-            $scope.$childNodesScope.accept(sourceNode, destIndex);
-        };
-
-        $scope.removeNode = function () {
-          var node = $scope.remove();
-          $scope.$callbacks.removed(node);
-          return node;
-        };
-
-        $scope.remove = function () {
-          return $scope.$parentNodesScope.removeNode($scope);
-        };
-
-        $scope.toggle = function () {
-          $scope.collapsed = !$scope.collapsed;
-        };
-
-        $scope.collapse = function () {
-          $scope.collapsed = true;
-        };
-
-        $scope.expand = function () {
-          $scope.collapsed = false;
-        };
-
-        $scope.depth = function () {
-          var parentNode = $scope.$parentNodeScope;
-          if (parentNode) {
-            return parentNode.depth() + 1;
-          }
-          return 1;
-        };
-
-        function countSubDepth(scope) {
-          var thisLevelDepth = 0,
-              childNodes = scope.childNodes(),
-              childNode,
-              childDepth,
-              i;
-          if (!childNodes || childNodes.length === 0) {
-            return 0;
-          }
-          for (i = 0; i < childNodes.length; i++) {
-            childNode = childNodes[i],
-            childDepth = 1 + countSubDepth(childNode);
-            thisLevelDepth = Math.max(thisLevelDepth, childDepth);
-          }
-          return thisLevelDepth;
-        }
-
-        $scope.maxSubDepth = function () {
-          return $scope.$childNodesScope ? countSubDepth($scope.$childNodesScope) : 0;
-        };
-      }
-    ]);
-})();
-
-(function () {
-  'use strict';
-
-  angular.module('ui.tree')
-
-    .controller('TreeNodesController', ['$scope', '$element',
-      function ($scope, $element) {
-        this.scope = $scope;
-
-        $scope.$element = $element;
-        $scope.$modelValue = null;
-        $scope.$nodeScope = null; // the scope of node which the nodes belongs to
-        $scope.$treeScope = null;
-        $scope.$type = 'uiTreeNodes';
-        $scope.$nodesMap = {};
-
-        $scope.nodropEnabled = false;
-        $scope.maxDepth = 0;
-        $scope.cloneEnabled = false;
-
-        $scope.initSubNode = function (subNode) {
-          if (!subNode.$modelValue) {
-            return null;
-          }
-          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = subNode;
-        };
-
-        $scope.destroySubNode = function (subNode) {
-          if (!subNode.$modelValue) {
-            return null;
-          }
-          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = null;
-        };
-
-        $scope.accept = function (sourceNode, destIndex) {
-          return $scope.$treeScope.$callbacks.accept(sourceNode, $scope, destIndex);
-        };
-
-        $scope.beforeDrag = function (sourceNode) {
-          return $scope.$treeScope.$callbacks.beforeDrag(sourceNode);
-        };
-
-        $scope.isParent = function (node) {
-          return node.$parentNodesScope == $scope;
-        };
-
-        $scope.hasChild = function () {
-          return $scope.$modelValue.length > 0;
-        };
-
-        $scope.safeApply = function (fn) {
-          var phase = this.$root.$$phase;
-          if (phase == '$apply' || phase == '$digest') {
-            if (fn && (typeof (fn) === 'function')) {
-              fn();
-            }
-          } else {
-            this.$apply(fn);
-          }
-        };
-
-        $scope.removeNode = function (node) {
-          var index = $scope.$modelValue.indexOf(node.$modelValue);
-          if (index > -1) {
-            $scope.safeApply(function () {
-              $scope.$modelValue.splice(index, 1)[0];
-            });
-            return node;
-          }
-          return null;
-        };
-
-        $scope.insertNode = function (index, nodeData) {
-          $scope.safeApply(function () {
-            $scope.$modelValue.splice(index, 0, nodeData);
-          });
-        };
-
-        $scope.childNodes = function () {
-          var i, nodes = [];
-          if ($scope.$modelValue) {
-            for (i = 0; i < $scope.$modelValue.length; i++) {
-              nodes.push($scope.$nodesMap[$scope.$modelValue[i].$$hashKey]);
-            }
-          }
-          return nodes;
-        };
-
-        $scope.depth = function () {
-          if ($scope.$nodeScope) {
-            return $scope.$nodeScope.depth();
-          }
-          return 0; // if it has no $nodeScope, it's root
-        };
-
-        // check if depth limit has reached
-        $scope.outOfDepth = function (sourceNode) {
-          var maxDepth = $scope.maxDepth || $scope.$treeScope.maxDepth;
-          if (maxDepth > 0) {
-            return $scope.depth() + sourceNode.maxSubDepth() + 1 > maxDepth;
-          }
-          return false;
-        };
-
-      }
-    ]);
-})();
-
-(function () {
-  'use strict';
-
-  angular.module('ui.tree')
-
-    .controller('TreeController', ['$scope', '$element',
-      function ($scope, $element) {
-        this.scope = $scope;
-
-        $scope.$element = $element;
-        $scope.$nodesScope = null; // root nodes
-        $scope.$type = 'uiTree';
-        $scope.$emptyElm = null;
-        $scope.$callbacks = null;
-
-        $scope.dragEnabled = true;
-        $scope.emptyPlaceholderEnabled = true;
-        $scope.maxDepth = 0;
-        $scope.dragDelay = 0;
-        $scope.cloneEnabled = false;
-        $scope.nodropEnabled = false;
-
-        // Check if it's a empty tree
-        $scope.isEmpty = function () {
-          return ($scope.$nodesScope && $scope.$nodesScope.$modelValue
-          && $scope.$nodesScope.$modelValue.length === 0);
-        };
-
-        // add placeholder to empty tree
-        $scope.place = function (placeElm) {
-          $scope.$nodesScope.$element.append(placeElm);
-          $scope.$emptyElm.remove();
-        };
-
-        this.resetEmptyElement = function () {
-          if ((!$scope.$nodesScope.$modelValue || $scope.$nodesScope.$modelValue.length === 0) &&
-            $scope.emptyPlaceholderEnabled) {
-            $element.append($scope.$emptyElm);
-          } else {
-            $scope.$emptyElm.remove();
-          }
-        };
-
-        $scope.resetEmptyElement = this.resetEmptyElement;
-
-        var collapseOrExpand = function (scope, collapsed) {
-          var i, subScope,
-              nodes = scope.childNodes();
-          for (i = 0; i < nodes.length; i++) {
-            collapsed ? nodes[i].collapse() : nodes[i].expand();
-            subScope = nodes[i].$childNodesScope;
-            if (subScope) {
-              collapseOrExpand(subScope, collapsed);
-            }
-          }
-        };
-
-        $scope.collapseAll = function () {
-          collapseOrExpand($scope.$nodesScope, true);
-        };
-
-        $scope.expandAll = function () {
-          collapseOrExpand($scope.$nodesScope, false);
-        };
-
       }
     ]);
 })();
