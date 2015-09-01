@@ -1,6 +1,6 @@
 {
-  "name": "AngularJS UI Tree",
-  "version": "2.5.0",
+  "name": "angular-ui-tree",
+  "version": "2.9.0",
   "homepage": "https://github.com/angular-ui-tree/angular-ui-tree",
   "authors": [
     "Jim Liu <https://github.com/JimLiu>",
@@ -9,7 +9,6 @@
   "description": "Tree directive for AngularJS",
   "main": [
     "dist/angular-ui-tree.js",
-    "dist/angular-ui-tree.min.js",
     "dist/angular-ui-tree.min.css"
   ],
   "keywords": [
@@ -23,11 +22,11 @@
     "node"
   ],
   "dependencies": {
-    "angular": ">= 1.2.0"
+    "angular": "1.2.x || 1.3.x"
   },
   "devDependencies": {
-    "angular-mocks": ">= 1.2.0",
-    "angular-route": ">= 1.2.0",
+    "angular-mocks": "1.2.x || 1.3.x",
+    "angular-route": "1.2.x || 1.3.x",
     "angularfire": "~0.8.2",
     "bootstrap-css": "~3.2.0",
     "jasmine-jquery": "~1.7.0",

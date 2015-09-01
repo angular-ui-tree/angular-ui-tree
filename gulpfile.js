@@ -19,6 +19,18 @@ gulp.task('build', ['clean'], function () {
   return gulp.start('styles', 'jscs', 'jshint', 'uglify', 'styles', 'test');
 });
 
+gulp.task('deploy', ['clean:deploy'], function () {
+  return gulp.start('website');
+});
+
 gulp.task('serve', function () {
   return gulp.start('connect', 'watch', 'open');
+});
+
+gulp.task('test', function () {
+  return gulp.start('karma');
+});
+
+gulp.task('test:e2e', function () {
+  return gulp.start('protractor');
 });

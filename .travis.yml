@@ -5,9 +5,16 @@ node_js:
 before_script:
   - npm install -g bower
   - bower install
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - ./node_modules/protractor/bin/webdriver-manager update
+  - gulp serve &
+  - sleep 3 # give webserver some time to start
 
 script:
   - npm test
 
 notifications:
   - email: false
+
+sudo: false

@@ -1,4 +1,5 @@
 {
+  "jasmine": true,
   "bitwise": true,
   "immed": true,
   "newcap": true,

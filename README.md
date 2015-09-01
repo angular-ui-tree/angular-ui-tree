@@ -1,7 +1,7 @@
 Angular UI Tree
 ======================
 
-[![Build Status](https://travis-ci.org/angular-ui-tree/angular-ui-tree.svg?branch=master)](https://travis-ci.org/angular-ui-tree/angular-ui-tree)
+[![Build Status](https://travis-ci.org/angular-ui-tree/angular-ui-tree.svg?branch=master)](https://travis-ci.org/angular-ui-tree/angular-ui-tree) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/angular-ui-tree/angular-ui-tree?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 Angular UI Tree is an AngularJS UI component that can sort nested lists, provides drag & drop support and doesn't depend on jQuery. If you are a user who uses `angular-nestedSortable`, this is [How to migrate From v1.x to v2.0](https://github.com/JimLiu/angular-ui-tree/wiki/Migrate-From-v1.x-to-v2.0).
 
@@ -27,7 +27,7 @@ For IE8 support, make sure you do the following:
 - use [jQuery 1.x](http://jquery.com/browser-support/)
 
 ## Demo
-Watch the Tree component in action on the [demo page](http://jimliu.github.io/angular-ui-tree/).
+Watch the Tree component in action on the [demo page](http://angular-ui-tree.github.io/angular-ui-tree/).
 
 ## Requirements
 
@@ -37,7 +37,7 @@ Watch the Tree component in action on the [demo page](http://jimliu.github.io/an
 
 ### Download
 - Using [bower](http://bower.io/) to install it. `bower install angular-ui-tree`
-- [Download](https://github.com/JimLiu/angular-ui-tree/archive/master.zip) from github.
+- [Download](https://github.com/angular-ui-tree/angular-ui-tree/archive/master.zip) from github.
 
 ### Load CSS
 Load the css file: `angular-ui-tree.min.css` in your application:
@@ -123,7 +123,7 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
           ui-tree-handle                --> Handle
 
 ## Migrate From v1.x to v2.0
-[Migrate From v1.x to v2.0](https://github.com/JimLiu/angular-ui-tree/wiki/Migrate-From-v1.x-to-v2.0)
+[Migrate From v1.x to v2.0](https://github.com/angular-ui-tree/angular-ui-tree/wiki/Migrate-From-v1.x-to-v2.0)
 
 ## API
 
@@ -131,8 +131,11 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
 `ui-tree` is the root scope for a tree
 
 #### Attributes
-##### data-drop-enabled
-Turn on the ability to prevent dropping of nodes into this tree.
+##### data-nodrop-enabled
+Prevent dropping of nodes into this tree. This applies to both nodes dragged within this tree and nodes from a connected tree. 
+Adding this attribute to the `ui-tree` effectively makes the tree a drag source only. 
+To prevent a particular node from accepting children, add the attribute to the `ui-tree-nodes` element instead (see below).
+See the [demo page](http://angular-ui-tree.github.io/angular-ui-tree/#/nodrop) for examples.
 - `false` (default): turn off
 - `true`: turn on no drop
 
@@ -159,7 +162,7 @@ If a tree is empty, there will be an empty placeholder which is used to drop nod
 - `true` (default): display an empty placeholder if the tree is empty
 - `false`: do not display an empty placeholder
 
-##### Example 
+##### Example
 - turn on/off drag and drop.
 - Limit depth to 5
 - 500 milliseconds delay
@@ -177,7 +180,10 @@ Collapse all it's child nodes.
 Expand all it's child nodes.
 
 ##### $callbacks (type: Object)
-`$callbacks` is a very important property for `angular-ui-tree`. When some special events trigger, the functions in `$callbacks` are called. The callbacks can be passed through the directive.
+`$callbacks` is a very important property for `angular-ui-tree`. 
+When some special events trigger, the functions in `$callbacks` are called. 
+The callbacks can be passed through the directive.
+
 Example:
 ```js
 myAppModule.controller('MyController', function($scope) {
@@ -221,6 +227,12 @@ If current node is draggable.
 - `true` Allow it to drag.
 - `false` Not allow.
 
+##### <a name="removed"></a>removed(node)
+If a node is removed, the `removed` callback will be called.
+
+**Parameters:**
+ - `node`: The node that was removed
+
 ##### <a name="dropped"></a>dropped(event)
 If a node moves it's position after dropped, the `nodeDropped` callback will be called.
 
@@ -262,11 +274,15 @@ The `beforeDrop` function is called before the dragging node is dropped.
 Same as [Parameters](#eventParam) of dropped.
 
 ### ui-tree-nodes
-`ui-tree-nodes` is the container of nodes. Every `ui-tree-node` should have a `ui-tree-nodes` as it's container, a `ui-tree-nodes` can have multiple child nodes.
+`ui-tree-nodes` is the container of nodes. 
+Every `ui-tree-node` should have a `ui-tree-nodes` as it's container, a `ui-tree-nodes` can have multiple child nodes.
 
 #### Attributes
 ##### data-nodrop-enabled <a name="nodes_attrs_nodrop"></a>
-Turn off drop of nodes.
+Prevent nodes from being dropped into this node container. 
+This prevents nodes from being dropped directly into the container with the attribute but not into children that contain additional containers.
+See the [demo page](http://angular-ui-tree.github.io/angular-ui-tree/#/nodrop) for examples.
+
 ##### data-max-depth <a name="nodes_attrs_maxDepth"></a>
 Number of levels a nodes can be nested (default 0). 0 means no limit. It can override the `data-max-depth` in `ui-tree`.
 **Note**
@@ -403,7 +419,8 @@ Check if the current node is a child of the target node.
 
 
 ### ui-tree-handle
-Use the `ui-tree-handle` to specify an element used to drag the object. If you don't add a `ui-tree-handle` for a node, the entire node can be dragged.
+Use the `ui-tree-handle` to specify an element used to drag the object. 
+If you don't add a `ui-tree-handle` for a node, the entire node can be dragged.
 
 ## NgModules Link
 
@@ -430,12 +447,14 @@ Run the commands below in the project root directory.
 #####2. Install project dependencies
 
     $ npm install
+    $ sudo ./node_modules/protractor/bin/webdriver-manager update
     $ bower install
 
 ## Useful commands
 
 ####Running a Local Development Web Server
-To debug code and run end-to-end tests, it is often useful to have a local HTTP server. For this purpose, we have made available a local web server based on Node.js.
+To debug code and run end-to-end tests, it is often useful to have a local HTTP server. 
+For this purpose, we have made available a local web server based on Node.js.
 
 To start the web server, run:
 
@@ -459,3 +478,13 @@ This will generate non-minified and minified JavaScript files in the `dist` dire
 You can run the unit test using a separate task.
 
     $ gulp test
+    
+The E2E-tests can be executed using
+    
+    $ gulp test:e2e
+    
+    > Note: make sure you have the example website running on port `9000` (using the `$ gulp serve` command)
+
+####Deploy examples
+
+    $ gulp deploy

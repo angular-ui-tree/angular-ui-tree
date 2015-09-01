@@ -1,13 +1,17 @@
 'use strict';
 
+var del = require('del');
+
 module.exports = function (gulp, $) {
-  gulp.task('clean', function () {
-    return gulp.src('dist', { read: false })
-      .pipe($.clean());
+  gulp.task('clean', function (callback) {
+    del('dist', callback);
   });
 
-  gulp.task('clean:examples', function () {
-    return gulp.src('examples/source', { read: false })
-      .pipe($.clean());
+  gulp.task('clean:examples', function (callback) {
+    del('examples/source', callback);
+  });
+
+  gulp.task('clean:deploy', function (callback) {
+    del('.tmp/website', callback);
   });
 };

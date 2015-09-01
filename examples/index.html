@@ -23,15 +23,25 @@
     </div>
 
     <div class="row">
-      <div class="col-md-6">
-        <h2>What?</h2>
+      <div class="col-md-4">
+        <h2>View Examples</h2>
+        <ol>
+          <li><a href="#/basic-example">Basic example</a></li>
+          <li><a href="#/filter-nodes">Filter nodes</a></li>
+          <li><a href="#/nodrop">Prevent drop</a></li>
+          <li><a href="#/connected-trees">Connected trees</a></li>
+          <li><a href="#/cloning">Cloning</a></li>
+        </ol>
+      </div>
 
+      <div class="col-md-4">
+        <h2>What?</h2>
         <p>
           Angular Tree is an AngularJS UI component that can sort nested lists, provides drag &amp; drop support and
           doesn't depend on jQuery.
         </p>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-4">
         <h2>Features</h2>
         <ul>
           <li>Uses the native AngularJS scope for data binding</li>
@@ -40,21 +50,13 @@
         </ul>
       </div>
     </div>
-
-    <div class="row">
-      <div class="col-md-12">
-        <h2>View Examples</h2>
-        <ol>
-          <li><a href="#/basic-example">Basic example</a></li>
-          <li><a href="#/filter-nodes">Filter nodes</a></li>
-          <li><a href="#/connected-trees">Connected trees</a></li>
-        </ol>
-      </div>
-    </div>
   </div>
 
   <div class="row">
-    <div class="col-sm-12" ng-view=""></div>
+    <div class="col-sm-12">
+      <h2>See it in action</h2>
+      <ng-view></ng-view>
+    </div>
   </div>
 
 </div>
@@ -82,6 +84,7 @@
 <script src="js/app.js"></script>
 <script src="js/basic-example.js"></script>
 <script src="js/filter-nodes.js"></script>
+<script src="js/cloning.js"></script>
 <script src="js/connected-trees.js"></script>
 </body>
 </html>

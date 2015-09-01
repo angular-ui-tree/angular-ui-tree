@@ -2,7 +2,7 @@
   'use strict';
 
   angular.module('demoApp')
-    .controller('ConnectedTreesCtrl', ['$scope', function ($scope) {
+    .controller('CloningCtrl', ['$scope', function ($scope) {
       $scope.remove = function (scope) {
         scope.remove();
       };

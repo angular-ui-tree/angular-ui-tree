@@ -8,13 +8,17 @@ module.exports = function (gulp, $) {
   });
 
   gulp.task('jscs', function () {
-    return gulp.src('source/**/*.js')
+    return gulp.src([
+      'source/**/*.js',
+      'examples/js/*.js'
+    ])
       .pipe($.jscs());
   });
 
   gulp.task('jshint', function () {
     return gulp.src([
-        'source/**/*.js'
+        'source/**/*.js',
+        'examples/js/*.js'
       ])
       .pipe($.jshint())
       .pipe($.jshint.reporter('jshint-stylish'))
@@ -39,7 +43,7 @@ module.exports = function (gulp, $) {
       .pipe(gulp.dest('dist'));
   });
 
-  gulp.task('test', function () {
+  gulp.task('karma', function () {
     return $.karma.server.start({
       configFile: __dirname + '/../karma.conf.js',
       singleRun: true
