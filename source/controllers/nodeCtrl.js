@@ -112,31 +112,26 @@
           return 1;
         };
 
-        var subDepth = 0;
         function countSubDepth(scope) {
-          var i, childNodes,
-              count = 0,
-              nodes = scope.childNodes();
-
-          for (i = 0; i < nodes.length; i++) {
-            childNodes = nodes[i].$childNodesScope;
-
-            if (childNodes && childNodes.childNodesCount() > 0) {
-              count = 1;
-              countSubDepth(childNodes);
-            }
+          var thisLevelDepth = 0,
+              childNodes = scope.childNodes(),
+              childNode,
+              childDepth,
+              i;
+          if (!childNodes || childNodes.length === 0) {
+            return 0;
           }
-          subDepth += count;
+          for (i = 0; i < childNodes.length; i++) {
+            childNode = childNodes[i],
+            childDepth = 1 + countSubDepth(childNode);
+            thisLevelDepth = Math.max(thisLevelDepth, childDepth);
+          }
+          return thisLevelDepth;
         }
 
         $scope.maxSubDepth = function () {
-          subDepth = 0;
-          if ($scope.$childNodesScope) {
-            countSubDepth($scope.$childNodesScope);
-          }
-          return subDepth;
+          return $scope.$childNodesScope ? countSubDepth($scope.$childNodesScope) : 0;
         };
-
       }
     ]);
 })();
