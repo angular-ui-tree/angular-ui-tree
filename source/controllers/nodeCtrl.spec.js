@@ -179,13 +179,13 @@ describe('treeCtrl', function () {
     scope.$digest();
     return element;
   }
-
+ 
   it('should not include in depth calculation child node scopes with no children', function () {
     var tree, localScope;
     tree = createTree();
     localScope = angular.element(tree.children('ol').first()).scope();
 
-    expect(localScope.childNodes()[1].maxSubDepth()).toEqual(1);
+    expect(localScope.childNodes()[1].maxSubDepth()).toEqual(2);
 
   });
 });
