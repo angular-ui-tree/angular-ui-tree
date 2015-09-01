@@ -46,120 +46,83 @@ describe('treeCtrl', function () {
 
     scope.list = [
       {
-        'id': 0,
-        'title': 'item0',
-        'items': []
-      },
-      {
         'id': 1,
         'title': 'item1',
-        'items': [
-          {
-            'id': 10,
-            'title': 'item1.0',
-            'items': [
-              {
-                'id': 100,
-                'title': 'item1.0.0',
-                'items': []
-              },
-              {
-                'id': 101,
-                'title': 'item1.0.1',
-                'items': []
-              },
-              {
-                'id': 102,
-                'title': 'item1.0.2',
-                'items': []
-              }
-            ]
-          },
-          {
-            'id': 11,
-            'title': 'item1.1',
-            'items': []
-          },
-          {
-            'id': 12,
-            'title': 'item1.2',
-            'items': [
-              {
-                'id': 120,
-                'title': 'item1.2.0',
-                'items': []
-              },
-              {
-                'id': 121,
-                'title': 'item1.2.1',
-                'items': []
-              },
-              {
-                'id': 122,
-                'title': 'item1.2.2',
-                'items': []
-              }
-            ]
-          },
-          {
-            'id': 13,
-            'title': 'item1.3',
-            'items': [
-              {
-                'id': 130,
-                'title': 'item1.3.0',
-                'items': []
-              },
-              {
-                'id': 131,
-                'title': 'item1.3.1',
-                'items': []
-              },
-              {
-                'id': 132,
-                'title': 'item2.4.3',
-                'items': []
-              },
-              {
-                'id': 244,
-                'title': 'item1.3.3',
-                'items': []
-              }
-            ]
-          }
-        ]
+        'items': []
       },
       {
         'id': 2,
         'title': 'item2',
         'items': [
           {
-            'id': 20,
-            'title': 'item2.0',
-            'items': []
-          },
-          {
             'id': 21,
             'title': 'item2.1',
-            'items': []
+            'items': [
+              {
+                'id': 211,
+                'title': 'item2.1.1',
+                'items': []
+              },
+              {
+                'id': 212,
+                'title': 'item2.1.2',
+                'items': []
+              },
+              {
+                'id': 213,
+                'title': 'item2.1.3',
+                'items': []
+              }
+            ]
           },
           {
             'id': 22,
             'title': 'item2.2',
+            'items': []
+          },
+          {
+            'id': 23,
+            'title': 'item2.3',
             'items': [
               {
-                'id': 220,
-                'title': 'item2.2.0',
+                'id': 231,
+                'title': 'item2.3.1',
                 'items': []
               },
               {
-                'id': 221,
-                'title': 'item2.2.1',
+                'id': 232,
+                'title': 'item2.3.2',
                 'items': []
               },
               {
-                'id': 222,
-                'title': 'item2.2.2',
+                'id': 233,
+                'title': 'item2.3.3',
+                'items': []
+              }
+            ]
+          },
+          {
+            'id': 24,
+            'title': 'item2.4',
+            'items': [
+              {
+                'id': 241,
+                'title': 'item2.4.1',
+                'items': []
+              },
+              {
+                'id': 242,
+                'title': 'item2.4.2',
+                'items': []
+              },
+              {
+                'id': 243,
+                'title': 'item2.4.3',
+                'items': []
+              },
+              {
+                'id': 244,
+                'title': 'item2.4.4',
                 'items': []
               }
             ]
@@ -169,6 +132,43 @@ describe('treeCtrl', function () {
       {
         'id': 3,
         'title': 'item3',
+        'items': [
+          {
+            'id': 31,
+            'title': 'item3.1',
+            'items': []
+          },
+          {
+            'id': 32,
+            'title': 'item3.2',
+            'items': []
+          },
+          {
+            'id': 33,
+            'title': 'item3.3',
+            'items': [
+              {
+                'id': 331,
+                'title': 'item3.3.1',
+                'items': []
+              },
+              {
+                'id': 332,
+                'title': 'item3.3.2',
+                'items': []
+              },
+              {
+                'id': 333,
+                'title': 'item3.3.3',
+                'items': []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        'id': 4,
+        'title': 'item4',
         'items': []
       }
     ];
@@ -185,18 +185,8 @@ describe('treeCtrl', function () {
     tree = createTree();
     localScope = angular.element(tree.children('ol').first()).scope();
 
-    expect(localScope.childNodes()[1].maxSubDepth()).toEqual(2);
+    expect(localScope.childNodes()[1].maxSubDepth()).toEqual(1);
 
-  });
-
-  it('should calculate the depth of any subtree', function () {
-    var tree, localScope;
-    tree = createTree();
-    localScope = angular.element(tree.children('ol').first()).scope();
-    expect(localScope.childNodes()[0].maxSubDepth()).toEqual(0); // item0
-    expect(localScope.childNodes()[1].maxSubDepth()).toEqual(2); // item1
-    expect(localScope.childNodes()[1].childNodes()[0].maxSubDepth()).toEqual(1); // item1.0
-    expect(localScope.childNodes()[1].childNodes()[0].childNodes()[0].maxSubDepth()).toEqual(0); // item1.0.0
   });
 });
 
