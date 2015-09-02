@@ -112,7 +112,13 @@
           return 1;
         };
 
-        function countSubDepth(scope) {
+        /**
+        * Returns the depth of the deepest subtree under this node
+        * @param scope a TreeNodesController scope object
+        * @returns Depth of all nodes *beneath* this node. If scope belongs to a leaf node, the
+        *   result is 0 (it has no subtree).
+        */
+        function countSubTreeDepth(scope) {
           var thisLevelDepth = 0,
               childNodes = scope.childNodes(),
               childNode,
@@ -121,16 +127,16 @@
           if (!childNodes || childNodes.length === 0) {
             return 0;
           }
-          for (i = 0; i < childNodes.length; i++) {
+          for (i = childNodes.length - 1; i >= 0 ; i--) {
             childNode = childNodes[i],
-            childDepth = 1 + countSubDepth(childNode);
+            childDepth = 1 + countSubTreeDepth(childNode);
             thisLevelDepth = Math.max(thisLevelDepth, childDepth);
           }
           return thisLevelDepth;
         }
 
         $scope.maxSubDepth = function () {
-          return $scope.$childNodesScope ? countSubDepth($scope.$childNodesScope) : 0;
+          return $scope.$childNodesScope ? countSubTreeDepth($scope.$childNodesScope) : 0;
         };
       }
     ]);
