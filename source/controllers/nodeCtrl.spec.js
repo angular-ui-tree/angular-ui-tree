@@ -186,6 +186,7 @@ describe('treeCtrl', function () {
     localScope = angular.element(tree.children('ol').first()).scope();
 
     expect(localScope.childNodes()[1].maxSubDepth()).toEqual(1);
+    expect(localScope.childNodes()[1].maxSubDepth()).toEqual(2);
 
   });
 });
