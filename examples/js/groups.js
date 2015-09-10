@@ -137,7 +137,7 @@
       },
       beforeDrop: function (event) {
         if (!window.confirm('Are you sure you want to drop it here?')) {
-          event.source.nodeScope.$$apply = false;
+          event.source.nodeScope.$$allowNodeDrop = false;
         }
       }
     };

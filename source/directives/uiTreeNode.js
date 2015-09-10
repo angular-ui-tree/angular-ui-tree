@@ -410,7 +410,7 @@
 
                 dragElm.remove();
                 dragElm = null;
-                if (scope.$$apply && !outOfBounds) {
+                if (scope.$$allowNodeDrop && !outOfBounds) {
                   scope.$treeScope.$apply(function () {
                     dragInfo.apply();
                     scope.$treeScope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
@@ -421,7 +421,7 @@
                 scope.$treeScope.$apply(function () {
                   scope.$treeScope.$callbacks.dragStop(dragInfo.eventArgs(elements, pos));
                 });
-                scope.$$apply = false;
+                scope.$$allowNodeDrop = false;
                 dragInfo = null;
               }
 
@@ -451,7 +451,7 @@
             };
 
             dragEndEvent = function (e) {
-              scope.$$apply = true;
+              scope.$$allowNodeDrop = true;
               dragEnd(e);
             };
 
@@ -490,7 +490,7 @@
 
             keydownHandler = function (e) {
               if (e.keyCode == 27) {
-                scope.$$apply = false;
+                scope.$$allowNodeDrop = false;
                 dragEnd(e);
               }
             };
