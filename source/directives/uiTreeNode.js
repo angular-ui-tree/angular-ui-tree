@@ -404,8 +404,21 @@
 
               scope.$treeScope.$apply(function () {
                 $q.when(scope.$treeScope.$callbacks.beforeDrop(dragEventArgs))
-                    // promise accepted (or callback didn't return a promise)
+                    // promise resolved (or callback didn't return a promise)
                     .then(function (cancel) {
+                      if (!cancel && scope.$$allowNodeDrop && !outOfBounds) { // node drop accepted)
+                        dragInfo.apply();
+                        // fire the dropped callback only if the move was successful
+                        scope.$treeScope.$callbacks.dropped(dragEventArgs);
+                      } else { // drop canceled - revert the node to its original position
+                        bindDragStartEvents();
+                      }
+                    })
+                    // promise rejected - revert the node to its original position
+                    .catch(function () {
+                      bindDragStartEvents();
+                    })
+                    .finally(function () {
                       hiddenPlaceElm.replaceWith(scope.$element);
                       placeElm.remove();
 
@@ -413,13 +426,9 @@
                         dragElm.remove();
                         dragElm = null;
                       }
-                      if (!cancel && scope.$$allowNodeDrop && !outOfBounds) { // node drop accepted)
-                        dragInfo.apply();
-                        scope.$treeScope.$callbacks.dropped(dragInfo.eventArgs(elements, pos));
-                      } else { // drop canceled - leave the source node in its original place
-                        bindDragStartEvents();
-                      }
-                      scope.$treeScope.$callbacks.dragStop(dragInfo.eventArgs(elements, pos));
+                      scope.$treeScope.$callbacks.dragStop(dragEventArgs);
+                      scope.$$allowNodeDrop = false;
+                      dragInfo = null;
 
                       // Restore cursor in Opera 12.16 and IE
                       var oldCur = document.body.getAttribute('ui-tree-cursor');
@@ -427,20 +436,8 @@
                         $document.find('body').css({'cursor': oldCur});
                         document.body.removeAttribute('ui-tree-cursor');
                       }
-                    })
-                    // promise rejected - cancel drop and stay in drag mode
-                    .catch(function () {
-                      if (dragElm) {
-                        dragElm.show();
-                      }
-                      bindDragMoveEvents();
-                    })
-                    .finally(function () {
-                      scope.$$allowNodeDrop = false;
-                      dragInfo = null;
                     });
               });
-
             };
 
             dragStartEvent = function (e) {

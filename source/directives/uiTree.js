@@ -129,11 +129,11 @@
 
             /**
              * Callback is fired when a user drops a node (but prior to processing the drop action)
-             * beforeDrop can return a Promise, truthy, or falsy.
-             * If it returns falsy, or an accepted Promise, the node move is accepted
-             * If it returns a rejected Promise, the node move is reverted and the tree remains in drag-drop mode
-             * If it returns truthy, the node move is canceled and the tree exits drag mode
+             * beforeDrop can return a Promise, truthy, or falsy (returning nothing is falsy).
+             * If it returns falsy, or a resolve Promise, the node move is accepted
+             * If it returns truthy, or a rejected Promise, the node move is reverted
              * @param event
+             * @returns {Boolean|Promise} Truthy (or rejected Promise) to cancel node move; falsy (or resolved promise)
              */
             callbacks.beforeDrop = function (event) {
 

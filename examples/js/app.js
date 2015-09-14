@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('demoApp', ['ui.tree', 'ngRoute'])
+  angular.module('demoApp', ['ui.tree', 'ngRoute', 'ui.bootstrap'])
 
     .config(['$routeProvider', function ($routeProvider) {
       $routeProvider
@@ -24,6 +24,10 @@
         .when('/nodrop', {
           controller: 'BasicExampleCtrl',
           templateUrl: 'views/nodrop.html'
+        })
+        .when('/drop-confirmation', {
+          controller: 'DropConfirmationCtrl',
+          templateUrl: 'views/drop-confirmation.html'
         })
         .otherwise({
           redirectTo: '/basic-example'
