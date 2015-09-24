@@ -25,6 +25,8 @@
               scope.$emptyElm.addClass(config.emptyTreeClass);
             }
 
+            element.data('_scope', scope);
+
             scope.$watch('$nodesScope.$modelValue.length', function (val) {
               if (!angular.isNumber(val)) {
                 return;

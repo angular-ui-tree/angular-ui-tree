@@ -36,10 +36,13 @@
               bindDrag,
               keydownHandler,
               outOfBounds;
+
             angular.extend(config, treeConfig);
+
             if (config.nodeClass) {
               element.addClass(config.nodeClass);
             }
+
             scope.init(controllersArr);
 
             scope.collapsed = !!UiTreeHelper.getNodeAttribute(scope, 'collapsed');
@@ -56,6 +59,20 @@
               attrs.$set('collapsed', val);
             });
 
+            function findScopeElement(elem) {
+              while (elem && !elem.data('_scope')) {
+                if (elem[0] && elem[0].parentNode) {
+                  elem = angular.element(elem[0].parentNode);
+                } else {
+                  elem = undefined;
+                }
+              }
+
+              return elem;
+            }
+
+            element.data('_scope', scope);
+
             dragStart = function (e) {
               if (!hasTouch && (e.button == 2 || e.which == 3)) {
                 // disable right click
@@ -67,7 +84,8 @@
 
               // the element which is clicked.
               var eventElm = angular.element(e.target),
-                eventScope = eventElm.scope(),
+                scopeElm = findScopeElement(eventElm),
+                eventScope = scopeElm.data('_scope'),
                 cloneElm = element.clone(),
                 eventElmTagName, tagName,
                 eventObj, tdElm, hStyle;
@@ -284,7 +302,7 @@
                   dragElm[0].style.display = displayElm;
                 }
 
-                outOfBounds = !(targetElm.scope().$type);
+                outOfBounds = !(targetElm.data('_scope').$type);
 
                 // Detect out of bounds condition, update drop target display, and prevent drop
                 if (outOfBounds) {
@@ -331,7 +349,8 @@
                 // move vertical
                 if (!pos.dirAx) {
                   // check it's new position
-                  targetNode = targetElm.scope();
+                  targetNode = targetElm.data('_scope');
+
                   isEmpty = false;
                   if (!targetNode) {
                     return;
