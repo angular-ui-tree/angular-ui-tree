@@ -3,7 +3,7 @@
 
   angular.module('demoApp', ['ui.tree', 'ngRoute'])
 
-    .config(['$routeProvider', function ($routeProvider) {
+    .config(['$routeProvider', '$compileProvider', function ($routeProvider, $compileProvider) {
       $routeProvider
         .when('/basic-example', {
           controller: 'BasicExampleCtrl',
@@ -28,5 +28,8 @@
         .otherwise({
           redirectTo: '/basic-example'
         });
+
+      // testing issue #521
+      $compileProvider.debugInfoEnabled(false);
     }]);
 })();
