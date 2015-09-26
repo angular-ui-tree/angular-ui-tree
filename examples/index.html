@@ -11,51 +11,116 @@
 </head>
 
 <body ng-app="demoApp">
-<div class="container">
-  <div>
-    <div class="jumbotron">
-      <h1>Tree component</h1>
 
-      <p class="lead">The AngularJS Tree component with drag and drop support.</p>
-
-      <p><a class="btn btn-lg btn-success" href="https://github.com/JimLiu/angular-ui-tree" role="button">Code on
-        GitHub</a></p>
+<nav class="navbar navbar-default navbar-static navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-example-js-navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
     </div>
+    <div class="container">
+      <div class="collapse navbar-collapse bs-example-js-navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="#/">Home</a></li>
+          <li><a href="#/">Tutorial</a></li>
 
-    <div class="row">
-      <div class="col-md-4">
-        <h2>View Examples</h2>
-        <ol>
-          <li><a href="#/basic-example">Basic example</a></li>
-          <li><a href="#/filter-nodes">Filter nodes</a></li>
-          <li><a href="#/nodrop">Prevent drop</a></li>
-          <li><a href="#/connected-trees">Connected trees</a></li>
-          <li><a href="#/cloning">Cloning</a></li>
-        </ol>
-      </div>
+          <li class="dropdown">
+            <a id="drop1" href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">Examples <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a tabindex="-1" href="#/">Basic example</a></li>
+              <li><a tabindex="-1" href="#/">Filter nodes</a></li>
+              <li><a tabindex="-1" href="#/">Prevent drop</a></li>
+              <li><a tabindex="-1" href="#/">Connected trees</a></li>
+              <li><a tabindex="-1" href="#/">Cloning</a></li>
+            </ul>
+          </li>
 
-      <div class="col-md-4">
-        <h2>What?</h2>
-        <p>
-          Angular Tree is an AngularJS UI component that can sort nested lists, provides drag &amp; drop support and
-          doesn't depend on jQuery.
-        </p>
-      </div>
-      <div class="col-md-4">
-        <h2>Features</h2>
-        <ul>
-          <li>Uses the native AngularJS scope for data binding</li>
-          <li>Sorted and move items through the entire tree</li>
-          <li>Prevent elements from accepting child nodes</li>
+          <!-- Reference -->
+          <li class="dropdown">
+            <a id="drop4" href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">Reference <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a tabindex="-1" href="#/api">API documentation</a></li>
+              <li><a tabindex="-1" href="#/ie8">IE8 support</a></li>
+              <li><a tabindex="-1" href="#/ie8">Changelog</a></li>
+            </ul>
+          </li>
         </ul>
+      </div><!-- /.nav-collapse -->
+    </div>
+  </div><!-- /.container-fluid -->
+</nav>
+
+<div class="container angular-ui-tree-container">
+
+  <div class="row" id="header">
+    <div class="col-sm-12">
+      <div class="text-center" id="head">
+        <h1 id="title">Angular UI Tree</h1>
+        <h2 class="lead">A Tree component for Angular</h2>
       </div>
+
+      <p class="text-center">
+        <a class="btn btn-lg btn-primary" href="https://github.com/JimLiu/angular-ui-tree" role="button"><i class="fa fa-download"></i> Download</a>
+        <a class="btn btn-lg btn-primary" href="https://github.com/JimLiu/angular-ui-tree" role="button"><i class="fa fa-github"></i> Code on GitHub</a>
+      </p>
+    </div>
+  </div>
+  <hr>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <p class="lead">
+        Angular Tree is an AngularJS UI component that can sort nested lists, provides drag &amp; drop support and
+        doesn't depend on jQuery.
+      </p>
     </div>
   </div>
 
   <div class="row">
+    <div class="col-sm-4">
+      <h3>Features</h3>
+      <ul>
+        <li>Uses the scope for data binding</li>
+        <li>Sort and move items through the entire tree</li>
+        <li>Prevent elements from accepting child nodes</li>
+      </ul>
+    </div>
+
+    <div class="col-sm-4">
+      <h3>View Examples</h3>
+      <ol>
+        <li><a href="#/basic-example">Basic example</a></li>
+        <li><a href="#/filter-nodes">Filter nodes</a></li>
+        <li><a href="#/nodrop">Prevent drop</a></li>
+        <li><a href="#/connected-trees">Connected trees</a></li>
+        <li><a href="#/cloning">Cloning</a></li>
+      </ol>
+    </div>
+
+    <div class="col-sm-4">
+      <h3>Support</h3>
+      <p>
+        The Angular UI Tree is tested with the following browsers:
+      </p>
+      <ul>
+        <li>Chrome (stable)</li>
+        <li>Firefox</li>
+        <li>IE 8 and up</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="row">
     <div class="col-sm-12">
-      <h2>See it in action</h2>
-      <ng-view></ng-view>
+      <h2>How it works</h2>
+
+      <div ng-view=""></div>
     </div>
   </div>
 
@@ -67,6 +132,7 @@
 <script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/3.4.0/es5-shim.min.js"></script>
 <![endif]-->
 
+<script src="bower_components/bootstrap-css/js/bootstrap.min.js"></script>
 <script src="bower_components/angular/angular.min.js"></script>
 <script src="bower_components/angular-route/angular-route.min.js"></script>
 
