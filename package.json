@@ -2,12 +2,11 @@
   "name": "angular-ui-tree",
   "version": "2.9.0",
   "description": "An AngularJS UI component that can sort nested lists, provides drag & drop support and doesn't depend on jQuery",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "repository": {
     "type": "git",
     "url": "https://github.com/angular-ui-tree/angular-ui-tree"
   },
-  "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
     "connect-livereload": "^0.5.2",
     "del": "^1.2.0",
@@ -20,6 +19,7 @@
     "gulp-jshint": "^1.9.0",
     "gulp-load-plugins": "^0.8.0",
     "gulp-minify-css": "^1.1.0",
+    "gulp-ngdocs": "^0.2.13",
     "gulp-protractor": "^1.0.0",
     "gulp-rename": "^1.2.0",
     "gulp-symlink": "^2.1.0",

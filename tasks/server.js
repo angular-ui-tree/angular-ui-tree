@@ -5,6 +5,7 @@ module.exports = function (gulp, $) {
   gulp.task('connect', [
     'clean:examples',
     'scripts:setup',
+    'docs:setup',
     'styles'
   ], function () {
     var livereloadPort = 35729;
@@ -25,7 +26,8 @@ module.exports = function (gulp, $) {
           mountFolder(connect, 'source'),
           mountFolder(connect, 'dist'),
           mountFolder(connect, 'bower_components'),
-          mountFolder(connect, 'examples')
+          mountFolder(connect, 'examples'),
+          mountFolder(connect, 'docs')
         ];
       }
     });
@@ -53,6 +55,8 @@ module.exports = function (gulp, $) {
     gulp.watch([
       'examples/**/*.scss'
     ], ['styles:examples']);
+
+
   });
 
   gulp.task('open', ['connect'], function () {
