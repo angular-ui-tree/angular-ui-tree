@@ -6,112 +6,11 @@ Angular UI Tree
 Angular UI Tree is an AngularJS UI component that can sort nested lists, provides drag & drop support and doesn't depend on jQuery. If you are a user who uses `angular-nestedSortable`, this is [How to migrate From v1.x to v2.0](https://github.com/JimLiu/angular-ui-tree/wiki/Migrate-From-v1.x-to-v2.0).
 
 
-## Supported browsers
-
-For IE8 support, make sure you do the following:
-
-- include an [ES5 shim](https://github.com/es-shims/es5-shim)
-- make your [AngularJS application compatible with Internet Explorer](http://docs.angularjs.org/guide/ie)
-- use [jQuery 1.x](http://jquery.com/browser-support/)
-
 ## Demo
 Watch the Tree component in action on the [demo page](http://angular-ui-tree.github.io/angular-ui-tree/).
 
-## Requirements
-
-- Angularjs
-
-## Usage
-
-### Download
-- Using [bower](http://bower.io/) to install it. `bower install angular-ui-tree`
-- [Download](https://github.com/angular-ui-tree/angular-ui-tree/archive/master.zip) from github.
-
-### Load CSS
-Load the css file: `angular-ui-tree.min.css` in your application:
-```html
-<link rel="stylesheet" href="bower_components/angular-ui-tree/dist/angular-ui-tree.min.css">
-```
-
-
-### Load Script
-Load the script file: `angular-ui-tree.js` or `angular-ui-tree.min.js` in your application:
-
-```html
-<script type="text/javascript" src="bower_components/angular-ui-tree/dist/angular-ui-tree.js"></script>
-```
-
-### Code
-Add the sortable module as a dependency to your application module:
-
-```js
-var myAppModule = angular.module('MyApp', ['ui.tree'])
-```
-
-Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your html.
-
-#### HTML View or Templates
-```html
-<div ui-tree>
-  <ol ui-tree-nodes="" ng-model="list">
-    <li ng-repeat="item in list" ui-tree-node>
-      <div ui-tree-handle>
-        {{item.title}}
-      </div>
-      <ol ui-tree-nodes="" ng-model="item.items">
-        <li ng-repeat="subItem in item.items" ui-tree-node>
-          <div ui-tree-handle>
-            {{subItem.title}}
-          </div>
-        </li>
-      </ol>
-    </li>
-  </ol>
-</div>
-```
-**Developing Notes:**
-- Adding `ui-tree` to your root element of the tree.
-- Adding `ui-tree-nodes` to the elements which contain the nodes. `ng-model` is required, and it should be an array, so that the directive knows which model to bind and update.
-- Adding `ui-tree-node` to your node element, it always follows the `ng-repeat` attribute.
-- Adding `ui-tree-handle` to the element used to drag the object.
-- All `ui-tree`, `ui-tree-nodes`, `ng-model`, `ui-tree-node` are necessary. And they can be nested.
-- If you don't add a `ui-tree-handle` for a node, the entire node can be dragged.
-
-#### Unlimited nesting HTML View or Templates Example
-
-```html
-<!-- Nested node template -->
-<script type="text/ng-template" id="nodes_renderer.html">
-  <div ui-tree-handle>
-    {{node.title}}
-  </div>
-  <ol ui-tree-nodes="" ng-model="node.nodes">
-    <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">
-    </li>
-  </ol>
-</script>
-<div ui-tree>
-  <ol ui-tree-nodes="" ng-model="data" id="tree-root">
-    <li ng-repeat="node in data" ui-tree-node ng-include="'nodes_renderer.html'"></li>
-  </ol>
-</div>
-```
-
-## Structure of angular-ui-tree
-
-    ui-tree                             --> Root of tree
-      ui-tree-nodes                     --> Container of nodes
-        ui-tree-node                    --> One of the node of a tree
-          ui-tree-handle                --> Handle
-          ui-tree-nodes                 --> Container of child-nodes
-            ui-tree-node                --> Child node
-              ui-tree-handle            --> Handle
-            ui-tree-node                --> Child node
-        ui-tree-node                    --> Another node
-          ui-tree-handle                --> Handle
-
 ## Migrate From v1.x to v2.0
-[Migrate From v1.x to v2.0](https://github.com/angular-ui-tree/angular-ui-tree/wiki/Migrate-From-v1.x-to-v2.0)
+[Migrate From v1.x to v2.0]()
 
 ## API
 

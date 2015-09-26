@@ -25,6 +25,12 @@
           controller: 'BasicExampleCtrl',
           templateUrl: 'views/nodrop.html'
         })
+        .when('/tutorial', {
+          templateUrl: 'views/tutorial.html'
+        })
+        .when('/ie8', {
+          templateUrl: 'views/ie8.html'
+        })
         .otherwise({
           redirectTo: '/basic-example'
         });
