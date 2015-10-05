@@ -153,31 +153,32 @@
           return 1;
         };
 
-        var subDepth = 0;
-        function countSubDepth(scope) {
-          var i, childNodes,
-              count = 0,
-              nodes = scope.childNodes();
-
-          for (i = 0; i < nodes.length; i++) {
-            childNodes = nodes[i].$childNodesScope;
-
-            if (childNodes && childNodes.childNodesCount() > 0) {
-              count = 1;
-              countSubDepth(childNodes);
-            }
+        /**
+        * Returns the depth of the deepest subtree under this node
+        * @param scope a TreeNodesController scope object
+        * @returns Depth of all nodes *beneath* this node. If scope belongs to a leaf node, the
+        *   result is 0 (it has no subtree).
+        */
+        function countSubTreeDepth(scope) {
+          var thisLevelDepth = 0,
+              childNodes = scope.childNodes(),
+              childNode,
+              childDepth,
+              i;
+          if (!childNodes || childNodes.length === 0) {
+            return 0;
           }
-          subDepth += count;
+          for (i = childNodes.length - 1; i >= 0 ; i--) {
+            childNode = childNodes[i],
+            childDepth = 1 + countSubTreeDepth(childNode);
+            thisLevelDepth = Math.max(thisLevelDepth, childDepth);
+          }
+          return thisLevelDepth;
         }
 
         $scope.maxSubDepth = function () {
-          subDepth = 0;
-          if ($scope.$childNodesScope) {
-            countSubDepth($scope.$childNodesScope);
-          }
-          return subDepth;
+          return $scope.$childNodesScope ? countSubTreeDepth($scope.$childNodesScope) : 0;
         };
-
       }
     ]);
 })();
@@ -386,8 +387,8 @@
               scope.$emptyElm.addClass(config.emptyTreeClass);
             }
 
-            scope.$watch('$nodesScope.$modelValue.length', function () {
-              if (!scope.$nodesScope.$modelValue) {
+            scope.$watch('$nodesScope.$modelValue.length', function (val) {
+              if (!angular.isNumber(val)) {
                 return;
               }
 
@@ -629,11 +630,6 @@
               firstMoving = true;
               dragInfo = UiTreeHelper.dragInfo(scope);
 
-              // Fire dragStart callback
-              scope.$apply(function () {
-                scope.$treeScope.$callbacks.dragStart(dragInfo.eventArgs(elements, pos));
-              });
-
               tagName = scope.$element.prop('tagName');
 
               if (tagName.toLowerCase() === 'tr') {
@@ -685,6 +681,11 @@
                 placeholder: placeElm,
                 dragging: dragElm
               };
+
+              // Fire dragStart callback
+              scope.$apply(function () {
+                scope.$treeScope.$callbacks.dragStart(dragInfo.eventArgs(elements, pos));
+              });
 
               angular.element($document).bind('touchend', dragEndEvent);
               angular.element($document).bind('touchcancel', dragEndEvent);
@@ -1062,7 +1063,9 @@
               };
             }
 
-            scope.$watch(attrs.maxDepth, function (val) {
+            scope.$watch(function () {
+              return attrs.maxDepth;
+            }, function (val) {
               if ((typeof val) == 'number') {
                 scope.maxDepth = val;
               }
