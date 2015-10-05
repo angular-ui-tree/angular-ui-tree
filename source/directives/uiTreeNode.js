@@ -119,11 +119,6 @@
               firstMoving = true;
               dragInfo = UiTreeHelper.dragInfo(scope);
 
-              // Fire dragStart callback
-              scope.$apply(function () {
-                scope.$treeScope.$callbacks.dragStart(dragInfo.eventArgs(elements, pos));
-              });
-
               tagName = scope.$element.prop('tagName');
 
               if (tagName.toLowerCase() === 'tr') {
@@ -177,6 +172,10 @@
               };
 
               bindDragMoveEvents();
+              // Fire dragStart callback
+              scope.$apply(function () {
+                scope.$treeScope.$callbacks.dragStart(dragInfo.eventArgs(elements, pos));
+              });
 
               document_height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
               document_width = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
