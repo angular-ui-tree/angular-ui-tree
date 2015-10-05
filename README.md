@@ -484,6 +484,8 @@ The E2E-tests can be executed using
     $ gulp test:e2e
     
     > Note: make sure you have the example website running on port `9000` (using the `$ gulp serve` command)
+	
+*Windows: If your e2e tests are failing, run the command prompt as an administrator. ([See symlink issue](https://github.com/ben-eb/gulp-symlink/issues/33))*
 
 ####Deploy examples
 
