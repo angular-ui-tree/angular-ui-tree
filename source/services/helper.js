@@ -47,7 +47,8 @@
 
           /**
            * @ngdoc method
-           * @methodOf ui.tree.service:$nodrag
+           * @methodOf ui.tree.service:UiTreeHelper
+           * @name ui.tree:$nodrag
            * @param  {Object} targetElm angular element
            * @return {Bool} check if the node can be dragged.
            */
@@ -211,7 +212,7 @@
           /**
            * @ngdoc method
            * @name ui.tree#offset
-           * @methodOf ui.nestedSortable.service:UiTreeHelper
+           * @methodOf ui.tree.service:UiTreeHelper
            *
            * @description
            * Get the offset values of an element.

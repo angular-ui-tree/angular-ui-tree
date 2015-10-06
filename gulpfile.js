@@ -19,11 +19,11 @@ gulp.task('build', ['clean'], function () {
   return gulp.start('styles', 'jscs', 'jshint', 'uglify', 'styles', 'test');
 });
 
-gulp.task('deploy', ['clean:deploy'], function () {
+gulp.task('deploy', ['clean:deploy', 'docs:generate'], function () {
   return gulp.start('website');
 });
 
-gulp.task('serve', function () {
+gulp.task('serve', ['docs:generate'], function () {
   return gulp.start('connect', 'watch', 'open');
 });
 
