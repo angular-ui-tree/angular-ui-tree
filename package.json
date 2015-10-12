@@ -8,6 +8,7 @@
     "url": "https://github.com/angular-ui-tree/angular-ui-tree"
   },
   "license": "SEE LICENSE IN LICENSE",
+  "main": "index.js",
   "devDependencies": {
     "connect-livereload": "^0.5.2",
     "del": "^1.2.0",
