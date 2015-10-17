@@ -13,6 +13,7 @@
 }
 
 .angular-ui-tree-nodes {
+    display: block;
     position: relative;
     margin: 0;
     padding: 0;
@@ -24,6 +25,7 @@
 }
 
 .angular-ui-tree-node, .angular-ui-tree-placeholder {
+    display: block;
     position: relative;
     margin: 0;
     padding: 0;

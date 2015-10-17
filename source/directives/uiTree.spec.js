@@ -108,29 +108,6 @@
 
       expect(element.scope().dragDelay).toEqual(84);
     });
-
-    describe('$nodesScope', function () {
-      var controller;
-
-      beforeEach(function () {
-        $scope.items.push('item1');
-        createElement();
-        controller = element.controller('uiTree');
-        spyOn(controller, 'resetEmptyElement');
-      });
-
-      it('should reset empty elements', function () {
-        $scope.items.pop();
-        $scope.$digest();
-        expect(controller.resetEmptyElement).toHaveBeenCalled();
-      });
-
-      it('should not attempt to reset elements without a $nodesScope', function () {
-        element.scope().$nodesScope = null;
-        $scope.$digest();
-        expect(controller.resetEmptyElement).not.toHaveBeenCalled();
-      });
-    });
   });
 
 }());

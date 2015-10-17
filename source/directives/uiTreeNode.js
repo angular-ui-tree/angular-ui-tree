@@ -3,8 +3,8 @@
 
   angular.module('ui.tree')
 
-    .directive('uiTreeNode', ['treeConfig', 'UiTreeHelper', '$window', '$document', '$timeout', '$rootElement',
-      function (treeConfig, UiTreeHelper, $window, $document, $timeout, $rootElement) {
+    .directive('uiTreeNode', ['treeConfig', 'UiTreeHelper', '$window', '$document', '$timeout',
+      function (treeConfig, UiTreeHelper, $window, $document, $timeout) {
         return {
           require: ['^uiTreeNodes', '^uiTree'],
           restrict: 'A',
@@ -113,6 +113,11 @@
               firstMoving = true;
               dragInfo = UiTreeHelper.dragInfo(scope);
 
+              // Fire dragStart callback
+              scope.$apply(function () {
+                scope.$treeScope.$callbacks.dragStart(dragInfo.eventArgs(elements, pos));
+              });
+
               tagName = scope.$element.prop('tagName');
 
               if (tagName.toLowerCase() === 'tr') {
@@ -155,9 +160,7 @@
               } else {
                 dragElm.append(scope.$element);
               }
-
-              $rootElement.append(dragElm);
-
+              $document.find('body').append(dragElm);
               dragElm.css({
                 'left': eventObj.pageX - pos.offsetX + 'px',
                 'top': eventObj.pageY - pos.offsetY + 'px'
@@ -166,11 +169,6 @@
                 placeholder: placeElm,
                 dragging: dragElm
               };
-
-              // Fire dragStart callback
-              scope.$apply(function () {
-                scope.$treeScope.$callbacks.dragStart(dragInfo.eventArgs(elements, pos));
-              });
 
               angular.element($document).bind('touchend', dragEndEvent);
               angular.element($document).bind('touchcancel', dragEndEvent);
