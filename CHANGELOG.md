@@ -1,3 +1,13 @@
+# 2.10.0
+
+* Fix crashing $nodesScope.$modelValue.length watch [#574](https://github.com/angular-ui-tree/angular-ui-tree/issues/574)
+* Fix out of depth calculation [#582](https://github.com/angular-ui-tree/angular-ui-tree/issues/582)
+* Update default styling to work with tables [#572](https://github.com/angular-ui-tree/angular-ui-tree/issues/572)
+* Call the dragStart callback after setting up the variables [#587](https://github.com/angular-ui-tree/angular-ui-tree/issues/587)
+* Add Angular 1.4.x as dependency [#592](https://github.com/angular-ui-tree/angular-ui-tree/issues/592)
+* Put drag element to the $rootElement instead of the body [#612](https://github.com/angular-ui-tree/angular-ui-tree/issues/612)
+* Add support for Browserify/Webpack [#614](https://github.com/angular-ui-tree/angular-ui-tree/issues/614)
+
 # 2.9.0
 
 * Updated Bower package name to `angular-ui-tree` [#568](https://github.com/angular-ui-tree/angular-ui-tree/pull/568)
