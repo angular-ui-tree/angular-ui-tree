@@ -261,8 +261,8 @@
                 // check if add it as a child node first
                 // todo decrease is unused
                 decrease = (UiTreeHelper.offset(dragElm).left - UiTreeHelper.offset(placeElm).left) >= config.threshold;
-                targetX = eventObj.pageX - $window.document.body.scrollLeft;
-                targetY = eventObj.pageY - (window.pageYOffset || $window.document.documentElement.scrollTop);
+                targetX = eventObj.pageX - (window.pageXOffset || $window.document.body.scrollLeft || $window.document.documentElement.scrollLeft);
+                targetY = eventObj.pageY - (window.pageYOffset || $window.document.body.scrollTop || $window.document.documentElement.scrollTop);
 
                 // Select the drag target. Because IE does not support CSS 'pointer-events: none', it will always
                 // pick the drag element itself as the target. To prevent this, we hide the drag element while
