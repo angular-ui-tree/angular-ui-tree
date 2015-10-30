@@ -497,11 +497,11 @@
               }
             };
 
-            angular.element($window.document.body).bind('keydown', keydownHandler);
+            angular.element($window.document).bind('keydown', keydownHandler);
 
             //unbind handler that retains scope
             scope.$on('$destroy', function () {
-              angular.element($window.document.body).unbind('keydown', keydownHandler);
+              angular.element($window.document).unbind('keydown', keydownHandler);
             });
           }
         };
