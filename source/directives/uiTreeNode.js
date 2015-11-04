@@ -35,7 +35,8 @@
               dragDelay,
               bindDrag,
               keydownHandler,
-              outOfBounds;
+              outOfBounds,
+              i;
             angular.extend(config, treeConfig);
             if (config.nodeClass) {
               element.addClass(config.nodeClass);
@@ -116,10 +117,12 @@
               tagName = scope.$element.prop('tagName');
 
               if (tagName.toLowerCase() === 'tr') {
-                placeElm = angular.element($window.document.createElement(tagName));
-                tdElm = angular.element($window.document.createElement('td'))
+                placeElm = angular.element($window.document.createElement(tagName))
                   .addClass(config.placeholderClass);
-                placeElm.append(tdElm);
+                for (i = 0; i < scope.$element[0].children.length; i++) {
+                  tdElm = angular.element($window.document.createElement('td'));
+                  placeElm.append(tdElm);
+                }
               } else {
                 placeElm = angular.element($window.document.createElement(tagName))
                   .addClass(config.placeholderClass);
@@ -340,7 +343,8 @@
                   }
 
                   // Show the placeholder if it was hidden for nodrop-enabled and this is a new tree
-                  if (targetNode.$treeScope && !targetNode.$parent.nodropEnabled && !targetNode.$treeScope.nodropEnabled) {
+                  if (targetNode.$treeScope && !targetNode.$parent.nodropEnabled
+                    && !targetNode.$treeScope.nodropEnabled && placeElm.prop('tagName').toLowerCase() !== 'tr') {
                     placeElm.css('display', 'block');
                   }
 
