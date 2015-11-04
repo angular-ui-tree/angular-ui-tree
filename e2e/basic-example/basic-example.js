@@ -33,7 +33,24 @@ describe('the Basic example page', function () {
 
   describe('the dragging and dropping of nodes', function () {
     it('should allow moving a node below another node', function () {
-      // TODO
+      var handles = basicExamplePage
+        .rootNodes.get(1)
+        .all(by.repeater('node in node.nodes'))
+        .all(by.css('[ui-tree-handle]'));
+
+      handles.get(0).getText().then(function(nodeTextBeforeDrag) {
+
+        browser.actions().dragAndDrop(
+          handles.get(0),
+          { x: 0, y: 200 }
+        ).perform();
+
+        handles.get(0).getText().then(function(nodeTextAfterDrag) {
+          console.log(nodeTextBeforeDrag, nodeTextAfterDrag);
+          expect(nodeTextBeforeDrag).not.toBe(nodeTextAfterDrag);
+        });
+
+      });
     });
 
     it('should allow adding a node to another node to make it a child-node', function () {
