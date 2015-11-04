@@ -7,14 +7,14 @@ describe('the Basic example page', function () {
 
   describe('rendering of the tree data', function () {
     it('should render a tree with 3 root nodes', function () {
-      basicExamplePage.rootNodes.count().then(function (meetupCount) {
-        expect(meetupCount).toEqual(3);
+      basicExamplePage.rootNodes.count().then(function (rootNodeCount) {
+        expect(rootNodeCount).toEqual(3);
       });
     });
 
     it('should show 2 subnodes for the first root node', function () {
-      basicExamplePage.firstSubNodes.count().then(function (meetupCount) {
-        expect(meetupCount).toEqual(2);
+      basicExamplePage.firstSubNodes.count().then(function (rootNodeCount) {
+        expect(rootNodeCount).toEqual(2);
       });
     });
 
