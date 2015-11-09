@@ -42,7 +42,7 @@
             }
             scope.init(controllersArr);
 
-            scope.collapsed = !!UiTreeHelper.getNodeAttribute(scope, 'collapsed');
+            scope.collapsed = !!UiTreeHelper.getNodeAttribute(scope, 'collapsed') || treeConfig.defaultCollapsed;
             scope.sourceOnly = scope.nodropEnabled || scope.$treeScope.nodropEnabled;
 
             scope.$watch(attrs.collapsed, function (val) {
