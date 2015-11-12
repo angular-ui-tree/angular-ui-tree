@@ -200,7 +200,8 @@
                 targetElm,
                 isEmpty,
                 targetOffset,
-                targetBefore;
+                targetBefore,
+                targetTreeScope;
 
               if (dragElm) {
                 e.preventDefault();
@@ -339,8 +340,10 @@
                     return;
                   }
 
+                  //Get the $treeScope from the targetNode or itself if it's we are dropping in the uiTree
+                  targetTreeScope = targetNode.$treeScope || targetNode.$type && targetNode.$type === 'uiTree' ? targetNode : null;
                   // Show the placeholder if it was hidden for nodrop-enabled and this is a new tree
-                  if (targetNode.$treeScope && !targetNode.$parent.nodropEnabled && !targetNode.$treeScope.nodropEnabled) {
+                  if (targetTreeScope && !targetNode.$parent.nodropEnabled && !targetTreeScope.nodropEnabled) {
                     placeElm.css('display', '');
                   }
 
