@@ -286,7 +286,7 @@
                   dragElm[0].style.display = displayElm;
                 }
 
-                outOfBounds = !(targetElm.scope().$type);
+                outOfBounds = !targetElm.scope() || !(targetElm.scope().$type);
 
                 // Detect out of bounds condition, update drop target display, and prevent drop
                 if (outOfBounds) {
