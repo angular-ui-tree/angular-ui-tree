@@ -15,6 +15,9 @@
             if (config.handleClass) {
               element.addClass(config.handleClass);
             }
+
+            element.data('_scope', scope);
+
             // connect with the tree node.
             if (scope != treeNodeCtrl.scope) {
               scope.$nodeScope = treeNodeCtrl.scope;
