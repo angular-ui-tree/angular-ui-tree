@@ -178,13 +178,14 @@ If a tree is empty, there will be an empty placeholder which is used to drop nod
 </div>
 ```
 
-#### Methods of scope
-##### collapseAll()
+#### Events
+`angular-ui-tree:collapse-all`
 Collapse all it's child nodes.
 
-##### expandAll()
+`angular-ui-tree:expand-all`
 Expand all it's child nodes.
 
+#### Methods of scope
 ##### $callbacks (type: Object)
 `$callbacks` is a very important property for `angular-ui-tree`. 
 When some special events trigger, the functions in `$callbacks` are called. 
