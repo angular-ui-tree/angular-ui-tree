@@ -71,29 +71,29 @@
              * @param e
              */
             dragStart = function (e) {
-              if (!hasTouch && (e.button == 2 || e.which == 3)) {
-                // disable right click
+              // disable right click
+              if (!hasTouch && (e.button === 2 || e.which === 3)) {
                 return;
               }
-              if (e.uiTreeDragging || (e.originalEvent && e.originalEvent.uiTreeDragging)) { // event has already fired in other scope.
+
+              // event has already fired in other scope
+              if (e.uiTreeDragging || (e.originalEvent && e.originalEvent.uiTreeDragging)) {
                 return;
               }
 
               // the node being dragged
               var eventElm = angular.element(e.target),
-                eventScope = eventElm.scope(),
                 cloneElm = element.clone(),
                 eventElmTagName, tagName,
-                eventObj, tdElm, hStyle;
-              if (!eventScope || !eventScope.$type) {
+                eventObj, tdElm, hStyle,
+                isTreeNode = UiTreeHelper.elementIsTreeNode(eventElm),
+                isTreeNodeHandle = UiTreeHelper.elementIsTreeNodeHandle(eventElm);
+
+              if (!isTreeNode && !isTreeNodeHandle) {
                 return;
               }
-              if (eventScope.$type != 'uiTreeNode'
-                && eventScope.$type != 'uiTreeHandle') { // Check if it is a node or a handle
-                return;
-              }
-              if (eventScope.$type == 'uiTreeNode'
-                && eventScope.$handleScope) { // If the node has a handle, then it should be clicked by the handle
+
+              if (isTreeNode && UiTreeHelper.elementContainsTreeNodeHandler(eventElm)) {
                 return;
               }
 
