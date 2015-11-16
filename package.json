@@ -44,6 +44,6 @@
   "scripts": {
     "test": "gulp build && gulp test:e2e",
     "coveralls": "cat ./coverage/lcov/lcov.info | coveralls",
-    "codacy": "cat ./coverage/lcov/lcov.info | codacy-coverage"
+    "codacy": "cat ./coverage/lcov/lcov.info | ./node_modules/codacy-coverage/bin/codacy-coverage.js"
   }
 }
