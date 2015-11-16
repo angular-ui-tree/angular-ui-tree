@@ -16,6 +16,7 @@ script:
 
 after_success:
   - npm run coveralls
+  - npm run codacy
 
 notifications:
   - email: false
