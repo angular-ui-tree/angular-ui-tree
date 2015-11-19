@@ -23,9 +23,11 @@
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
-.angular-ui-tree-empty {
+
+tr.angular-ui-tree-empty {
     height:100px
 }
+
 .group-title {
     background-color: #687074 !important;
     color: #FFF !important;
