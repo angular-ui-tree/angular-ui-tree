@@ -118,7 +118,8 @@
               if (tagName.toLowerCase() === 'tr') {
                 placeElm = angular.element($window.document.createElement(tagName));
                 tdElm = angular.element($window.document.createElement('td'))
-                  .addClass(config.placeholderClass);
+                  .addClass(config.placeholderClass)
+                  .attr('colspan', scope.$element[0].children.length);
                 placeElm.append(tdElm);
               } else {
                 placeElm = angular.element($window.document.createElement(tagName))
