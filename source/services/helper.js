@@ -169,7 +169,7 @@
 
                 // cloneEnabled and cross-tree so copy and do not remove from source
                 if (this.isClone() && this.isForeign()) {
-                  this.parent.insertNode(this.index, angular.copy(nodeData));
+                  this.parent.insertNode(this.index, this.sourceInfo.cloneModel);
                 } else { // Any other case, remove and reinsert
                   this.source.remove();
                   this.parent.insertNode(this.index, nodeData);

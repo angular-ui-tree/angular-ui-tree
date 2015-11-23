@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.10.0
+ * @license Angular UI Tree v2.11.0
  * (c) 2010-2015. https://github.com/angular-ui-tree/angular-ui-tree
  * License: MIT
  */
@@ -375,14 +375,33 @@
               accept: null,
               beforeDrag: null
             },
-              config = {};
+              config = {},
+              tdElm,
+              $trElm,
+              emptyElmColspan;
 
             angular.extend(config, treeConfig);
             if (config.treeClass) {
               element.addClass(config.treeClass);
             }
 
-            scope.$emptyElm = angular.element($window.document.createElement('div'));
+            if (element.prop('tagName').toLowerCase() === 'table') {
+              scope.$emptyElm = angular.element($window.document.createElement('tr'));
+              $trElm = element.find('tr');
+              // If we can find a tr, then we can use its td children as the empty element colspan.
+              if ($trElm.length > 0) {
+                emptyElmColspan = angular.element($trElm).children().length;
+              } else {
+                // If not, by setting a huge colspan we make sure it takes full width.
+                emptyElmColspan = 1000000;
+              }
+              tdElm = angular.element($window.document.createElement('td'))
+                .attr('colspan', emptyElmColspan);
+              scope.$emptyElm.append(tdElm);
+            } else {
+              scope.$emptyElm = angular.element($window.document.createElement('div'));
+            }
+
             if (config.emptyTreeClass) {
               scope.$emptyElm.addClass(config.emptyTreeClass);
             }
@@ -630,12 +649,13 @@
               firstMoving = true;
               dragInfo = UiTreeHelper.dragInfo(scope);
 
-              tagName = scope.$element.prop('tagName');
+              tagName = element.prop('tagName');
 
               if (tagName.toLowerCase() === 'tr') {
                 placeElm = angular.element($window.document.createElement(tagName));
                 tdElm = angular.element($window.document.createElement('td'))
-                  .addClass(config.placeholderClass);
+                  .addClass(config.placeholderClass)
+                  .attr('colspan', element[0].children.length);
                 placeElm.append(tdElm);
               } else {
                 placeElm = angular.element($window.document.createElement(tagName))
@@ -646,17 +666,16 @@
                 hiddenPlaceElm.addClass(config.hiddenClass);
               }
 
-              pos = UiTreeHelper.positionStarted(eventObj, scope.$element);
-              placeElm.css('height', UiTreeHelper.height(scope.$element) + 'px');
-              placeElm.css('width', UiTreeHelper.width(scope.$element) + 'px');
+              pos = UiTreeHelper.positionStarted(eventObj, element);
+              placeElm.css('height', UiTreeHelper.height(element) + 'px');
 
               dragElm = angular.element($window.document.createElement(scope.$parentNodesScope.$element.prop('tagName')))
                 .addClass(scope.$parentNodesScope.$element.attr('class')).addClass(config.dragClass);
-              dragElm.css('width', UiTreeHelper.width(scope.$element) + 'px');
+              dragElm.css('width', UiTreeHelper.width(element) + 'px');
               dragElm.css('z-index', 9999);
 
               // Prevents cursor to change rapidly in Opera 12.16 and IE when dragging an element
-              hStyle = (scope.$element[0].querySelector('.angular-ui-tree-handle') || scope.$element[0]).currentStyle;
+              hStyle = (element[0].querySelector('.angular-ui-tree-handle') || element[0]).currentStyle;
               if (hStyle) {
                 document.body.setAttribute('ui-tree-cursor', $document.find('body').css('cursor') || '');
                 $document.find('body').css({'cursor': hStyle.cursor + '!important'});
@@ -665,12 +684,12 @@
               if (scope.sourceOnly) {
                 placeElm.css('display', 'none');
               }
-              scope.$element.after(placeElm);
-              scope.$element.after(hiddenPlaceElm);
+              element.after(placeElm);
+              element.after(hiddenPlaceElm);
               if (dragInfo.isClone() && scope.sourceOnly) {
                 dragElm.append(cloneElm);
               } else {
-                dragElm.append(scope.$element);
+                dragElm.append(element);
               }
 
               $rootElement.append(dragElm);
@@ -778,8 +797,16 @@
                 // check if add it as a child node first
                 // todo decrease is unused
                 decrease = (UiTreeHelper.offset(dragElm).left - UiTreeHelper.offset(placeElm).left) >= config.threshold;
-                targetX = eventObj.pageX - $window.document.body.scrollLeft;
-                targetY = eventObj.pageY - (window.pageYOffset || $window.document.documentElement.scrollTop);
+
+                targetX = eventObj.pageX - ($window.pageXOffset ||
+                  $window.document.body.scrollLeft ||
+                  $window.document.documentElement.scrollLeft) -
+                  ($window.document.documentElement.clientLeft || 0);
+
+                targetY = eventObj.pageY - ($window.pageYOffset ||
+                  $window.document.body.scrollTop ||
+                  $window.document.documentElement.scrollTop) -
+                  ($window.document.documentElement.clientTop || 0);
 
                 // Select the drag target. Because IE does not support CSS 'pointer-events: none', it will always
                 // pick the drag element itself as the target. To prevent this, we hide the drag element while
@@ -803,7 +830,7 @@
                   dragElm[0].style.display = displayElm;
                 }
 
-                outOfBounds = !(targetElm.scope().$type);
+                outOfBounds = !targetElm.scope() || !(targetElm.scope().$type);
 
                 // Detect out of bounds condition, update drop target display, and prevent drop
                 if (outOfBounds) {
@@ -858,7 +885,7 @@
 
                   // Show the placeholder if it was hidden for nodrop-enabled and this is a new tree
                   if (targetNode.$treeScope && !targetNode.$parent.nodropEnabled && !targetNode.$treeScope.nodropEnabled) {
-                    placeElm.css('display', 'block');
+                    placeElm.css('display', '');
                   }
 
                   if (targetNode.$type == 'uiTree' && targetNode.dragEnabled) {
@@ -924,7 +951,7 @@
                   scope.$treeScope.$callbacks.beforeDrop(dragInfo.eventArgs(elements, pos));
                 });
                 // roll back elements changed
-                hiddenPlaceElm.replaceWith(scope.$element);
+                hiddenPlaceElm.replaceWith(element);
                 placeElm.remove();
 
                 dragElm.remove();
