@@ -13,14 +13,33 @@
               accept: null,
               beforeDrag: null
             },
-              config = {};
+              config = {},
+              tdElm,
+              $trElm,
+              emptyElmColspan;
 
             angular.extend(config, treeConfig);
             if (config.treeClass) {
               element.addClass(config.treeClass);
             }
 
-            scope.$emptyElm = angular.element($window.document.createElement('div'));
+            if (element.prop('tagName').toLowerCase() === 'table') {
+              scope.$emptyElm = angular.element($window.document.createElement('tr'));
+              $trElm = element.find('tr');
+              // If we can find a tr, then we can use its td children as the empty element colspan.
+              if ($trElm.length > 0) {
+                emptyElmColspan = angular.element($trElm).children().length;
+              } else {
+                // If not, by setting a huge colspan we make sure it takes full width.
+                emptyElmColspan = 1000000;
+              }
+              tdElm = angular.element($window.document.createElement('td'))
+                .attr('colspan', emptyElmColspan);
+              scope.$emptyElm.append(tdElm);
+            } else {
+              scope.$emptyElm = angular.element($window.document.createElement('div'));
+            }
+
             if (config.emptyTreeClass) {
               scope.$emptyElm.addClass(config.emptyTreeClass);
             }
