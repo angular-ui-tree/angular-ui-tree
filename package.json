@@ -7,7 +7,6 @@
     "type": "git",
     "url": "https://github.com/angular-ui-tree/angular-ui-tree"
   },
-  "license": "SEE LICENSE IN LICENSE",
   "main": "index.js",
   "devDependencies": {
     "codacy-coverage": "^1.1.3",
