@@ -113,13 +113,13 @@
               firstMoving = true;
               dragInfo = UiTreeHelper.dragInfo(scope);
 
-              tagName = scope.$element.prop('tagName');
+              tagName = element.prop('tagName');
 
               if (tagName.toLowerCase() === 'tr') {
                 placeElm = angular.element($window.document.createElement(tagName));
                 tdElm = angular.element($window.document.createElement('td'))
                   .addClass(config.placeholderClass)
-                  .attr('colspan', scope.$element[0].children.length);
+                  .attr('colspan', element[0].children.length);
                 placeElm.append(tdElm);
               } else {
                 placeElm = angular.element($window.document.createElement(tagName))
@@ -130,16 +130,16 @@
                 hiddenPlaceElm.addClass(config.hiddenClass);
               }
 
-              pos = UiTreeHelper.positionStarted(eventObj, scope.$element);
-              placeElm.css('height', UiTreeHelper.height(scope.$element) + 'px');
+              pos = UiTreeHelper.positionStarted(eventObj, element);
+              placeElm.css('height', UiTreeHelper.height(element) + 'px');
 
               dragElm = angular.element($window.document.createElement(scope.$parentNodesScope.$element.prop('tagName')))
                 .addClass(scope.$parentNodesScope.$element.attr('class')).addClass(config.dragClass);
-              dragElm.css('width', UiTreeHelper.width(scope.$element) + 'px');
+              dragElm.css('width', UiTreeHelper.width(element) + 'px');
               dragElm.css('z-index', 9999);
 
               // Prevents cursor to change rapidly in Opera 12.16 and IE when dragging an element
-              hStyle = (scope.$element[0].querySelector('.angular-ui-tree-handle') || scope.$element[0]).currentStyle;
+              hStyle = (element[0].querySelector('.angular-ui-tree-handle') || element[0]).currentStyle;
               if (hStyle) {
                 document.body.setAttribute('ui-tree-cursor', $document.find('body').css('cursor') || '');
                 $document.find('body').css({'cursor': hStyle.cursor + '!important'});
@@ -148,12 +148,12 @@
               if (scope.sourceOnly) {
                 placeElm.css('display', 'none');
               }
-              scope.$element.after(placeElm);
-              scope.$element.after(hiddenPlaceElm);
+              element.after(placeElm);
+              element.after(hiddenPlaceElm);
               if (dragInfo.isClone() && scope.sourceOnly) {
                 dragElm.append(cloneElm);
               } else {
-                dragElm.append(scope.$element);
+                dragElm.append(element);
               }
 
               $rootElement.append(dragElm);
@@ -415,7 +415,7 @@
                   scope.$treeScope.$callbacks.beforeDrop(dragInfo.eventArgs(elements, pos));
                 });
                 // roll back elements changed
-                hiddenPlaceElm.replaceWith(scope.$element);
+                hiddenPlaceElm.replaceWith(element);
                 placeElm.remove();
 
                 dragElm.remove();
