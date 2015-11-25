@@ -1,18 +1,45 @@
-// page object
+var BASIC_EXAMPLE_URL = 'http://localhost:9000/#/basic-example';
+
+var LOCATORS = {
+  firstSubNodes: by.css([
+          '#tree-root',
+          '.angular-ui-tree-nodes',
+          '.angular-ui-tree-node:first-child',
+          '.angular-ui-tree-nodes',
+          '.angular-ui-tree-node'
+      ].join(' > ')
+    ),
+  topLevelNodeRepeaters: by.repeater('node in data'),
+  childNodeRepeaters: by.repeater('node in node.nodes'),
+  nodeHandles: by.css('[ui-tree-handle]')
+}
+
+var BasicExamplePageNode = function (nodeLocation) {
+  this._node = element(by.xpath(xpathStringForNodeAtPosition(nodeLocation)));
+  this._handles = this._node.all(LOCATORS.nodeHandles);
+  this.getHandle = function() { return this._handles.first(); };
+  this.getText = this._handles.first().getText;
+
+  function xpathStringForNodeAtPosition(nodeLocation) {
+    var xpathChunks = ['//*[@id="tree-root"]'];
+    nodeLocation.forEach(function(index) {
+      xpathChunks.push('ol/li[contains(@class,"angular-ui-tree-node")][' + index + ']')
+    });
+    return xpathChunks.join('/');
+  }
+}
+
 var BasicExamplePage = function () {
-  var that = this;
-
-  // elements
   this.tree = element(by.css('#tree-root'));
-  this.firstSubNodes = element.all(by.css('#tree-root > .angular-ui-tree-nodes > .angular-ui-tree-node:first-child > .angular-ui-tree-nodes > .angular-ui-tree-node'));
-  this.secondNode = that.tree.all(by.css('.angular-ui-tree-node')).get(1);
-  this.thirdNode = that.tree.all(by.css('.angular-ui-tree-node')).get(2);
+  this.firstSubNodes = element.all(LOCATORS.firstSubNodes);
+  this.rootNodes = element.all(LOCATORS.topLevelNodeRepeaters);
 
-  // repeaters
-  this.rootNodes = element.all(by.repeater('node in data'));
+  this.getNodeAtPosition = function () {
+    return new BasicExamplePageNode([].slice.call(arguments));
+  }
 
   this.get = function () {
-    browser.get('http://localhost:9000/#/basic-example');
+    browser.get(BASIC_EXAMPLE_URL);
   };
 };
 
