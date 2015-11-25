@@ -7,49 +7,59 @@ describe('the Basic example page', function () {
 
   describe('rendering of the tree data', function () {
     it('should render a tree with 3 root nodes', function () {
-      basicExamplePage.rootNodes.count().then(function (meetupCount) {
-        expect(meetupCount).toEqual(3);
-      });
+      basicExamplePage.rootNodes.count()
+        .then(function (meetupCount) {
+          expect(meetupCount).toEqual(3);
+        });
     });
 
     it('should show 2 subnodes for the first root node', function () {
-      basicExamplePage.firstSubNodes.count().then(function (meetupCount) {
-        expect(meetupCount).toEqual(2);
-      });
+      basicExamplePage.firstSubNodes.count()
+        .then(function (meetupCount) {
+          expect(meetupCount).toEqual(2);
+        });
     });
 
     it('should show the correct text for the subnodes', function () {
-      var subnodes = basicExamplePage.firstSubNodes;
+      basicExamplePage
+        .getNodeAtPosition(1, 1)
+        .getText()
+        .then(function (text) {
+          expect(text).toEqual('node1.1');
+        });
 
-      subnodes.get(0).all(by.css('.tree-node-content')).first().getText().then(function (text) {
-        expect(text).toEqual('node1.1');
-      });
-
-      subnodes.get(1).all(by.css('.tree-node-content')).first().getText().then(function (text) {
-        expect(text).toEqual('node1.2');
-      });
+      basicExamplePage
+        .getNodeAtPosition(1, 2)
+        .getText()
+        .then(function (text) {
+          expect(text).toEqual('node1.2');
+        });
     });
   });
 
   describe('the dragging and dropping of nodes', function () {
     it('should allow moving a node below another node', function () {
-      var handles = basicExamplePage
-        .rootNodes.get(1)
-        .all(by.repeater('node in node.nodes'))
-        .all(by.css('[ui-tree-handle]'));
 
-      handles.get(0).getText().then(function(nodeTextBeforeDrag) {
+      basicExamplePage
+        .getNodeAtPosition(2, 1)
+        .getText()
+        .then(function (nodeTextBeforeDrag) {
 
-        browser.actions().dragAndDrop(
-          handles.get(0),
-          { x: 0, y: 200 }
-        ).perform();
+          browser.actions()
+            .dragAndDrop(
+              basicExamplePage
+                .getNodeAtPosition(2, 1)
+                .getHandle(),
+              { x: 0, y: 200 })
+            .perform();
 
-        handles.get(0).getText().then(function(nodeTextAfterDrag) {
-          console.log(nodeTextBeforeDrag, nodeTextAfterDrag);
-          expect(nodeTextBeforeDrag).not.toBe(nodeTextAfterDrag);
-        });
-
+          basicExamplePage
+            .getNodeAtPosition(2, 1)
+            .getText()
+            .then(function (nodeTextAfterDrag) {
+              expect(nodeTextBeforeDrag).toBe('node2.1');
+              expect(nodeTextAfterDrag).toBe('node2.2');
+            });
       });
     });
 
