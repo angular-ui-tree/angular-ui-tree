@@ -6,18 +6,26 @@ describe('the Basic example page', function () {
   });
 
   describe('rendering of the tree data', function () {
+
     it('should render a tree with 3 root nodes', function () {
-      basicExamplePage.rootNodes.count()
-        .then(function (meetupCount) {
-          expect(meetupCount).toEqual(3);
+      basicExamplePage
+        .getRootNodes()
+        .count()
+        .then(function (count) {
+          expect(count).toEqual(3);
         });
     });
 
     it('should show 2 subnodes for the first root node', function () {
-      basicExamplePage.firstSubNodes.count()
-        .then(function (meetupCount) {
-          expect(meetupCount).toEqual(2);
+
+      basicExamplePage
+        .getNodeAtPosition(1)
+        .getSubnodes()
+        .count()
+        .then(function (count) {
+          expect(count).toEqual(2);
         });
+
     });
 
     it('should show the correct text for the subnodes', function () {
@@ -63,12 +71,12 @@ describe('the Basic example page', function () {
       });
     });
 
-    it('should allow adding a node to another node to make it a child-node', function () {
-      // TODO
-    });
+    // it('should allow adding a node to another node to make it a child-node', function () {
+    //   // TODO
+    // });
 
-    it('should allow removing a child-node from a node to put it on the same tree level', function () {
-      // TODO
-    });
+    // it('should allow removing a child-node from a node to put it on the same tree level', function () {
+    //   // TODO
+    // });
   });
 });
