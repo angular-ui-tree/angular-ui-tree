@@ -47,11 +47,11 @@
             if (!e.source.nodeScope.$treeScope.usePromise) {
               return modalInstance.result;
             } else { // return a promise
-              modalInstance.result.then(function (cancel) {
-                if (cancel) {
+              return modalInstance.result.then(function (allowDrop) {
+                if (!allowDrop) {
                   return $q.reject();
                 }
-                return cancel;
+                return allowDrop;
               });
             }
           }

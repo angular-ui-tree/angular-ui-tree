@@ -3,7 +3,7 @@
 
   angular.module('ui.tree')
 
-    .directive('uiTreeNode', ['treeConfig', 'UiTreeHelper', '$window', '$document', '$timeout', '$rootElement',
+    .directive('uiTreeNode', ['treeConfig', 'UiTreeHelper', '$window', '$document', '$timeout', '$q', '$rootElement',
       function (treeConfig, UiTreeHelper, $window, $document, $timeout, $q, $rootElement) {
         return {
           require: ['^uiTreeNodes', '^uiTree'],
@@ -413,9 +413,9 @@
 
               scope.$treeScope.$apply(function () {
                 $q.when(scope.$treeScope.$callbacks.beforeDrop(dragEventArgs))
-                    // promise resolved (or callback didn't return a promise)
-                    .then(function (cancel) {
-                      if (!cancel && scope.$$allowNodeDrop && !outOfBounds) { // node drop accepted)
+                    // promise resolved (or callback returned truthy)
+                    .then(function (allowDrop) {
+                      if (allowDrop && scope.$$allowNodeDrop && !outOfBounds) { // node drop accepted)
                         dragInfo.apply();
                         // fire the dropped callback only if the move was successful
                         scope.$treeScope.$callbacks.dropped(dragEventArgs);
