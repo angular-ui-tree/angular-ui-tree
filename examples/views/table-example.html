@@ -1,0 +1,44 @@
+<div class="row">
+  <div class="col-sm-12">
+    <h3>Table Example</h3>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-6">
+    <table ui-tree id="tree-root" class="table table-responsive">
+      <thead>
+        <tr>
+          <th>Sort</th>
+          <th width="80%">Name</th>
+          <th>
+		    <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newItem()" style="margin-right: 8px;"><span
+            class="glyphicon glyphicon-plus"></span></a>
+          </th>		   
+		</tr>
+      </thead>
+      <tbody ui-tree-nodes ng-model="data">
+        <tr ng-repeat="node in data" ui-tree-node>
+          <td>
+            <i class="glyphicon glyphicon-resize-vertical" ui-tree-handle></i> 
+          </td>
+          <td>
+            <strong>{{node.title}}</strong> 
+          </td>
+          <td>
+            <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)">
+              <span class="glyphicon glyphicon-remove"></span>
+            </a>
+          </td>
+		</tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col-sm-6">
+    <div class="info">
+      {{info}}
+    </div>
+    <pre class="code">{{ data | json }}</pre>
+  </div>
+</div>

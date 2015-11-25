@@ -25,6 +25,10 @@
           controller: 'BasicExampleCtrl',
           templateUrl: 'views/nodrop.html'
         })
+        .when('/table-example', {
+          controller: 'TableExampleCtrl',
+          templateUrl: 'views/table-example.html'
+        })
         .when('/drop-confirmation', {
           controller: 'DropConfirmationCtrl',
           templateUrl: 'views/drop-confirmation.html'

@@ -26,12 +26,14 @@ module.exports = function(config) {
 
     plugins: [
       'karma-phantomjs-launcher',
-      'karma-jasmine'
+      'karma-jasmine',
+      'karma-coverage'
     ],
 
     // generate js files from html templates to expose them during testing
     preprocessors: {
-      '**/*.html': 'ng-html2js'
+      '**/*.html': 'ng-html2js',
+      'source/**/!(*spec).js': ['coverage']
     },
 
     // https://github.com/karma-runner/karma-ng-html2js-preprocessor#configuration
@@ -48,7 +50,15 @@ module.exports = function(config) {
     logLevel: config.LOG_INFO,
 
     port: 9876,
-    reporters: 'dots',
-    singleRun: true
+    reporters: ['dots', 'coverage'],
+    singleRun: true,
+
+    coverageReporter: {
+      dir: 'coverage',
+      reporters: [{
+        type: 'lcov',
+        subdir: 'lcov'
+      }]
+    }
   });
 };

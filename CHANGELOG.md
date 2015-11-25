@@ -1,3 +1,25 @@
+# 2.11.0
+
+* Reset placeholder display attribute instead of changing it to block [#631](https://github.com/angular-ui-tree/angular-ui-tree/issues/631)
+* Firefox issue where tree offset is wrong if scrolled horizontally [#626](https://github.com/angular-ui-tree/angular-ui-tree/issues/626)
+* Fix `Cannot read property '$type' of undefined"` error / issue  [#674](https://github.com/angular-ui-tree/angular-ui-tree/issues/674)
+* Remove line which sets the placeholder width explicitly  [#642](https://github.com/angular-ui-tree/angular-ui-tree/issues/642)
+* Added a demo using a table [#656](https://github.com/angular-ui-tree/angular-ui-tree/issues/656)
+* Fix drop placeholder for tables [#654](https://github.com/angular-ui-tree/angular-ui-tree/issues/654)
+* Fix empty tree element for tables [#655](https://github.com/angular-ui-tree/angular-ui-tree/issues/655)
+* Fix `Cannot read property 'childNodes' of undefined` [#650](https://github.com/angular-ui-tree/angular-ui-tree/issues/650)
+* Remove duplicate license entry in package.json [#658](https://github.com/angular-ui-tree/angular-ui-tree/issues/658)
+
+# 2.10.0
+
+* Fix crashing $nodesScope.$modelValue.length watch [#574](https://github.com/angular-ui-tree/angular-ui-tree/issues/574)
+* Fix out of depth calculation [#582](https://github.com/angular-ui-tree/angular-ui-tree/issues/582)
+* Update default styling to work with tables [#572](https://github.com/angular-ui-tree/angular-ui-tree/issues/572)
+* Call the dragStart callback after setting up the variables [#587](https://github.com/angular-ui-tree/angular-ui-tree/issues/587)
+* Add Angular 1.4.x as dependency [#592](https://github.com/angular-ui-tree/angular-ui-tree/issues/592)
+* Put drag element to the $rootElement instead of the body [#612](https://github.com/angular-ui-tree/angular-ui-tree/issues/612)
+* Add support for Browserify/Webpack [#614](https://github.com/angular-ui-tree/angular-ui-tree/issues/614)
+
 # 2.9.0
 
 * Updated Bower package name to `angular-ui-tree` [#568](https://github.com/angular-ui-tree/angular-ui-tree/pull/568)
