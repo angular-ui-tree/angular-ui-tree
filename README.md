@@ -242,6 +242,7 @@ If a node moves it's position after dropped, the `nodeDropped` callback will be 
     + `nodeScope`: The scope of source node which was dragged.
     + `nodesScope`: The scope of the parent nodes of source node  when it began to drag.
     + `index`: The position when it began to drag.
+    + `cloneModel`: Given data-clone-enabled is true, holds the model of the cloned node that is to be inserted, this can be edited before drop without affecting the source node.   
   * `dest`: Destination object
     + `nodesScope`: The scope of `ui-tree-nodes` which you just dropped in.
     + `index`: The position you dropped in.
@@ -250,6 +251,7 @@ If a node moves it's position after dropped, the `nodeDropped` callback will be 
     + `dragging`: The dragging element.
   * `pos`: Position object.
 
+To change the node being dropped before 
 ##### <a name="dragStart"></a>dragStart(event)
 The `dragStart` function is called when the user starts to drag the node.
 **Parameters:**
