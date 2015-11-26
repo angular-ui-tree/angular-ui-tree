@@ -268,10 +268,16 @@ The `dragStop` function is called when the user stop dragging the node.
 Same as [Parameters](#eventParam) of dropped.
 
 ##### beforeDrop(event)
-The `beforeDrop` function is called before the dragging node is dropped.
+The `beforeDrop` function is called before the dragging node is dropped. If you implement this callback, the return value determines whether the drop event is allowed to proceed.
 
 **Parameters:**
 Same as [Parameters](#eventParam) of dropped.
+
+**Callback Return Values**
+
+- **Resolved Promise** or **truthy**: Allow the node to be dropped
+
+- **Rejected Promise** or **falsy**: Disallow the node drop and return the dragged node to its original position
 
 ### ui-tree-nodes
 `ui-tree-nodes` is the container of nodes. 
