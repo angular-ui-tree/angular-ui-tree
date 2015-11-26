@@ -45,11 +45,13 @@
             scope.collapsed = !!UiTreeHelper.getNodeAttribute(scope, 'collapsed');
             scope.sourceOnly = scope.nodropEnabled || scope.$treeScope.nodropEnabled;
 
-            scope.$watch(attrs.collapsed, function (val) {
-              if ((typeof val) == 'boolean') {
-                scope.collapsed = val;
-              }
-            });
+            if(attrs && attrs.collapsed) {
+              scope.$watch(attrs.collapsed, function (val) {
+                if ((typeof val) == 'boolean') {
+                  scope.collapsed = val;
+                }
+              });
+            }
 
             scope.$watch('collapsed', function (val) {
               UiTreeHelper.setNodeAttribute(scope, 'collapsed', val);
