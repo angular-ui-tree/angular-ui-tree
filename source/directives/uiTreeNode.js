@@ -302,7 +302,10 @@
                   dragElm[0].style.display = displayElm;
                 }
 
-                outOfBounds = !targetElm.scope() || !(targetElm.scope().$type);
+                outOfBounds = !UiTreeHelper.elementIsTreeNodeHandle(targetElm) &&
+                              !UiTreeHelper.elementIsTreeNode(targetElm) &&
+                              !UiTreeHelper.elementIsTreeNodes(targetElm) &&
+                              !UiTreeHelper.elementIsTree(targetElm);
 
                 // Detect out of bounds condition, update drop target display, and prevent drop
                 if (outOfBounds) {

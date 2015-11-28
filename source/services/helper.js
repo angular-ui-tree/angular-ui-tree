@@ -324,7 +324,12 @@
           elementIsTreeNodeHandle: function (element) {
             return typeof element.attr('ui-tree-handle') !== 'undefined';
           },
-
+          elementIsTree: function (element) {
+            return typeof element.attr('ui-tree') !== 'undefined';
+          },
+          elementIsTreeNodes: function (element) {
+            return typeof element.attr('ui-tree-nodes') !== 'undefined';
+          },
           elementContainsTreeNodeHandler: function (element) {
             return element[0].querySelectorAll('[ui-tree-handle]').length >= 1;
           }
