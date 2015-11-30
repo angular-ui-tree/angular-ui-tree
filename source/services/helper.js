@@ -12,8 +12,8 @@
    * @description
    * angular-ui-tree.
    */
-    .factory('UiTreeHelper', ['$document', '$window',
-      function ($document, $window) {
+    .factory('UiTreeHelper', ['$document', '$window', 'treeConfig',
+      function ($document, $window, treeConfig) {
         return {
 
           /**
@@ -329,6 +329,9 @@
           },
           elementIsTreeNodes: function (element) {
             return typeof element.attr('ui-tree-nodes') !== 'undefined';
+          },
+          elementIsPlaceholder: function (element) {
+            return element.hasClass(treeConfig.placeholderClass);
           },
           elementContainsTreeNodeHandler: function (element) {
             return element[0].querySelectorAll('[ui-tree-handle]').length >= 1;

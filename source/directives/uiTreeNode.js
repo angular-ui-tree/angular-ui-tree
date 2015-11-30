@@ -305,7 +305,8 @@
                 outOfBounds = !UiTreeHelper.elementIsTreeNodeHandle(targetElm) &&
                               !UiTreeHelper.elementIsTreeNode(targetElm) &&
                               !UiTreeHelper.elementIsTreeNodes(targetElm) &&
-                              !UiTreeHelper.elementIsTree(targetElm);
+                              !UiTreeHelper.elementIsTree(targetElm) &&
+                              !UiTreeHelper.elementIsPlaceholder(targetElm);
 
                 // Detect out of bounds condition, update drop target display, and prevent drop
                 if (outOfBounds) {
