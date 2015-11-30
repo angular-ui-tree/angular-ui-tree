@@ -10,16 +10,12 @@
           restrict: 'A',
           controller: 'TreeNodeController',
           link: function (scope, element, attrs, controllersArr) {
-            // todo startPos is unused
             var config = {},
               hasTouch = 'ontouchstart' in window,
-              startPos, firstMoving, dragInfo, pos,
+              firstMoving, dragInfo, pos,
               placeElm, hiddenPlaceElm, dragElm,
               treeScope = null,
               elements, // As a parameter for callbacks
-              dragDelaying = true,
-              dragStarted = false,
-              dragTimer = null,
               body = document.body,
               html = document.documentElement,
               document_height,
@@ -36,25 +32,32 @@
               bindDrag,
               keydownHandler,
               outOfBounds;
+
             angular.extend(config, treeConfig);
+
             if (config.nodeClass) {
               element.addClass(config.nodeClass);
             }
             scope.init(controllersArr);
 
-            scope.collapsed = !!UiTreeHelper.getNodeAttribute(scope, 'collapsed');
             scope.sourceOnly = scope.nodropEnabled || scope.$treeScope.nodropEnabled;
 
-            scope.$watch(attrs.collapsed, function (val) {
-              if ((typeof val) == 'boolean') {
-                scope.collapsed = val;
+            function setScopeCollapsedValue(value) {
+              if ((typeof collapsed) != 'boolean') {
+                return;
               }
-            });
 
-            scope.$watch('collapsed', function (val) {
-              UiTreeHelper.setNodeAttribute(scope, 'collapsed', val);
-              attrs.$set('collapsed', val);
-            });
+              scope.collapsed = value;
+            }
+
+            function setAttributeCollapsedValue(value) {
+              UiTreeHelper.setNodeAttribute(scope, 'collapsed', value);
+              attrs.$set('collapsed', value);
+            }
+
+            setScopeCollapsedValue(attrs.collapsed);
+            scope.$watch(attrs.collapsed, setScopeCollapsedValue);
+            scope.$watch('collapsed', setAttributeCollapsedValue);
 
             dragStart = function (e) {
               if (!hasTouch && (e.button == 2 || e.which == 3)) {
