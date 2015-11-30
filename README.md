@@ -89,6 +89,12 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
 - All `ui-tree`, `ui-tree-nodes`, `ng-model`, `ui-tree-node` are necessary. And they can be nested.
 - If you don't add a `ui-tree-handle` for a node, the entire node can be dragged.
 
+**Styling Notes:**
+- While an element is being dragged, it is temporarily removed from the DOM and injected just before closing `</body>` tag. When dropped, it returns to it's original place in the DOM's hierarchy.
+- The dragged element `ui-tree-node`, together with its parent `ui-tree-nodes`, are the only ones being injected. hence any styling that relies on a 'higher' parent, will not apply.
+- To target the dragged element use the class `angular-ui-tree-drag`, which is added to the `ui-tree-nodes` element.
+- While a node is being dragged, a new empty node is added into the tree to act as a placeholder. this node will have the class 'angular-ui-tree-placeholder'.
+
 #### Unlimited nesting HTML View or Templates Example
 
 ```html
