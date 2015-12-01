@@ -51,52 +51,66 @@
 
               ctrl.resetEmptyElement();
             }, true);
-            
-            if(attrs) {            
-              if(attrs.dragEnabled) {
-                scope.$watch(attrs.dragEnabled, function (val) {
-                  if ((typeof val) == 'boolean') {
-                    scope.dragEnabled = val;
-                  }
-                });
-              }
-              if(attrs.emptyPlaceholderEnabled) {
-                scope.$watch(attrs.emptyPlaceholderEnabled, function (val) {
-                  if ((typeof val) == 'boolean') {
-                    scope.emptyPlaceholderEnabled = val;
-                    ctrl.resetEmptyElement();
-                  }
-                });
-              }
-              if(attrs.nodropEnabled) {  
-                scope.$watch(attrs.nodropEnabled, function (val) {
-                  if ((typeof val) == 'boolean') {
-                    scope.nodropEnabled = val;
-                  }
-                });
-              }
-              if(attrs.cloneEnabled) {
-                scope.$watch(attrs.cloneEnabled, function (val) {
-                  if ((typeof val) == 'boolean') {
-                    scope.cloneEnabled = val;
-                  }
-                });
-              }
-              if(attrs.maxDepth) {
-                scope.$watch(attrs.maxDepth, function (val) {
-                  if ((typeof val) == 'number') {
-                    scope.maxDepth = val;
-                  }
-                });
-              }
-              if(attrs.dragDelay) {
-                scope.$watch(attrs.dragDelay, function (val) {
-                  if ((typeof val) == 'number') {
-                    scope.dragDelay = val;
-                  }
-                });
-              }
+
+            // PR #664: Define any undefined attributes to fix incompability with older versions of Angular batarang
+            if (typeof attrs.dragEnabled === 'undefined') {
+              attrs.dragEnabled = '';
             }
+            if (typeof attrs.emptyPlaceHolderEnabled === 'undefined') {
+              attrs.emptyPlaceHolderEnabled = '';
+            }
+            if (typeof attrs.nodropEnabled === 'undefined') {
+              attrs.nodropEnabled = '';
+            }
+            if (typeof attrs.cloneEnabled === 'undefined') {
+              attrs.cloneEnabled = '';
+            }
+            if (typeof attrs.maxDepth === 'undefined') {
+              attrs.maxDepth = '';
+            }
+            if (typeof attrs.dragDelay === 'undefined') {
+              attrs.dragDelay = '';
+            }
+            if (typeof attrs.uiTree === 'undefined') {
+              attrs.uiTree = '';
+            }
+
+            scope.$watch(attrs.dragEnabled, function (val) {
+              if ((typeof val) == 'boolean') {
+                scope.dragEnabled = val;
+              }
+            });
+
+            scope.$watch(attrs.emptyPlaceholderEnabled, function (val) {
+              if ((typeof val) == 'boolean') {
+                scope.emptyPlaceholderEnabled = val;
+                ctrl.resetEmptyElement();
+              }
+            });
+
+            scope.$watch(attrs.nodropEnabled, function (val) {
+              if ((typeof val) == 'boolean') {
+                scope.nodropEnabled = val;
+              }
+            });
+
+            scope.$watch(attrs.cloneEnabled, function (val) {
+              if ((typeof val) == 'boolean') {
+                scope.cloneEnabled = val;
+              }
+            });
+
+            scope.$watch(attrs.maxDepth, function (val) {
+              if ((typeof val) == 'number') {
+                scope.maxDepth = val;
+              }
+            });
+
+            scope.$watch(attrs.dragDelay, function (val) {
+              if ((typeof val) == 'number') {
+                scope.dragDelay = val;
+              }
+            });
 
             // check if the dest node can accept the dragging node
             // by default, we check the 'data-nodrop-enabled' attribute in `ui-tree-nodes`
