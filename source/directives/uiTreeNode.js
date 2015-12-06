@@ -314,10 +314,9 @@
                   pos.distAxX = 0;
                   
                   // check if document is rtl or ltr and determine level direction
-                  var isRTL = angular.element('html[dir="rtl"]').length > 0;
-
-                  var increaseLevel = (isRTL) ? pos.distX < 0 : pos.distX > 0;
-                  var decreaseLevel = (isRTL) ? pos.distX > 0 : pos.distX < 0;
+                  var isRTL = angular.element('html[dir="rtl"]').length > 0,
+                      increaseLevel = (isRTL) ? pos.distX < 0 : pos.distX > 0,
+                      decreaseLevel = (isRTL) ? pos.distX > 0 : pos.distX < 0;
 
                   // increase horizontal level if previous sibling exists and is not collapsed
                   if (increaseLevel) {
