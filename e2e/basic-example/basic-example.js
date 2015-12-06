@@ -52,23 +52,23 @@ describe('the Basic example page', function () {
         .getNodeAtPosition(2, 1)
         .getText()
         .then(function (nodeTextBeforeDrag) {
+          expect(nodeTextBeforeDrag).toBe('node2.1');
+        });
 
-          browser.actions()
-            .dragAndDrop(
-              basicExamplePage
-                .getNodeAtPosition(2, 1)
-                .getHandle(),
-              { x: 0, y: 200 })
-            .perform();
-
+      browser.actions()
+        .dragAndDrop(
           basicExamplePage
             .getNodeAtPosition(2, 1)
-            .getText()
-            .then(function (nodeTextAfterDrag) {
-              expect(nodeTextBeforeDrag).toBe('node2.1');
-              expect(nodeTextAfterDrag).toBe('node2.2');
-            });
-      });
+            .getHandle(),
+          { x: 0, y: 200 })
+        .perform();
+
+      basicExamplePage
+        .getNodeAtPosition(2, 1)
+        .getText()
+        .then(function (nodeTextAfterDrag) {
+          expect(nodeTextAfterDrag).toBe('node2.2');
+        });
     });
 
     // it('should allow adding a node to another node to make it a child-node', function () {
