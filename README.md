@@ -422,6 +422,21 @@ Check if the current node is a child of the target node.
 Use the `ui-tree-handle` to specify an element used to drag the object. 
 If you don't add a `ui-tree-handle` for a node, the entire node can be dragged.
 
+## Runtime Configuration
+Use the `treeConfig` service to configure the tree defaults at runtime.
+With this you can customize the classes applied to various tree elements
+(`treeClass`, `emptyTreeClass`, `hiddenClass`, `nodesClass`, `handleClass`,
+`placeholderClass`, `dragClass`).
+
+In addition, you can modify whether nodes are collapsed by default
+(`defaultCollapsed`: default false). For example:
+
+```js
+module.config(function(treeConfig) {
+  treeConfig.defaultCollapsed = true; // collapse nodes by default
+});
+```
+
 ## NgModules Link
 
 [Give us a like on ngmodules](http://ngmodules.org/modules/angular-ui-tree)
