@@ -345,9 +345,9 @@
 
   // TODO: optimize this loop
   function findFirstParentElementWithAttribute(attributeName, childObj) {
-    var testObj = childObj.parentNode;
-    var count = 1;
-    var res = testObj.hasAttribute(attributeName) ? testObj : null;
+    var testObj = childObj.parentNode,
+      count = 1,
+      res = testObj.hasAttribute(attributeName) ? testObj : null;
     while (!testObj.hasAttribute(attributeName)) {
       testObj = testObj.parentNode;
       res = testObj;
