@@ -123,12 +123,6 @@
             $scope.$childNodesScope.accept(sourceNode, destIndex);
         };
 
-        $scope.removeNode = function () {
-          var node = $scope.remove();
-          $scope.$callbacks.removed(node);
-          return node;
-        };
-
         $scope.remove = function () {
           return $scope.$parentNodesScope.removeNode($scope);
         };
@@ -250,7 +244,7 @@
             $scope.safeApply(function () {
               $scope.$modelValue.splice(index, 1)[0];
             });
-            return node;
+            return $scope.$treeScope.$callbacks.removed(node);
           }
           return null;
         };
@@ -456,7 +450,7 @@
             // and the 'max-depth' attribute in `ui-tree` or `ui-tree-nodes`.
             // the method can be overrided
             callbacks.accept = function (sourceNodeScope, destNodesScope, destIndex) {
-              return !(destNodesScope.nodropEnabled || destNodesScope.outOfDepth(sourceNodeScope));
+              return !(destNodesScope.nodropEnabled || destNodesScope.$treeScope.nodropEnabled || destNodesScope.outOfDepth(sourceNodeScope));
             };
 
             callbacks.beforeDrag = function (sourceNodeScope) {
@@ -1092,7 +1086,9 @@
               };
             }
 
-            scope.$watch(attrs.maxDepth, function (val) {
+            scope.$watch(function () {
+              return attrs.maxDepth;
+            }, function (val) {
               if ((typeof val) == 'number') {
                 scope.maxDepth = val;
               }
@@ -1287,7 +1283,7 @@
 
                 // cloneEnabled and cross-tree so copy and do not remove from source
                 if (this.isClone() && this.isForeign()) {
-                  this.parent.insertNode(this.index, angular.copy(nodeData));
+                  this.parent.insertNode(this.index, this.sourceInfo.cloneModel);
                 } else { // Any other case, remove and reinsert
                   this.source.remove();
                   this.parent.insertNode(this.index, nodeData);
