@@ -30,6 +30,8 @@
     "describe": true,
     "expect": true,
     "inject": true,
-    "it": true
+    "it": true,
+    "browser": true,
+    "by": true
   }
 }
