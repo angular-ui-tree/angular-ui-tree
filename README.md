@@ -276,10 +276,16 @@ The `dragStop` function is called when the user stop dragging the node.
 Same as [Parameters](#eventParam) of dropped.
 
 ##### beforeDrop(event)
-The `beforeDrop` function is called before the dragging node is dropped.
+The `beforeDrop` function is called before the dragging node is dropped. If you implement this callback, the return value determines whether the drop event is allowed to proceed.
 
 **Parameters:**
 Same as [Parameters](#eventParam) of dropped.
+
+**Callback Return Values**
+
+- **Resolved Promise** or **truthy**: Allow the node to be dropped
+
+- **Rejected Promise** or **falsy**: Disallow the node drop and return the dragged node to its original position
 
 ### ui-tree-nodes
 `ui-tree-nodes` is the container of nodes. 
@@ -492,6 +498,8 @@ The E2E-tests can be executed using
     $ gulp test:e2e
     
     > Note: make sure you have the example website running on port `9000` (using the `$ gulp serve` command)
+	
+*Windows: If your e2e tests are failing, run the command prompt as an administrator. ([See symlink issue](https://github.com/ben-eb/gulp-symlink/issues/33))*
 
 ####Deploy examples
 

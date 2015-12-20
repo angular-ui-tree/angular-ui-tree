@@ -14,7 +14,7 @@
         $scope.$treeScope = null; // uiTree scope
         $scope.$handleScope = null; // it's handle scope
         $scope.$type = 'uiTreeNode';
-        $scope.$$apply = false;
+        $scope.$$allowNodeDrop = false;
         $scope.collapsed = false;
 
         $scope.init = function (controllersArr) {
