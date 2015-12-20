@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.11.0
+ * @license Angular UI Tree v2.12.0
  * (c) 2010-2015. https://github.com/angular-ui-tree/angular-ui-tree
  * License: MIT
  */
@@ -17,7 +17,8 @@
       placeholderClass: 'angular-ui-tree-placeholder',
       dragClass: 'angular-ui-tree-drag',
       dragThreshold: 3,
-      levelThreshold: 30
+      levelThreshold: 30,
+      defaultCollapsed: false
     });
 
 })();
