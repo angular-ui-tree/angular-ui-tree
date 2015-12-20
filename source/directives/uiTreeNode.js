@@ -120,7 +120,7 @@
 
               // check if it or it's parents has a 'data-nodrag' attribute
               el = angular.element(e.target);
-              while (el && el[0] && el[0] != element) {
+              while (el && el[0] && el[0] !== element) {
                 if (UiTreeHelper.nodrag(el)) { // if the node mark as `nodrag`, DONOT drag it.
                   return;
                 }
