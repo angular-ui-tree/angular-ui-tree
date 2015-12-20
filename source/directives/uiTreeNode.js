@@ -116,11 +116,12 @@
               }
 
               // check if it or it's parents has a 'data-nodrag' attribute
-              while (eventElm && eventElm[0] && eventElm[0] != element) {
-                if (UiTreeHelper.nodrag(eventElm)) { // if the node mark as `nodrag`, DONOT drag it.
+              var el = angular.element(e.target);
+              while (el && el[0] && el[0] != element) {
+                if (UiTreeHelper.nodrag(el)) { // if the node mark as `nodrag`, DONOT drag it.
                   return;
                 }
-                eventElm = eventElm.parent();
+                el = el.parent();
               }
 
               if (!scope.beforeDrag(scope)) {
@@ -306,6 +307,13 @@
 
                 targetElm = angular.element($window.document.elementFromPoint(targetX, targetY));
 
+                // if the target element is a child element of a ui-tree-handle,
+                // use the containing handle element as target element
+                var isHandleChild = UiTreeHelper.treeNodeHandlerContainerOfElement(targetElm);
+                if (isHandleChild) {
+                  targetElm = angular.element(isHandleChild);
+                }
+
                 if (angular.isFunction(dragElm.show)) {
                   dragElm.show();
                 } else {
@@ -362,8 +370,22 @@
 
                 // move vertical
                 if (!pos.dirAx) {
+                  if (UiTreeHelper.elementIsTree(targetElm)) {
+                    targetNode = targetElm.controller('uiTree').scope;
+                  } else if (UiTreeHelper.elementIsTreeNodeHandle(targetElm)) {
+                    targetNode = targetElm.controller('uiTreeHandle').scope;
+                  } else if (UiTreeHelper.elementIsTreeNode(targetElm)) {
+                    targetNode = targetElm.controller('uiTreeNode').scope;
+                  } else if (UiTreeHelper.elementIsTreeNodes(targetElm)) {
+                    targetNode = targetElm.controller('uiTreeNodes').scope;
+                  } else if (UiTreeHelper.elementIsPlaceholder(targetElm)) {
+                    targetNode = targetElm.controller('uiTreeNodes').scope;
+                  } else if (targetElm.controller('uiTreeNode')) {
+                    // is a child element of a node
+                    targetNode = targetElm.controller('uiTreeNode').scope;
+                  }
+
                   // check it's new position
-                  targetNode = targetElm.scope();
                   isEmpty = false;
                   if (!targetNode) {
                     return;
