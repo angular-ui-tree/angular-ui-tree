@@ -35,7 +35,7 @@
       $scope.treeOptions = {
         beforeDrop : function (e) {
           var sourceValue = e.source.nodeScope.$modelValue.value,
-            destValue = e.dest.nodesScope.node.value,
+            destValue = e.dest.nodesScope.node ? e.dest.nodesScope.node.value : undefined,
             modalInstance;
 
           // display modal if the node is being dropped into a smaller container
