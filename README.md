@@ -285,7 +285,7 @@ Same as [Parameters](#eventParam) of dropped.
 
 - **Resolved Promise** or **truthy**: Allow the node to be dropped
 
-- **Rejected Promise** or **falsy**: Disallow the node drop and return the dragged node to its original position
+- **Rejected Promise** or **false**: Disallow the node drop and return the dragged node to its original position
 
 ### ui-tree-nodes
 `ui-tree-nodes` is the container of nodes. 
