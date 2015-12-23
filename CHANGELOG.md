@@ -1,3 +1,10 @@
+# 2.13.0
+
+* Bind keydown handler to document [#636](https://github.com/angular-ui-tree/angular-ui-tree/pull/636)
+* Ability to change whether nodes should be collapsed or expanded by default [#643](https://github.com/angular-ui-tree/angular-ui-tree/pull/643)
+* Drag & drop Protractor tests [#638](https://github.com/angular-ui-tree/angular-ui-tree/pull/638)
+* Fix #680 (drag-drop not working if beforeDrop is not implemented) [#683](https://github.com/angular-ui-tree/angular-ui-tree/pull/683)
+
 # 2.12.0
 
 * Use this.sourceInfo.cloneModel instead [#627](https://github.com/angular-ui-tree/angular-ui-tree/issues/627)
