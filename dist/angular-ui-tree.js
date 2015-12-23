@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.12.0
+ * @license Angular UI Tree v2.13.0
  * (c) 2010-2015. https://github.com/angular-ui-tree/angular-ui-tree
  * License: MIT
  */
@@ -17,7 +17,8 @@
       placeholderClass: 'angular-ui-tree-placeholder',
       dragClass: 'angular-ui-tree-drag',
       dragThreshold: 3,
-      levelThreshold: 30
+      levelThreshold: 30,
+      defaultCollapsed: false
     });
 
 })();
@@ -613,7 +614,7 @@
             }
             scope.init(controllersArr);
 
-            scope.collapsed = !!UiTreeHelper.getNodeAttribute(scope, 'collapsed');
+            scope.collapsed = !!UiTreeHelper.getNodeAttribute(scope, 'collapsed') || treeConfig.defaultCollapsed;
             scope.sourceOnly = scope.nodropEnabled || scope.$treeScope.nodropEnabled;
 
             scope.$watch(attrs.collapsed, function (val) {
@@ -982,9 +983,9 @@
 
               scope.$treeScope.$apply(function () {
                 $q.when(scope.$treeScope.$callbacks.beforeDrop(dragEventArgs))
-                    // promise resolved (or callback returned truthy)
+                    // promise resolved (or callback didn't return false)
                     .then(function (allowDrop) {
-                      if (allowDrop && scope.$$allowNodeDrop && !outOfBounds) { // node drop accepted)
+                      if (allowDrop !== false && scope.$$allowNodeDrop && !outOfBounds) { // node drop accepted)
                         dragInfo.apply();
                         // fire the dropped callback only if the move was successful
                         scope.$treeScope.$callbacks.dropped(dragEventArgs);
@@ -1100,11 +1101,11 @@
               }
             };
 
-            angular.element($window.document.body).bind('keydown', keydownHandler);
+            angular.element($window.document).bind('keydown', keydownHandler);
 
             //unbind handler that retains scope
             scope.$on('$destroy', function () {
-              angular.element($window.document.body).unbind('keydown', keydownHandler);
+              angular.element($window.document).unbind('keydown', keydownHandler);
             });
           }
         };
