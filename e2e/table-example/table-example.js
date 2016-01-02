@@ -31,4 +31,36 @@ describe('the table example page', function () {
 
   });
 
+  describe('the dragging and dropping of nodes', function () {
+    it('should allow moving a node below another node', function () {
+
+      tableExamplePage
+        .getNodeAtPosition(1)
+        .getText()
+        .then(function (nodeTextBeforeDrag) {
+          expect(nodeTextBeforeDrag).toBe('node 1');
+        });
+
+      browser.actions()
+        .dragAndDrop(
+          tableExamplePage
+            .getNodeAtPosition(1)
+            .getHandle(),
+          { x: 0, y: 200 })
+        .perform();
+
+      tableExamplePage
+        .getNodeAtPosition(1)
+        .getText()
+        .then(function (nodeTextAfterDrag) {
+          expect(nodeTextAfterDrag).toBe('node 2');
+        });
+
+      tableExamplePage.getNodeAtPosition(1).getElement().getInnerHtml().then(console.log);
+      tableExamplePage.getNodeAtPosition(2).getElement().getInnerHtml().then(console.log);
+      tableExamplePage.getNodeAtPosition(3).getElement().getInnerHtml().then(console.log);
+    });
+
+  });
+
 });
