@@ -1,3 +1,18 @@
+# 2.13.0
+
+* Bind keydown handler to document [#636](https://github.com/angular-ui-tree/angular-ui-tree/pull/636)
+* Ability to change whether nodes should be collapsed or expanded by default [#643](https://github.com/angular-ui-tree/angular-ui-tree/pull/643)
+* Drag & drop Protractor tests [#638](https://github.com/angular-ui-tree/angular-ui-tree/pull/638)
+* Fix #680 (drag-drop not working if beforeDrop is not implemented) [#683](https://github.com/angular-ui-tree/angular-ui-tree/pull/683)
+
+# 2.12.0
+
+* Use this.sourceInfo.cloneModel instead [#627](https://github.com/angular-ui-tree/angular-ui-tree/issues/627)
+* Add documentation for cloneModel [#660](https://github.com/angular-ui-tree/angular-ui-tree/issues/660)
+* Fix accept() to check $treeScope.nodropEnabled [#665](https://github.com/angular-ui-tree/angular-ui-tree/issues/665)
+* Add information about styling to the README file [#666](https://github.com/angular-ui-tree/angular-ui-tree/issues/666)
+* [#507](https://github.com/angular-ui-tree/angular-ui-tree/issues/507) Promise support callbacks [#589](https://github.com/angular-ui-tree/angular-ui-tree/issues/589)
+
 # 2.11.0
 
 * Reset placeholder display attribute instead of changing it to block [#631](https://github.com/angular-ui-tree/angular-ui-tree/issues/631)

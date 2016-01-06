@@ -1,0 +1,52 @@
+<!-- Nested node template -->
+<script type="text/ng-template" id="nodes_renderer.html">
+    <div ui-tree-handle class="tree-node tree-node-content">
+        <a class="btn btn-success btn-xs" ng-if="node.nodes && node.nodes.length > 0" data-nodrag ng-click="toggle(this)"><span
+                class="glyphicon"
+                ng-class="{
+          'glyphicon-chevron-right': collapsed,
+          'glyphicon-chevron-down': !collapsed
+        }"></span></a>
+        {{node.value}}
+    </div>
+    <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
+        <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">
+        </li>
+    </ol>
+</script>
+
+<script type="text/ng-template" id="drop-modal.html">
+    <div class="modal-body">
+        <p>Whoa now, you're trying to drop a larger node inside a smaller one. Are you sure that's a good idea?</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="$close(true)">OK</button>
+        <button class="btn btn-warning" type="button" ng-click="$dismiss()">Cancel</button>
+    </div>
+</script>
+
+<div class="row">
+    <div class="col-sm-12">
+        <h3>Drop Confirmation</h3>
+        <p>This demo shows how to use the beforeDrop callback to prompt a user before completing a drag-drop operation.</p>
+        <p>You will get a modal confirmation popup any time you try to drop a node as a child of a node with a smaller value. Try dropping 20 under 5 now.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6">
+        <div data-ui-tree="treeOptions" id="tree-root">
+            <input type="checkbox" id="usePromise" data-ng-model="usePromise" data-ng-checked="usePromise"><label for="usePromise">Use Promise</label>
+            <ol data-ui-tree-nodes ng-model="data">
+                <li data-ng-repeat="node in data" data-ui-tree-node ng-include="'nodes_renderer.html'"></li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="info">
+            {{info}}
+        </div>
+        <pre class="code">{{ data | json }}</pre>
+    </div>
+</div>

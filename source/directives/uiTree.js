@@ -89,10 +89,18 @@
               }
             });
 
-            // check if the dest node can accept the dragging node
-            // by default, we check the 'data-nodrop-enabled' attribute in `ui-tree-nodes`
-            // and the 'max-depth' attribute in `ui-tree` or `ui-tree-nodes`.
-            // the method can be overrided
+            /**
+             * Callback checks if the destination node can accept the dragged node.
+             * By default, ui-tree will check that 'data-nodrop-enabled' is not set for the
+             * destination ui-tree-nodes, and that the 'max-depth' attribute will not be exceeded
+             * if it is set on the ui-tree or ui-tree-nodes.
+             * This callback can be overridden, but callers must manually enforce nodrop and max-depth
+             * themselves if they need those to be enforced.
+             * @param sourceNodeScope Scope of the ui-tree-node being dragged
+             * @param destNodesScope Scope of the ui-tree-nodes where the node is hovering
+             * @param destIndex Index in the destination nodes array where the source node will drop
+             * @returns {boolean} True if the node is permitted to be dropped here
+             */
             callbacks.accept = function (sourceNodeScope, destNodesScope, destIndex) {
               return !(destNodesScope.nodropEnabled || destNodesScope.$treeScope.nodropEnabled || destNodesScope.outOfDepth(sourceNodeScope));
             };
@@ -105,22 +113,47 @@
 
             };
 
+            /**
+             * Callback is fired when a node is successfully dropped in a new location
+             * @param event
+             */
             callbacks.dropped = function (event) {
 
             };
 
+            /**
+             * Callback is fired each time the user starts dragging a node
+             * @param event
+             */
             callbacks.dragStart = function (event) {
 
             };
 
+            /**
+             * Callback is fired each time a dragged node is moved with the mouse/touch.
+             * @param event
+             */
             callbacks.dragMove = function (event) {
 
             };
 
+            /**
+             * Callback is fired when the tree exits drag mode. If the user dropped a node, the drop may have been
+             * accepted or reverted.
+             * @param event
+             */
             callbacks.dragStop = function (event) {
 
             };
 
+            /**
+             * Callback is fired when a user drops a node (but prior to processing the drop action)
+             * beforeDrop can return a Promise, truthy, or falsy (returning nothing is falsy).
+             * If it returns falsy, or a resolve Promise, the node move is accepted
+             * If it returns truthy, or a rejected Promise, the node move is reverted
+             * @param event
+             * @returns {Boolean|Promise} Truthy (or rejected Promise) to cancel node move; falsy (or resolved promise)
+             */
             callbacks.beforeDrop = function (event) {
 
             };
