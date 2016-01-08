@@ -345,10 +345,15 @@
 
   // TODO: optimize this loop
   function findFirstParentElementWithAttribute(attributeName, childObj) {
+    // undefined if the mouse leaves the browser window
+    if (childObj === undefined) {
+      return null;
+    }
     var testObj = childObj.parentNode,
       count = 1,
-      res = testObj.hasAttribute(attributeName) ? testObj : null;
-    while (!testObj.hasAttribute(attributeName)) {
+      // check for setAttribute due to exception thrown by Firefox when a node is dragged outside the browser window
+      res = (typeof testObj.setAttribute === 'function' && testObj.hasAttribute(attributeName)) ? testObj : null;
+    while (testObj && typeof testObj.setAttribute === 'function' && !testObj.hasAttribute(attributeName)) {
       testObj = testObj.parentNode;
       res = testObj;
       if (testObj === document.documentElement) {
