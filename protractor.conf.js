@@ -4,7 +4,7 @@ exports.config = {
 
   // Capabilities to be passed to the webdriver instance.
   capabilities: {
-    'browserName': 'firefox'
+    'browserName': 'chrome' // using chrome because drag & drop doesn't seem to work with FF v43
   },
 
   // Spec patterns are relative to the current working directly when

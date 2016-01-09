@@ -9,7 +9,9 @@ var BasicExamplePageNode = function (nodeLocation) {
 
   this.getElement = function() { return nodeElement; }
   this.getHandle = function() { return handle; };
-  this.getText = handle.getText;
+  this.getText = function () {
+    return handle.getText();
+  };
   this.getSubnodes = function() {
     return nodeElement.all(by.xpath(subnodesXpath));
   }
