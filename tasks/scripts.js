@@ -44,11 +44,12 @@ module.exports = function (gulp, $) {
   });
 
   gulp.task('karma', function () {
-    return $.karma.server.start({
+    var server = new $.karma.Server({
       configFile: __dirname + '/../karma.conf.js',
       singleRun: true
     }, function (err) {
       process.exit(err ? 1 : 0);
     });
+    return server.start();
   });
 };
