@@ -199,6 +199,7 @@
                 targetNode,
                 targetElm,
                 isEmpty,
+                scrollDownBy,
                 targetOffset,
                 targetBefore;
 
@@ -243,8 +244,9 @@
                 bottom_scroll = top_scroll + (window.innerHeight || $window.document.clientHeight || $window.document.clientHeight);
 
                 // to scroll down if cursor y-position is greater than the bottom position the vertical scroll
-                if (bottom_scroll < eventObj.pageY && bottom_scroll <= document_height) {
-                  window.scrollBy(0, 10);
+                if (bottom_scroll < eventObj.pageY && bottom_scroll < document_height) {
+                  scrollDownBy = Math.min(document_height - bottom_scroll, 10);
+                  window.scrollBy(0, scrollDownBy);
                 }
 
                 // to scroll top if cursor y-position is less than the top position the vertical scroll
