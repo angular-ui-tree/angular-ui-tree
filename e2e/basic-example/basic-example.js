@@ -58,8 +58,6 @@ describe('the Basic example page', function () {
       // make sure the element to drag is inside the browser's viewport
       browser.wait(browser.executeScript('arguments[0].scrollIntoView();', basicExamplePage.getNodeAtPosition(2).getHandle().getWebElement()));
 
-      nodeToDrag.getHandle().click();
-
       browser.actions()
         .mouseMove(nodeToDrag.getHandle(), {x: 0, y: 0})
         .mouseDown()
