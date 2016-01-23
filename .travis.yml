@@ -3,7 +3,7 @@ node_js:
   - "4.2.4"
 
 addons:
-  firefox: "43.0.4"
+  firefox: "latest-beta"
 
 before_script:
   - npm install -g bower
