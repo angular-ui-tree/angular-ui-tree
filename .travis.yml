@@ -2,8 +2,9 @@ language: node_js
 node_js:
   - "4.2.4"
 
-addons:
-  firefox: "43.0.4"
+before_install:
+  addons:
+    firefox: "43.0.4"
 
 before_script:
   - npm install -g bower
