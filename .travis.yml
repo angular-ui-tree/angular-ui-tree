@@ -4,7 +4,7 @@ node_js:
 
 before_install:
   addons:
-    firefox: "43.0.4"
+    firefox: "43.0"
 
 before_script:
   - npm install -g bower
