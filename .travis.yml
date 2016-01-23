@@ -17,7 +17,7 @@ before_script:
 script:
   - >
     echo "Extracting firefox and setting PATH variable..."
-    tar -xjf /tmp/firefox-43.0.tar.bz2 --directory /tmp
+    tar -xjf /tmp/firefox-43.0.4.tar.bz2 --directory /tmp
     export PATH="/tmp/firefox:$PATH"
     echo "Using firefox version `firefox --version`"
 
