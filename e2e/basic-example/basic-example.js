@@ -62,7 +62,7 @@ describe('the Basic example page', function () {
         .mouseMove(nodeToDrag.getHandle(), {x: 0, y: 0})
         .mouseDown()
         .mouseMove(nodeToDrag.getHandle(), {x: 0, y: 0}) // Initial move to trigger drag start
-        .mouseMove(nodeToDrag.getHandle(), {x: 2, y: 70})
+        .mouseMove(nodeToDrag.getHandle(), {x: 2, y: 80})
         .mouseUp()
         .perform();
 

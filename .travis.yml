@@ -3,7 +3,7 @@ node_js:
   - "4.2.4"
 
 addons:
-  firefox: "latest-beta"
+  firefox: "latest"
 
 before_script:
   - npm install -g bower
@@ -15,12 +15,6 @@ before_script:
   - sleep 3 # give webserver some time to start
 
 script:
-  - >
-    echo "Extracting firefox and setting PATH variable..."
-    tar -xjf /tmp/firefox-43.0.4.tar.bz2 --directory /tmp
-    export PATH="/tmp/firefox:$PATH"
-    echo "Using firefox version `firefox --version`"
-
   - npm test
 
 after_success:
