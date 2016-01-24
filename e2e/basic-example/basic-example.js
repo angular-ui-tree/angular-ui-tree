@@ -59,12 +59,16 @@ describe('the Basic example page', function () {
       browser.wait(browser.executeScript('arguments[0].scrollIntoView();', basicExamplePage.getNodeAtPosition(2).getHandle().getWebElement()));
 
       browser.actions()
-        .mouseMove(nodeToDrag.getHandle(), {x: 0, y: 0})
-        .mouseDown()
-        .mouseMove(nodeToDrag.getHandle(), {x: 0, y: 0}) // Initial move to trigger drag start
-        .mouseMove(nodeToDrag.getHandle(), {x: 2, y: 80})
-        .mouseUp()
+        .dragAndDrop(nodeToDrag.getHandle(), {x: 2, y: 80})
         .perform();
+
+      //browser.actions()
+      //  .mouseMove(nodeToDrag.getHandle(), {x: 0, y: 0})
+      //  .mouseDown()
+      //  .mouseMove(nodeToDrag.getHandle(), {x: 0, y: 0}) // Initial move to trigger drag start
+      //  .mouseMove(nodeToDrag.getHandle(), {x: 2, y: 80})
+      //  .mouseUp()
+      //  .perform();
 
       basicExamplePage
         .getNodeAtPosition(2, 1)
