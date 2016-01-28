@@ -3,15 +3,15 @@
 var del = require('del');
 
 module.exports = function (gulp, $) {
-  gulp.task('clean', function (callback) {
-    del('dist', callback);
+  gulp.task('clean', function () {
+    del.sync('dist');
   });
 
-  gulp.task('clean:examples', function (callback) {
-    del('examples/source', callback);
+  gulp.task('clean:examples', function () {
+    del.sync('examples/source');
   });
 
-  gulp.task('clean:deploy', function (callback) {
-    del('.tmp/website', callback);
+  gulp.task('clean:deploy', function () {
+    del.sync('.tmp/website')
   });
 };

@@ -9,7 +9,7 @@ module.exports = function (gulp, $) {
 
   gulp.task('styles', function () {
     return gulp.src('source/*.css')
-      .pipe($.minifyCss({ compatibility: 'ie8' }))
+      .pipe($.cssnano({ safe: true }))
       .pipe($.rename('angular-ui-tree.min.css'))
       .pipe(gulp.dest('dist'));
   });

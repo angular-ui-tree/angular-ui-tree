@@ -9,7 +9,9 @@ var TableExamplePageNode = function (position) {
 
   this.getElement = function () { return nodeElement; }
   this.getHandle = function () { return handle; };
-  this.getText = nodeElement.getText;
+  this.getText = function () {
+    return nodeElement.getText();
+  };
 }
 
 var TableExamplePage = function () {

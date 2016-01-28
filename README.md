@@ -476,7 +476,7 @@ Run the commands below in the project root directory.
 #####2. Install project dependencies
 
     $ npm install
-    $ sudo ./node_modules/protractor/bin/webdriver-manager update
+    $ ./node_modules/protractor/bin/webdriver-manager update
     $ bower install
 
 ## Useful commands
