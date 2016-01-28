@@ -1,3 +1,9 @@
+# 2.14.0
+
+* Include the CSS source files in the build [#685](https://github.com/angular-ui-tree/angular-ui-tree/pull/685)
+* Fix Callback Routing [#673](https://github.com/angular-ui-tree/angular-ui-tree/pull/673)
+* Update to Node v4.2.4 [#696](https://github.com/angular-ui-tree/angular-ui-tree/pull/696)
+
 # 2.13.0
 
 * Bind keydown handler to document [#636](https://github.com/angular-ui-tree/angular-ui-tree/pull/636)
