@@ -24,7 +24,7 @@
       return element;
     }
 
-    it('should should add the configured CSS class to it\'s element', function () {
+    it('should add the configured CSS class to it\'s element', function () {
       var element = createElement();
       expect(element.find('[ui-tree-handle]')).toHaveClass('angular-ui-tree-handle');
     });
