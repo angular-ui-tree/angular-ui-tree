@@ -1,3 +1,7 @@
+# 2.15.0
+
+* Remove scope dependency [#648](https://github.com/angular-ui-tree/angular-ui-tree/pull/648)
+
 # 2.14.0
 
 * Include the CSS source files in the build [#685](https://github.com/angular-ui-tree/angular-ui-tree/pull/685)
