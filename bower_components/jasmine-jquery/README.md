@@ -1,54 +1,70 @@
 # jasmine-jquery [![Build Status](https://travis-ci.org/velesin/jasmine-jquery.png)](https://travis-ci.org/velesin/jasmine-jquery)
 
 
-jasmine-jquery provides two extensions for [Jasmine](http://pivotal.github.com/jasmine/) JavaScript Testing Framework:
+jasmine-jquery provides two extensions for the [Jasmine](http://jasmine.github.io/) JavaScript Testing Framework:
 
 - a set of custom matchers for jQuery framework
 - an API for handling HTML, CSS, and JSON fixtures in your specs
 
 ## Installation
 
-Simply download _jasmine-jquery.js_ from [here](https://raw.github.com/velesin/jasmine-jquery/master/lib/jasmine-jquery.js) and include it in your Jasmine's test runner file (or add it to _jasmine.yml_ file if you're using Ruby with [jasmine-gem](http://github.com/pivotal/jasmine-gem)). Remember to include also jQuery library as jasmine-jquery relies on it.
+Choose one of the following options:
 
-For Ruby on Rails, use this [gem](https://github.com/travisjeffery/jasmine-jquery-rails) or I recommend to comply with the standard RSpec and Jasmine frameworks dir structure and keep your tests in `spec/javascripts/` dir. I put jasmine-jquery (and other libraries like jasmine-ajax) into `spec/javascripts/helpers` dir (so they are automatically loaded) and fixtures into `spec/javascripts/fixtures` dir.
+- Simply download _jasmine-jquery.js_ from [here](https://raw.github.com/velesin/jasmine-jquery/master/lib/jasmine-jquery.js) and include it in your Jasmine's test runner file (or add it to _jasmine.yml_ file if you're using Ruby with [jasmine-gem](http://github.com/jasmine/jasmine-gem)). Remember to also include the jQuery library as jasmine-jquery relies on it.
+- Using bower by running ```bower install jasmine-jquery --save```
+- For Ruby on Rails, use this [gem](https://github.com/travisjeffery/jasmine-jquery-rails) or I recommend to comply with the standard RSpec and Jasmine frameworks dir structure and keep your tests in `spec/javascripts/` dir. I put jasmine-jquery (and other libraries like jasmine-ajax) into `spec/javascripts/helpers` dir (so they are automatically loaded) and fixtures into `spec/javascripts/fixtures` dir.
+
 
 ## jQuery matchers
 
-jasmine-jquery provides following custom matchers (in alphabetical order):
+jasmine-jquery provides the following custom matchers (in alphabetical order):
 
-- `toBe(jQuerySelector)`
-  - e.g. `expect($('<div id="some-id"></div>')).toBe('div')`
-  - e.g. `expect($('<div id="some-id"></div>')).toBe('div#some-id')`
 - `toBeChecked()`
   - only for tags that have checked attribute
   - e.g. `expect($('<input type="checkbox" checked="checked"/>')).toBeChecked()`
+- `toBeDisabled()`
+  - e.g. `expect('<input type="submit" disabled="disabled"/>').toBeDisabled()`
 - `toBeEmpty()`
   - Checks for child DOM elements or text.
+- `toBeFocused()`
+  - e.g. `expect($('<input type="text" />').focus()).toBeFocused()`
 - `toBeHidden()`
-
   Elements can be considered hidden for several reasons:
     - They have a CSS `display` value of `none`.
     - They are form elements with `type` equal to `hidden`.
     - Their `width` and `height` are explicitly set to `0`.
     - An ancestor element is hidden, so the element is not shown on the page.
-- `toHaveCss(css)`
-  - e.g. `expect($('<div style="display: none; margin: 10px;"></div>')).toHaveCss({display: "none", margin: "10px"})`
-  - e.g. `expect($('<div style="display: none; margin: 10px;"></div>')).toHaveCss({margin: "10px"})`
+- `toBeInDOM()`
+  - Checks to see if the matched element is attached to the DOM
+  - e.g. `expect($('#id-name')[0]).toBeInDOM()`
+- `toBeMatchedBy(jQuerySelector)`
+  - Check to see if the set of matched elements matches the given selector
+  - e.g.  `expect($('<span></span>').addClass('js-something')).toBeMatchedBy('.js-something')`
+  - true if the dom contains the element
 - `toBeSelected()`
   - only for tags that have selected attribute
   - e.g. `expect($('<option selected="selected"></option>')).toBeSelected()`
 - `toBeVisible()`
   - Elements are considered visible if they consume space in the document. Visible elements have a width or height that is greater than zero.
-- `toContain(jQuerySelector)`
-  - e.g. `expect($('<div><span class="some-class"></span></div>')).toContain('span.some-class')`
-- `toBeMatchedBy(jQuerySelector)`
-  - Check to see if the set of matched elements matches the given selector
-  - e.g.  `expect($('<span></span>').addClass('js-something')).toBeMatchedBy('.js-something')`
+- `toContain(string)`
+  - e.g. `expect($('<div><span class="some-class"></span></div>')).toContain('some-class')`
+- `toContainElement(jQuerySelector)`
+  - e.g. `expect($('<div><span class="some-class"></span></div>')).toContainElement('span.some-class')`
+- `toContainHtml(string)`
+  - e.g. `expect($('<div><ul></ul><h1>header</h1></div>')).toContainHtml('<ul></ul>')`
+- `toContainText(string)`
+  - e.g. `expect($('<div><ul></ul><h1>header</h1></div>')).toContainText('header')`
+- `toEqual(jQuerySelector)`
+  - e.g. `expect($('<div id="some-id"></div>')).toEqual('div')`
+  - e.g. `expect($('<div id="some-id"></div>')).toEqual('div#some-id')`
 - `toExist()`
+  - true if element exists in or out of the dom
+- `toHandle(eventName)`
+  - e.g. `expect($form).toHandle("submit")`
+- `toHandleWith(eventName, eventHandler)`
+  - e.g. `expect($form).toHandleWith("submit", yourSubmitCallback)`
 - `toHaveAttr(attributeName, attributeValue)`
   - attribute value is optional, if omitted it will check only if attribute exists
-- `toHaveProp(propertyName, propertyValue)`
-  - property value is optional, if omitted it will check only if property exists
 - `toHaveBeenTriggeredOn(selector)`
   - if event has been triggered on `selector` (see "Event Spies", below)
 - `toHaveBeenTriggered()`
@@ -61,40 +77,33 @@ jasmine-jquery provides following custom matchers (in alphabetical order):
   - if event has been prevented on `selector` (see "Event Spies", below)
 - `toHaveClass(className)`
   - e.g. `expect($('<div class="some-class"></div>')).toHaveClass("some-class")`
+- `toHaveCss(css)`
+  - e.g. `expect($('<div style="display: none; margin: 10px;"></div>')).toHaveCss({display: "none", margin: "10px"})`
+  - e.g. `expect($('<div style="display: none; margin: 10px;"></div>')).toHaveCss({margin: "10px"})`
 - `toHaveData(key, value)`
   - value is optional, if omitted it will check only if an entry for that key exists
 - `toHaveHtml(string)`
   - e.g. `expect($('<div><span></span></div>')).toHaveHtml('<span></span>')`
-- `toContainHtml(string)`
-  - e.g. `expect($('<div><ul></ul><h1>header</h1></div>')).toContainHtml('<ul></ul>')`
-- `toContainText(string)`
-  - e.g. `expect($('<div><ul></ul><h1>header</h1></div>')).toContainText('header')`
 - `toHaveId(id)`
   - e.g. `expect($('<div id="some-id"></div>')).toHaveId("some-id")`
+- `toHaveLength(value)`
+  - e.g. `expect($('ul > li')).toHaveLength(3)`
+- `toHaveProp(propertyName, propertyValue)`
+  - property value is optional, if omitted it will check only if property exists
 - `toHaveText(string)`
   - accepts a String or regular expression
   - e.g. `expect($('<div>some text</div>')).toHaveText('some text')`
 - `toHaveValue(value)`
   - only for elements on which `val` can be called (`input`, `textarea`, etc)
   - e.g. `expect($('<input type="text" value="some text"/>')).toHaveValue('some text')`
-- `toHaveLength(value)`
-  - e.g. `expect($('ul > li')).toHaveLength(3)`
-- `toBeDisabled()`
-  - e.g. `expect('<input type="submit" disabled="disabled"/>').toBeDisabled()`
-- `toBeFocused()`
-  - e.g. `expect($('<input type="text" />').focus()).toBeFocused()`
-- `toHandle(eventName)`
-  - e.g. `expect($form).toHandle("submit")`
-- `toHandleWith(eventName, eventHandler)`
-  - e.g. `expect($form).toHandleWith("submit", yourSubmitCallback)`
 
-The same as with standard Jasmine matchers, all of above custom matchers may be inverted by using `.not` prefix, e.g.:
+The same as with standard Jasmine matchers, all of the above custom matchers may be inverted by using `.not` prefix, e.g.:
 
     expect($('<div>some text</div>')).not.toHaveText(/other/)
 
 ## HTML Fixtures
 
-The Fixture module of jasmine-jquery allows you to load HTML content to be used by your tests. The overall workflow is like follows:
+The Fixture module of jasmine-jquery allows you to load HTML content to be used by your tests. The overall workflow is as follows:
 
 In _myfixture.html_ file:
 
@@ -108,7 +117,7 @@ Inside your test:
 
 By default, fixtures are loaded from `spec/javascripts/fixtures`. You can configure this path: `jasmine.getFixtures().fixturesPath = 'my/new/path';`.
 
-Your fixture is being loaded into `<div id="jasmine-fixtures"></div>` container that is automatically added to the DOM by the Fixture module (If you _REALLY_ must change id of this container, try: `jasmine.getFixtures().containerId = 'my-new-id';` in your test runner). To make tests fully independent, fixtures container is automatically cleaned-up between tests, so you don't have to worry about left-overs from fixtures loaded in preceeding test. Also, fixtures are internally cached by the Fixture module, so you can load the same fixture file in several tests without penalty to your test suite's speed.
+Your fixture is being loaded into the `<div id="jasmine-fixtures"></div>` container that is automatically added to the DOM by the Fixture module (If you _REALLY_ must change the id of this container, try: `jasmine.getFixtures().containerId = 'my-new-id';` in your test runner). To make tests fully independent, fixtures container is automatically cleaned-up between tests, so you don't have to worry about left-overs from fixtures loaded in preceeding test. Also, fixtures are internally cached by the Fixture module, so you can load the same fixture file in several tests without penalty to your test suite's speed.
 
 To invoke fixture related methods, obtain Fixtures singleton through a factory and invoke a method on it:
 
@@ -333,17 +342,19 @@ Much thanks to Luiz Fernando Ribeiro for his
 
 ## Dependencies
 
-jasmine-jquery was tested with Jasmine 1.2 and jQuery 1.8 on IE, FF, Chrome, and Safari. There is a high chance it will work with older versions and other browsers as well, but I don't typically run test suite against them when adding new features.
+jasmine-jquery v2.0.0+ is to be used with jasmine v2.0.0+. jasmine-jquery v1.7.0 is to be used with jasmine < v2.0.0.
+
+jasmine-jquery is tested with jQuery 2.0 on IE, FF, Chrome, and Safari. There is a high chance it will work with older versions and other browsers as well, but I don't typically run test suite against them when adding new features.
 
 ## Cross domain policy problems under Chrome
 
-Newer versions of Chrome don't allow file:// URIs read other file:// URIs. In effect, jasmine-jquery cannot properly load fixtures under some versions of Chrome. An override for this is to run Chrome with a switch `--allow-file-access-from-files`. The full discussion on this topic can be found in [this GitHub ticket](https://github.com/velesin/jasmine-jquery/issues/4).
+Newer versions of Chrome don't allow file:// URIs read other file:// URIs. In effect, jasmine-jquery cannot properly load fixtures under some versions of Chrome. An override for this is to run Chrome with a switch `--allow-file-access-from-files`. (https://github.com/velesin/jasmine-jquery/issues/4). Quit open Chromes before running Chrome with that switch. (https://github.com/velesin/jasmine-jquery/issues/179).
 
 Under Windows 7, you have to launch `C:\Users\[UserName]\AppData\Local\Google\Chrome[ SxS]\Application\chrome.exe --allow-file-access-from-files`
 
 ## Mocking with jasmine-ajax
 
-[jasmine-ajax](https://github.com/pivotal/jasmine-ajax) library doesn't let user to manually start / stop XMLHttpRequest mocking, but instead it overrides XMLHttpRequest automatically when loaded. This breaks jasmine-jquery fixtures as fixture loading mechanism uses jQuery.ajax, that stops to function the very moment jasmine-ajax is loaded. A workaround for this may be to invoke jasmine-jquery `preloadFixtures` function (specifying all required fixtures) before jasmine-ajax is loaded. This way subsequent calls to `loadFixtures` or `readFixtures` methods will get fixtures content from cache, without need to use jQuery.ajax and thus will work correctly even after jasmine-ajax is loaded.
+[jasmine-ajax](https://github.com/jasmine/jasmine-ajax) library doesn't let user to manually start / stop XMLHttpRequest mocking, but instead it overrides XMLHttpRequest automatically when loaded. This breaks jasmine-jquery fixtures as fixture loading mechanism uses jQuery.ajax, that stops to function the very moment jasmine-ajax is loaded. A workaround for this may be to invoke jasmine-jquery `preloadFixtures` function (specifying all required fixtures) before jasmine-ajax is loaded. This way subsequent calls to `loadFixtures` or `readFixtures` methods will get fixtures content from cache, without need to use jQuery.ajax and thus will work correctly even after jasmine-ajax is loaded.
 
 ## Testing with Javascript Test Driver
 

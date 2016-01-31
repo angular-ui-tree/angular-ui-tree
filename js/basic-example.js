@@ -26,11 +26,11 @@
       };
 
       $scope.collapseAll = function () {
-        $scope.$broadcast('collapseAll');
+        $scope.$broadcast('angular-ui-tree:collapse-all');
       };
 
       $scope.expandAll = function () {
-        $scope.$broadcast('expandAll');
+        $scope.$broadcast('angular-ui-tree:expand-all');
       };
 
       $scope.data = [{
