@@ -418,7 +418,6 @@
                   }
 
                   if (scope.dropIn()) {
-                    // TODO: kazkas nebe taip
                     var lastChild = scope.$treeScope.$nodesScope.childNodes().pop();
                     if((!targetNode || targetNode.$type != 'uiTreeNode') &&
                         eventObj.pageY > UiTreeHelper.offset(lastChild.$element).top + UiTreeHelper.height(lastChild.$element) &&
