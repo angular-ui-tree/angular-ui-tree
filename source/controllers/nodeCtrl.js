@@ -41,6 +41,10 @@
           return !($scope.$treeScope && !$scope.$treeScope.dragEnabled);
         };
 
+        $scope.dropIn = function () {
+          return !($scope.$treeScope && !$scope.$treeScope.dropIn);
+        };
+
         $scope.isSibling = function (targetNode) {
           return $scope.$parentNodesScope == targetNode.$parentNodesScope;
         };

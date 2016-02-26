@@ -58,6 +58,12 @@
               }
             });
 
+            scope.$watch(attrs.dropIn, function (val) {
+              if ((typeof val) == 'boolean') {
+                scope.dropIn = val;
+              }
+            });
+
             scope.$watch(attrs.emptyPlaceholderEnabled, function (val) {
               if ((typeof val) == 'boolean') {
                 scope.emptyPlaceholderEnabled = val;
