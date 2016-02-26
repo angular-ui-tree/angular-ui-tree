@@ -1,6 +1,6 @@
 var customMatchers = {
 
-  toHaveLogErrors: function (util, customEqualityTesters) {
+  toHaveLogErrors: function (util) {
 
     function compare(actualLogs, isNegativeComparison) {
       var i, logEntry,
