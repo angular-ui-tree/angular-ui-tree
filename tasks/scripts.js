@@ -4,7 +4,7 @@ module.exports = function (gulp, $) {
 
   gulp.task('scripts:setup', function () {
     return gulp.src('source')
-      .pipe($.symlink('examples/source', { force: true }));
+      .pipe($.symlink('examples/source'));
   });
 
   gulp.task('jscs', function () {
@@ -44,11 +44,12 @@ module.exports = function (gulp, $) {
   });
 
   gulp.task('karma', function () {
-    return $.karma.server.start({
+    var server = new $.karma.Server({
       configFile: __dirname + '/../karma.conf.js',
       singleRun: true
     }, function (err) {
       process.exit(err ? 1 : 0);
     });
+    return server.start();
   });
 };

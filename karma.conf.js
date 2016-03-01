@@ -1,4 +1,4 @@
-module.exports = function(config) {
+module.exports = function (config) {
   'use strict';
 
   var cfg = {
@@ -26,6 +26,7 @@ module.exports = function(config) {
 
     plugins: [
       'karma-phantomjs-launcher',
+      'karma-ng-html2js-preprocessor',
       'karma-jasmine',
       'karma-coverage'
     ],

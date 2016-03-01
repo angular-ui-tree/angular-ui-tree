@@ -1,8 +1,12 @@
 language: node_js
 node_js:
-  - "0.10"
+  - "4.2.4"
+
+addons:
+  firefox: "latest"
 
 before_script:
+  - echo "Using firefox version `firefox --version`"
   - npm install -g bower
   - bower install
   - export DISPLAY=:99.0
