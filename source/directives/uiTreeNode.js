@@ -42,7 +42,6 @@
               bindDragMoveEvents,
               unbindDragMoveEvents,
               keydownHandler,
-              outOfBounds,
               isHandleChild,
               el,
               isUiTreeRoot,
