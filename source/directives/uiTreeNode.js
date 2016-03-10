@@ -37,7 +37,6 @@
               bindDragMoveEvents,
               unbindDragMoveEvents,
               keydownHandler,
-              outOfBounds,
               isHandleChild,
               el;
 
