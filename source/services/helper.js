@@ -320,7 +320,9 @@
           elementIsTreeNode: function (element) {
             return typeof element.attr('ui-tree-node') !== 'undefined';
           },
-
+          elementIsEmpty: function(element) {
+            return element.hasClass(treeConfig.emptyTreeClass);
+          },
           elementIsTreeNodeHandle: function (element) {
             return typeof element.attr('ui-tree-handle') !== 'undefined';
           },

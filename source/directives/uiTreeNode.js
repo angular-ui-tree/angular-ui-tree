@@ -325,25 +325,6 @@
                   dragElm[0].style.display = displayElm;
                 }
 
-                outOfBounds = !UiTreeHelper.elementIsTreeNodeHandle(targetElm) &&
-                              !UiTreeHelper.elementIsTreeNode(targetElm) &&
-                              !UiTreeHelper.elementIsTreeNodes(targetElm) &&
-                              !UiTreeHelper.elementIsTree(targetElm) &&
-                              !UiTreeHelper.elementIsPlaceholder(targetElm);
-
-                // Detect out of bounds condition, update drop target display, and prevent drop
-                if (outOfBounds) {
-
-                  // Remove the placeholder
-                  placeElm.remove();
-
-                  // If the target was an empty tree, replace the empty element placeholder
-                  if (treeScope) {
-                    treeScope.resetEmptyElement();
-                    treeScope = null;
-                  }
-                }
-
                 // move horizontal
                 if (pos.dirAx && pos.distAxX >= config.levelThreshold) {
                   pos.distAxX = 0;
@@ -375,7 +356,7 @@
 
                 // move vertical
                 if (!pos.dirAx) {
-                  if (UiTreeHelper.elementIsTree(targetElm)) {
+                  if (UiTreeHelper.elementIsTree(targetElm) || UiTreeHelper.elementIsEmpty(targetElm)) {
                     targetNode = targetElm.controller('uiTree').scope;
                   } else if (UiTreeHelper.elementIsTreeNodeHandle(targetElm)) {
                     targetNode = targetElm.controller('uiTreeHandle').scope;
@@ -420,6 +401,7 @@
                     treeScope = null;
                   }
 
+                  console.log(isEmpty, 'isEmpty?');
                   if (isEmpty) { // it's an empty tree
                     treeScope = targetNode;
                     if (targetNode.$nodesScope.accept(scope, 0)) {
@@ -443,8 +425,6 @@
                     } else if (!targetBefore && targetNode.accept(scope, targetNode.childNodesCount())) { // we have to check if it can add the dragging node as a child
                       targetNode.$childNodesScope.$element.append(placeElm);
                       dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), targetNode.childNodesCount());
-                    } else {
-                      outOfBounds = true;
                     }
                   }
                 }
@@ -464,7 +444,7 @@
                 $q.when(scope.$treeScope.$callbacks.beforeDrop(dragEventArgs))
                     // promise resolved (or callback didn't return false)
                     .then(function (allowDrop) {
-                      if (allowDrop !== false && scope.$$allowNodeDrop && !outOfBounds) { // node drop accepted)
+                      if (allowDrop !== false && scope.$$allowNodeDrop) { // node drop accepted)
                         dragInfo.apply();
                         // fire the dropped callback only if the move was successful
                         scope.$treeScope.$callbacks.dropped(dragEventArgs);
