@@ -157,6 +157,10 @@
             callbacks.beforeDrop = function (event) {
 
             };
+            
+            callbacks.onClone = function (data) {
+              return data;
+            };
 
             scope.$watch(attrs.uiTree, function (newVal, oldVal) {
               angular.forEach(newVal, function (value, key) {
