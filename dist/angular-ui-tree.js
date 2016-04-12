@@ -546,8 +546,8 @@
 
   angular.module('ui.tree')
 
-    .directive('uiTreeNode', ['treeConfig', 'UiTreeHelper', '$window', '$document', '$timeout', '$q', '$rootElement',
-      function (treeConfig, UiTreeHelper, $window, $document, $timeout, $q, $rootElement) {
+    .directive('uiTreeNode', ['treeConfig', 'UiTreeHelper', '$window', '$document', '$timeout', '$q', '$rootElement', '$compile',
+      function (treeConfig, UiTreeHelper, $window, $document, $timeout, $q, $rootElement, $compile) {
         return {
           require: ['^uiTreeNodes', '^uiTree'],
           restrict: 'A',
@@ -727,7 +727,13 @@
                 dragElm.append(element);
               }
 
-              $rootElement.append(dragElm);
+              var document = $document[0],
+                  _element = $rootElement[0];
+              if (_element === document || _element === document.documentElement) {
+                _element = document.body;
+              }
+
+              angular.element(_element).append($compile(dragElm)(scope));
 
               dragElm.css({
                 'left': eventObj.pageX - pos.offsetX + 'px',
