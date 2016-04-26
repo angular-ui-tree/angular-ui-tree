@@ -14,6 +14,7 @@
         $scope.$callbacks = null;
 
         $scope.dragEnabled = true;
+        $scope.dropIn = false;
         $scope.emptyPlaceholderEnabled = true;
         $scope.maxDepth = 0;
         $scope.dragDelay = 0;
