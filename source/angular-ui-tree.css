@@ -10,6 +10,7 @@
     background-image: linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
     background-size: 60px 60px;
     background-position: 0 0, 30px 30px;
+    pointer-events: none;
 }
 
 .angular-ui-tree-nodes {
