@@ -223,8 +223,7 @@
                 isEmpty,
                 scrollDownBy,
                 targetOffset,
-                targetBefore,
-                destIndex;
+                targetBefore;
 
               if (dragElm) {
                 e.preventDefault();
@@ -433,7 +432,7 @@
                     targetBefore = targetNode.horizontal ? eventObj.pageX < (targetOffset.left + UiTreeHelper.width(targetElm) / 2)
                       : eventObj.pageY < (targetOffset.top + UiTreeHelper.height(targetElm) / 2);
                     
-                    destIndex = targetBefore ?  targetNode.index() : targetNode.index() + 1;
+                    var destIndex = targetBefore ?  targetNode.index() : targetNode.index() + 1;
                     if (targetNode.$parentNodesScope.accept(scope, destIndex)) {
                       if (targetBefore) {
                         targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
