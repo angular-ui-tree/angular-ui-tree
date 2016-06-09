@@ -158,6 +158,15 @@
 
             };
 
+            /**
+             * Callback is fired when a user toggles node (but after processing the toggle action)
+             * @param sourceNodeScope
+             * @param collapsed
+             */
+            callbacks.toggle = function (collapsed, sourceNodeScope) {
+
+            };
+
             scope.$watch(attrs.uiTree, function (newVal, oldVal) {
               angular.forEach(newVal, function (value, key) {
                 if (callbacks[key]) {

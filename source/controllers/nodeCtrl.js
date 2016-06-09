@@ -88,6 +88,7 @@
 
         $scope.toggle = function () {
           $scope.collapsed = !$scope.collapsed;
+          $scope.$treeScope.$callbacks.toggle($scope.collapsed, $scope);
         };
 
         $scope.collapse = function () {
