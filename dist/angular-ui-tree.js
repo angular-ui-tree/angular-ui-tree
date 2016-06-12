@@ -727,7 +727,13 @@
                 dragElm.append(element);
               }
 
-              $rootElement.append(dragElm);
+              var document = $document[0],
+                  _element = $rootElement[0];
+              if (_element === document || _element === document.documentElement) {
+                _element = document.body;
+              }
+
+              angular.element(_element).append(dragElm);
 
               dragElm.css({
                 'left': eventObj.pageX - pos.offsetX + 'px',
