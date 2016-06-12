@@ -288,6 +288,13 @@ Same as [Parameters](#eventParam) of dropped.
 
 - **Rejected Promise** or **false**: Disallow the node drop and return the dragged node to its original position
 
+##### toggle(collapsed, sourceNodeScope)
+The `toggle` function is called after the node is toggled
+
+**Parameters:**
+- `collapsed`: Boolean value with state of the node.
+- `sourceNodeScope`: The scope of source node which is toggled.
+
 ### ui-tree-nodes
 `ui-tree-nodes` is the container of nodes. 
 Every `ui-tree-node` should have a `ui-tree-nodes` as it's container, a `ui-tree-nodes` can have multiple child nodes.
