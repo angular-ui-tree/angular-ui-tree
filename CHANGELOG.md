@@ -1,3 +1,10 @@
+# 2.16.0
+
+* Updated Angular references to include 1.5
+* Fixed issue dragging and dropping a node into an empty tree
+* Added new callback for a toggle event that fires when any node is expanded or collapsed.
+* Fixed drag/drop error that occurred when the ng-app was attached to document.
+
 # 2.15.0
 
 * Remove scope dependency [#648](https://github.com/angular-ui-tree/angular-ui-tree/pull/648)

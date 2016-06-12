@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.15.0
+ * @license Angular UI Tree v2.16.0
  * (c) 2010-2016. https://github.com/angular-ui-tree/angular-ui-tree
  * License: MIT
  */
@@ -130,6 +130,7 @@
 
         $scope.toggle = function () {
           $scope.collapsed = !$scope.collapsed;
+          $scope.$treeScope.$callbacks.toggle($scope.collapsed, $scope);
         };
 
         $scope.collapse = function () {
@@ -494,6 +495,15 @@
 
             };
 
+            /**
+             * Callback is fired when a user toggles node (but after processing the toggle action)
+             * @param sourceNodeScope
+             * @param collapsed
+             */
+            callbacks.toggle = function (collapsed, sourceNodeScope) {
+
+            };
+
             scope.$watch(attrs.uiTree, function (newVal, oldVal) {
               angular.forEach(newVal, function (value, key) {
                 if (callbacks[key]) {
@@ -546,8 +556,8 @@
 
   angular.module('ui.tree')
 
-    .directive('uiTreeNode', ['treeConfig', 'UiTreeHelper', '$window', '$document', '$timeout', '$q', '$rootElement',
-      function (treeConfig, UiTreeHelper, $window, $document, $timeout, $q, $rootElement) {
+    .directive('uiTreeNode', ['treeConfig', 'UiTreeHelper', '$window', '$document', '$timeout', '$q',
+      function (treeConfig, UiTreeHelper, $window, $document, $timeout, $q) {
         return {
           require: ['^uiTreeNodes', '^uiTree'],
           restrict: 'A',
@@ -727,7 +737,7 @@
                 dragElm.append(element);
               }
 
-              $rootElement.append(dragElm);
+              $document.find('body').append(dragElm);
 
               dragElm.css({
                 'left': eventObj.pageX - pos.offsetX + 'px',
@@ -764,6 +774,7 @@
                 targetNode,
                 targetElm,
                 isEmpty,
+                scrollDownBy,
                 targetOffset,
                 targetBefore;
 
@@ -808,8 +819,9 @@
                 bottom_scroll = top_scroll + (window.innerHeight || $window.document.clientHeight || $window.document.clientHeight);
 
                 // to scroll down if cursor y-position is greater than the bottom position the vertical scroll
-                if (bottom_scroll < eventObj.pageY && bottom_scroll <= document_height) {
-                  window.scrollBy(0, 10);
+                if (bottom_scroll < eventObj.pageY && bottom_scroll < document_height) {
+                  scrollDownBy = Math.min(document_height - bottom_scroll, 10);
+                  window.scrollBy(0, scrollDownBy);
                 }
 
                 // to scroll top if cursor y-position is less than the top position the vertical scroll
