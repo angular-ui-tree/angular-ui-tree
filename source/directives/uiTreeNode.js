@@ -184,7 +184,7 @@
                 dragElm.append(element);
               }
 
-              $rootElement.append(dragElm);
+              $document.find('body').append(dragElm);
 
               dragElm.css({
                 'left': eventObj.pageX - pos.offsetX + 'px',
