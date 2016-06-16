@@ -475,12 +475,18 @@ With this you can customize the classes applied to various tree elements
 (`treeClass`, `emptyTreeClass`, `hiddenClass`, `nodesClass`, `handleClass`,
 `placeholderClass`, `dragClass`).
 
-In addition, you can modify whether nodes are collapsed by default
-(`defaultCollapsed`: default false). For example:
+In addition, you can modify whether or not nodes are collapsed by default
+(`defaultCollapsed`: default false).
+
+You can also modify whether or not dragging a node over a parent node will insert the node as a child
+(`appendChildOnHover`: default false).
+
+For example:
 
 ```js
 module.config(function(treeConfig) {
   treeConfig.defaultCollapsed = true; // collapse nodes by default
+  treeConfig.appendChildOnHover = true; // append dragged nodes as children by default
 });
 ```
 
