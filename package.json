@@ -1,6 +1,6 @@
 {
   "name": "angular-ui-tree",
-  "version": "2.16.0",
+  "version": "2.17.0",
   "description": "An AngularJS UI component that can sort nested lists, provides drag & drop support and doesn't depend on jQuery",
   "license": "MIT",
   "repository": {
