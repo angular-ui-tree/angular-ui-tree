@@ -48,6 +48,7 @@
             scope.init(controllersArr);
 
             scope.collapsed = !!UiTreeHelper.getNodeAttribute(scope, 'collapsed') || treeConfig.defaultCollapsed;
+			scope.expandOnHover = !!UiTreeHelper.getNodeAttribute(scope, 'expandOnHover');
             scope.sourceOnly = scope.nodropEnabled || scope.$treeScope.nodropEnabled;
 
             scope.$watch(attrs.collapsed, function (val) {
@@ -62,7 +63,14 @@
             });
 
             scope.$watch(attrs.expandOnHover, function(val) {
+              if ((typeof val) == 'boolean') {
                 scope.expandOnHover = val;
+              }
+            });
+
+			scope.$watch('expandOnHover', function (val) {
+              UiTreeHelper.setNodeAttribute(scope, 'expandOnHover', val);
+              attrs.$set('expandOnHover', val);
             });
 
             scope.$on('angular-ui-tree:collapse-all', function () {
