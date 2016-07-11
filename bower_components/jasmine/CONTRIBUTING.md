@@ -1,6 +1,6 @@
 # Developing for Jasmine Core
 
-We welcome your contributions! Thanks for helping make Jasmine a better project for everyone. Please review the backlog and discussion lists before starting work.  What you're looking for may already have been done. If it hasn't, the community can help make your contribution better.
+We welcome your contributions! Thanks for helping make Jasmine a better project for everyone. Please review the backlog and discussion lists before starting work.  What you're looking for may already have been done. If it hasn't, the community can help make your contribution better. If you want to contribute but don't know what to work on, [issues tagged ready for work](https://github.com/jasmine/jasmine/labels/ready%20for%20work) should have enough detail to get started.
 
 ## Links
 
@@ -82,11 +82,11 @@ To install the Node dependencies, you will need Node.js, Npm, and [Grunt](http:/
 
     $ npm install --local
 
-...will install all of the node modules locally. If when you run
+...will install all of the node modules locally. Now run
 
     $ grunt
 
-...you see that JSHint runs your system is ready.
+...if you see that JSHint runs, your system is ready.
 
 ### How to write new Jasmine code
 
@@ -105,7 +105,7 @@ Follow these tips and your pull request, patch, or suggestion is much more likel
 
 Jasmine uses the [Jasmine Ruby gem](http://github.com/jasmine/jasmine-gem) to test itself in browser.
 
-    $ rake jasmine
+    $ bundle exec rake jasmine
 
 ...and then visit `http://localhost:8888` to run specs.
 

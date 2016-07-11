@@ -16,6 +16,7 @@
         $scope.$type = 'uiTreeNode';
         $scope.$$allowNodeDrop = false;
         $scope.collapsed = false;
+        $scope.expandOnHover = false;
 
         $scope.init = function (controllersArr) {
           var treeNodesCtrl = controllersArr[0];
@@ -88,6 +89,7 @@
 
         $scope.toggle = function () {
           $scope.collapsed = !$scope.collapsed;
+          $scope.$treeScope.$callbacks.toggle($scope.collapsed, $scope);
         };
 
         $scope.collapse = function () {
