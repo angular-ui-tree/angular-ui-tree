@@ -172,6 +172,7 @@ If a tree is empty, there will be an empty placeholder which is used to drop nod
 - turn on/off drag and drop.
 - Limit depth to 5
 - 500 milliseconds delay
+
 ```html
 <div ui-tree data-drag-enabled="tree.enabled" data-max-depth="5" data-drag-delay="500">
 
@@ -363,7 +364,7 @@ Check if the nodes is the parent of the target node.
 A node of a tree. Every `ui-tree-node` should have a `ui-tree-nodes` as it's container.
 
 #### Attributes
-##### data-nodrag
+##### data-nodrag (type: boolean)
 Turn off drag of node.
 Example: turn off drag.
 ```html
@@ -372,8 +373,12 @@ Example: turn off drag.
 </ol>
 ```
 
-##### data-collapsed
+##### data-collapsed (type: boolean)
 Collapse the node.
+
+##### data-expand-on-hover (type: boolean)
+Causes the node to expand (if it contains child nodes and was collapsed) when dragging a node over it.
+This lets users drag and drop items into a nested tree in a single drag operation, instead of having to expand all the nodes to the destination first.
 
 #### Properties of scope
 ##### $element (type: AngularElement)
@@ -382,7 +387,7 @@ The html element which bind with the `ui-tree-nodes` scope.
 ##### $modelValue (type: Object)
 The data which bind with the scope.
 
-##### collapsed (type: Bool)
+##### collapsed (type: boolean)
 If the node is collapsed
 
 - `true`: Current node is collapsed;

@@ -1,3 +1,8 @@
+# 2.17.0
+
+* Updated Angular/angularfire references in bower.json
+* Re-introduced feature to expand collapsed nodes when hovering another node [#783](https://github.com/angular-ui-tree/angular-ui-tree/pull/783)
+
 # 2.16.0
 
 * Updated Angular references to include 1.5
