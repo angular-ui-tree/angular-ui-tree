@@ -190,7 +190,7 @@
            * @returns {String} Height
            */
           height: function (element) {
-            return element.prop('scrollHeight');
+            return element.height();
           },
 
           /**

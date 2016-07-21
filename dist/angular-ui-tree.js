@@ -1017,9 +1017,9 @@
                       }
 
                       if (targetNode.collapsed) {
-                        if (scope.expandOnHover === true || (angular.isNumber(scope.expandOnHover) && scope.expandOnHover === 0)) {
+                        if (scope.expandOnHover === true || (angular.isNumber(scope.expandOnHover) && scope.expandOnHover === 0) && targetNode.depth() !== dragInfo.source.depth()) {
                           targetNode.collapsed = false;
-                        } else if (scope.expandOnHover !== false && angular.isNumber(scope.expandOnHover) && scope.expandOnHover > 0) {
+                        } else if (scope.expandOnHover !== false && angular.isNumber(scope.expandOnHover) && scope.expandOnHover > 0 && targetNode.depth() !== dragInfo.source.depth()) {
                           if (angular.isUndefined(scope.expandTimeoutOn)) {
                             scope.expandTimeoutOn = targetNode.$id;
 
@@ -1457,7 +1457,7 @@
            * @returns {String} Height
            */
           height: function (element) {
-            return element.prop('scrollHeight');
+            return element.height();
           },
 
           /**
