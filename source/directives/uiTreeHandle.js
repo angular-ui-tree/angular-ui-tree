@@ -18,7 +18,7 @@
             // connect with the tree node.
             if (scope != treeNodeCtrl.scope) {
               scope.$nodeScope = treeNodeCtrl.scope;
-              treeNodeCtrl.scope.$handleScope = scope;
+              treeNodeCtrl.scope.$handleScope.push(scope);
             }
           }
         };
