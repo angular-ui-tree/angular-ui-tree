@@ -1,11 +1,11 @@
 {
-  "name": "angular-ui-tree",
-  "version": "2.17.0",
-  "description": "An AngularJS UI component that can sort nested lists, provides drag & drop support and doesn't depend on jQuery",
+  "name": "angular-ui-tree-lite",
+  "version": "1.0.0",
+  "description": "A lite and fast version of angular-ui-tree",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/angular-ui-tree/angular-ui-tree"
+    "url": "https://github.com/jacobscarter/angular-ui-tree"
   },
   "main": "index.js",
   "devDependencies": {
