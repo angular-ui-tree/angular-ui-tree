@@ -48,7 +48,7 @@
             scope.init(controllersArr);
 
             scope.collapsed = !!UiTreeHelper.getNodeAttribute(scope, 'collapsed') || treeConfig.defaultCollapsed;
-			scope.expandOnHover = !!UiTreeHelper.getNodeAttribute(scope, 'expandOnHover');
+			      scope.expandOnHover = !!UiTreeHelper.getNodeAttribute(scope, 'expandOnHover');
             scope.sourceOnly = scope.nodropEnabled || scope.$treeScope.nodropEnabled;
 
             scope.$watch(attrs.collapsed, function (val) {
@@ -68,7 +68,7 @@
               }
             });
 
-			scope.$watch('expandOnHover', function (val) {
+			      scope.$watch('expandOnHover', function (val) {
               UiTreeHelper.setNodeAttribute(scope, 'expandOnHover', val);
               attrs.$set('expandOnHover', val);
             });
@@ -226,7 +226,6 @@
                 top_scroll,
                 bottom_scroll,
                 target,
-                decrease,
                 targetX,
                 targetY,
                 displayElm,
@@ -240,73 +239,75 @@
               if (dragElm) {
                 e.preventDefault();
 
+                //Deselect anything that was selected when move began.
                 if ($window.getSelection) {
                   $window.getSelection().removeAllRanges();
                 } else if ($window.document.selection) {
                   $window.document.selection.empty();
                 }
 
+                //Get top left positioning of element being moved.
                 leftElmPos = eventObj.pageX - pos.offsetX;
                 topElmPos = eventObj.pageY - pos.offsetY;
 
-                //dragElm can't leave the screen on the left
+                //dragElm can't leave the screen on the left.
                 if (leftElmPos < 0) {
                   leftElmPos = 0;
                 }
 
-                //dragElm can't leave the screen on the top
+                //dragElm can't leave the screen on the top.
                 if (topElmPos < 0) {
                   topElmPos = 0;
                 }
 
-                //dragElm can't leave the screen on the bottom
+                //dragElm can't leave the screen on the bottom.
                 if ((topElmPos + 10) > document_height) {
                   topElmPos = document_height - 10;
                 }
 
-                //dragElm can't leave the screen on the right
+                //dragElm can't leave the screen on the right.
                 if ((leftElmPos + 10) > document_width) {
                   leftElmPos = document_width - 10;
                 }
 
+                //Updating element being moved css.
                 dragElm.css({
                   'left': leftElmPos + 'px',
                   'top': topElmPos + 'px'
                 });
 
+                //Getting position to top and bottom of page.
                 top_scroll = window.pageYOffset || $window.document.documentElement.scrollTop;
                 bottom_scroll = top_scroll + (window.innerHeight || $window.document.clientHeight || $window.document.clientHeight);
 
-                // to scroll down if cursor y-position is greater than the bottom position the vertical scroll
+                //To scroll down if cursor y-position is greater than the bottom position the vertical scroll
                 if (bottom_scroll < eventObj.pageY && bottom_scroll < document_height) {
                   scrollDownBy = Math.min(document_height - bottom_scroll, 10);
                   window.scrollBy(0, scrollDownBy);
                 }
 
-                // to scroll top if cursor y-position is less than the top position the vertical scroll
+                //To scroll top if cursor y-position is less than the top position the vertical scroll
                 if (top_scroll > eventObj.pageY) {
                   window.scrollBy(0, -10);
                 }
 
+                //Calling service to update position coordinates based on move.
                 UiTreeHelper.positionMoved(e, pos, firstMoving);
+
                 if (firstMoving) {
                   firstMoving = false;
                   return;
                 }
 
-                // check if add it as a child node first
-                // todo decrease is unused
-                decrease = (UiTreeHelper.offset(dragElm).left - UiTreeHelper.offset(placeElm).left) >= config.threshold;
-
                 targetX = eventObj.pageX - ($window.pageXOffset ||
-                  $window.document.body.scrollLeft ||
-                  $window.document.documentElement.scrollLeft) -
-                  ($window.document.documentElement.clientLeft || 0);
+                    $window.document.body.scrollLeft ||
+                    $window.document.documentElement.scrollLeft) -
+                    ($window.document.documentElement.clientLeft || 0);
 
                 targetY = eventObj.pageY - ($window.pageYOffset ||
-                  $window.document.body.scrollTop ||
-                  $window.document.documentElement.scrollTop) -
-                  ($window.document.documentElement.clientTop || 0);
+                    $window.document.body.scrollTop ||
+                    $window.document.documentElement.scrollTop) -
+                    ($window.document.documentElement.clientTop || 0);
 
                 // Select the drag target. Because IE does not support CSS 'pointer-events: none', it will always
                 // pick the drag element itself as the target. To prevent this, we hide the drag element while
@@ -337,13 +338,14 @@
                   dragElm[0].style.display = displayElm;
                 }
 
+                //This checks if angularUiTree attributes are found on element.
                 outOfBounds = !UiTreeHelper.elementIsTreeNodeHandle(targetElm) &&
                               !UiTreeHelper.elementIsTreeNode(targetElm) &&
                               !UiTreeHelper.elementIsTreeNodes(targetElm) &&
                               !UiTreeHelper.elementIsTree(targetElm) &&
                               !UiTreeHelper.elementIsPlaceholder(targetElm);
 
-                // Detect out of bounds condition, update drop target display, and prevent drop
+                //Detect out of bounds condition, update drop target display, and prevent drop
                 if (outOfBounds) {
 
                   // Remove the placeholder
@@ -356,37 +358,40 @@
                   }
                 }
 
+                //TODO(jcarter): Do we have a use for horizontal trees?
                 // move horizontal
-                if (pos.dirAx && pos.distAxX >= config.levelThreshold) {
-                  pos.distAxX = 0;
+                // if (pos.dirAx && pos.distAxX >= config.levelThreshold) {
+                //   pos.distAxX = 0;
 
-                  // increase horizontal level if previous sibling exists and is not collapsed
-                  if (pos.distX > 0) {
-                    prev = dragInfo.prev();
-                    if (prev && !prev.collapsed
-                      && prev.accept(scope, prev.childNodesCount())) {
-                      prev.$childNodesScope.$element.append(placeElm);
-                      dragInfo.moveTo(prev.$childNodesScope, prev.childNodes(), prev.childNodesCount());
-                    }
-                  }
+                //   // increase horizontal level if previous sibling exists and is not collapsed
+                //   if (pos.distX > 0) {
+                //     prev = dragInfo.prev();
+                //     if (prev && !prev.collapsed
+                //       && prev.accept(scope, prev.childNodesCount())) {
+                //       prev.$childNodesScope.$element.append(placeElm);
+                //       dragInfo.moveTo(prev.$childNodesScope, prev.childNodes(), prev.childNodesCount());
+                //     }
+                //   }
 
-                  // decrease horizontal level
-                  if (pos.distX < 0) {
-                    // we can't decrease a level if an item preceeds the current one
-                    next = dragInfo.next();
-                    if (!next) {
-                      target = dragInfo.parentNode(); // As a sibling of it's parent node
-                      if (target
-                        && target.$parentNodesScope.accept(scope, target.index() + 1)) {
-                        target.$element.after(placeElm);
-                        dragInfo.moveTo(target.$parentNodesScope, target.siblings(), target.index() + 1);
-                      }
-                    }
-                  }
-                }
+                //   // decrease horizontal level
+                //   if (pos.distX < 0) {
+                //     // we can't decrease a level if an item preceeds the current one
+                //     next = dragInfo.next();
+                //     if (!next) {
+                //       target = dragInfo.parentNode(); // As a sibling of it's parent node
+                //       if (target
+                //         && target.$parentNodesScope.accept(scope, target.index() + 1)) {
+                //         target.$element.after(placeElm);
+                //         dragInfo.moveTo(target.$parentNodesScope, target.siblings(), target.index() + 1);
+                //       }
+                //     }
+                //   }
+                // }
 
                 // move vertical
-                if (!pos.dirAx) {
+                //if (!pos.dirAx) {
+                //Logging all moves until horizontal tree is implemented.
+                if (true) {
                   if (UiTreeHelper.elementIsTree(targetElm)) {
                     targetNode = targetElm.controller('uiTree').scope;
                   } else if (UiTreeHelper.elementIsTreeNodeHandle(targetElm)) {
@@ -597,6 +602,7 @@
               angular.element($document).bind('touchmove', dragMoveEvent);
               angular.element($document).bind('mouseup', dragEndEvent);
               angular.element($document).bind('mousemove', dragMoveEvent);
+              angular.element($document).bind('mousedown', dragStartEvent);
               angular.element($document).bind('mouseleave', dragCancelEvent);
             };
 
@@ -610,7 +616,9 @@
               angular.element($document).unbind('mouseup', dragEndEvent);
               angular.element($document).unbind('mousemove', dragMoveEvent);
               angular.element($document).unbind('mouseleave', dragCancelEvent);
+              angular.element($document).unbind('mousedown', dragStartEvent);
             };
+
 
             keydownHandler = function (e) {
               if (e.keyCode == 27) {
