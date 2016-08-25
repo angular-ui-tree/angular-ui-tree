@@ -85,7 +85,13 @@
               index: node.index(),
               siblings: node.siblings().slice(0),
               parent: node.$parentNodesScope,
-
+              //Added as a fix to problem described below:
+              //Source tree is a no drop, drag item over tree that can accept drop, parent is set, then move and drop
+              //item into source tree, because source is no drop and last parent set was other tree, item is inserted into
+              //other tree.
+              resetParent: function() {
+                this.parent = {};
+              },
               // Move the node to a new position
               moveTo: function (parent, siblings, index) {
                 this.parent = parent;
@@ -158,7 +164,7 @@
                 var nodeData = this.source.$modelValue;
 
                 // nodrop enabled on tree or parent
-                if (this.parent.nodropEnabled || this.parent.$treeScope.nodropEnabled) {
+                if (Object.keys(this.parent).length > 0 && (this.parent.nodropEnabled || this.parent.$treeScope.nodropEnabled)) {
                   return;
                 }
 
