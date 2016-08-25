@@ -1,13 +1,14 @@
 {
-  "name": "angular-ui-tree",
-  "version": "2.17.0",
-  "homepage": "https://github.com/angular-ui-tree/angular-ui-tree",
+  "name": "angular-ui-tree-lite",
+  "version": "2.19.0",
+  "homepage": "https://github.com/jacobscarter/angular-ui-tree",
   "authors": [
     "Jim Liu <https://github.com/JimLiu>",
     "Voles <https://github.com/Voles>",
-    "Stefan Mohr <https://github.com/StefanCodes>"
+    "Stefan Mohr <https://github.com/StefanCodes>",
+    "Jacob Carter <https://github.com/jacobscarter>"
   ],
-  "description": "Tree directive for AngularJS",
+  "description": "A Lite and Fast Tree directive for AngularJS",
   "main": [
     "dist/angular-ui-tree.js",
     "dist/angular-ui-tree.css"

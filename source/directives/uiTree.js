@@ -13,16 +13,18 @@
               accept: null,
               beforeDrag: null
             },
-              config = {},
-              tdElm,
-              $trElm,
-              emptyElmColspan;
+            config = {},
+            tdElm,
+            $trElm,
+            emptyElmColspan;
 
+            //Adding configured class to uiTree.
             angular.extend(config, treeConfig);
             if (config.treeClass) {
               element.addClass(config.treeClass);
             }
 
+            //Determining if uiTree is on a table.
             if (element.prop('tagName').toLowerCase() === 'table') {
               scope.$emptyElm = angular.element($window.document.createElement('tr'));
               $trElm = element.find('tr');
@@ -31,6 +33,7 @@
                 emptyElmColspan = angular.element($trElm).children().length;
               } else {
                 // If not, by setting a huge colspan we make sure it takes full width.
+                //TODO(jcarter): Check for negative side effects.
                 emptyElmColspan = 1000000;
               }
               tdElm = angular.element($window.document.createElement('td'))

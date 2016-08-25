@@ -18,22 +18,29 @@
         $scope.collapsed = false;
         $scope.expandOnHover = false;
 
+        //Called by uiTreeNode Directive on load.
         $scope.init = function (controllersArr) {
           var treeNodesCtrl = controllersArr[0];
           $scope.$treeScope = controllersArr[1] ? controllersArr[1].scope : null;
 
-          // find the scope of it's parent node
+          //Find the scope of it's parent node.
           $scope.$parentNodeScope = treeNodesCtrl.scope.$nodeScope;
-          // modelValue for current node
+          
+          //ModelValue for current node.
           $scope.$modelValue = treeNodesCtrl.scope.$modelValue[$scope.$index];
           $scope.$parentNodesScope = treeNodesCtrl.scope;
-          treeNodesCtrl.scope.initSubNode($scope); // init sub nodes
+          
+          //Init sub nodes.
+          treeNodesCtrl.scope.initSubNode($scope);
 
           $element.on('$destroy', function () {
-            treeNodesCtrl.scope.destroySubNode($scope); // destroy sub nodes
+            
+            //Destroy sub nodes.
+            treeNodesCtrl.scope.destroySubNode($scope);
           });
         };
 
+        //Return the index of child node in parent node (nodesScope).
         $scope.index = function () {
           return $scope.$parentNodesScope.$modelValue.indexOf($scope.$modelValue);
         };
@@ -51,6 +58,7 @@
           return nodes && nodes.indexOf(targetNode) > -1;
         };
 
+        //TODO(jcarter): This method is on uiTreeHelper already.
         $scope.prev = function () {
           var index = $scope.index();
           if (index > 0) {
@@ -59,6 +67,7 @@
           return null;
         };
 
+        //Calls childNodes on parent.
         $scope.siblings = function () {
           return $scope.$parentNodesScope.childNodes();
         };
@@ -71,6 +80,7 @@
           return $scope.childNodesCount() > 0;
         };
 
+        //TODO(jcarter): Understand this functionality more.
         $scope.childNodes = function () {
           return $scope.$childNodesScope && $scope.$childNodesScope.$modelValue ?
             $scope.$childNodesScope.childNodes() :
