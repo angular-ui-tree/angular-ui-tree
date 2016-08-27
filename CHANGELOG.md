@@ -1,4 +1,4 @@
-# 2.19.0
+# 2.18.0
 
 * Added check that skips dragDelay logic if no drag delay was specified by user.  This removed unavoidable 100-200ms delay at the start of every drag.
 * Removed all horizontal tree logic that doesn't appear to be supported.

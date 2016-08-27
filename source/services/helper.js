@@ -96,10 +96,7 @@
               siblings: node.siblings().slice(0),
               parent: node.$parentNodesScope,
 
-              //Added as a fix to problem described below:
-              //Source tree is a no drop, drag item over tree that can accept drop, parent is set, then move and drop
-              //item into source tree (meaning outOfBounds is false), because source is no drop and last parent set was
-              //other tree, item is inserted into other tree.
+              //Reset parent to source parent.
               resetParent: function() {
                 this.parent = node.$parentNodesScope;
               },
@@ -112,7 +109,6 @@
                 this.siblings = siblings.slice(0);
 
                 //If source node is in the target nodes
-                //TODO(jcarter): does this take care of re-ordering a tree?
                 var i = this.siblings.indexOf(this.source);
                 if (i > -1) {
                   this.siblings.splice(i, 1);
@@ -306,7 +302,6 @@
             }
 
             //Mouse position last event.
-            //TODO(jcarter): What is this being used for?.
             pos.lastX = pos.nowX;
             pos.lastY = pos.nowY;
 
@@ -315,22 +310,18 @@
             pos.nowY = pageY;
 
             //Distance mouse moved between events.
-            //TODO(jcarter): What is this being used for?.            
             pos.distX = pos.nowX - pos.lastX;
             pos.distY = pos.nowY - pos.lastY;
 
             //Direction mouse was moving.
-            //TODO(jcarter): What is this being used for?.            
             pos.lastDirX = pos.dirX;
             pos.lastDirY = pos.dirY;
 
             //Direction mouse is now moving (on both axis).
-            //TODO(jcarter): What is this being used for?.            
             pos.dirX = pos.distX === 0 ? 0 : pos.distX > 0 ? 1 : -1;
             pos.dirY = pos.distY === 0 ? 0 : pos.distY > 0 ? 1 : -1;
 
             //Axis mouse is now moving on.
-            //TODO(jcarter): What is this being used for?.            
             newAx = Math.abs(pos.distX) > Math.abs(pos.distY) ? 1 : 0;
 
             //Do nothing on first move.
@@ -341,7 +332,6 @@
             }
 
             //Calc distance moved on this axis (and direction).
-            //TODO(jcarter): What is this being used for?.            
             if (pos.dirAx !== newAx) {
               pos.distAxX = 0;
               pos.distAxY = 0;

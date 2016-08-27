@@ -80,7 +80,6 @@
           return $scope.childNodesCount() > 0;
         };
 
-        //TODO(jcarter): Understand this functionality more.
         $scope.childNodes = function () {
           return $scope.$childNodesScope && $scope.$childNodesScope.$modelValue ?
             $scope.$childNodesScope.childNodes() :
