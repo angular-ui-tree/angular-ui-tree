@@ -92,14 +92,11 @@
               },
               index: node.index(),
 
-              //slice(0) just duplicates an array.
+              //Slice(0) just duplicates an array.
               siblings: node.siblings().slice(0),
               parent: node.$parentNodesScope,
 
-              //Added as a fix to problem described below:
-              //Source tree is a no drop, drag item over tree that can accept drop, parent is set, then move and drop
-              //item into source tree (meaning outOfBounds is false), because source is no drop and last parent set was
-              //other tree, item is inserted into other tree.
+              //Reset parent to source parent.
               resetParent: function() {
                 this.parent = node.$parentNodesScope;
               },
@@ -112,7 +109,6 @@
                 this.siblings = siblings.slice(0);
 
                 //If source node is in the target nodes
-                //TODO(jcarter): does this take care of re-ordering a tree?
                 var i = this.siblings.indexOf(this.source);
                 if (i > -1) {
                   this.siblings.splice(i, 1);
@@ -188,7 +184,6 @@
                 var nodeData = this.source.$modelValue;
 
                 //Nodrop enabled on tree or parent
-                //Added Object.keys check because parent may be empty object.
                 if (this.parent.nodropEnabled || this.parent.$treeScope.nodropEnabled) {
                   return;
                 }
@@ -306,7 +301,6 @@
             }
 
             //Mouse position last event.
-            //TODO(jcarter): What is this being used for?.
             pos.lastX = pos.nowX;
             pos.lastY = pos.nowY;
 
@@ -314,23 +308,19 @@
             pos.nowX = pageX;
             pos.nowY = pageY;
 
-            //Distance mouse moved between events.
-            //TODO(jcarter): What is this being used for?.            
+            //Distance mouse moved between events.          
             pos.distX = pos.nowX - pos.lastX;
             pos.distY = pos.nowY - pos.lastY;
 
-            //Direction mouse was moving.
-            //TODO(jcarter): What is this being used for?.            
+            //Direction mouse was moving.           
             pos.lastDirX = pos.dirX;
             pos.lastDirY = pos.dirY;
 
-            //Direction mouse is now moving (on both axis).
-            //TODO(jcarter): What is this being used for?.            
+            //Direction mouse is now moving (on both axis).          
             pos.dirX = pos.distX === 0 ? 0 : pos.distX > 0 ? 1 : -1;
             pos.dirY = pos.distY === 0 ? 0 : pos.distY > 0 ? 1 : -1;
 
-            //Axis mouse is now moving on.
-            //TODO(jcarter): What is this being used for?.            
+            //Axis mouse is now moving on.         
             newAx = Math.abs(pos.distX) > Math.abs(pos.distY) ? 1 : 0;
 
             //Do nothing on first move.
@@ -340,8 +330,7 @@
               return;
             }
 
-            //Calc distance moved on this axis (and direction).
-            //TODO(jcarter): What is this being used for?.            
+            //Calc distance moved on this axis (and direction).          
             if (pos.dirAx !== newAx) {
               pos.distAxX = 0;
               pos.distAxY = 0;
@@ -384,9 +373,8 @@
       }
     ]);
 
-  // TODO: optimize this loop
-  //(Jcarter): Suggest adding a parent element property on uiTree, then all these bubble to <html> can trigger to stop when they reach the parent.
   function findFirstParentElementWithAttribute(attributeName, childObj) {
+    var uiTreeRootFound = false;
     //Undefined if the mouse leaves the browser window
     if (childObj === undefined) {
       return null;
@@ -395,13 +383,12 @@
     count = 1,
     //Check for setAttribute due to exception thrown by Firefox when a node is dragged outside the browser window
     res = (typeof testObj.setAttribute === 'function' && testObj.hasAttribute(attributeName)) ? testObj : null;
-    while (testObj && typeof testObj.setAttribute === 'function' && !testObj.hasAttribute(attributeName)) {
+    while (testObj && typeof testObj.setAttribute === 'function' && !testObj.hasAttribute(attributeName) && !uiTreeRootFound) {
       testObj = testObj.parentNode;
       res = testObj;
-      //Stop once we reach top of page.
-      if (testObj === document.documentElement) {
-        res = null;
-        break;
+      //Stop once we reach ui tree root.
+      if (testObj.hasAttribute('ui-tree')) {
+        uiTreeRootFound = true;
       }
       count++;
     }

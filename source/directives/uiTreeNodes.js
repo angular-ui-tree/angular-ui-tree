@@ -52,11 +52,6 @@
               }
             }, true);
 
-            //TODO(jcarter): Remove until horizontal tree is added.
-            // attrs.$observe('horizontal', function (val) {
-            //   scope.horizontal = ((typeof val) != 'undefined');
-            // });
-
           }
         };
       }
