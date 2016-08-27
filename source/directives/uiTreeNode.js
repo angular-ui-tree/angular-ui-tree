@@ -519,7 +519,7 @@
                     dragInfo.resetParent();
                   }
                 }
-
+                
                 //Triggering dragMove callback.
                 scope.$apply(function () {
                   scope.$treeScope.$callbacks.dragMove(dragInfo.eventArgs(elements, pos));

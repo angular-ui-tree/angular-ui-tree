@@ -92,7 +92,7 @@
               },
               index: node.index(),
 
-              //slice(0) just duplicates an array.
+              //Slice(0) just duplicates an array.
               siblings: node.siblings().slice(0),
               parent: node.$parentNodesScope,
 
@@ -184,7 +184,6 @@
                 var nodeData = this.source.$modelValue;
 
                 //Nodrop enabled on tree or parent
-                //Added Object.keys check because parent may be empty object.
                 if (this.parent.nodropEnabled || this.parent.$treeScope.nodropEnabled) {
                   return;
                 }
@@ -309,19 +308,19 @@
             pos.nowX = pageX;
             pos.nowY = pageY;
 
-            //Distance mouse moved between events.
+            //Distance mouse moved between events.          
             pos.distX = pos.nowX - pos.lastX;
             pos.distY = pos.nowY - pos.lastY;
 
-            //Direction mouse was moving.
+            //Direction mouse was moving.           
             pos.lastDirX = pos.dirX;
             pos.lastDirY = pos.dirY;
 
-            //Direction mouse is now moving (on both axis).
+            //Direction mouse is now moving (on both axis).          
             pos.dirX = pos.distX === 0 ? 0 : pos.distX > 0 ? 1 : -1;
             pos.dirY = pos.distY === 0 ? 0 : pos.distY > 0 ? 1 : -1;
 
-            //Axis mouse is now moving on.
+            //Axis mouse is now moving on.         
             newAx = Math.abs(pos.distX) > Math.abs(pos.distY) ? 1 : 0;
 
             //Do nothing on first move.
@@ -331,7 +330,7 @@
               return;
             }
 
-            //Calc distance moved on this axis (and direction).
+            //Calc distance moved on this axis (and direction).          
             if (pos.dirAx !== newAx) {
               pos.distAxX = 0;
               pos.distAxY = 0;
