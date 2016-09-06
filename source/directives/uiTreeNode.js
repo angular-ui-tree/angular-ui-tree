@@ -63,7 +63,7 @@
             });
 
             scope.$watch(attrs.expandOnHover, function(val) {
-              if ((typeof val) == 'boolean') {
+              if ((typeof val) == 'boolean' || (typeof val) == 'number') {
                 scope.expandOnHover = val;
               }
             });
