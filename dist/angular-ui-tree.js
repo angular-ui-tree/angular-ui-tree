@@ -572,8 +572,8 @@
 
   angular.module('ui.tree')
 
-    .directive('uiTreeNode', ['treeConfig', 'UiTreeHelper', '$window', '$document', '$timeout', '$q',
-      function (treeConfig, UiTreeHelper, $window, $document, $timeout, $q) {
+    .directive('uiTreeNode', ['treeConfig', 'UiTreeHelper', '$window', '$document', '$timeout', '$q', '$rootElement',
+      function (treeConfig, UiTreeHelper, $window, $document, $timeout, $q, $rootElement) {
         return {
           require: ['^uiTreeNodes', '^uiTree'],
           restrict: 'A',
@@ -632,12 +632,12 @@
             });
 
             scope.$watch(attrs.expandOnHover, function(val) {
-              if ((typeof val) == 'boolean') {
+              if ((typeof val) == 'boolean' || (typeof val) == 'number') {
                 scope.expandOnHover = val;
               }
             });
 
-			scope.$watch('expandOnHover', function (val) {
+      			scope.$watch('expandOnHover', function (val) {
               UiTreeHelper.setNodeAttribute(scope, 'expandOnHover', val);
               attrs.$set('expandOnHover', val);
             });
@@ -765,7 +765,7 @@
                 dragElm.append(element);
               }
 
-              $document.find('body').append(dragElm);
+              $rootElement.append(dragElm);
 
               dragElm.css({
                 'left': eventObj.pageX - pos.offsetX + 'px',
@@ -1017,9 +1017,9 @@
                       }
 
                       if (targetNode.collapsed) {
-                        if (scope.expandOnHover === true || (angular.isNumber(scope.expandOnHover) && scope.expandOnHover === 0)) {
+                        if (scope.expandOnHover === true || (angular.isNumber(scope.expandOnHover) && scope.expandOnHover === 0) && targetNode.depth() !== dragInfo.source.depth()) {
                           targetNode.collapsed = false;
-                        } else if (scope.expandOnHover !== false && angular.isNumber(scope.expandOnHover) && scope.expandOnHover > 0) {
+                        } else if (scope.expandOnHover !== false && angular.isNumber(scope.expandOnHover) && scope.expandOnHover > 0 && targetNode.depth() !== dragInfo.source.depth()) {
                           if (angular.isUndefined(scope.expandTimeoutOn)) {
                             scope.expandTimeoutOn = targetNode.$id;
 
@@ -1457,7 +1457,7 @@
            * @returns {String} Height
            */
           height: function (element) {
-            return element.prop('scrollHeight');
+            return element.height();
           },
 
           /**
