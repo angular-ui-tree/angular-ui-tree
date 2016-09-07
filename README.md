@@ -5,6 +5,12 @@ Angular UI Tree
 
 Angular UI Tree is an AngularJS UI component that can sort nested lists, provides drag & drop support and doesn't depend on jQuery. If you are a user who uses `angular-nestedSortable`, this is [How to migrate From v1.x to v2.0](https://github.com/JimLiu/angular-ui-tree/wiki/Migrate-From-v1.x-to-v2.0).
 
+### Considering Contributing?
+
+Read our contributing guidelines and become a contributing member of Angular UI Tree!
+
+[CONTRIBUTING](https://github.com/angular-ui-tree/angular-ui-tree/blob/master/CONTRIBUTING.md)
+
 
 ## Features
 
