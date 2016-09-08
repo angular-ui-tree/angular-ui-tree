@@ -18,29 +18,22 @@
         $scope.collapsed = false;
         $scope.expandOnHover = false;
 
-        //Called by uiTreeNode Directive on load.
         $scope.init = function (controllersArr) {
           var treeNodesCtrl = controllersArr[0];
           $scope.$treeScope = controllersArr[1] ? controllersArr[1].scope : null;
 
-          //Find the scope of it's parent node.
+          // find the scope of it's parent node
           $scope.$parentNodeScope = treeNodesCtrl.scope.$nodeScope;
-          
-          //ModelValue for current node.
+          // modelValue for current node
           $scope.$modelValue = treeNodesCtrl.scope.$modelValue[$scope.$index];
           $scope.$parentNodesScope = treeNodesCtrl.scope;
-          
-          //Init sub nodes.
-          treeNodesCtrl.scope.initSubNode($scope);
+          treeNodesCtrl.scope.initSubNode($scope); // init sub nodes
 
           $element.on('$destroy', function () {
-            
-            //Destroy sub nodes.
-            treeNodesCtrl.scope.destroySubNode($scope);
+            treeNodesCtrl.scope.destroySubNode($scope); // destroy sub nodes
           });
         };
 
-        //Return the index of child node in parent node (nodesScope).
         $scope.index = function () {
           return $scope.$parentNodesScope.$modelValue.indexOf($scope.$modelValue);
         };
@@ -58,7 +51,6 @@
           return nodes && nodes.indexOf(targetNode) > -1;
         };
 
-        //TODO(jcarter): This method is on uiTreeHelper already.
         $scope.prev = function () {
           var index = $scope.index();
           if (index > 0) {
@@ -67,7 +59,6 @@
           return null;
         };
 
-        //Calls childNodes on parent.
         $scope.siblings = function () {
           return $scope.$parentNodesScope.childNodes();
         };

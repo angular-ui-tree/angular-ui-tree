@@ -52,6 +52,10 @@
               }
             }, true);
 
+            attrs.$observe('horizontal', function (val) {
+              scope.horizontal = ((typeof val) != 'undefined');
+            });
+
           }
         };
       }
