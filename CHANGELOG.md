@@ -1,3 +1,11 @@
+#2.19.0
+
+* Fix error caused by version rollback.
+
+# 2.18.0
+
+* Enable setting a numeric value for the expand-on-hover attribute.
+
 # 2.17.0
 
 * Updated Angular/angularfire references in bower.json
