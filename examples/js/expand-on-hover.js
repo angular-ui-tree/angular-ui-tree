@@ -33,7 +33,7 @@
         $scope.$broadcast('angular-ui-tree:expand-all');
       };
 
-      $scope.data = [{
+      $scope.dataBoolean = [{
         'id': 1,
         'title': 'node1',
         'nodes': [
@@ -52,7 +52,28 @@
       }, {
         'id': 2,
         'title': 'node2',
-        'nodrop': true, // An arbitrary property to check in custom template for nodrop-enabled
+        'nodes': []
+      }];
+
+      $scope.dataNumber = [{
+        'id': 1,
+        'title': 'node1',
+        'nodes': [
+          {
+            'id': 11,
+            'title': 'node1.1',
+            'nodes': [
+              {
+                'id': 111,
+                'title': 'node1.1.1',
+                'nodes': []
+              }
+            ]
+          }
+        ]
+      }, {
+        'id': 2,
+        'title': 'node2',
         'nodes': []
       }];
     }]);

@@ -382,9 +382,12 @@ Example: turn off drag.
 ##### data-collapsed (type: boolean)
 Collapse the node.
 
-##### data-expand-on-hover (type: boolean)
+##### data-expand-on-hover (type: boolean, number)
 Causes the node to expand (if it contains child nodes and was collapsed) when dragging a node over it.
 This lets users drag and drop items into a nested tree in a single drag operation, instead of having to expand all the nodes to the destination first.
+
+The target node will immediately expand when `true` is provided.
+When a number (in milliseconds) is specified, the target node will expand after the specified amount of milliseconds.
 
 #### Properties of scope
 ##### $element (type: AngularElement)
