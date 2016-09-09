@@ -33,5 +33,6 @@ A fail does not necessarily mean a PR should be rejected, but it is a red flag t
 7. Push all the changes including tags (eg. `$ git push --tags`)
 8. Publish to npm with `$ npm publish ./`
 9. Update the website by running `$ gulp website` (runs the ghpages plugin)
+10. Announce the release on [Gitter](https://gitter.im/angular-ui-tree/angular-ui-tree)
 
 Our intention is to keep working on this document. Happy coding!
