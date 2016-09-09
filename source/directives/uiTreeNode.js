@@ -341,7 +341,8 @@
                               !UiTreeHelper.elementIsTreeNode(targetElm) &&
                               !UiTreeHelper.elementIsTreeNodes(targetElm) &&
                               !UiTreeHelper.elementIsTree(targetElm) &&
-                              !UiTreeHelper.elementIsPlaceholder(targetElm);
+                              !UiTreeHelper.elementIsPlaceholder(targetElm) &&
+                              !UiTreeHelper.elementIsEmptyTree(targetElm);
 
                 // Detect out of bounds condition, update drop target display, and prevent drop
                 if (outOfBounds) {
@@ -389,6 +390,8 @@
                 if (!pos.dirAx) {
                   if (UiTreeHelper.elementIsTree(targetElm)) {
                     targetNode = targetElm.controller('uiTree').scope;
+                  } else if (UiTreeHelper.elementIsEmptyTree(targetElm)) {
+                    targetNode = targetElm.controller('uiTree').scope;
                   } else if (UiTreeHelper.elementIsTreeNodeHandle(targetElm)) {
                     targetNode = targetElm.controller('uiTreeHandle').scope;
                   } else if (UiTreeHelper.elementIsTreeNode(targetElm)) {
@@ -408,8 +411,11 @@
                     return;
                   }
 
-                  // Show the placeholder if it was hidden for nodrop-enabled and this is a new tree
-                  if (targetNode.$treeScope && !targetNode.$parent.nodropEnabled && !targetNode.$treeScope.nodropEnabled) {
+                  // Show the placeholder if it was hidden for nodrop-enabled and this is a new tree (or an empty tree)
+                  if (
+                    (targetNode.$type == 'uiTree'&& !targetNode.nodropEnabled) ||
+                    (targetNode.$treeScope && !targetNode.$treeScope.nodropEnabled && !targetNode.$parent.nodropEnabled)
+                  ) {
                     placeElm.css('display', '');
                   }
 
