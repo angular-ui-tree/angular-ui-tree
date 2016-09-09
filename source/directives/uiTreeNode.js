@@ -42,7 +42,8 @@
               keydownHandler,
               outOfBounds,
               isHandleChild,
-              el;
+              el,
+              isUiTreeRoot;
 
             //Adding configured class to ui-tree-node.
             angular.extend(config, treeConfig);
