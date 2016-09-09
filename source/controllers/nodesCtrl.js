@@ -59,6 +59,7 @@
           }
         };
 
+        //Called in apply method of UiTreeHelper.dragInfo.
         $scope.removeNode = function (node) {
           var index = $scope.$modelValue.indexOf(node.$modelValue);
           if (index > -1) {
@@ -70,6 +71,7 @@
           return null;
         };
 
+        //Called in apply method of UiTreeHelper.dragInfo.
         $scope.insertNode = function (index, nodeData) {
           $scope.safeApply(function () {
             $scope.$modelValue.splice(index, 0, nodeData);
