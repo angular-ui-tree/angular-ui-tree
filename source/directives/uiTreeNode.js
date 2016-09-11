@@ -143,6 +143,9 @@
                 return;
               }
 
+              // Mark the element as the one that got dragged
+              eventElm.prop('activeHandle', true);
+
               e.uiTreeDragging = true; // stop event bubbling
               if (e.originalEvent) {
                 e.originalEvent.uiTreeDragging = true;
@@ -518,6 +521,14 @@
                     .finally(function () {
                       hiddenPlaceElm.replaceWith(scope.$element);
                       placeElm.remove();
+
+                      // Remove the 'activeHandle' property from all
+                      // the node's handles
+                      scope.$handleScope.forEach(function(thisHandle) {
+                        if (typeof thisHandle.$element.prop('activeHandle') != 'undefined') {
+                          thisHandle.$element.removeProp('activeHandle');
+                        }
+                      });
 
                       if (dragElm) { // drag element is attached to the mouse pointer
                         dragElm.remove();
