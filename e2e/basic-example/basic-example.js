@@ -1,7 +1,9 @@
 describe('the Basic example page', function () {
+  var customMatchers = require('../matchers/customMatchers.js');
   var basicExamplePage = require('./page.js');
 
   beforeEach(function () {
+    jasmine.addMatchers(customMatchers);
     basicExamplePage.get();
   });
 
@@ -77,5 +79,22 @@ describe('the Basic example page', function () {
     // it('should allow removing a child-node from a node to put it on the same tree level', function () {
     //   // TODO
     // });
+
   });
+
+  describe('pressing Escape key', function () {
+
+    it('should not throw error when no dragging action started', function () {
+      browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+      browser.manage().logs().get('browser').then(function (browserLogs) {
+        expect(browserLogs).not.toHaveLogErrors();
+      });
+    });
+
+    // it('should cancel dragging node', function () {
+    //   // TODO
+    // });
+
+  });
+
 });

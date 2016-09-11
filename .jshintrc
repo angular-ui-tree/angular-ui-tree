@@ -32,6 +32,7 @@
     "inject": true,
     "it": true,
     "browser": true,
-    "by": true
+    "by": true,
+    "protractor": true
   }
 }
