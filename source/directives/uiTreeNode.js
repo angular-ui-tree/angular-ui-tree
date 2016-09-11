@@ -289,7 +289,10 @@
                 isEmpty,
                 scrollDownBy,
                 targetOffset,
-                targetBefore;
+                targetBefore,
+                isRTL,
+                increaseLevel,
+                decreaseLevel;
 
               //If check ensures that drag element was created.
               if (dragElm) {
@@ -425,8 +428,14 @@
                 if (pos.dirAx && pos.distAxX >= config.levelThreshold) {
                   pos.distAxX = 0;
 
+                  // check if document is rtl or ltr and determine level direction
+                  isRTL = document.documentElement.getAttribute('dir') === 'rtl';
+
+                  increaseLevel = (isRTL) ? pos.distX < 0 : pos.distX > 0;
+                  decreaseLevel = (isRTL) ? pos.distX > 0 : pos.distX < 0;
+
                   // increase horizontal level if previous sibling exists and is not collapsed
-                  if (pos.distX > 0) {
+                  if (increaseLevel) {
                     prev = dragInfo.prev();
                     if (prev && !prev.collapsed
                       && prev.accept(scope, prev.childNodesCount())) {
@@ -436,8 +445,8 @@
                   }
 
                   // decrease horizontal level
-                  if (pos.distX < 0) {
-                    // we can't decrease a level if an item preceeds the current one
+                  if (decreaseLevel) {
+                    // we can't decrease a level if an item precedes the current one
                     next = dragInfo.next();
                     if (!next) {
                       target = dragInfo.parentNode(); // As a sibling of it's parent node
