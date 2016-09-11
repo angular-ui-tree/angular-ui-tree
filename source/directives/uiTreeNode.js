@@ -546,8 +546,9 @@
                     targetOffset = UiTreeHelper.offset(targetElm);
                     targetBefore = targetNode.horizontal ? eventObj.pageX < (targetOffset.left + UiTreeHelper.width(targetElm) / 2)
                       : eventObj.pageY < (targetOffset.top + UiTreeHelper.height(targetElm) / 2);
-
-                    if (targetNode.$parentNodesScope.accept(scope, targetNode.index())) {
+                    
+                    var destIndex = targetBefore ?  targetNode.index() : targetNode.index() + 1;
+                    if (targetNode.$parentNodesScope.accept(scope, destIndex)) {
                       if (targetBefore) {
                         targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
                         dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index());
