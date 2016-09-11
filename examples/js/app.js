@@ -33,10 +33,14 @@
           controller: 'DropConfirmationCtrl',
           templateUrl: 'views/drop-confirmation.html'
         })
-		.when('/expand-on-hover', {
-			controller: 'ExpandOnHoverCtrl',
-			templateUrl: 'views/expand-on-hover.html'
-		})
+        .when('/expand-on-hover', {
+          controller: 'ExpandOnHoverCtrl',
+          templateUrl: 'views/expand-on-hover.html'
+        })
+        .when('/rtl', {
+          controller: 'RtlCtrl',
+          templateUrl: 'views/rtl.html'
+        })
         .otherwise({
           redirectTo: '/basic-example'
         });
