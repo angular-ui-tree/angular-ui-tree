@@ -1,3 +1,9 @@
+#2.20.0
+
+* Performance Improvements by skipping dragDelay when no delay is specified
+* Corrected error with ESC key not cancelling drag [#799](https://github.com/angular-ui-tree/angular-ui-tree/issues/799)
+* Corrected error where dropping on a noDrop clone tree would add node to second tree [Example of Error](http://gfycat.com/EverlastingCanineCleanerwrasse)
+
 #2.19.0
 
 * Fix error caused by version rollback.
