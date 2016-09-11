@@ -4,7 +4,7 @@
 
 # 2.18.0
 
-* Enable setting a numeric value for the expand-on-hover attribute.
+* Enable setting a numeric value for the expand-on-hover attribute [#812](https://github.com/angular-ui-tree/angular-ui-tree/pull/812)
 
 # 2.17.0
 

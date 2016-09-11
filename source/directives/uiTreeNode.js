@@ -56,7 +56,7 @@
             scope.init(controllersArr);
 
             scope.collapsed = !!UiTreeHelper.getNodeAttribute(scope, 'collapsed') || treeConfig.defaultCollapsed;
-			      scope.expandOnHover = !!UiTreeHelper.getNodeAttribute(scope, 'expandOnHover');
+            scope.expandOnHover = !!UiTreeHelper.getNodeAttribute(scope, 'expandOnHover');
             scope.sourceOnly = scope.nodropEnabled || scope.$treeScope.nodropEnabled;
 
             scope.$watch(attrs.collapsed, function (val) {
@@ -77,7 +77,7 @@
               }
             });
 
-			      scope.$watch('expandOnHover', function (val) {
+            scope.$watch('expandOnHover', function (val) {
               UiTreeHelper.setNodeAttribute(scope, 'expandOnHover', val);
               attrs.$set('expandOnHover', val);
             });
@@ -671,6 +671,12 @@
                 }
               };
             })();
+            
+            keydownHandler = function (e) {
+              if (e.keyCode === 27) {
+                dragEndEvent(e);
+              }
+            };
 
             /**
              * Binds the mouse/touch events to enable drag start for this node.
@@ -705,6 +711,7 @@
               angular.element($document).bind('mouseup', dragEndEvent);
               angular.element($document).bind('mousemove', dragMoveEvent);
               angular.element($document).bind('mouseleave', dragCancelEvent);
+              angular.element($document).bind('keydown', keydownHandler);
             };
 
             /**
@@ -717,25 +724,10 @@
               angular.element($document).unbind('mouseup', dragEndEvent);
               angular.element($document).unbind('mousemove', dragMoveEvent);
               angular.element($document).unbind('mouseleave', dragCancelEvent);
+              angular.element($document).unbind('keydown', keydownHandler);
             };
-
-            //Hitting the 'esc' key ends drag.
-            keydownHandler = function (e) {
-              if (e.keyCode === 27) {
-                scope.$$allowNodeDrop = false;
-                dragEnd(e);
-              }
-            };
-
-            angular.element($window.document).bind('keydown', keydownHandler);
-
-            //Unbind handler that retains scope.
-            scope.$on('$destroy', function () {
-              angular.element($window.document).unbind('keydown', keydownHandler);
-            });
           }
         };
       }
     ]);
-
 })();
