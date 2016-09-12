@@ -581,7 +581,7 @@
                     targetElm = targetNode.$element;
                     targetOffset = UiTreeHelper.offset(targetElm);
                     targetBefore = targetNode.horizontal ? eventObj.pageX < (targetOffset.left + UiTreeHelper.width(targetElm) / 2)
-                      : eventObj.pageY < (targetOffset.top + UiTreeHelper.height(targetElm) / 2);
+                      : eventObj.pageY < (targetOffset.top + targetOffset.height / 2);
 
                     if (targetNode.$parentNodesScope.accept(scope, targetNode.index())) {
                       if (targetBefore) {
