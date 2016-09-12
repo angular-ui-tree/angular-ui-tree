@@ -18,6 +18,7 @@
               placeElm,
               hiddenPlaceElm,
               dragElm,
+              scrollContainerElm,
               treeScope = null,
               elements, // As a parameter for callbacks
               dragDelaying = true,
@@ -57,6 +58,7 @@
 
             scope.collapsed = !!UiTreeHelper.getNodeAttribute(scope, 'collapsed') || treeConfig.defaultCollapsed;
             scope.expandOnHover = !!UiTreeHelper.getNodeAttribute(scope, 'expandOnHover');
+            scope.scrollContainer = UiTreeHelper.getNodeAttribute(scope, 'scrollContainer') || attrs.scrollContainer || null;
             scope.sourceOnly = scope.nodropEnabled || scope.$treeScope.nodropEnabled;
 
             scope.$watch(attrs.collapsed, function (val) {
@@ -82,6 +84,18 @@
               attrs.$set('expandOnHover', val);
             });
 
+            attrs.$observe('scrollContainer', function(val) {
+              if ((typeof val) === 'string') {
+                scope.scrollContainer = val;
+              }
+            });
+
+            scope.$watch('scrollContainer', function(val) {
+              UiTreeHelper.setNodeAttribute(scope, 'scrollContainer', val);
+              attrs.$set('scrollContainer', val);
+              scrollContainerElm = document.querySelector(val);
+            });
+
             scope.$on('angular-ui-tree:collapse-all', function () {
               scope.collapsed = true;
             });
@@ -92,7 +106,7 @@
 
             /**
              * Called when the user has grabbed a node and started dragging it.
-             * 
+             *
              * @param {MouseEvent} e event that is triggered by DOM.
              * @return undefined?
              */
@@ -279,6 +293,7 @@
                 topElmPos,
                 top_scroll,
                 bottom_scroll,
+                scrollContainerElmRect,
                 target,
                 decrease,
                 targetX,
@@ -288,6 +303,7 @@
                 targetElm,
                 isEmpty,
                 scrollDownBy,
+                scrollUpBy,
                 targetOffset,
                 targetBefore;
 
@@ -332,19 +348,39 @@
                   'top': topElmPos + 'px'
                 });
 
-                //Getting position to top and bottom of page.
-                top_scroll = window.pageYOffset || $window.document.documentElement.scrollTop;
-                bottom_scroll = top_scroll + (window.innerHeight || $window.document.clientHeight || $window.document.clientHeight);
+                if (scrollContainerElm) {
+                  //Getting position to top and bottom of container element.
+                  scrollContainerElmRect = scrollContainerElm.getBoundingClientRect();
+                  top_scroll = scrollContainerElm.scrollTop;
+                  bottom_scroll = top_scroll + scrollContainerElm.clientHeight;
 
-                //To scroll down if cursor y-position is greater than the bottom position the vertical scroll
-                if (bottom_scroll < eventObj.pageY && bottom_scroll < document_height) {
-                  scrollDownBy = Math.min(document_height - bottom_scroll, 10);
-                  window.scrollBy(0, scrollDownBy);
-                }
+                  //To scroll down if cursor y-position is greater than the bottom position of the container vertical scroll
+                  if (scrollContainerElmRect.bottom < eventObj.clientY && bottom_scroll < scrollContainerElm.scrollHeight) {
+                    scrollDownBy = Math.min(scrollContainerElm.scrollHeight - bottom_scroll, 10);
+                    scrollContainerElm.scrollTop += scrollDownBy;
+                  }
 
-                //To scroll top if cursor y-position is less than the top position the vertical scroll
-                if (top_scroll > eventObj.pageY) {
-                  window.scrollBy(0, -10);
+                  //To scroll top if cursor y-position is less than the top position of the container vertical scroll
+                  if (scrollContainerElmRect.top > eventObj.clientY && top_scroll > 0) {
+                    scrollUpBy = Math.min(top_scroll, 10);
+                    scrollContainerElm.scrollTop -= scrollUpBy;
+                  }
+                } else {
+                  //Getting position to top and bottom of page.
+                  top_scroll = window.pageYOffset || $window.document.documentElement.scrollTop;
+                  bottom_scroll = top_scroll + (window.innerHeight || $window.document.clientHeight || $window.document.clientHeight);
+
+                  //To scroll down if cursor y-position is greater than the bottom position of the window vertical scroll
+                  if (bottom_scroll < eventObj.pageY && bottom_scroll < document_height) {
+                    scrollDownBy = Math.min(document_height - bottom_scroll, 10);
+                    window.scrollBy(0, scrollDownBy);
+                  }
+
+                  //To scroll top if cursor y-position is less than the top position of the window vertical scroll
+                  if (top_scroll > eventObj.pageY) {
+                    scrollUpBy = Math.min(top_scroll, 10);
+                    window.scrollBy(0, -scrollUpBy);
+                  }
                 }
 
                 //Calling service to update position coordinates based on move.
@@ -582,20 +618,20 @@
 
               //TODO(jcarter): Is dragStart need to be unbound?
               unbindDragMoveEvents();
-              
+
               //This cancel the collapse/expand login running.
               $timeout.cancel(scope.expandTimeout);
 
               scope.$treeScope.$apply(function () {
                 $q.when(scope.$treeScope.$callbacks.beforeDrop(dragEventArgs))
-                     
+
                      //Promise resolved (or callback didn't return false)
                     .then(function (allowDrop) {
                       if (allowDrop !== false && scope.$$allowNodeDrop && !outOfBounds) {
 
                         //Node drop accepted.
                         dragInfo.apply();
-                        
+
                         //Fire the dropped callback only if the move was successful.
                         scope.$treeScope.$callbacks.dropped(dragEventArgs);
                       } else {
@@ -604,7 +640,7 @@
                         bindDragStartEvents();
                       }
                     })
-                    
+
                     //Promise rejected - revert the node to its original position.
                     .catch(function () {
                       bindDragStartEvents();
@@ -671,7 +707,7 @@
                 }
               };
             })();
-            
+
             keydownHandler = function (e) {
               if (e.keyCode === 27) {
                 dragEndEvent(e);
