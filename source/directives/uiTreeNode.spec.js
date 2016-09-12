@@ -61,7 +61,8 @@
 
       it('should allow changing of the container dynamically', function () {
         $scope.container = '.wrapper';
-        var element = createElement('<div class="wrapper" ui-tree><ul ui-tree-nodes ng-model="items"><li ng-repeat="item in items" ui-tree-node data-scroll-container="{{container}}"></li></ul></div>');
+        var element = 
+            createElement('<div class="wrapper" ui-tree><ul ui-tree-nodes ng-model="items"><li ng-repeat="item in items" ui-tree-node data-scroll-container="{{container}}"></li></ul></div>');
         $scope.$digest();
         expect(element.find('[ui-tree-node]').scope().scrollContainer).toEqual('.wrapper');
 
