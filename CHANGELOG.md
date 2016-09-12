@@ -1,3 +1,12 @@
+#2.21.1
+
+* Update CHANGELOG.md
+
+#2.21.0
+
+* New ui-tree-node attribute data-scroll-container allows for specifying any valid querySelector argument to scroll relative to the dragged node.
+* Fixes Issues [#49](https://github.com/angular-ui-tree/angular-ui-tree/issues/49), [#644](https://github.com/angular-ui-tree/angular-ui-tree/issues/644), [#158](https://github.com/angular-ui-tree/angular-ui-tree/issues/158), and [#544](https://github.com/angular-ui-tree/angular-ui-tree/issues/544)
+
 #2.20.0
 
 * Performance Improvements by skipping dragDelay when no delay is specified
