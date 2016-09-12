@@ -17,7 +17,6 @@
       placeholderClass: 'angular-ui-tree-placeholder',
       dragClass: 'angular-ui-tree-drag',
       dragThreshold: 3,
-      levelThreshold: 30,
       defaultCollapsed: false
     });
 
