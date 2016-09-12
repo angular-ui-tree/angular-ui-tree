@@ -202,7 +202,6 @@
               //Setting drag info properties and methods in scope of node being moved.
               dragInfo = UiTreeHelper.dragInfo(scope);
 
-              console.log('DRAG START DRAG INFO: ', dragInfo);
               //Setting original tree to adjust horizontal behavior in drag move.
               treeOfOrigin = dragInfo.source.$treeScope.$id;
 
@@ -477,8 +476,6 @@
 
                 moveWithinTree =  (targetNode && targetNode.$treeScope && targetNode.$treeScope.$id && targetNode.$treeScope.$id === treeOfOrigin);
 
-                console.log('move within tree: ', moveWithinTree);
-
                 // move horizontal
                 if (moveWithinTree) {
 
@@ -584,8 +581,7 @@
                     //Get the element of ui-tree-node
                     targetElm = targetNode.$element;
                     targetOffset = UiTreeHelper.offset(targetElm);
-                    targetBefore = targetNode.horizontal ? eventObj.pageX < (targetOffset.left + UiTreeHelper.width(targetElm) / 2)
-                      : eventObj.pageY < (targetOffset.top + UiTreeHelper.height(targetElm) / 2);
+                    targetBefore = eventObj.pageY < (targetOffset.top + UiTreeHelper.height(targetElm) / 2);
 
                     if (targetNode.$parentNodesScope.accept(scope, targetNode.index())) {
                       if (targetBefore) {
