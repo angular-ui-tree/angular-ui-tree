@@ -479,7 +479,7 @@ In addition, you can modify whether or not nodes are collapsed by default
 (`defaultCollapsed`: default false).
 
 You can also modify whether or not dragging a node over a parent node will insert the node as a child
-(`appendChildOnHover`: default false).
+(`appendChildOnHover`: default true).
 
 For example:
 
