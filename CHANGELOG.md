@@ -1,3 +1,7 @@
+#2.22.0
+
+* Improve horizontal movement detection for smoother node movement and to address Issue [#562](https://github.com/angular-ui-tree/angular-ui-tree/issues/562)
+
 #2.21.3
 
 * Set `appendChildOnHover` to `true` by default.
