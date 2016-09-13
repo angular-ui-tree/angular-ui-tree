@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.21.3
+ * @license Angular UI Tree v2.22.0
  * (c) 2010-2016. https://github.com/angular-ui-tree/angular-ui-tree
  * License: MIT
  */
@@ -17,7 +17,6 @@
       placeholderClass: 'angular-ui-tree-placeholder',
       dragClass: 'angular-ui-tree-drag',
       dragThreshold: 3,
-      levelThreshold: 30,
       defaultCollapsed: false,
       appendChildOnHover: true
     });
@@ -635,7 +634,8 @@
               outOfBounds,
               isHandleChild,
               el,
-              isUiTreeRoot;
+              isUiTreeRoot,
+              treeOfOrigin;
 
             //Adding configured class to ui-tree-node.
             angular.extend(config, treeConfig);
@@ -757,7 +757,6 @@
 
               //Check if it or it's parents has a 'data-nodrag' attribute
               el = angular.element(e.target);
-              //TODO(jcarter): This may be breaking the changing nest level within self.
               while (el && el[0] && el[0] !== element && !isUiTreeRoot) {
 
                 //Checking that I can access attributes.
@@ -792,6 +791,9 @@
 
               //Setting drag info properties and methods in scope of node being moved.
               dragInfo = UiTreeHelper.dragInfo(scope);
+
+              //Setting original tree to adjust horizontal behavior in drag move.
+              treeOfOrigin = dragInfo.source.$treeScope.$id;
 
               //Determine tage name of element ui-tree-node is on.
               tagName = element.prop('tagName');
@@ -886,7 +888,6 @@
                 bottom_scroll,
                 scrollContainerElmRect,
                 target,
-                decrease,
                 targetX,
                 targetY,
                 displayElm,
@@ -897,6 +898,7 @@
                 scrollUpBy,
                 targetOffset,
                 targetBefore,
+                moveWithinTree,
                 targetBeforeBuffer,
                 targetHeight,
                 targetChildElm,
@@ -986,8 +988,6 @@
                 }
 
                 //Setting X point for elementFromPoint.
-                decrease = (UiTreeHelper.offset(dragElm).left - UiTreeHelper.offset(placeElm).left) >= config.threshold;
-
                 targetX = eventObj.pageX - ($window.pageXOffset ||
                     $window.document.body.scrollLeft ||
                     $window.document.documentElement.scrollLeft) -
@@ -1052,8 +1052,27 @@
                   dragInfo.resetParent();
                 }
 
+                //Assigning scope to target you are moving draggable over.
+                if (UiTreeHelper.elementIsTree(targetElm)) {
+                  targetNode = targetElm.controller('uiTree').scope;
+                } else if (UiTreeHelper.elementIsTreeNodeHandle(targetElm)) {
+                  targetNode = targetElm.controller('uiTreeHandle').scope;
+                } else if (UiTreeHelper.elementIsTreeNode(targetElm)) {
+                  targetNode = targetElm.controller('uiTreeNode').scope;
+                } else if (UiTreeHelper.elementIsTreeNodes(targetElm)) {
+                  targetNode = targetElm.controller('uiTreeNodes').scope;
+                } else if (UiTreeHelper.elementIsPlaceholder(targetElm)) {
+                  targetNode = targetElm.controller('uiTreeNodes').scope;
+                } else if (targetElm.controller('uiTreeNode')) {
+                  //Is a child element of a node.
+                  targetNode = targetElm.controller('uiTreeNode').scope;
+                }
+
+                moveWithinTree =  (targetNode && targetNode.$treeScope && targetNode.$treeScope.$id && targetNode.$treeScope.$id === treeOfOrigin);
+
                 // move horizontal
-                if (pos.dirAx && pos.distAxX >= config.levelThreshold) {
+                if (moveWithinTree) {
+
                   pos.distAxX = 0;
 
                   // increase horizontal level if previous sibling exists and is not collapsed
@@ -1079,27 +1098,8 @@
                       }
                     }
                   }
-                }
-
-                // move vertical
-                if (!pos.dirAx) {
-                  //Assigning scope to target you are moving draggable to.
-                  if (UiTreeHelper.elementIsTree(targetElm)) {
-                    targetNode = targetElm.controller('uiTree').scope;
-                  } else if (UiTreeHelper.elementIsTreeNodeHandle(targetElm)) {
-                    targetNode = targetElm.controller('uiTreeHandle').scope;
-                  } else if (UiTreeHelper.elementIsTreeNode(targetElm)) {
-                    targetNode = targetElm.controller('uiTreeNode').scope;
-                  } else if (UiTreeHelper.elementIsTreeNodes(targetElm)) {
-                    targetNode = targetElm.controller('uiTreeNodes').scope;
-                  } else if (UiTreeHelper.elementIsPlaceholder(targetElm)) {
-                    targetNode = targetElm.controller('uiTreeNodes').scope;
-                  } else if (targetElm.controller('uiTreeNode')) {
-                    //Is a child element of a node.
-                    targetNode = targetElm.controller('uiTreeNode').scope;
-                  }
-
-                  //Check it's new position.
+                } else {
+                                    //Check it's new position.
                   isEmpty = false;
 
                   //Exit if target is not a uiTree or child of one.
@@ -1191,8 +1191,7 @@
                     targetChildHeight = targetChildElm ? UiTreeHelper.height(targetChildElm) : 0;
                     targetHeight -= targetChildHeight;
                     targetBeforeBuffer = config.appendChildOnHover ? targetHeight * 0.25 : UiTreeHelper.height(targetElm) / 2;
-                    targetBefore = targetNode.horizontal ? eventObj.pageX < (targetOffset.left + UiTreeHelper.width(targetElm) / 2)
-                      : eventObj.pageY < (targetOffset.top + targetBeforeBuffer);
+                    targetBefore = eventObj.pageY < (targetOffset.top + targetBeforeBuffer);
 
                     if (targetNode.$parentNodesScope.accept(scope, targetNode.index())) {
                       if (targetBefore) {
@@ -1439,10 +1438,6 @@
                 scope.nodropEnabled = true;
               }
             }, true);
-
-            attrs.$observe('horizontal', function (val) {
-              scope.horizontal = ((typeof val) != 'undefined');
-            });
 
           }
         };
