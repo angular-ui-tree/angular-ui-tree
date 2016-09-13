@@ -37,10 +37,6 @@
           controller: 'ExpandOnHoverCtrl',
           templateUrl: 'views/expand-on-hover.html'
         })
-        .when('/append-child-on-hover', {
-          controller: 'AppendChildOnHoverCtrl',
-          templateUrl: 'views/append-child-on-hover.html'
-        })
         .otherwise({
           redirectTo: '/basic-example'
         });

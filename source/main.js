@@ -19,7 +19,7 @@
       dragThreshold: 3,
       levelThreshold: 30,
       defaultCollapsed: false,
-      appendChildOnHover: false
+      appendChildOnHover: true
     });
 
 })();
