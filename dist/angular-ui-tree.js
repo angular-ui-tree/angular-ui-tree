@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.21.1
+ * @license Angular UI Tree v2.21.2
  * (c) 2010-2016. https://github.com/angular-ui-tree/angular-ui-tree
  * License: MIT
  */
@@ -166,6 +166,9 @@
         *   result is 0 (it has no subtree).
         */
         function countSubTreeDepth(scope) {
+          if (!scope) {
+            return 0;
+          }
           var thisLevelDepth = 0,
               childNodes = scope.childNodes(),
               childNode,
