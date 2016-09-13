@@ -124,6 +124,9 @@
         *   result is 0 (it has no subtree).
         */
         function countSubTreeDepth(scope) {
+          if (!scope) {
+            return 0;
+          }
           var thisLevelDepth = 0,
               childNodes = scope.childNodes(),
               childNode,
