@@ -1,3 +1,11 @@
+#2.21.3
+
+* Set `appendChildOnHover` to `true` by default.
+
+#2.21.2
+
+* Re-integrate lost patch from PR [#650](https://github.com/angular-ui-tree/angular-ui-tree/pull/650).
+
 #2.21.1
 
 * Update CHANGELOG.md

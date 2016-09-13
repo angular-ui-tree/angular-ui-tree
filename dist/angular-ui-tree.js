@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.21.1
+ * @license Angular UI Tree v2.21.3
  * (c) 2010-2016. https://github.com/angular-ui-tree/angular-ui-tree
  * License: MIT
  */
@@ -18,7 +18,8 @@
       dragClass: 'angular-ui-tree-drag',
       dragThreshold: 3,
       levelThreshold: 30,
-      defaultCollapsed: false
+      defaultCollapsed: false,
+      appendChildOnHover: true
     });
 
 })();
@@ -166,6 +167,9 @@
         *   result is 0 (it has no subtree).
         */
         function countSubTreeDepth(scope) {
+          if (!scope) {
+            return 0;
+          }
           var thisLevelDepth = 0,
               childNodes = scope.childNodes(),
               childNode,
@@ -605,6 +609,7 @@
               hiddenPlaceElm,
               dragElm,
               scrollContainerElm,
+              unhover,
               treeScope = null,
               elements, // As a parameter for callbacks
               dragDelaying = true,
@@ -891,7 +896,11 @@
                 scrollDownBy,
                 scrollUpBy,
                 targetOffset,
-                targetBefore;
+                targetBefore,
+                targetBeforeBuffer,
+                targetHeight,
+                targetChildElm,
+                targetChildHeight;
 
               //If check ensures that drag element was created.
               if (dragElm) {
@@ -1115,6 +1124,17 @@
 
                   //Check if it is a uiTreeNode or it's an empty tree.
                   if (targetNode.$type !== 'uiTreeNode' && !isEmpty) {
+
+                    // Allow node to return to its original position if no longer hovering over target
+                    if (config.appendChildOnHover) {
+                      next = dragInfo.next();
+                      if (!next && unhover) {
+                        target = dragInfo.parentNode();
+                        target.$element.after(placeElm);
+                        dragInfo.moveTo(target.$parentNodesScope, target.siblings(), target.index() + 1);
+                        unhover = false;
+                      }
+                    }
                     return;
                   }
 
@@ -1166,16 +1186,28 @@
                     //Get the element of ui-tree-node
                     targetElm = targetNode.$element;
                     targetOffset = UiTreeHelper.offset(targetElm);
+                    targetHeight = UiTreeHelper.height(targetElm);
+                    targetChildElm = targetNode.$childNodesScope ? targetNode.$childNodesScope.$element : null;
+                    targetChildHeight = targetChildElm ? UiTreeHelper.height(targetChildElm) : 0;
+                    targetHeight -= targetChildHeight;
+                    targetBeforeBuffer = config.appendChildOnHover ? targetHeight * 0.25 : UiTreeHelper.height(targetElm) / 2;
                     targetBefore = targetNode.horizontal ? eventObj.pageX < (targetOffset.left + UiTreeHelper.width(targetElm) / 2)
-                      : eventObj.pageY < (targetOffset.top + UiTreeHelper.height(targetElm) / 2);
+                      : eventObj.pageY < (targetOffset.top + targetBeforeBuffer);
 
                     if (targetNode.$parentNodesScope.accept(scope, targetNode.index())) {
                       if (targetBefore) {
                         targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
                         dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index());
                       } else {
-                        targetElm.after(placeElm);
-                        dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index() + 1);
+                        // Try to append as a child if dragged upwards onto targetNode
+                        if (config.appendChildOnHover && targetNode.accept(scope, targetNode.childNodesCount())) {
+                          targetNode.$childNodesScope.$element.prepend(placeElm);
+                          dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), 0);
+                          unhover = true;
+                        } else {
+                          targetElm.after(placeElm);
+                          dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index() + 1);
+                        }
                       }
 
                     //We have to check if it can add the dragging node as a child.
