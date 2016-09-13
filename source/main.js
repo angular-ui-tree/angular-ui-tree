@@ -18,7 +18,8 @@
       dragClass: 'angular-ui-tree-drag',
       dragThreshold: 3,
       levelThreshold: 30,
-      defaultCollapsed: false
+      defaultCollapsed: false,
+      appendChildOnHover: false
     });
 
 })();
