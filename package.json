@@ -10,7 +10,7 @@
   "main": "index.js",
   "devDependencies": {
     "codacy-coverage": "2.0.0",
-    "connect-livereload": "0.5.4",
+    "connect-livereload": "0.6.0",
     "coveralls": "2.11.12",
     "del": "2.2.2",
     "gulp": "3.9.1",
@@ -36,7 +36,7 @@
     "load-grunt-tasks": "3.5.2",
     "open": "0.0.5",
     "phantomjs-prebuilt": "2.1.12",
-    "protractor": "4.0.5",
+    "protractor": "4.0.8",
     "require-dir": "0.3.0"
   },
   "engines": {
