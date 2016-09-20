@@ -266,10 +266,12 @@
               //Create drag element.
               $document.find('body').append(dragElm);
 
+              var parentOffset = UiTreeHelper.offset($document.find('body'));
+
               //Set drag elements position on screen.
               dragElm.css({
-                'left': eventObj.pageX - pos.offsetX + 'px',
-                'top': eventObj.pageY - pos.offsetY + 'px'
+                'left': eventObj.pageX - pos.offsetX - parentOffset.left + 'px',
+                'top': eventObj.pageY - pos.offsetY - parentOffset.top + 'px'
               });
               elements = {
                 placeholder: placeElm,
@@ -326,9 +328,11 @@
                   $window.document.selection.empty();
                 }
 
+                var parentOffset = UiTreeHelper.offset($document.find('body'));
+
                 //Get top left positioning of element being moved.
-                leftElmPos = eventObj.pageX - pos.offsetX;
-                topElmPos = eventObj.pageY - pos.offsetY;
+                leftElmPos = eventObj.pageX - pos.offsetX - parentOffset.left;
+                topElmPos = eventObj.pageY - pos.offsetY - parentOffset.top;
 
                 //dragElm can't leave the screen on the left.
                 if (leftElmPos < 0) {
