@@ -481,12 +481,22 @@
 
                 moveWithinTree =  (targetNode && targetNode.$treeScope && targetNode.$treeScope.$id && targetNode.$treeScope.$id === treeOfOrigin);
 
-                // move horizontal
-                if (moveWithinTree) {
+                /* (jcarter) Notes to developers:
+                *  pos.dirAx is either 0 or 1
+                *  1 means horizontal movement is happening
+                *  0 means vertical movement is happening
+                *
+                *  Not sure what pos.distAxX does and not going to look into it now.... :P
+                */
 
-                  pos.distAxX = 0;
+                // Move nodes up and down in nesting level.
+                if (moveWithinTree && pos.dirAx) {
+
+                  //no longer used but keeping because use was not 100% understood.
+                  //pos.distAxX = 0;
 
                   // increase horizontal level if previous sibling exists and is not collapsed
+                  // example 1.1.1 becomes 1.2 
                   if (pos.distX > 0) {
                     prev = dragInfo.prev();
                     if (prev && !prev.collapsed
@@ -497,6 +507,7 @@
                   }
 
                   // decrease horizontal level
+                  // example 1.2 become 1.1.1
                   if (pos.distX < 0) {
                     // we can't decrease a level if an item preceeds the current one
                     next = dragInfo.next();
@@ -509,8 +520,9 @@
                       }
                     }
                   }
-                } else {
-                                    //Check it's new position.
+                } else { //Either in origin tree and moving horizontally OR you are moving within a new tree.  
+
+                  //Check it's new position.
                   isEmpty = false;
 
                   //Exit if target is not a uiTree or child of one.
