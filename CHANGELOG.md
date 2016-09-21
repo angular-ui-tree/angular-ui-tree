@@ -1,3 +1,7 @@
+#2.22.1
+
+* Fix tree sorting bug, see Issues [#831](https://github.com/angular-ui-tree/angular-ui-tree/issues/831) and [#832](https://github.com/angular-ui-tree/angular-ui-tree/issues/832)
+
 #2.22.0
 
 * Improve horizontal movement detection for smoother node movement and to address Issue [#562](https://github.com/angular-ui-tree/angular-ui-tree/issues/562)
