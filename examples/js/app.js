@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('demoApp', ['ui.tree', 'ngRoute', 'ui.bootstrap'])
+  angular.module('demoApp', ['ui.tree', 'ngRoute', 'ui.bootstrap', 'RecursionHelper'])
 
     .config(['$routeProvider', '$compileProvider', function ($routeProvider, $compileProvider) {
       $routeProvider
@@ -36,6 +36,10 @@
         .when('/expand-on-hover', {
           controller: 'ExpandOnHoverCtrl',
           templateUrl: 'views/expand-on-hover.html'
+        })
+        .when('/big-tree', {
+          controller: 'BigTreeCtrl',
+          templateUrl: 'views/big-tree.html'
         })
         .otherwise({
           redirectTo: '/basic-example'

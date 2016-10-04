@@ -1,0 +1,36 @@
+<script type="text/ng-template" id="big-tree-template.html">
+<div ui-tree-handle class="tree-node tree-node-content">
+    <a class="btn btn-success btn-xs" ng-if="currentNode.nodes && currentNode.nodes.length > 0" data-nodrag ng-click="toggle(this)"><span
+        class="glyphicon"
+        ng-class="{
+          'glyphicon-chevron-right': collapsed,
+          'glyphicon-chevron-down': !collapsed
+        }"></span></a> {{currentNode.title}}
+    <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span
+        class="glyphicon glyphicon-remove"></span></a>
+    <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span
+        class="glyphicon glyphicon-plus"></span></a>
+</div>
+<ol ui-tree-nodes="" ng-model="currentNode.nodes" ng-class="{hidden: collapsed}">
+    <li ng-repeat="node in currentNode.nodes" ui-tree-node ui-tree-nodes-renderer current-node='node' node-render-template='big-tree-template.html'></li>
+</ol>
+</script>
+
+<div class="row">
+  <div class="col-sm-12">
+    <h3>Basic Example</h3>
+
+    <button ng-click="expandAll()">Expand all</button>
+    <button ng-click="collapseAll()">Collapse all</button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <div ui-tree id="tree-root">
+      <ol ui-tree-nodes ng-model="data">
+        <li ng-repeat="node in data" ui-tree-node ui-tree-nodes-renderer current-node='node' node-render-template='big-tree-template.html'></li>
+      </ol>
+    </div>
+  </div>
+</div>

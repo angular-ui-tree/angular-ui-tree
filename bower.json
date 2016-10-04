@@ -23,7 +23,8 @@
     "node"
   ],
   "dependencies": {
-    "angular": "1.2.x || 1.3.x || 1.4.x || 1.5.x"
+    "angular": "1.2.x || 1.3.x || 1.4.x || 1.5.x",
+    "angular-recursion": "^1.0.5"
   },
   "devDependencies": {
     "angular-bootstrap": "~0.13.4",
