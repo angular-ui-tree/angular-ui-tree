@@ -134,7 +134,8 @@
                 tdElm,
                 hStyle,
                 isTreeNode,
-                isTreeNodeHandle;
+                isTreeNodeHandle,
+                isUiTreeRoot;
 
               //If the target element is a child element of a ui-tree-handle,
               // use the containing handle element as target element.
