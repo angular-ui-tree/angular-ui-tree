@@ -27,6 +27,333 @@
   'use strict';
 
   angular.module('ui.tree')
+
+    .controller('TreeHandleController', ['$scope', '$element',
+      function ($scope, $element) {
+        this.scope = $scope;
+
+        $scope.$element = $element;
+        $scope.$nodeScope = null;
+        $scope.$type = 'uiTreeHandle';
+
+      }
+    ]);
+})();
+
+(function () {
+  'use strict';
+
+  angular.module('ui.tree')
+    .controller('TreeNodeController', ['$scope', '$element',
+      function ($scope, $element) {
+        this.scope = $scope;
+
+        $scope.$element = $element;
+        $scope.$modelValue = null; // Model value for node;
+        $scope.$parentNodeScope = null; // uiTreeNode Scope of parent node;
+        $scope.$childNodesScope = null; // uiTreeNodes Scope of child nodes.
+        $scope.$parentNodesScope = null; // uiTreeNodes Scope of parent nodes.
+        $scope.$treeScope = null; // uiTree scope
+        $scope.$handleScope = null; // it's handle scope
+        $scope.$type = 'uiTreeNode';
+        $scope.$$allowNodeDrop = false;
+        $scope.collapsed = false;
+        $scope.expandOnHover = false;
+
+        //Called by uiTreeNode Directive on load.
+        $scope.init = function (controllersArr) {
+          var treeNodesCtrl = controllersArr[0];
+          $scope.$treeScope = controllersArr[1] ? controllersArr[1].scope : null;
+
+          //Find the scope of it's parent node.
+          $scope.$parentNodeScope = treeNodesCtrl.scope.$nodeScope;
+
+          //modelValue for current node.
+          $scope.$modelValue = treeNodesCtrl.scope.$modelValue[$scope.$index];
+          $scope.$parentNodesScope = treeNodesCtrl.scope;
+
+          //Init sub nodes.
+          treeNodesCtrl.scope.initSubNode($scope);
+
+          $element.on('$destroy', function () {
+
+            //Destroy sub nodes.
+            treeNodesCtrl.scope.destroySubNode($scope);
+          });
+        };
+
+        //Return the index of child node in parent node (nodesScope).
+        $scope.index = function () {
+          return $scope.$parentNodesScope.$modelValue.indexOf($scope.$modelValue);
+        };
+
+        $scope.dragEnabled = function () {
+          return !($scope.$treeScope && !$scope.$treeScope.dragEnabled);
+        };
+
+        $scope.isSibling = function (targetNode) {
+          return $scope.$parentNodesScope == targetNode.$parentNodesScope;
+        };
+
+        $scope.isChild = function (targetNode) {
+          var nodes = $scope.childNodes();
+          return nodes && nodes.indexOf(targetNode) > -1;
+        };
+
+        //TODO(jcarter): This method is on uiTreeHelper already.
+        $scope.prev = function () {
+          var index = $scope.index();
+          if (index > 0) {
+            return $scope.siblings()[index - 1];
+          }
+          return null;
+        };
+
+        //Calls childNodes on parent.
+        $scope.siblings = function () {
+          return $scope.$parentNodesScope.childNodes();
+        };
+
+        $scope.childNodesCount = function () {
+          return $scope.childNodes() ? $scope.childNodes().length : 0;
+        };
+
+        $scope.hasChild = function () {
+          return $scope.childNodesCount() > 0;
+        };
+
+        $scope.childNodes = function () {
+          return $scope.$childNodesScope && $scope.$childNodesScope.$modelValue ?
+            $scope.$childNodesScope.childNodes() :
+            null;
+        };
+
+        $scope.accept = function (sourceNode, destIndex) {
+          return $scope.$childNodesScope &&
+            $scope.$childNodesScope.$modelValue &&
+            $scope.$childNodesScope.accept(sourceNode, destIndex);
+        };
+
+        $scope.remove = function () {
+          return $scope.$parentNodesScope.removeNode($scope);
+        };
+
+        $scope.toggle = function () {
+          $scope.collapsed = !$scope.collapsed;
+          $scope.$treeScope.$callbacks.toggle($scope.collapsed, $scope);
+        };
+
+        $scope.collapse = function () {
+          $scope.collapsed = true;
+        };
+
+        $scope.expand = function () {
+          $scope.collapsed = false;
+        };
+
+        $scope.depth = function () {
+          var parentNode = $scope.$parentNodeScope;
+          if (parentNode) {
+            return parentNode.depth() + 1;
+          }
+          return 1;
+        };
+
+        /**
+        * Returns the depth of the deepest subtree under this node
+        * @param scope a TreeNodesController scope object
+        * @returns Depth of all nodes *beneath* this node. If scope belongs to a leaf node, the
+        *   result is 0 (it has no subtree).
+        */
+        function countSubTreeDepth(scope) {
+          if (!scope) {
+            return 0;
+          }
+          var thisLevelDepth = 0,
+              childNodes = scope.childNodes(),
+              childNode,
+              childDepth,
+              i;
+          if (!childNodes || childNodes.length === 0) {
+            return 0;
+          }
+          for (i = childNodes.length - 1; i >= 0 ; i--) {
+            childNode = childNodes[i],
+            childDepth = 1 + countSubTreeDepth(childNode);
+            thisLevelDepth = Math.max(thisLevelDepth, childDepth);
+          }
+          return thisLevelDepth;
+        }
+
+        $scope.maxSubDepth = function () {
+          return $scope.$childNodesScope ? countSubTreeDepth($scope.$childNodesScope) : 0;
+        };
+      }
+    ]);
+})();
+
+(function () {
+  'use strict';
+
+  angular.module('ui.tree')
+
+    .controller('TreeNodesController', ['$scope', '$element',
+      function ($scope, $element) {
+        this.scope = $scope;
+
+        $scope.$element = $element;
+        $scope.$modelValue = null;
+        $scope.$nodeScope = null; // the scope of node which the nodes belongs to
+        $scope.$treeScope = null;
+        $scope.$type = 'uiTreeNodes';
+        $scope.$nodesMap = {};
+
+        $scope.nodropEnabled = false;
+        $scope.maxDepth = 0;
+        $scope.cloneEnabled = false;
+
+        $scope.initSubNode = function (subNode) {
+          if (!subNode.$modelValue) {
+            return null;
+          }
+          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = subNode;
+        };
+
+        $scope.destroySubNode = function (subNode) {
+          if (!subNode.$modelValue) {
+            return null;
+          }
+          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = null;
+        };
+
+        $scope.accept = function (sourceNode, destIndex) {
+          return $scope.$treeScope.$callbacks.accept(sourceNode, $scope, destIndex);
+        };
+
+        $scope.beforeDrag = function (sourceNode) {
+          return $scope.$treeScope.$callbacks.beforeDrag(sourceNode);
+        };
+
+        $scope.isParent = function (node) {
+          return node.$parentNodesScope == $scope;
+        };
+
+        $scope.hasChild = function () {
+          return $scope.$modelValue.length > 0;
+        };
+
+        $scope.safeApply = function (fn) {
+          var phase = this.$root.$$phase;
+          if (phase == '$apply' || phase == '$digest') {
+            if (fn && (typeof (fn) === 'function')) {
+              fn();
+            }
+          } else {
+            this.$apply(fn);
+          }
+        };
+
+        //Called in apply method of UiTreeHelper.dragInfo.
+        $scope.removeNode = function (node) {
+          var index = $scope.$modelValue.indexOf(node.$modelValue);
+          if (index > -1) {
+            $scope.safeApply(function () {
+              $scope.$modelValue.splice(index, 1)[0];
+            });
+            return $scope.$treeScope.$callbacks.removed(node);
+          }
+          return null;
+        };
+
+        //Called in apply method of UiTreeHelper.dragInfo.
+        $scope.insertNode = function (index, nodeData) {
+          $scope.safeApply(function () {
+            $scope.$modelValue.splice(index, 0, nodeData);
+          });
+        };
+
+        $scope.childNodes = function () {
+          var i, nodes = [];
+          if ($scope.$modelValue) {
+            for (i = 0; i < $scope.$modelValue.length; i++) {
+              nodes.push($scope.$nodesMap[$scope.$modelValue[i].$$hashKey]);
+            }
+          }
+          return nodes;
+        };
+
+        $scope.depth = function () {
+          if ($scope.$nodeScope) {
+            return $scope.$nodeScope.depth();
+          }
+          return 0; // if it has no $nodeScope, it's root
+        };
+
+        // check if depth limit has reached
+        $scope.outOfDepth = function (sourceNode) {
+          var maxDepth = $scope.maxDepth || $scope.$treeScope.maxDepth;
+          if (maxDepth > 0) {
+            return $scope.depth() + sourceNode.maxSubDepth() + 1 > maxDepth;
+          }
+          return false;
+        };
+
+      }
+    ]);
+})();
+
+(function () {
+  'use strict';
+
+  angular.module('ui.tree')
+
+    .controller('TreeController', ['$scope', '$element',
+      function ($scope, $element) {
+        this.scope = $scope;
+
+        $scope.$element = $element;
+        $scope.$nodesScope = null; // root nodes
+        $scope.$type = 'uiTree';
+        $scope.$emptyElm = null;
+        $scope.$callbacks = null;
+
+        $scope.dragEnabled = true;
+        $scope.emptyPlaceholderEnabled = true;
+        $scope.maxDepth = 0;
+        $scope.dragDelay = 0;
+        $scope.cloneEnabled = false;
+        $scope.nodropEnabled = false;
+
+        // Check if it's a empty tree
+        $scope.isEmpty = function () {
+          return ($scope.$nodesScope && $scope.$nodesScope.$modelValue
+          && $scope.$nodesScope.$modelValue.length === 0);
+        };
+
+        // add placeholder to empty tree
+        $scope.place = function (placeElm) {
+          $scope.$nodesScope.$element.append(placeElm);
+          $scope.$emptyElm.remove();
+        };
+
+        this.resetEmptyElement = function () {
+          if ((!$scope.$nodesScope.$modelValue || $scope.$nodesScope.$modelValue.length === 0) &&
+            $scope.emptyPlaceholderEnabled) {
+            $element.append($scope.$emptyElm);
+          } else {
+            $scope.$emptyElm.remove();
+          }
+        };
+
+        $scope.resetEmptyElement = this.resetEmptyElement;
+      }
+    ]);
+})();
+
+(function () {
+  'use strict';
+
+  angular.module('ui.tree')
     .directive('uiTree', ['treeConfig', '$window',
       function (treeConfig, $window) {
         return {
@@ -304,6 +631,7 @@
               bindDragMoveEvents,
               unbindDragMoveEvents,
               keydownHandler,
+              outOfBounds,
               isHandleChild,
               el,
               isUiTreeRoot,
@@ -701,6 +1029,29 @@
                   dragElm[0].style.display = displayElm;
                 }
 
+                //This checks if angularUiTree attributes are found on element.
+                outOfBounds = !UiTreeHelper.elementIsTreeNodeHandle(targetElm) &&
+                    !UiTreeHelper.elementIsTreeNode(targetElm) &&
+                    !UiTreeHelper.elementIsTreeNodes(targetElm) &&
+                    !UiTreeHelper.elementIsTree(targetElm) &&
+                    !UiTreeHelper.elementIsPlaceholder(targetElm);
+
+                //Detect out of bounds condition, update drop target display, and prevent drop, also reset parent to source.
+                if (outOfBounds) {
+
+                  //Remove the placeholder.
+                  placeElm.remove();
+
+                  //If the target was an empty tree, replace the empty element placeholder.
+                  if (treeScope) {
+                    treeScope.resetEmptyElement();
+                    treeScope = null;
+                  }
+
+                  //Reset parent to source parent.
+                  dragInfo.resetParent();
+                }
+
                 //Assigning scope to target you are moving draggable over.
                 if (UiTreeHelper.elementIsTree(targetElm)) {
                   targetNode = targetElm.controller('uiTree').scope;
@@ -720,16 +1071,16 @@
                 moveWithinTree =  (targetNode && targetNode.$treeScope && targetNode.$treeScope.$id && targetNode.$treeScope.$id === treeOfOrigin);
 
                 /* (jcarter) Notes to developers:
-                 *  pos.dirAx is either 0 or 1
-                 *  1 means horizontal movement is happening
-                 *  0 means vertical movement is happening
-                 */
+                *  pos.dirAx is either 0 or 1
+                *  1 means horizontal movement is happening
+                *  0 means vertical movement is happening
+                */
 
                 // Move nodes up and down in nesting level.
                 if (moveWithinTree && pos.dirAx) {
 
                   // increase horizontal level if previous sibling exists and is not collapsed
-                  // example 1.1.1 becomes 1.2
+                  // example 1.1.1 becomes 1.2 
                   if (pos.distX > 0) {
                     prev = dragInfo.prev();
                     if (prev && !prev.collapsed
@@ -753,7 +1104,7 @@
                       }
                     }
                   }
-                } else { //Either in origin tree and moving horizontally OR you are moving within a new tree.
+                } else { //Either in origin tree and moving horizontally OR you are moving within a new tree.  
 
                   //Check it's new position.
                   isEmpty = false;
@@ -869,6 +1220,9 @@
                     } else if (!targetBefore && targetNode.accept(scope, targetNode.childNodesCount())) {
                       targetNode.$childNodesScope.$element.append(placeElm);
                       dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), targetNode.childNodesCount());
+                    } else {
+                      outOfBounds = true;
+                      dragInfo.resetParent();
                     }
                   }
                 }
@@ -897,7 +1251,7 @@
 
                      //Promise resolved (or callback didn't return false)
                     .then(function (allowDrop) {
-                      if (allowDrop !== false && scope.$$allowNodeDrop) {
+                      if (allowDrop !== false && scope.$$allowNodeDrop && !outOfBounds) {
                         //Node drop accepted.
                         dragInfo.apply();
 
@@ -1091,333 +1445,6 @@
 
           }
         };
-      }
-    ]);
-})();
-
-(function () {
-  'use strict';
-
-  angular.module('ui.tree')
-
-    .controller('TreeHandleController', ['$scope', '$element',
-      function ($scope, $element) {
-        this.scope = $scope;
-
-        $scope.$element = $element;
-        $scope.$nodeScope = null;
-        $scope.$type = 'uiTreeHandle';
-
-      }
-    ]);
-})();
-
-(function () {
-  'use strict';
-
-  angular.module('ui.tree')
-    .controller('TreeNodeController', ['$scope', '$element',
-      function ($scope, $element) {
-        this.scope = $scope;
-
-        $scope.$element = $element;
-        $scope.$modelValue = null; // Model value for node;
-        $scope.$parentNodeScope = null; // uiTreeNode Scope of parent node;
-        $scope.$childNodesScope = null; // uiTreeNodes Scope of child nodes.
-        $scope.$parentNodesScope = null; // uiTreeNodes Scope of parent nodes.
-        $scope.$treeScope = null; // uiTree scope
-        $scope.$handleScope = null; // it's handle scope
-        $scope.$type = 'uiTreeNode';
-        $scope.$$allowNodeDrop = false;
-        $scope.collapsed = false;
-        $scope.expandOnHover = false;
-
-        //Called by uiTreeNode Directive on load.
-        $scope.init = function (controllersArr) {
-          var treeNodesCtrl = controllersArr[0];
-          $scope.$treeScope = controllersArr[1] ? controllersArr[1].scope : null;
-
-          //Find the scope of it's parent node.
-          $scope.$parentNodeScope = treeNodesCtrl.scope.$nodeScope;
-
-          //modelValue for current node.
-          $scope.$modelValue = treeNodesCtrl.scope.$modelValue[$scope.$index];
-          $scope.$parentNodesScope = treeNodesCtrl.scope;
-
-          //Init sub nodes.
-          treeNodesCtrl.scope.initSubNode($scope);
-
-          $element.on('$destroy', function () {
-
-            //Destroy sub nodes.
-            treeNodesCtrl.scope.destroySubNode($scope);
-          });
-        };
-
-        //Return the index of child node in parent node (nodesScope).
-        $scope.index = function () {
-          return $scope.$parentNodesScope.$modelValue.indexOf($scope.$modelValue);
-        };
-
-        $scope.dragEnabled = function () {
-          return !($scope.$treeScope && !$scope.$treeScope.dragEnabled);
-        };
-
-        $scope.isSibling = function (targetNode) {
-          return $scope.$parentNodesScope == targetNode.$parentNodesScope;
-        };
-
-        $scope.isChild = function (targetNode) {
-          var nodes = $scope.childNodes();
-          return nodes && nodes.indexOf(targetNode) > -1;
-        };
-
-        //TODO(jcarter): This method is on uiTreeHelper already.
-        $scope.prev = function () {
-          var index = $scope.index();
-          if (index > 0) {
-            return $scope.siblings()[index - 1];
-          }
-          return null;
-        };
-
-        //Calls childNodes on parent.
-        $scope.siblings = function () {
-          return $scope.$parentNodesScope.childNodes();
-        };
-
-        $scope.childNodesCount = function () {
-          return $scope.childNodes() ? $scope.childNodes().length : 0;
-        };
-
-        $scope.hasChild = function () {
-          return $scope.childNodesCount() > 0;
-        };
-
-        $scope.childNodes = function () {
-          return $scope.$childNodesScope && $scope.$childNodesScope.$modelValue ?
-            $scope.$childNodesScope.childNodes() :
-            null;
-        };
-
-        $scope.accept = function (sourceNode, destIndex) {
-          return $scope.$childNodesScope &&
-            $scope.$childNodesScope.$modelValue &&
-            $scope.$childNodesScope.accept(sourceNode, destIndex);
-        };
-
-        $scope.remove = function () {
-          return $scope.$parentNodesScope.removeNode($scope);
-        };
-
-        $scope.toggle = function () {
-          $scope.collapsed = !$scope.collapsed;
-          $scope.$treeScope.$callbacks.toggle($scope.collapsed, $scope);
-        };
-
-        $scope.collapse = function () {
-          $scope.collapsed = true;
-        };
-
-        $scope.expand = function () {
-          $scope.collapsed = false;
-        };
-
-        $scope.depth = function () {
-          var parentNode = $scope.$parentNodeScope;
-          if (parentNode) {
-            return parentNode.depth() + 1;
-          }
-          return 1;
-        };
-
-        /**
-        * Returns the depth of the deepest subtree under this node
-        * @param scope a TreeNodesController scope object
-        * @returns Depth of all nodes *beneath* this node. If scope belongs to a leaf node, the
-        *   result is 0 (it has no subtree).
-        */
-        function countSubTreeDepth(scope) {
-          if (!scope) {
-            return 0;
-          }
-          var thisLevelDepth = 0,
-              childNodes = scope.childNodes(),
-              childNode,
-              childDepth,
-              i;
-          if (!childNodes || childNodes.length === 0) {
-            return 0;
-          }
-          for (i = childNodes.length - 1; i >= 0 ; i--) {
-            childNode = childNodes[i],
-            childDepth = 1 + countSubTreeDepth(childNode);
-            thisLevelDepth = Math.max(thisLevelDepth, childDepth);
-          }
-          return thisLevelDepth;
-        }
-
-        $scope.maxSubDepth = function () {
-          return $scope.$childNodesScope ? countSubTreeDepth($scope.$childNodesScope) : 0;
-        };
-      }
-    ]);
-})();
-
-(function () {
-  'use strict';
-
-  angular.module('ui.tree')
-
-    .controller('TreeNodesController', ['$scope', '$element',
-      function ($scope, $element) {
-        this.scope = $scope;
-
-        $scope.$element = $element;
-        $scope.$modelValue = null;
-        $scope.$nodeScope = null; // the scope of node which the nodes belongs to
-        $scope.$treeScope = null;
-        $scope.$type = 'uiTreeNodes';
-        $scope.$nodesMap = {};
-
-        $scope.nodropEnabled = false;
-        $scope.maxDepth = 0;
-        $scope.cloneEnabled = false;
-
-        $scope.initSubNode = function (subNode) {
-          if (!subNode.$modelValue) {
-            return null;
-          }
-          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = subNode;
-        };
-
-        $scope.destroySubNode = function (subNode) {
-          if (!subNode.$modelValue) {
-            return null;
-          }
-          $scope.$nodesMap[subNode.$modelValue.$$hashKey] = null;
-        };
-
-        $scope.accept = function (sourceNode, destIndex) {
-          return $scope.$treeScope.$callbacks.accept(sourceNode, $scope, destIndex);
-        };
-
-        $scope.beforeDrag = function (sourceNode) {
-          return $scope.$treeScope.$callbacks.beforeDrag(sourceNode);
-        };
-
-        $scope.isParent = function (node) {
-          return node.$parentNodesScope == $scope;
-        };
-
-        $scope.hasChild = function () {
-          return $scope.$modelValue.length > 0;
-        };
-
-        $scope.safeApply = function (fn) {
-          var phase = this.$root.$$phase;
-          if (phase == '$apply' || phase == '$digest') {
-            if (fn && (typeof (fn) === 'function')) {
-              fn();
-            }
-          } else {
-            this.$apply(fn);
-          }
-        };
-
-        //Called in apply method of UiTreeHelper.dragInfo.
-        $scope.removeNode = function (node) {
-          var index = $scope.$modelValue.indexOf(node.$modelValue);
-          if (index > -1) {
-            $scope.safeApply(function () {
-              $scope.$modelValue.splice(index, 1)[0];
-            });
-            return $scope.$treeScope.$callbacks.removed(node);
-          }
-          return null;
-        };
-
-        //Called in apply method of UiTreeHelper.dragInfo.
-        $scope.insertNode = function (index, nodeData) {
-          $scope.safeApply(function () {
-            $scope.$modelValue.splice(index, 0, nodeData);
-          });
-        };
-
-        $scope.childNodes = function () {
-          var i, nodes = [];
-          if ($scope.$modelValue) {
-            for (i = 0; i < $scope.$modelValue.length; i++) {
-              nodes.push($scope.$nodesMap[$scope.$modelValue[i].$$hashKey]);
-            }
-          }
-          return nodes;
-        };
-
-        $scope.depth = function () {
-          if ($scope.$nodeScope) {
-            return $scope.$nodeScope.depth();
-          }
-          return 0; // if it has no $nodeScope, it's root
-        };
-
-        // check if depth limit has reached
-        $scope.outOfDepth = function (sourceNode) {
-          var maxDepth = $scope.maxDepth || $scope.$treeScope.maxDepth;
-          if (maxDepth > 0) {
-            return $scope.depth() + sourceNode.maxSubDepth() + 1 > maxDepth;
-          }
-          return false;
-        };
-
-      }
-    ]);
-})();
-
-(function () {
-  'use strict';
-
-  angular.module('ui.tree')
-
-    .controller('TreeController', ['$scope', '$element',
-      function ($scope, $element) {
-        this.scope = $scope;
-
-        $scope.$element = $element;
-        $scope.$nodesScope = null; // root nodes
-        $scope.$type = 'uiTree';
-        $scope.$emptyElm = null;
-        $scope.$callbacks = null;
-
-        $scope.dragEnabled = true;
-        $scope.emptyPlaceholderEnabled = true;
-        $scope.maxDepth = 0;
-        $scope.dragDelay = 0;
-        $scope.cloneEnabled = false;
-        $scope.nodropEnabled = false;
-
-        // Check if it's a empty tree
-        $scope.isEmpty = function () {
-          return ($scope.$nodesScope && $scope.$nodesScope.$modelValue
-          && $scope.$nodesScope.$modelValue.length === 0);
-        };
-
-        // add placeholder to empty tree
-        $scope.place = function (placeElm) {
-          $scope.$nodesScope.$element.append(placeElm);
-          $scope.$emptyElm.remove();
-        };
-
-        this.resetEmptyElement = function () {
-          if ((!$scope.$nodesScope.$modelValue || $scope.$nodesScope.$modelValue.length === 0) &&
-            $scope.emptyPlaceholderEnabled) {
-            $element.append($scope.$emptyElm);
-          } else {
-            $scope.$emptyElm.remove();
-          }
-        };
-
-        $scope.resetEmptyElement = this.resetEmptyElement;
       }
     ]);
 })();
