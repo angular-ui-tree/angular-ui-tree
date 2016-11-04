@@ -96,6 +96,12 @@
               UiTreeHelper.setNodeAttribute(scope, 'scrollContainer', val);
               attrs.$set('scrollContainer', val);
               scrollContainerElm = document.querySelector(val);
+              if (!scrollContainerElm) {
+                $timeout(function() {
+                  scrollContainerElm = document.querySelector(val);
+
+                }, 0);
+              }
             });
 
             scope.$on('angular-ui-tree:collapse-all', function () {
@@ -491,7 +497,7 @@
                 if (moveWithinTree && pos.dirAx) {
 
                   // increase horizontal level if previous sibling exists and is not collapsed
-                  // example 1.1.1 becomes 1.2 
+                  // example 1.1.1 becomes 1.2
                   if (pos.distX > 0) {
                     prev = dragInfo.prev();
                     if (prev && !prev.collapsed
@@ -515,7 +521,7 @@
                       }
                     }
                   }
-                } else { //Either in origin tree and moving horizontally OR you are moving within a new tree.  
+                } else { //Either in origin tree and moving horizontally OR you are moving within a new tree.
 
                   //Check it's new position.
                   isEmpty = false;
