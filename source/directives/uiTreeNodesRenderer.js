@@ -12,7 +12,7 @@
                     },
                     compile: function (element) {
                         return RecursionHelper.compile(element,
-                            function (scope, iElement, iAttrs, controller, transcludeFn) {
+                            function (scope, iElement, iAttrs, controller) {
                                 scope.currentNode = scope.$eval(iAttrs.currentNode);
                             });
                     }
