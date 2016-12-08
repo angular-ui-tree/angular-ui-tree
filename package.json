@@ -14,7 +14,7 @@
     "coveralls": "2.11.15",
     "del": "2.2.2",
     "gulp": "3.9.1",
-    "gulp-concat": "2.6.0",
+    "gulp-concat": "2.6.1",
     "gulp-connect": "5.0.0",
     "gulp-cssnano": "2.1.2",
     "gulp-gh-pages": "0.5.4",
