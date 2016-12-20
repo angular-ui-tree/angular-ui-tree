@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2008-2016 Pivotal Labs
+Copyright (c) 2008-2015 Pivotal Labs
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -77,14 +77,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   var throwingExpectationFailures = queryString.getParam("throwFailures");
   env.throwOnExpectationFailure(throwingExpectationFailures);
 
-  var random = queryString.getParam("random");
-  env.randomizeTests(random);
-
-  var seed = queryString.getParam("seed");
-  if (seed) {
-    env.seed(seed);
-  }
-
   /**
    * ## Reporters
    * The `HtmlReporter` builds all of the HTML UI for the runner page. This reporter paints the dots, stars, and x's for specs, as well as all spec names and all failures (if any).
@@ -93,7 +85,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     env: env,
     onRaiseExceptionsClick: function() { queryString.navigateWithNewParam("catch", !env.catchingExceptions()); },
     onThrowExpectationsClick: function() { queryString.navigateWithNewParam("throwFailures", !env.throwingExpectationFailures()); },
-    onRandomClick: function() { queryString.navigateWithNewParam("random", !env.randomTests()); },
     addToExistingQueryString: function(key, value) { return queryString.fullStringWithNewParam(key, value); },
     getContainer: function() { return document.body; },
     createElement: function() { return document.createElement.apply(document, arguments); },

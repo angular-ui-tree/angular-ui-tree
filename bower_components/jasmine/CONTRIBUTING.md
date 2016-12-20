@@ -1,6 +1,6 @@
 # Developing for Jasmine Core
 
-We welcome your contributions! Thanks for helping make Jasmine a better project for everyone. Please review the backlog and discussion lists before starting work.  What you're looking for may already have been done. If it hasn't, the community can help make your contribution better. If you want to contribute but don't know what to work on, [issues tagged ready for work](https://github.com/jasmine/jasmine/labels/ready%20for%20work) should have enough detail to get started.
+We welcome your contributions! Thanks for helping make Jasmine a better project for everyone. Please review the backlog and discussion lists before starting work.  What you're looking for may already have been done. If it hasn't, the community can help make your contribution better.
 
 ## Links
 
@@ -82,11 +82,11 @@ To install the Node dependencies, you will need Node.js, Npm, and [Grunt](http:/
 
     $ npm install --local
 
-...will install all of the node modules locally. Now run
+...will install all of the node modules locally. If when you run
 
     $ grunt
 
-...if you see that JSHint runs, your system is ready.
+...you see that JSHint runs your system is ready.
 
 ### How to write new Jasmine code
 
@@ -105,7 +105,7 @@ Follow these tips and your pull request, patch, or suggestion is much more likel
 
 Jasmine uses the [Jasmine Ruby gem](http://github.com/jasmine/jasmine-gem) to test itself in browser.
 
-    $ bundle exec rake jasmine
+    $ rake jasmine
 
 ...and then visit `http://localhost:8888` to run specs.
 
@@ -114,15 +114,6 @@ Jasmine uses the [Jasmine NPM package](http://github.com/jasmine/jasmine-npm) to
     $ grunt execSpecsInNode
 
 ...and then the results will print to the console. All specs run except those that expect a browser (the specs in `spec/html` are ignored).
-
-The easiest way to run the tests in **Internet Explorer** is to run a VM that has IE installed. It's easy to do this with VirtualBox.
-
-1. Download and install [VirtualBox](https://www.virtualbox.org/wiki/Downloads).
-1. Download a VM image [from Microsoft](https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/). Select "VirtualBox" as the platform.
-1. Unzip the downloaded archive. There should be an OVA file inside.
-1. In VirtualBox, choose `File > Import Appliance` and select the OVA file. Accept the default settings in the dialog that appears. Now you have a Windows VM!
-1. Run the VM and start IE.
-1. With `bundle exec rake jasmine` running on your host machine, navigate to `http://10.0.2.2:8888` in IE.
 
 ## Before Committing or Submitting a Pull Request
 

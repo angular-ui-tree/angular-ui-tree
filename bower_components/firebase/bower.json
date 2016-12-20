@@ -1,20 +1,19 @@
 {
   "name": "firebase",
-  "version": "3.3.2",
-  "homepage": "https://firebase.google.com",
+  "version": "1.0.24",
+  "homepage": "https://firebase.com",
   "authors": [
-    "Firebase <firebase-support@google.com>"
+    "Firebase <operations@firebase.com>"
   ],
   "description": "Firebase Web Client",
   "main": "firebase.js",
   "keywords": [
     "Firebase",
-    "realtime",
-    "database",
-    "storage",
-    "authentication"
+    "synchronization",
+    "real-time",
+    "websocket"
   ],
-  "license": "https://developers.google.com/terms",
+  "license": "MIT",
   "private": false,
   "ignore": [
     "**/.*",
