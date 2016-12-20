@@ -1,3 +1,8 @@
+#2.22.2
+
+* Update devDependencies
+* Remove unused outOfBounds calculation [#856](https://github.com/angular-ui-tree/angular-ui-tree/issues/856) and [#832](https://github.com/angular-ui-tree/angular-ui-tree/issues/832)
+
 #2.22.1
 
 * Fix tree sorting bug, see Issues [#831](https://github.com/angular-ui-tree/angular-ui-tree/issues/831) and [#832](https://github.com/angular-ui-tree/angular-ui-tree/issues/832)
