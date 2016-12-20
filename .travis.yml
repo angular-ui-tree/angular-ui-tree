@@ -3,7 +3,7 @@ node_js:
   - "4.2.4"
 
 addons:
-  firefox: "49.0.2"
+  firefox: "49.0"
 
 before_script:
   - echo "Using firefox version `firefox --version`"
