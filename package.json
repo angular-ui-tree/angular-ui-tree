@@ -36,7 +36,7 @@
     "load-grunt-tasks": "3.5.2",
     "open": "0.0.5",
     "phantomjs-prebuilt": "2.1.13",
-    "protractor": "4.0.11",
+    "protractor": "4.0.14",
     "require-dir": "0.3.1"
   },
   "engines": {
