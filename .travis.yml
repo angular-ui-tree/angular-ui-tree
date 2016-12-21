@@ -3,10 +3,14 @@ node_js:
   - "4.2.4"
 
 addons:
-  firefox: "49.0"
+  firefox: "47.0.2"
 
 before_script:
-  - echo "Using firefox version `firefox --version`"
+  # credits for FF configuration: https://github.com/pouchdb/pouchdb/blob/master/.travis.yml
+  # Our test-browser.js script uses FIREFOX_BIN to find the Firefox binary
+  # See https://github.com/travis-ci/travis-ci/issues/4649
+  - echo "using firefox $(firefox --version)"
+  - export FIREFOX_BIN=$(which firefox)
   - npm install -g bower
   - bower install
   - export DISPLAY=:99.0
