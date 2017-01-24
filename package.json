@@ -24,7 +24,7 @@
     "gulp-protractor": "3.0.0",
     "gulp-rename": "1.2.2",
     "gulp-symlink": "2.1.4",
-    "gulp-uglify": "2.0.0",
+    "gulp-uglify": "2.0.1",
     "jshint": "2.9.4",
     "jshint-stylish": "2.2.1",
     "karma": "1.4.0",
