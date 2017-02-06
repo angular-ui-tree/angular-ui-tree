@@ -562,7 +562,6 @@
                         if (scope.expandOnHover === true || (angular.isNumber(scope.expandOnHover) && scope.expandOnHover === 0)) {
                           targetNode.collapsed = false;
                         } else if (scope.expandOnHover !== false && angular.isNumber(scope.expandOnHover) && scope.expandOnHover > 0) {
-
                           //Triggering expansion.
                           if (angular.isUndefined(scope.expandTimeoutOn)) {
                             scope.expandTimeoutOn = targetNode.$id;
@@ -572,7 +571,7 @@
                             {
                               scope.$callbacks.expandTimeoutEnd();
                               targetNode.collapsed = false;
-                            }, scope.expandOnHover);
+                            }, scope.toggle());
                           }
                         }
                       }
