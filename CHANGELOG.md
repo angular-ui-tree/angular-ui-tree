@@ -1,3 +1,7 @@
+#2.22.3
+
+* Expand-on-hover event not calling toggle callback function [#899](https://github.com/angular-ui-tree/angular-ui-tree/issues/899)
+
 #2.22.2
 
 * Update devDependencies

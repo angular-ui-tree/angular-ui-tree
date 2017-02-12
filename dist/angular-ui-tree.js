@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.22.2
+ * @license Angular UI Tree v2.22.3
  * (c) 2010-2016. https://github.com/angular-ui-tree/angular-ui-tree
  * License: MIT
  */
@@ -1150,6 +1150,7 @@
                       if (targetNode.collapsed) {
                         if (scope.expandOnHover === true || (angular.isNumber(scope.expandOnHover) && scope.expandOnHover === 0)) {
                           targetNode.collapsed = false;
+                          targetNode.$treeScope.$callbacks.toggle(false, targetNode);
                         } else if (scope.expandOnHover !== false && angular.isNumber(scope.expandOnHover) && scope.expandOnHover > 0) {
 
                           //Triggering expansion.
@@ -1161,6 +1162,7 @@
                             {
                               scope.$callbacks.expandTimeoutEnd();
                               targetNode.collapsed = false;
+                              targetNode.$treeScope.$callbacks.toggle(false, targetNode);
                             }, scope.expandOnHover);
                           }
                         }
