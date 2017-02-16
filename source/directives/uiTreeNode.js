@@ -167,6 +167,7 @@
 
               //Check if it or it's parents has a 'data-nodrag' attribute
               el = angular.element(e.target);
+              isUiTreeRoot = el[0].attributes['ui-tree'];
               while (el && el[0] && el[0] !== element && !isUiTreeRoot) {
 
                 //Checking that I can access attributes.
@@ -233,7 +234,7 @@
 
               //Getting starting position of element being moved.
               pos = UiTreeHelper.positionStarted(eventObj, element);
-              placeElm.css('height', UiTreeHelper.height(element) + 'px');
+              placeElm.css('height', element.prop('offsetHeight') + 'px');
 
               //Creating drag element to represent node.
               dragElm = angular.element($window.document.createElement(scope.$parentNodesScope.$element.prop('tagName')))
