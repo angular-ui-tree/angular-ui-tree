@@ -37,7 +37,7 @@
 }
 
 .angular-ui-tree-placeholder {
-    margin: 5px 0;
+    margin: 10px;
     padding: 0;
     min-height: 30px;
 }
@@ -58,4 +58,8 @@
     pointer-events: none;
     z-index: 999;
     opacity: .8;
+}
+
+.angular-ui-tree-drag .tree-node-content {
+    margin-top: 0;
 }
