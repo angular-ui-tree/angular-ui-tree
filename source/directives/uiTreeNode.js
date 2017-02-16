@@ -234,7 +234,7 @@
 
               //Getting starting position of element being moved.
               pos = UiTreeHelper.positionStarted(eventObj, element);
-              placeElm.css('height', UiTreeHelper.height(element) + 'px');
+              placeElm.css('height', element.prop('offsetHeight') + 'px');
 
               //Creating drag element to represent node.
               dragElm = angular.element($window.document.createElement(scope.$parentNodesScope.$element.prop('tagName')))
