@@ -3,7 +3,7 @@ node_js:
   - "6"
 
 addons:
-  firefox: "47.0.2"
+  firefox: "51.0.0"
 
 before_script:
   # credits for FF configuration: https://github.com/pouchdb/pouchdb/blob/master/.travis.yml
