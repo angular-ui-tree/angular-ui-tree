@@ -23,13 +23,12 @@
         // Check if it's a empty tree
         $scope.isEmpty = function (dragInfo) {
           if($scope.$nodesScope && $scope.$nodesScope.$modelValue){
-            if($scope.$nodesScope.$modelValue.indexOf(dragInfo.source.$modelValue) !== -1){
-              return ( $scope.$nodesScope.$modelValue.length === 1 );
+            if(dragInfo && $scope.$nodesScope.$modelValue.indexOf(dragInfo.source.$modelValue) !== -1){
+              return ( $scope.$nodesScope.$modelValue.length <= 1 );
             }
             return ( $scope.$nodesScope.$modelValue.length === 0 );
-          }else{
-            return false;
           }
+          return false;
         };
 
         // add placeholder to empty tree
