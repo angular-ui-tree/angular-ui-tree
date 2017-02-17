@@ -1,3 +1,7 @@
+#2.22.5
+
+* Move postinstall hook to pretest [#907](https://github.com/angular-ui-tree/angular-ui-tree/issues/907)
+
 #2.22.4
 
 * Fixed placeholder height calculating [#904](https://github.com/angular-ui-tree/angular-ui-tree/issues/904)
