@@ -42,7 +42,7 @@
     "node": ">=6"
   },
   "scripts": {
-    "postinstall": "webdriver-manager update",
+    "pretest:e2e": "webdriver-manager update",
     "test:e2e": "protractor",
     "test": "gulp build && npm run test:e2e",
     "coveralls": "cat ./coverage/lcov/lcov.info | coveralls",
