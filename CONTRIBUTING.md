@@ -25,7 +25,7 @@ A fail does not necessarily mean a PR should be rejected, but it is a red flag t
 
 ## Creating a release
 
-1. Run the tests (`$ gulp test` and `$ gulp test:e2e`)
+1. Run the tests (`$ npm test`)
 3. Update CHANGELOG.md with release notes for the changes in the this release
 4. Update version string in `source/main.js` and `package.json` and `bower.json`
 5. Run `$ gulp build` and commit, this time including the new dist files.

@@ -1,3 +1,13 @@
+#2.22.4
+
+* Fixed placeholder height calculating [#904](https://github.com/angular-ui-tree/angular-ui-tree/issues/904)
+* Prevent node being non-collapsable after drag-and-drop in-place [#878](https://github.com/angular-ui-tree/angular-ui-tree/issues/878)
+* Edit Protractor installation [#905](https://github.com/angular-ui-tree/angular-ui-tree/issues/905)
+
+#2.22.3
+
+* Expand-on-hover event not calling toggle callback function [#899](https://github.com/angular-ui-tree/angular-ui-tree/issues/899)
+
 #2.22.2
 
 * Update devDependencies

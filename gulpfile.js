@@ -30,7 +30,3 @@ gulp.task('serve', function () {
 gulp.task('test', function () {
   return gulp.start('karma');
 });
-
-gulp.task('test:e2e', function () {
-  return gulp.start('protractor');
-});
