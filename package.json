@@ -1,6 +1,6 @@
 {
   "name": "angular-ui-tree",
-  "version": "2.22.4",
+  "version": "2.22.5",
   "description": "An AngularJS UI component that can sort nested lists, provides drag & drop support and doesn't depend on jQuery",
   "license": "MIT",
   "repository": {
@@ -26,7 +26,7 @@
     "gulp-uglify": "2.0.1",
     "jshint": "2.9.4",
     "jshint-stylish": "2.2.1",
-    "karma": "1.4.1",
+    "karma": "1.5.0",
     "karma-coverage": "1.1.1",
     "karma-firefox-launcher": "1.0.0",
     "karma-jasmine": "1.1.0",
@@ -42,7 +42,7 @@
     "node": ">=6"
   },
   "scripts": {
-    "postinstall": "webdriver-manager update",
+    "pretest:e2e": "webdriver-manager update",
     "test:e2e": "protractor",
     "test": "gulp build && npm run test:e2e",
     "coveralls": "cat ./coverage/lcov/lcov.info | coveralls",
