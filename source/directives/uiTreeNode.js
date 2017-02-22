@@ -543,7 +543,6 @@
                   if (isEmpty) {
                     treeScope = targetNode;
                     if (targetNode.$nodesScope.accept(scope, 0)) {
-                      targetNode.place(placeElm);
                       dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), 0);
                     }
                   //Not empty and drag enabled.
