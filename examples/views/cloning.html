@@ -2,7 +2,7 @@
 <script type="text/ng-template" id="nodes_renderer1.html">
   <div ui-tree-handle class="tree-node tree-node-content">
     <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle(this)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
-    <input type="text" ng-model="node.title">
+    <input type="text" ng-model="node.title" class="ui-tree-input">
     <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
     <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
   </div>
@@ -12,7 +12,7 @@
   </ol>
 </script>
 <script type="text/ng-template" id="nodes_renderer2.html">
-  <div class="tree-node">
+  <div class="tree-node ui-tree-compact-node">
     <div class="pull-left tree-handle" ui-tree-handle>
       <span class="glyphicon glyphicon-list"></span>
     </div>
@@ -24,9 +24,7 @@
           }">
         </span>
       </a>
-
-      <input type="text" ng-model="node.title">
-
+      <input type="text" ng-model="node.title" class="ui-tree-input">
       <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
       <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
     </div>
@@ -58,7 +56,7 @@
 
   <div class="col-sm-6">
     <h3>Tree 2 - Destination</h3>
-    <div ui-tree id="tree2-root" data-clone-enabled="true">
+    <div ui-tree id="tree2-root" data-clone-enabled="true" class="ui-tree-compact">
       <ol ui-tree-nodes="" ng-model="tree2">
         <li ng-repeat="node in tree2" ui-tree-node ng-include="'nodes_renderer2.html'"></li>
       </ol>
