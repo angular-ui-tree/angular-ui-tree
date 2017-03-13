@@ -43,6 +43,7 @@
     "node": ">=6"
   },
   "scripts": {
+    "pretest:e2e": "webdriver-manager update",
     "test": "gulp build && gulp test:e2e",
     "coveralls": "cat ./coverage/lcov/lcov.info | coveralls",
     "codacy": "cat ./coverage/lcov/lcov.info | codacy-coverage --verbose"
