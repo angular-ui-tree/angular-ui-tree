@@ -730,16 +730,16 @@
             bindDragStartEvents = function () {
               element.bind('touchstart mousedown', function (e) {
                 //Don't call drag delay if no delay was specified.
-                if (scope.dragDelay > 0) {
+                if (scope.$treeScope.dragDelay > 0) {
                   dragDelay.exec(function () {
                     dragStartEvent(e);
-                  }, scope.dragDelay);
+                  }, scope.$treeScope.dragDelay);
                 } else {
                   dragStartEvent(e);
                 }
               });
               element.bind('touchend touchcancel mouseup', function () {
-                if (scope.dragDelay > 0) {
+                if (scope.$treeScope.dragDelay > 0) {
                   dragDelay.cancel();
                 }
               });
