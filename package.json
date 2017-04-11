@@ -21,7 +21,7 @@
     "gulp-jscs": "4.0.0",
     "gulp-jshint": "2.0.4",
     "gulp-load-plugins": "1.5.0",
-    "gulp-protractor": "3.0.0",
+    "gulp-protractor": "4.1.0",
     "gulp-rename": "1.2.2",
     "gulp-symlink": "2.1.4",
     "gulp-uglify": "2.0.1",
@@ -43,7 +43,6 @@
     "node": ">=6"
   },
   "scripts": {
-    "pretest:e2e": "webdriver-manager update",
     "test": "gulp build && gulp test:e2e",
     "coveralls": "cat ./coverage/lcov/lcov.info | coveralls",
     "codacy": "cat ./coverage/lcov/lcov.info | codacy-coverage --verbose"
