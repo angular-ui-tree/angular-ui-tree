@@ -508,11 +508,11 @@ module.config(function(treeConfig) {
 #### Installation
 Run the commands below in the project root directory.
 
-#####1. Install Gulp and Bower
+##### 1. Install Gulp and Bower
 
     $ sudo npm install -g gulp bower
 
-#####2. Install project dependencies
+##### 2. Install project dependencies
 
     $ npm install
     $ ./node_modules/protractor/bin/webdriver-manager update
@@ -520,7 +520,7 @@ Run the commands below in the project root directory.
 
 ## Useful commands
 
-####Running a Local Development Web Server
+#### Running a Local Development Web Server
 To debug code and run end-to-end tests, it is often useful to have a local HTTP server.
 For this purpose, we have made available a local web server based on Node.js.
 
@@ -535,14 +535,14 @@ To access the local server, enter the following URL into your web browser:
 By default, it serves the contents of the `examples` directory.
 
 
-####Building angular-ui-tree
+#### Building angular-ui-tree
 To build angular-ui-tree, you use the following command.
 
     $ gulp build
 
 This will generate non-minified and minified JavaScript files in the `dist` directory.
 
-####Run tests
+#### Run tests
 You can run the unit test using a separate task.
 
     $ gulp test
@@ -555,6 +555,6 @@ The E2E-tests can be executed using
 
 *Windows: If your e2e tests are failing, run the command prompt as an administrator. ([See symlink issue](https://github.com/ben-eb/gulp-symlink/issues/33))*
 
-####Deploy examples
+#### Deploy examples
 
     $ gulp deploy
