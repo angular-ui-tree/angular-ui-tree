@@ -11,6 +11,7 @@
         $scope.$nodesScope = null; // root nodes
         $scope.$type = 'uiTree';
         $scope.$emptyElm = null;
+        $scope.$dropzoneElm = null;
         $scope.$callbacks = null;
 
         $scope.dragEnabled = true;
@@ -19,6 +20,7 @@
         $scope.dragDelay = 0;
         $scope.cloneEnabled = false;
         $scope.nodropEnabled = false;
+        $scope.dropzoneEnabled = false;
 
         // Check if it's a empty tree
         $scope.isEmpty = function () {
@@ -41,7 +43,17 @@
           }
         };
 
+        this.resetDropzoneElement = function () {
+          if ((!$scope.$nodesScope.$modelValue || $scope.$nodesScope.$modelValue.length !== 0) &&
+            $scope.dropzoneEnabled) {
+            $element.append($scope.$dropzoneElm);
+          } else {
+            $scope.$dropzoneElm.remove();
+          }
+        };
+
         $scope.resetEmptyElement = this.resetEmptyElement;
+        $scope.resetDropzoneElement = this.resetDropzoneElement;
       }
     ]);
 })();

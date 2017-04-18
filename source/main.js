@@ -10,6 +10,7 @@
     .constant('treeConfig', {
       treeClass: 'angular-ui-tree',
       emptyTreeClass: 'angular-ui-tree-empty',
+      dropzoneClass: 'angular-ui-tree-dropzone',
       hiddenClass: 'angular-ui-tree-hidden',
       nodesClass: 'angular-ui-tree-nodes',
       nodeClass: 'angular-ui-tree-node',

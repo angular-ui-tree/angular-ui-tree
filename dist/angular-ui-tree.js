@@ -10,6 +10,7 @@
     .constant('treeConfig', {
       treeClass: 'angular-ui-tree',
       emptyTreeClass: 'angular-ui-tree-empty',
+      dropzoneClass: 'angular-ui-tree-dropzone',
       hiddenClass: 'angular-ui-tree-hidden',
       nodesClass: 'angular-ui-tree-nodes',
       nodeClass: 'angular-ui-tree-node',
@@ -315,6 +316,7 @@
         $scope.$nodesScope = null; // root nodes
         $scope.$type = 'uiTree';
         $scope.$emptyElm = null;
+        $scope.$dropzoneElm = null;
         $scope.$callbacks = null;
 
         $scope.dragEnabled = true;
@@ -323,6 +325,7 @@
         $scope.dragDelay = 0;
         $scope.cloneEnabled = false;
         $scope.nodropEnabled = false;
+        $scope.dropzoneEnabled = false;
 
         // Check if it's a empty tree
         $scope.isEmpty = function () {
@@ -345,7 +348,17 @@
           }
         };
 
+        this.resetDropzoneElement = function () {
+          if ((!$scope.$nodesScope.$modelValue || $scope.$nodesScope.$modelValue.length !== 0) &&
+            $scope.dropzoneEnabled) {
+            $element.append($scope.$dropzoneElm);
+          } else {
+            $scope.$dropzoneElm.remove();
+          }
+        };
+
         $scope.resetEmptyElement = this.resetEmptyElement;
+        $scope.resetDropzoneElement = this.resetDropzoneElement;
       }
     ]);
 })();
@@ -396,10 +409,14 @@
               scope.$emptyElm.append(tdElm);
             } else {
               scope.$emptyElm = angular.element($window.document.createElement('div'));
+              scope.$dropzoneElm = angular.element($window.document.createElement('div'));
             }
 
             if (config.emptyTreeClass) {
               scope.$emptyElm.addClass(config.emptyTreeClass);
+            }
+            if (config.dropzoneClass) {
+              scope.$dropzoneElm.addClass(config.dropzoneClass);
             }
 
             scope.$watch('$nodesScope.$modelValue.length', function (val) {
@@ -408,6 +425,7 @@
               }
 
               ctrl.resetEmptyElement();
+              ctrl.resetDropzoneElement();
             }, true);
 
             scope.$watch(attrs.dragEnabled, function (val) {
@@ -426,6 +444,13 @@
             scope.$watch(attrs.nodropEnabled, function (val) {
               if ((typeof val) == 'boolean') {
                 scope.nodropEnabled = val;
+              }
+            });
+
+            scope.$watch(attrs.dropzoneEnabled, function (val) {
+              if ((typeof val) == 'boolean') {
+                scope.dropzoneEnabled = val;
+                ctrl.resetDropzoneElement();
               }
             });
 
@@ -902,7 +927,8 @@
                 targetBeforeBuffer,
                 targetHeight,
                 targetChildElm,
-                targetChildHeight;
+                targetChildHeight,
+                isDropzone;
 
               //If check ensures that drag element was created.
               if (dragElm) {
@@ -1040,6 +1066,9 @@
                   targetNode = targetElm.controller('uiTreeNodes').scope;
                 } else if (UiTreeHelper.elementIsPlaceholder(targetElm)) {
                   targetNode = targetElm.controller('uiTreeNodes').scope;
+                } else if (UiTreeHelper.elementIsDropzone(targetElm)) {
+                  targetNode = targetElm.controller('uiTree').scope;
+                  isDropzone = true;
                 } else if (targetElm.controller('uiTreeNode')) {
                   //Is a child element of a node.
                   targetNode = targetElm.controller('uiTreeNode').scope;
@@ -1106,8 +1135,8 @@
                     targetNode = targetNode.$nodeScope;
                   }
 
-                  //Check if it is a uiTreeNode or it's an empty tree.
-                  if (targetNode.$type !== 'uiTreeNode' && !isEmpty) {
+                  //Check if it is a uiTreeNode or it's an empty tree or it's a dropzone.
+                  if (targetNode.$type !== 'uiTreeNode' && !isEmpty && !isDropzone) {
 
                     // Allow node to return to its original position if no longer hovering over target
                     if (config.appendChildOnHover) {
@@ -1125,6 +1154,7 @@
                   //If placeholder move from empty tree, reset it.
                   if (treeScope && placeElm.parent()[0] != treeScope.$element[0]) {
                     treeScope.resetEmptyElement();
+                    treeScope.resetDropzoneElement();
                     treeScope = null;
                   }
 
@@ -1132,8 +1162,13 @@
                   if (isEmpty) {
                     treeScope = targetNode;
                     if (targetNode.$nodesScope.accept(scope, 0)) {
-                      targetNode.place(placeElm);
                       dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), 0);
+                    }
+                  //It's a dropzone
+                  } else if (isDropzone) {
+                    treeScope = targetNode;
+                    if (targetNode.$nodesScope.accept(scope, targetNode.$nodesScope.childNodes().length)) {
+                      dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), targetNode.$nodesScope.childNodes().length);
                     }
                   //Not empty and drag enabled.
                   } else if (targetNode.dragEnabled()) {
@@ -1790,6 +1825,9 @@
           },
           elementIsPlaceholder: function (element) {
             return element.hasClass(treeConfig.placeholderClass);
+          },
+          elementIsDropzone: function (element) {
+            return element.hasClass(treeConfig.dropzoneClass);
           },
           elementContainsTreeNodeHandler: function (element) {
             return element[0].querySelectorAll('[ui-tree-handle]').length >= 1;

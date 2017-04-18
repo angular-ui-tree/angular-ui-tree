@@ -151,6 +151,11 @@ See the [demo page](http://angular-ui-tree.github.io/angular-ui-tree/#/nodrop) f
 - `false` (default): turn off
 - `true`: turn on no drop
 
+##### data-dropzone-enabled
+Turn on a dropzone that is always visible, even when tree is not empty.
+- `false` (default): turn off
+- `true`: turn on dropzone
+
 ##### data-clone-enabled
 Turn on cloning of nodes. This will clone the source node to the destination when dragging between 2 trees.
 - `false` (default): turn off clone

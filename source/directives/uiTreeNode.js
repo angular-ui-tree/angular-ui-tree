@@ -313,7 +313,8 @@
                 targetBeforeBuffer,
                 targetHeight,
                 targetChildElm,
-                targetChildHeight;
+                targetChildHeight,
+                isDropzone;
 
               //If check ensures that drag element was created.
               if (dragElm) {
@@ -451,6 +452,9 @@
                   targetNode = targetElm.controller('uiTreeNodes').scope;
                 } else if (UiTreeHelper.elementIsPlaceholder(targetElm)) {
                   targetNode = targetElm.controller('uiTreeNodes').scope;
+                } else if (UiTreeHelper.elementIsDropzone(targetElm)) {
+                  targetNode = targetElm.controller('uiTree').scope;
+                  isDropzone = true;
                 } else if (targetElm.controller('uiTreeNode')) {
                   //Is a child element of a node.
                   targetNode = targetElm.controller('uiTreeNode').scope;
@@ -517,8 +521,8 @@
                     targetNode = targetNode.$nodeScope;
                   }
 
-                  //Check if it is a uiTreeNode or it's an empty tree.
-                  if (targetNode.$type !== 'uiTreeNode' && !isEmpty) {
+                  //Check if it is a uiTreeNode or it's an empty tree or it's a dropzone.
+                  if (targetNode.$type !== 'uiTreeNode' && !isEmpty && !isDropzone) {
 
                     // Allow node to return to its original position if no longer hovering over target
                     if (config.appendChildOnHover) {
@@ -536,6 +540,7 @@
                   //If placeholder move from empty tree, reset it.
                   if (treeScope && placeElm.parent()[0] != treeScope.$element[0]) {
                     treeScope.resetEmptyElement();
+                    treeScope.resetDropzoneElement();
                     treeScope = null;
                   }
 
@@ -544,6 +549,12 @@
                     treeScope = targetNode;
                     if (targetNode.$nodesScope.accept(scope, 0)) {
                       dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), 0);
+                    }
+                  //It's a dropzone
+                  } else if (isDropzone) {
+                    treeScope = targetNode;
+                    if (targetNode.$nodesScope.accept(scope, targetNode.$nodesScope.childNodes().length)) {
+                      dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), targetNode.$nodesScope.childNodes().length);
                     }
                   //Not empty and drag enabled.
                   } else if (targetNode.dragEnabled()) {
