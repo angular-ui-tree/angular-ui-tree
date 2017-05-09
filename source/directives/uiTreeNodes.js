@@ -36,9 +36,12 @@
               };
             }
 
-            scope.$watch(function () {
-              return attrs.maxDepth;
-            }, function (val) {
+            // PR #664: Define any undefined attributes to fix incompability with older versions of Angular batarang
+            if (typeof attrs.maxDepth === 'undefined') {
+              attrs.maxDepth = '';
+            }
+
+            scope.$watch(attrs.maxDepth, function (val) {
               if ((typeof val) == 'number') {
                 scope.maxDepth = val;
               }

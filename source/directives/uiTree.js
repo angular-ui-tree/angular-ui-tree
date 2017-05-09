@@ -58,6 +58,29 @@
               ctrl.resetEmptyElement();
             }, true);
 
+            // PR #664: Define any undefined attributes to fix incompability with older versions of Angular batarang
+            if (typeof attrs.dragEnabled === 'undefined') {
+              attrs.dragEnabled = '';
+            }
+            if (typeof attrs.emptyPlaceHolderEnabled === 'undefined') {
+              attrs.emptyPlaceHolderEnabled = '';
+            }
+            if (typeof attrs.nodropEnabled === 'undefined') {
+              attrs.nodropEnabled = '';
+            }
+            if (typeof attrs.cloneEnabled === 'undefined') {
+              attrs.cloneEnabled = '';
+            }
+            if (typeof attrs.maxDepth === 'undefined') {
+              attrs.maxDepth = '';
+            }
+            if (typeof attrs.dragDelay === 'undefined') {
+              attrs.dragDelay = '';
+            }
+            if (typeof attrs.uiTree === 'undefined') {
+              attrs.uiTree = '';
+            }
+
             scope.$watch(attrs.dragEnabled, function (val) {
               if ((typeof val) == 'boolean') {
                 scope.dragEnabled = val;

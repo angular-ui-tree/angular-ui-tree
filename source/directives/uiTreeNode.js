@@ -62,6 +62,11 @@
             scope.scrollContainer = UiTreeHelper.getNodeAttribute(scope, 'scrollContainer') || attrs.scrollContainer || null;
             scope.sourceOnly = scope.nodropEnabled || scope.$treeScope.nodropEnabled;
 
+            // PR #664: Define any undefined attributes to fix incompability with older versions of Angular batarang
+            if (attrs.collapsed === 'undefined') {
+              attrs.collapsed = '';
+            }
+
             scope.$watch(attrs.collapsed, function (val) {
               if ((typeof val) == 'boolean') {
                 scope.collapsed = val;
