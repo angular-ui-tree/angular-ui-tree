@@ -209,7 +209,7 @@ myAppModule.controller('MyController', function($scope) {
 });
 ```
 ```html
-<div ui-tree="treeOptions">
+<div ui-tree callbacks="treeOptions">
   <ol ui-tree-nodes ng-model="nodes">
     <li ng-repeat="node in nodes" ui-tree-node>{{node.title}}</li>
   </ol>
