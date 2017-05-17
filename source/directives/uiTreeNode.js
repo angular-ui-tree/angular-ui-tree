@@ -458,6 +458,12 @@
 
                 moveWithinTree =  (targetNode && targetNode.$treeScope && targetNode.$treeScope.$id && targetNode.$treeScope.$id === treeOfOrigin);
 
+                // if set 'data-allowed-types' attribute to target 'ui-tree',
+                // check for compatibilite of types with data-allowed-type in 'ui-tree-nodes'
+                if(!UiTreeHelper.isAllowedNodeType(scope, targetNode)) { 
+                  return; 
+                }
+                
                 /* (jcarter) Notes to developers:
                  *  pos.dirAx is either 0 or 1
                  *  1 means horizontal movement is happening

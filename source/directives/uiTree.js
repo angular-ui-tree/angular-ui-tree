@@ -89,6 +89,12 @@
               }
             });
 
+            scope.$watch(attrs.allowedTypes, function (val) {
+              if (val instanceof Array) { 
+                scope.allowedTypes = val;
+              }
+            }); 
+
             scope.$watch(attrs.dragDelay, function (val) {
               if ((typeof val) == 'number') {
                 scope.dragDelay = val;

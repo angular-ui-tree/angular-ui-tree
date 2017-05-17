@@ -368,6 +368,34 @@
           },
           treeNodeHandlerContainerOfElement: function (element) {
             return findFirstParentElementWithAttribute('ui-tree-handle', element[0]);
+          },
+          
+          /**
+           * @ngdoc method
+           * @name ui.tree#isAllowedNodeType
+           *
+           * @description
+           * Check for 'data-allowed-types' in 'ui-tree'. 
+           * If set, trying get 'data-allowed-type' from current 'scope.$nodesScope'
+           * and find this in allowed list of types.
+           *
+           * @param {Object} scope Scope of the node that is being moved.
+           * @param {Object}  Target element, with 'data-allowed-types' or without.
+           * @returns {Boolean} is allowed 'ui-tree' element.
+           */
+          isAllowedNodeType: function ( scope, targetNode ) {
+            
+            var haveAllowedTypes = (targetNode && targetNode.$treeScope &&
+                                    targetNode.$treeScope.allowedTypes instanceof Array &&
+                                    targetNode.$treeScope.allowedTypes.length); 
+            // TRUE if attribute 'data-allowed-types' wasn't set or 
+            // 'data-allowed-types' contains 'data-allowed-type'
+            if(!haveAllowedTypes || ( scope.$nodesScope.allowedType &&
+                targetNode.$treeScope.allowedTypes.indexOf(scope.$nodesScope.allowedType) !== -1)) {
+              return true; 
+            } 
+            
+            return false;
           }
         };
       }

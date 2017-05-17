@@ -52,6 +52,12 @@
               }
             }, true);
 
+            scope.$watch(attrs.allowedType, function (val) {
+              if ((typeof val) != 'string') {
+                scope.allowedTypes = val;
+              }
+            }); 
+
           }
         };
       }
