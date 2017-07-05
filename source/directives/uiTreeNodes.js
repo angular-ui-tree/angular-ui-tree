@@ -47,7 +47,7 @@
             scope.$watch(function () {
               return attrs.nodropEnabled;
             }, function (newVal) {
-              if ((typeof newVal) != 'undefined') {
+              if (newVal && (typeof newVal) != 'undefined') {
                 scope.nodropEnabled = true;
               }
             }, true);
