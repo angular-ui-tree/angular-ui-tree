@@ -12,7 +12,7 @@
     "codacy-coverage": "2.0.2",
     "connect-livereload": "0.6.0",
     "coveralls": "2.13.0",
-    "del": "2.2.2",
+    "del": "3.0.0",
     "gulp": "3.9.1",
     "gulp-concat": "2.6.1",
     "gulp-connect": "5.0.0",
