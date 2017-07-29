@@ -12,7 +12,7 @@
     "codacy-coverage": "2.0.2",
     "connect-livereload": "0.6.0",
     "coveralls": "2.13.1",
-    "del": "2.2.2",
+    "del": "3.0.0",
     "gulp": "3.9.1",
     "gulp-concat": "2.6.1",
     "gulp-connect": "5.0.0",
@@ -24,9 +24,9 @@
     "gulp-rename": "1.2.2",
     "gulp-symlink": "2.1.4",
     "gulp-uglify": "2.1.2",
-    "jshint": "2.9.4",
+    "jshint": "2.9.5",
     "jshint-stylish": "2.2.1",
-    "karma": "1.6.0",
+    "karma": "1.7.0",
     "karma-coverage": "1.1.1",
     "karma-firefox-launcher": "1.0.1",
     "karma-jasmine": "1.1.0",
@@ -36,7 +36,7 @@
     "open": "0.0.5",
     "phantomjs-prebuilt": "2.1.14",
     "protractor": "4.0.14",
-    "require-dir": "0.3.1"
+    "require-dir": "0.3.2"
   },
   "engines": {
     "node": ">=6"
