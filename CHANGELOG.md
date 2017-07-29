@@ -1,54 +1,54 @@
-#2.22.5
+# 2.22.5
 
 * Move postinstall hook to pretest [#907](https://github.com/angular-ui-tree/angular-ui-tree/issues/907)
 
-#2.22.4
+# 2.22.4
 
 * Fixed placeholder height calculating [#904](https://github.com/angular-ui-tree/angular-ui-tree/issues/904)
 * Prevent node being non-collapsable after drag-and-drop in-place [#878](https://github.com/angular-ui-tree/angular-ui-tree/issues/878)
 * Edit Protractor installation [#905](https://github.com/angular-ui-tree/angular-ui-tree/issues/905)
 
-#2.22.3
+# 2.22.3
 
 * Expand-on-hover event not calling toggle callback function [#899](https://github.com/angular-ui-tree/angular-ui-tree/issues/899)
 
-#2.22.2
+# 2.22.2
 
 * Update devDependencies
 * Remove unused outOfBounds calculation [#856](https://github.com/angular-ui-tree/angular-ui-tree/issues/856)
 
-#2.22.1
+# 2.22.1
 
 * Fix tree sorting bug, see Issues [#831](https://github.com/angular-ui-tree/angular-ui-tree/issues/831) and [#832](https://github.com/angular-ui-tree/angular-ui-tree/issues/832)
 
-#2.22.0
+# 2.22.0
 
 * Improve horizontal movement detection for smoother node movement and to address Issue [#562](https://github.com/angular-ui-tree/angular-ui-tree/issues/562)
 
-#2.21.3
+# 2.21.3
 
 * Set `appendChildOnHover` to `true` by default.
 
-#2.21.2
+# 2.21.2
 
 * Re-integrate lost patch from PR [#650](https://github.com/angular-ui-tree/angular-ui-tree/pull/650).
 
-#2.21.1
+# 2.21.1
 
 * Update CHANGELOG.md
 
-#2.21.0
+# 2.21.0
 
 * New ui-tree-node attribute data-scroll-container allows for specifying any valid querySelector argument to scroll relative to the dragged node.
 * Fixes Issues [#49](https://github.com/angular-ui-tree/angular-ui-tree/issues/49), [#644](https://github.com/angular-ui-tree/angular-ui-tree/issues/644), [#158](https://github.com/angular-ui-tree/angular-ui-tree/issues/158), and [#544](https://github.com/angular-ui-tree/angular-ui-tree/issues/544)
 
-#2.20.0
+# 2.20.0
 
 * Performance Improvements by skipping dragDelay when no delay is specified
 * Corrected error with ESC key not cancelling drag [#799](https://github.com/angular-ui-tree/angular-ui-tree/issues/799)
 * Corrected error where dropping on a noDrop clone tree would add node to second tree [Example of Error](http://gfycat.com/EverlastingCanineCleanerwrasse)
 
-#2.19.0
+# 2.19.0
 
 * Fix error caused by version rollback.
 
