@@ -74,7 +74,7 @@
         //Called in apply method of UiTreeHelper.dragInfo.
         $scope.insertNode = function (index, nodeData) {
           $scope.safeApply(function () {
-            $scope.$modelValue.splice(index, 0, nodeData);
+            $scope.$modelValue.splice(index, 0, $scope.$treeScope.$callbacks.onClone(nodeData));
           });
         };
 

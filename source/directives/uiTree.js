@@ -178,6 +178,10 @@
             callbacks.beforeDrop = function (event) {
 
             };
+            
+            callbacks.onClone = function (data) {
+              return data;
+            };
 
             /**
              * Callback is fired when a user toggles node (but after processing the toggle action)
