@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.22.5
+ * @license Angular UI Tree v2.22.6
  * (c) 2010-2017. https://github.com/angular-ui-tree/angular-ui-tree
  * License: MIT
  */
@@ -10,6 +10,7 @@
     .constant('treeConfig', {
       treeClass: 'angular-ui-tree',
       emptyTreeClass: 'angular-ui-tree-empty',
+      dropzoneClass: 'angular-ui-tree-dropzone',
       hiddenClass: 'angular-ui-tree-hidden',
       nodesClass: 'angular-ui-tree-nodes',
       nodeClass: 'angular-ui-tree-node',
