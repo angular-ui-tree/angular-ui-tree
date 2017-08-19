@@ -1,7 +1,7 @@
 .angular-ui-tree {
 }
 
-.angular-ui-tree-empty {
+.angular-ui-tree-empty, .angular-ui-tree-dropzone {
     border: 1px dashed #bbb;
     min-height: 100px;
     background-color: #e5e5e5;
@@ -10,6 +10,9 @@
     background-image: linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
     background-size: 60px 60px;
     background-position: 0 0, 30px 30px;
+}
+
+.angular-ui-tree-empty {
     pointer-events: none;
 }
 

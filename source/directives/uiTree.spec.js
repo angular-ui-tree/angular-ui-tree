@@ -61,6 +61,21 @@
       expect(element.scope().$emptyElm.parent()).not.toEqual(element);
     });
 
+    it('should allow enabling / disabling the dropzone', function () {
+      $scope.enableDropzone = true;
+      $scope.items = [{}];
+
+      var element = createElement('<div ui-tree data-dropzone-enabled="enableDropzone"><div ui-tree-nodes="" ng-model="items"><div ng-repeat="item in items" ui-tree-node></div></div>');
+      expect(element.scope().dropzoneEnabled).toEqual(true);
+      expect(element.scope().$dropzoneElm.parent()).toEqual(element);
+
+      $scope.enableDropzone = false;
+      $scope.$digest();
+
+      expect(element.scope().dropzoneEnabled).toEqual(false);
+      expect(element.scope().$dropzoneElm.parent()).not.toEqual(element);
+    });
+
     it('should allow enabling / disabling dropping nodes', function () {
       $scope.enableNodrop = true;
 
@@ -117,6 +132,7 @@
         createElement();
         controller = element.controller('uiTree');
         spyOn(controller, 'resetEmptyElement');
+        spyOn(controller, 'resetDropzoneElement');
       });
 
       it('should reset empty elements', function () {
@@ -125,10 +141,17 @@
         expect(controller.resetEmptyElement).toHaveBeenCalled();
       });
 
+      it('should reset dropzone elements', function () {
+        $scope.items.push('item1');
+        $scope.$digest();
+        expect(controller.resetDropzoneElement).toHaveBeenCalled();
+      });
+
       it('should not attempt to reset elements without a $nodesScope', function () {
         element.scope().$nodesScope = null;
         $scope.$digest();
         expect(controller.resetEmptyElement).not.toHaveBeenCalled();
+        expect(controller.resetDropzoneElement).not.toHaveBeenCalled();
       });
     });
   });
