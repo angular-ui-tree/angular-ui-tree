@@ -509,7 +509,7 @@
 
                   //Set whether target tree is empty or not.
                   if (targetNode.$type === 'uiTree' && targetNode.dragEnabled) {
-                    isEmpty = targetNode.isEmpty();
+                    isEmpty = targetNode.isEmpty(dragInfo);
                   }
 
                   //If target is a handle set new target to handle's node.

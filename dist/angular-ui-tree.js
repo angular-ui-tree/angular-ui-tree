@@ -325,9 +325,14 @@
         $scope.nodropEnabled = false;
 
         // Check if it's a empty tree
-        $scope.isEmpty = function () {
-          return ($scope.$nodesScope && $scope.$nodesScope.$modelValue
-          && $scope.$nodesScope.$modelValue.length === 0);
+        $scope.isEmpty = function (dragInfo) {
+          if($scope.$nodesScope && $scope.$nodesScope.$modelValue){
+            if(dragInfo && $scope.$nodesScope.$modelValue.indexOf(dragInfo.source.$modelValue) !== -1){
+              return ( $scope.$nodesScope.$modelValue.length <= 1 );
+            }
+            return ( $scope.$nodesScope.$modelValue.length === 0 );
+          }
+          return false;
         };
 
         // add placeholder to empty tree
@@ -1098,7 +1103,7 @@
 
                   //Set whether target tree is empty or not.
                   if (targetNode.$type === 'uiTree' && targetNode.dragEnabled) {
-                    isEmpty = targetNode.isEmpty();
+                    isEmpty = targetNode.isEmpty(dragInfo);
                   }
 
                   //If target is a handle set new target to handle's node.
