@@ -1,3 +1,9 @@
+# 2.22.6
+
+* Fix broken headings in Markdown files [#936](https://github.com/angular-ui-tree/angular-ui-tree/issues/936)
+* Prefer $timeout over safeApply [#964](https://github.com/angular-ui-tree/angular-ui-tree/issues/964)
+* Leave empty placeholder in DOM until node is dropped [#910](https://github.com/angular-ui-tree/angular-ui-tree/issues/910)
+
 # 2.22.5
 
 * Move postinstall hook to pretest [#907](https://github.com/angular-ui-tree/angular-ui-tree/issues/907)

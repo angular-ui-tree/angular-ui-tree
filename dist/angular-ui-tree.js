@@ -1,5 +1,5 @@
 /**
- * @license Angular UI Tree v2.22.5
+ * @license Angular UI Tree v2.22.6
  * (c) 2010-2017. https://github.com/angular-ui-tree/angular-ui-tree
  * License: MIT
  */
@@ -198,8 +198,8 @@
 
   angular.module('ui.tree')
 
-    .controller('TreeNodesController', ['$scope', '$element',
-      function ($scope, $element) {
+    .controller('TreeNodesController', ['$scope', '$element', '$timeout',
+      function ($scope, $element, $timeout) {
         this.scope = $scope;
 
         $scope.$element = $element;
@@ -243,22 +243,11 @@
           return $scope.$modelValue.length > 0;
         };
 
-        $scope.safeApply = function (fn) {
-          var phase = this.$root.$$phase;
-          if (phase == '$apply' || phase == '$digest') {
-            if (fn && (typeof (fn) === 'function')) {
-              fn();
-            }
-          } else {
-            this.$apply(fn);
-          }
-        };
-
         //Called in apply method of UiTreeHelper.dragInfo.
         $scope.removeNode = function (node) {
           var index = $scope.$modelValue.indexOf(node.$modelValue);
           if (index > -1) {
-            $scope.safeApply(function () {
+            $timeout(function () {
               $scope.$modelValue.splice(index, 1)[0];
             });
             return $scope.$treeScope.$callbacks.removed(node);
@@ -268,7 +257,7 @@
 
         //Called in apply method of UiTreeHelper.dragInfo.
         $scope.insertNode = function (index, nodeData) {
-          $scope.safeApply(function () {
+          $timeout(function () {
             $scope.$modelValue.splice(index, 0, nodeData);
           });
         };
