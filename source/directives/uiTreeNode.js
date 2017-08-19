@@ -97,12 +97,24 @@
               scrollContainerElm = document.querySelector(val);
             });
 
-            scope.$on('angular-ui-tree:collapse-all', function () {
-              scope.collapsed = true;
+            scope.$on('angular-ui-tree:collapse-all', function (event, data) {
+              if(angular.isDefined(data) && angular.isDefined(data.treeId)) {
+                if(data.treeId == attrs.uiTreeId) {
+                  scope.collapsed = true;
+                }
+              } else {
+                scope.collapsed = true;
+              }
             });
 
-            scope.$on('angular-ui-tree:expand-all', function () {
-              scope.collapsed = false;
+            scope.$on('angular-ui-tree:expand-all', function (event, data) {
+              if(angular.isDefined(data) && angular.isDefined(data.treeId)) {
+                if(data.treeId == attrs.uiTreeId) {
+                  scope.collapsed = false;
+                }
+              } else {
+                scope.collapsed = false;
+              }
             });
 
             /**
