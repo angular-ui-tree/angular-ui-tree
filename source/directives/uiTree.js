@@ -44,8 +44,8 @@
               scope.$emptyElm.append(tdElm);
             } else {
               scope.$emptyElm = angular.element($window.document.createElement('div'));
-              scope.$dropzoneElm = angular.element($window.document.createElement('div'));
             }
+            scope.$dropzoneElm = angular.element($window.document.createElement('div'));
 
             if (config.emptyTreeClass) {
               scope.$emptyElm.addClass(config.emptyTreeClass);
