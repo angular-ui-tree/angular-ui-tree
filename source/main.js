@@ -17,9 +17,9 @@
       handleClass: 'angular-ui-tree-handle',
       placeholderClass: 'angular-ui-tree-placeholder',
       dragClass: 'angular-ui-tree-drag',
-      dragThreshold: 3,
       defaultCollapsed: false,
-      appendChildOnHover: true
+      appendChildOnHover: true,
+      dragMoveSensitivity: 15
     });
 
 })();

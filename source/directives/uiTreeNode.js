@@ -477,8 +477,15 @@
                     prev = dragInfo.prev();
                     if (prev && !prev.collapsed
                       && prev.accept(scope, prev.childNodesCount())) {
-                      prev.$childNodesScope.$element.append(placeElm);
-                      dragInfo.moveTo(prev.$childNodesScope, prev.childNodes(), prev.childNodesCount());
+                      if (!dragInfo.deltaDistX || dragInfo.deltaDistX < 0) {
+                        dragInfo.deltaDistX = 0;
+                      }
+                      dragInfo.deltaDistX += pos.distX;
+                      if (dragInfo.deltaDistX > config.dragMoveSensitivity) {
+                        prev.$childNodesScope.$element.append(placeElm);
+                        dragInfo.moveTo(prev.$childNodesScope, prev.childNodes(), prev.childNodesCount());
+                        dragInfo.deltaDistX = 0;
+                      }
                     }
                   }
 
@@ -491,8 +498,15 @@
                       target = dragInfo.parentNode(); // As a sibling of it's parent node
                       if (target
                         && target.$parentNodesScope.accept(scope, target.index() + 1)) {
-                        target.$element.after(placeElm);
-                        dragInfo.moveTo(target.$parentNodesScope, target.siblings(), target.index() + 1);
+                          if (!dragInfo.deltaDistX || dragInfo.deltaDistX > 0) {
+                            dragInfo.deltaDistX = 0;
+                          }
+                          dragInfo.deltaDistX += pos.distX;
+                          if (dragInfo.deltaDistX < -config.dragMoveSensitivity) {
+                            target.$element.after(placeElm);
+                            dragInfo.moveTo(target.$parentNodesScope, target.siblings(), target.index() + 1);
+                            dragInfo.deltaDistX = 0;
+                          }
                       }
                     }
                   }

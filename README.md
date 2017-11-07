@@ -477,8 +477,7 @@ If you don't add a `ui-tree-handle` for a node, the entire node can be dragged.
 ## Runtime Configuration
 Use the `treeConfig` service to configure the tree defaults at runtime.
 With this you can customize the classes applied to various tree elements
-(`treeClass`, `emptyTreeClass`, `hiddenClass`, `nodesClass`, `handleClass`,
-`placeholderClass`, `dragClass`).
+(`treeClass`, `emptyTreeClass`, `hiddenClass`, `nodesClass`, `nodeClass`, `handleClass`, `placeholderClass`, `dragClass`).
 
 In addition, you can modify whether or not nodes are collapsed by default
 (`defaultCollapsed`: default false).
@@ -486,12 +485,16 @@ In addition, you can modify whether or not nodes are collapsed by default
 You can also modify whether or not dragging a node over a parent node will insert the node as a child
 (`appendChildOnHover`: default true).
 
+You can also modify sensitivity of moving nodes up and down in nesting level that is measured in pixels
+(`dragMoveSensitivity`: default 10).
+
 For example:
 
 ```js
 module.config(function(treeConfig) {
   treeConfig.defaultCollapsed = true; // collapse nodes by default
   treeConfig.appendChildOnHover = true; // append dragged nodes as children by default
+  treeConfig.dragMoveSensitivity = 5; // sensitivity of moving nodes up and down in nesting level - 5 pixels
 });
 ```
 
