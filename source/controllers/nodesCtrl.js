@@ -17,6 +17,7 @@
         $scope.nodropEnabled = false;
         $scope.maxDepth = 0;
         $scope.cloneEnabled = false;
+        $scope.allowedType = '';
 
         $scope.initSubNode = function (subNode) {
           if (!subNode.$modelValue) {
@@ -32,7 +33,7 @@
           $scope.$nodesMap[subNode.$modelValue.$$hashKey] = null;
         };
 
-        $scope.accept = function (sourceNode, destIndex) {
+        $scope.accept = function (sourceNode, destIndex) { 
           return $scope.$treeScope.$callbacks.accept(sourceNode, $scope, destIndex);
         };
 

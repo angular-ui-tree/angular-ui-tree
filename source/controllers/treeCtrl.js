@@ -18,6 +18,7 @@
         $scope.emptyPlaceholderEnabled = true;
         $scope.maxDepth = 0;
         $scope.dragDelay = 0;
+        $scope.allowedTypes = [];
         $scope.cloneEnabled = false;
         $scope.nodropEnabled = false;
         $scope.dropzoneEnabled = false;
