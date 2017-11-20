@@ -738,7 +738,10 @@
              */
             //This is outside of bindDragMoveEvents because of the potential for a delay setting.
             bindDragStartEvents = function () {
-              element.bind('touchstart mousedown', function (e) {
+              // Trigged 'touchstart' and 'mousedown'
+              // if use with angular-material, fix it.
+              var dragStartEventName = hasTouch?'touchstart':'mousedown';
+              element.bind(dragStartEventName, function (e) {
                 //Don't call drag delay if no delay was specified.
                 if (scope.dragDelay > 0) {
                   dragDelay.exec(function () {
