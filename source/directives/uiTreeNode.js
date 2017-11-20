@@ -95,6 +95,12 @@
               UiTreeHelper.setNodeAttribute(scope, 'scrollContainer', val);
               attrs.$set('scrollContainer', val);
               scrollContainerElm = document.querySelector(val);
+              if (!scrollContainerElm) {
+                $timeout(function() {
+                  scrollContainerElm = document.querySelector(val);
+
+                }, 0);
+              }
             });
 
             scope.$on('angular-ui-tree:collapse-all', function () {
