@@ -12,7 +12,7 @@
   </ol>
 </script>
 <script type="text/ng-template" id="nodes_renderer2.html">
-  <div class="tree-node">
+  <div class="tree-node ui-tree-compact-node">
     <div class="pull-left tree-handle" ui-tree-handle>
       <span class="glyphicon glyphicon-list"></span>
     </div>
@@ -55,7 +55,7 @@
 
   <div class="col-sm-6">
     <h3>Tree 2</h3>
-    <div ui-tree id="tree2-root">
+    <div ui-tree id="tree2-root" class="ui-tree-compact">
       <ol ui-tree-nodes="" ng-model="tree2">
         <li ng-repeat="node in tree2" ui-tree-node ng-include="'nodes_renderer2.html'"></li>
       </ol>

@@ -1,4 +1,3 @@
-
 .btn {
     margin-right: 8px;
 }
@@ -25,7 +24,7 @@
 }
 
 tr.angular-ui-tree-empty {
-    height:100px
+    height: 100px
 }
 
 .group-title {
@@ -33,8 +32,6 @@ tr.angular-ui-tree-empty {
     color: #FFF !important;
 }
 
-
-/* --- Tree --- */
 .tree-node {
     border: 1px solid #dae2ea;
     background: #f8faff;
@@ -48,14 +45,12 @@ tr.angular-ui-tree-empty {
 .tree-node-content {
     margin: 10px;
 }
+
 .tree-handle {
     padding: 10px;
     background: #428bca;
     color: #FFF;
     margin-right: 10px;
-}
-
-.angular-ui-tree-handle:hover {
 }
 
 .angular-ui-tree-placeholder {
@@ -64,4 +59,17 @@ tr.angular-ui-tree-empty {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+}
+
+.ui-tree-compact .angular-ui-tree-placeholder {
+    margin: 0;
+}
+
+.ui-tree-compact-node .tree-node-content {
+    margin: 10px;
+}
+
+.ui-tree-input {
+    position: absolute;
+    top: 9px;
 }
