@@ -15,7 +15,7 @@
     "del": "3.0.0",
     "gulp": "3.9.1",
     "gulp-concat": "2.6.1",
-    "gulp-connect": "5.0.0",
+    "gulp-connect": "5.2.0",
     "gulp-cssnano": "2.1.2",
     "gulp-gh-pages": "0.5.4",
     "gulp-jscs": "4.0.0",
