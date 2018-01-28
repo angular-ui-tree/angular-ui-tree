@@ -94,6 +94,7 @@ Injecting `ui.tree`, `ui-tree-nodes`, `ui-tree-node`, `ui-tree-handle` to your h
 - Adding `ui-tree-handle` to the element used to drag the object.
 - All `ui-tree`, `ui-tree-nodes`, `ng-model`, `ui-tree-node` are necessary. And they can be nested.
 - If you don't add a `ui-tree-handle` for a node, the entire node can be dragged.
+- Do not use `track by` in `ng-repeat` statement. Otherwise `angular-ui-tree` and `ng-repeat` directive conflict on managing dom nodes.
 
 **Styling Notes:**
 - While an element is being dragged, it is temporarily removed from the DOM and injected just before closing `</body>` tag. When dropped, it returns to it's original place in the DOM's hierarchy.
