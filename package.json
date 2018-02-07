@@ -36,7 +36,7 @@
     "open": "0.0.5",
     "phantomjs-prebuilt": "2.1.16",
     "protractor": "4.0.14",
-    "require-dir": "0.3.2"
+    "require-dir": "1.0.0"
   },
   "engines": {
     "node": ">=6"
