@@ -9,7 +9,7 @@
   },
   "main": "index.js",
   "devDependencies": {
-    "codacy-coverage": "2.0.3",
+    "codacy-coverage": "2.1.1",
     "connect-livereload": "0.6.0",
     "coveralls": "2.13.2",
     "del": "3.0.0",
