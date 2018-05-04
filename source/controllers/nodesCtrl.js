@@ -53,7 +53,8 @@
           var index = $scope.$modelValue.indexOf(node.$modelValue);
           if (index > -1) {
             $timeout(function () {
-              $scope.$modelValue.splice(index, 1)[0];
+              if ($scope.$modelValue[index] == node.$modelValue)
+                $scope.$modelValue.splice(index, 1)[0];
             });
             return $scope.$treeScope.$callbacks.removed(node);
           }
