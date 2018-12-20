@@ -10,7 +10,7 @@
   "main": "index.js",
   "devDependencies": {
     "codacy-coverage": "2.0.3",
-    "connect-livereload": "0.6.0",
+    "connect-livereload": "0.6.1",
     "coveralls": "2.13.2",
     "del": "3.0.0",
     "gulp": "3.9.1",
