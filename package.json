@@ -32,7 +32,7 @@
     "karma-jasmine": "1.1.0",
     "karma-ng-html2js-preprocessor": "1.0.0",
     "karma-phantomjs-launcher": "1.0.4",
-    "load-grunt-tasks": "3.5.2",
+    "load-grunt-tasks": "5.0.0",
     "open": "0.0.5",
     "phantomjs-prebuilt": "2.1.16",
     "protractor": "4.0.14",
