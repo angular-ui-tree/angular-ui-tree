@@ -26,7 +26,7 @@
     "gulp-uglify": "2.1.2",
     "jshint": "2.9.5",
     "jshint-stylish": "2.2.1",
-    "karma": "1.7.1",
+    "karma": "4.2.0",
     "karma-coverage": "1.1.1",
     "karma-firefox-launcher": "1.0.1",
     "karma-jasmine": "1.1.0",
