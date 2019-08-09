@@ -28,7 +28,7 @@
     "jshint-stylish": "2.2.1",
     "karma": "1.7.1",
     "karma-coverage": "1.1.1",
-    "karma-firefox-launcher": "1.0.1",
+    "karma-firefox-launcher": "1.2.0",
     "karma-jasmine": "1.1.0",
     "karma-ng-html2js-preprocessor": "1.0.0",
     "karma-phantomjs-launcher": "1.0.4",
