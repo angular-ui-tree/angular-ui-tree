@@ -24,7 +24,7 @@
     "gulp-rename": "1.2.2",
     "gulp-symlink": "2.1.4",
     "gulp-uglify": "2.1.2",
-    "jshint": "2.9.5",
+    "jshint": "2.11.0",
     "jshint-stylish": "2.2.1",
     "karma": "1.7.1",
     "karma-coverage": "1.1.1",
