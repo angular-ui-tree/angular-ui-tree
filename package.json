@@ -11,7 +11,7 @@
   "devDependencies": {
     "codacy-coverage": "2.0.3",
     "connect-livereload": "0.6.0",
-    "coveralls": "2.13.2",
+    "coveralls": "3.0.10",
     "del": "3.0.0",
     "gulp": "3.9.1",
     "gulp-concat": "2.6.1",
