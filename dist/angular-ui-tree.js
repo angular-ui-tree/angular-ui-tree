@@ -394,12 +394,12 @@
             if (element.prop('tagName').toLowerCase() === 'table') {
               scope.$emptyElm = angular.element($window.document.createElement('tr'));
               $trElm = element.find('tr');
-              
+
               //If we can find a tr, then we can use its td children as the empty element colspan.
               if ($trElm.length > 0) {
                 emptyElmColspan = angular.element($trElm).children().length;
               } else {
-                
+
                 //If not, by setting a huge colspan we make sure it takes full width.
                 //TODO(jcarter): Check for negative side effects.
                 emptyElmColspan = 1000000;
@@ -655,7 +655,7 @@
               bindDragStartEvents,
               bindDragMoveEvents,
               unbindDragMoveEvents,
-              keydownHandler,
+              keyupHandler,
               isHandleChild,
               el,
               isUiTreeRoot,
@@ -928,7 +928,11 @@
                 targetHeight,
                 targetChildElm,
                 targetChildHeight,
-                isDropzone;
+                isDropzone,
+                maxRightX = -1,
+                minLeftX = -1,
+                maxBottomY = -1,
+                minTopY = -1;
 
               //If check ensures that drag element was created.
               if (dragElm) {
@@ -970,6 +974,30 @@
                   'left': leftElmPos + 'px',
                   'top': topElmPos + 'px'
                 });
+
+                if (scrollContainerElm) {
+                  /*var parentBoundingClientRect = scrollContainerElm.getBoundingClientRect();
+                  maxRightX = parentBoundingClientRect.right - 50;
+                  minLeftX = parentBoundingClientRect.left + 50;
+
+                  minTopY = parentBoundingClientRect.top + 20;*/
+
+                  var uiTreeNodesContainer = document.querySelectorAll('[ui-tree-nodes]');
+                  var treeNodesBoundClientRect = uiTreeNodesContainer[0].getBoundingClientRect();
+
+                  minTopY = treeNodesBoundClientRect.top + 10;
+                  // adeopura: there is one more item underneath, so that has to be accounted for
+                  // Perhaps this has to be parameterized and passed in to the directive
+                  maxBottomY = treeNodesBoundClientRect.bottom - element[0].offsetHeight - 10;
+
+                  maxRightX = treeNodesBoundClientRect.right - 10;
+                  minLeftX = treeNodesBoundClientRect.left + 10;
+
+                  //console.log("minTopY: " + minTopY);
+
+                  // all ui-tree-notes
+
+                }
 
                 if (scrollContainerElm) {
                   //Getting position to top and bottom of container element.
@@ -1023,6 +1051,23 @@
                     $window.document.body.scrollTop ||
                     $window.document.documentElement.scrollTop) -
                     ($window.document.documentElement.clientTop || 0);
+
+                if ((targetX > maxRightX) && maxRightX > 0) {
+                  targetX = maxRightX;
+                } else if ((targetX < minLeftX) && minLeftY >= 0){
+                  targetX = minLeftX;
+                }
+
+                console.log("scroll targetY orig: " + targetY);
+
+                if ((targetY > maxBottomY) && maxBottomY > 0) {
+                  targetY = maxBottomY;
+                } else if ((targetY < minTopY) && minTopY >= 0){
+                  targetY = minTopY;
+                }
+
+                console.log("scroll targetY adjusted: " + targetY);
+                console.log("*********************************************");
 
                 //Select the drag target. Because IE does not support CSS 'pointer-events: none', it will always
                 // pick the drag element itself as the target. To prevent this, we hide the drag element while
@@ -1341,9 +1386,10 @@
               };
             })();
 
-            keydownHandler = function (e) {
+            keyupHandler = function (e) {
               if (e.keyCode === 27) {
-                dragEndEvent(e);
+                scope.$$allowNodeDrop = false;
+                dragEnd(e);
               }
             };
 
@@ -1380,7 +1426,7 @@
               angular.element($document).bind('mouseup', dragEndEvent);
               angular.element($document).bind('mousemove', dragMoveEvent);
               angular.element($document).bind('mouseleave', dragCancelEvent);
-              angular.element($document).bind('keydown', keydownHandler);
+              angular.element($document).bind('keyup', keyupHandler);
             };
 
             /**
@@ -1393,7 +1439,7 @@
               angular.element($document).unbind('mouseup', dragEndEvent);
               angular.element($document).unbind('mousemove', dragMoveEvent);
               angular.element($document).unbind('mouseleave', dragCancelEvent);
-              angular.element($document).unbind('keydown', keydownHandler);
+              angular.element($document).unbind('keyup', keyupHandler);
             };
           }
         };
@@ -1523,7 +1569,7 @@
 
           /**
            * Get the event object for touches.
-           * 
+           *
            * @param  {MouseEvent|TouchEvent} e MouseEvent or TouchEvent that kicked off dragX method.
            * @return {MouseEvent|TouchEvent} Object returned as original event object.
            */
@@ -1541,7 +1587,7 @@
 
           /**
            * Generate object used to store data about node being moved.
-           * 
+           *
            * {angular.$scope} node Scope of the node that is being moved.
            */
           dragInfo: function (node) {
@@ -1771,19 +1817,19 @@
             pos.nowX = pageX;
             pos.nowY = pageY;
 
-            //Distance mouse moved between events.          
+            //Distance mouse moved between events.
             pos.distX = pos.nowX - pos.lastX;
             pos.distY = pos.nowY - pos.lastY;
 
-            //Direction mouse was moving.           
+            //Direction mouse was moving.
             pos.lastDirX = pos.dirX;
             pos.lastDirY = pos.dirY;
 
-            //Direction mouse is now moving (on both axis).          
+            //Direction mouse is now moving (on both axis).
             pos.dirX = pos.distX === 0 ? 0 : pos.distX > 0 ? 1 : -1;
             pos.dirY = pos.distY === 0 ? 0 : pos.distY > 0 ? 1 : -1;
 
-            //Axis mouse is now moving on.         
+            //Axis mouse is now moving on.
             newAx = Math.abs(pos.distX) > Math.abs(pos.distY) ? 1 : 0;
 
             //Do nothing on first move.
@@ -1793,7 +1839,7 @@
               return;
             }
 
-            //Calc distance moved on this axis (and direction).          
+            //Calc distance moved on this axis (and direction).
             if (pos.dirAx !== newAx) {
               pos.distAxX = 0;
               pos.distAxY = 0;
