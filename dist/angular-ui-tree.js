@@ -659,7 +659,8 @@
               isHandleChild,
               el,
               isUiTreeRoot,
-              treeOfOrigin;
+              treeOfOrigin,
+              uiTreeNodesContainer;
 
             //Adding configured class to ui-tree-node.
             angular.extend(config, treeConfig);
@@ -901,6 +902,11 @@
               //Get bounds of document.
               document_height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
               document_width = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
+
+              if (scrollContainerElm) {
+                uiTreeNodesContainer = document.querySelectorAll('[ui-tree-nodes]');
+              }
+
             };
 
             dragMove = function (e) {
@@ -976,15 +982,7 @@
                 });
 
                 if (scrollContainerElm) {
-                  /*var parentBoundingClientRect = scrollContainerElm.getBoundingClientRect();
-                  maxRightX = parentBoundingClientRect.right - 50;
-                  minLeftX = parentBoundingClientRect.left + 50;
-
-                  minTopY = parentBoundingClientRect.top + 20;*/
-
-                  var uiTreeNodesContainer = document.querySelectorAll('[ui-tree-nodes]');
                   var treeNodesBoundClientRect = uiTreeNodesContainer[0].getBoundingClientRect();
-
                   minTopY = treeNodesBoundClientRect.top + 10;
                   // adeopura: there is one more item underneath, so that has to be accounted for
                   // Perhaps this has to be parameterized and passed in to the directive
@@ -992,11 +990,6 @@
 
                   maxRightX = treeNodesBoundClientRect.right - 10;
                   minLeftX = treeNodesBoundClientRect.left + 10;
-
-                  //console.log("minTopY: " + minTopY);
-
-                  // all ui-tree-notes
-
                 }
 
                 if (scrollContainerElm) {
@@ -1054,20 +1047,15 @@
 
                 if ((targetX > maxRightX) && maxRightX > 0) {
                   targetX = maxRightX;
-                } else if ((targetX < minLeftX) && minLeftY >= 0){
+                } else if ((targetX < minLeftX) && minLeftX >= 0){
                   targetX = minLeftX;
                 }
-
-                console.log("scroll targetY orig: " + targetY);
 
                 if ((targetY > maxBottomY) && maxBottomY > 0) {
                   targetY = maxBottomY;
                 } else if ((targetY < minTopY) && minTopY >= 0){
                   targetY = minTopY;
                 }
-
-                console.log("scroll targetY adjusted: " + targetY);
-                console.log("*********************************************");
 
                 //Select the drag target. Because IE does not support CSS 'pointer-events: none', it will always
                 // pick the drag element itself as the target. To prevent this, we hide the drag element while
