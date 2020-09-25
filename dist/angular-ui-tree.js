@@ -321,6 +321,7 @@
 
         $scope.dragEnabled = true;
         $scope.emptyPlaceholderEnabled = true;
+        $scope.dragElementExtraWidth = 0;
         $scope.maxDepth = 0;
         $scope.dragDelay = 0;
         $scope.cloneEnabled = false;
@@ -438,6 +439,13 @@
               if ((typeof val) == 'boolean') {
                 scope.emptyPlaceholderEnabled = val;
                 ctrl.resetEmptyElement();
+              }
+            });
+
+            scope.$watch(attrs.dragElementExtraWidth, function (val) {
+              if ((typeof val) == 'number') {
+                // This is the extra width that is added to the drag element if so desired.
+                scope.dragElementExtraWidth = val;
               }
             });
 
@@ -854,7 +862,7 @@
               //Creating drag element to represent node.
               dragElm = angular.element($window.document.createElement(scope.$parentNodesScope.$element.prop('tagName')))
                   .addClass(scope.$parentNodesScope.$element.attr('class')).addClass(config.dragClass);
-              dragElm.css('width', UiTreeHelper.width(element) + 'px');
+              dragElm.css('width', UiTreeHelper.width(element) + scope.dragElementExtraWidth + 'px');
               dragElm.css('z-index', 9999);
 
               //Prevents cursor to change rapidly in Opera 12.16 and IE when dragging an element.
