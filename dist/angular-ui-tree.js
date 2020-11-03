@@ -992,7 +992,7 @@
                 if (scrollContainerElm) {
                   var treeNodesBoundClientRect = uiTreeNodesContainer[0].getBoundingClientRect();
                   minTopY = treeNodesBoundClientRect.top + 10;
-                  // adeopura: there is one more item underneath, so that has to be accounted for
+                  // There is one more item underneath, so that has to be accounted for
                   // Perhaps this has to be parameterized and passed in to the directive
                   maxBottomY = treeNodesBoundClientRect.bottom - element[0].offsetHeight - 10;
 
