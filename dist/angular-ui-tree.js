@@ -442,6 +442,9 @@
               }
             });
 
+            // This value will typically not change, but if the drag drop wanted to keep
+            // adjusting the value as the drag element as the element position changes, we
+            // will adjust the drag element accordingly.
             scope.$watch(attrs.dragElementExtraWidth, function (val) {
               if ((typeof val) == 'number') {
                 // This is the extra width that is added to the drag element if so desired.
@@ -862,7 +865,12 @@
               //Creating drag element to represent node.
               dragElm = angular.element($window.document.createElement(scope.$parentNodesScope.$element.prop('tagName')))
                   .addClass(scope.$parentNodesScope.$element.attr('class')).addClass(config.dragClass);
-              dragElm.css('width', UiTreeHelper.width(element) + scope.dragElementExtraWidth + 'px');
+
+              // Calculate the actual width of the element based on the drag element
+              // extra width and the base width of the element before it the drag
+              // started.
+              var dragElmWidth = UiTreeHelper.width(element) + scope.dragElementExtraWidth;
+              dragElm.css('width', dragElmWidth + 'px');
               dragElm.css('z-index', 9999);
 
               //Prevents cursor to change rapidly in Opera 12.16 and IE when dragging an element.
@@ -912,6 +920,14 @@
               document_width = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
 
               if (scrollContainerElm) {
+                // If the scroll container is present, this will help us compute the
+                // bounds of the scroll area so that we can allow drop from any part
+                // of the screen. For instance, if the user were to drag the drag element
+                // way to the right (does not intersect with any entry) and then moves the
+                // the element up or down, it would be as if the user moved the drag
+                // element up and down without moving to the right.
+                // If the scroll container is not provided, the code will still work,
+                // except that the user has to drag within the bounds of the scroll area.
                 uiTreeNodesContainer = document.querySelectorAll('[ui-tree-nodes]');
               }
 
@@ -990,6 +1006,13 @@
                 });
 
                 if (scrollContainerElm) {
+                  // If the scroll container element was set, we can allow the user to
+                  // drag an element outside of the scroll container and still drop the
+                  // element. We will compute the drop target based on the position of the
+                  // drag element. For instance, if the user were to drag the drag element
+                  // way to the right (does not intersect with any entry) and then moves the
+                  // the element up or down, it would be as if the user moved the drag
+                  // element up and down without moving to the right.
                   var treeNodesBoundClientRect = uiTreeNodesContainer[0].getBoundingClientRect();
                   minTopY = treeNodesBoundClientRect.top + 10;
                   // There is one more item underneath, so that has to be accounted for
@@ -1053,15 +1076,35 @@
                     $window.document.documentElement.scrollTop) -
                     ($window.document.documentElement.clientTop || 0);
 
+                // Say there is a vertical list of elements (e1, e2, e3) in that order
+                // The user starts dragging e3 towards the top. However if the user
+                // were to move the elemnent way to the right (or left) so that there is
+                // no overlap between the dragged element and the elements above, we want
+                // to still honor the drop. This is not being supported in the current code.
+                // Similarly, if the user were to drag outside the bounds below (or above), we
+                // want to allow the drop to be to the last (or first).
+                // In order to do this, we will adjust the targetX and/or targetY so that the
+                // code ahead works without any changes.
+                // NOTE: In order for the code below to take effect, the scroll container element
+                // has to be set by the client so that the bounds (maxRightX, minLeftX, maxBottomY, minTopY)
+                // are computed.
                 if ((targetX > maxRightX) && maxRightX > 0) {
+                  // Case A1: The drag element is to the right of all elements, so
+                  // set the targetX to be max right value
                   targetX = maxRightX;
                 } else if ((targetX < minLeftX) && minLeftX >= 0){
+                  // Case A2: The drag element is to the left of all elements, so
+                  // set the targetX to be min left value
                   targetX = minLeftX;
                 }
 
                 if ((targetY > maxBottomY) && maxBottomY > 0) {
+                  // Case B1: The drag element is below all elements, so
+                  // set the targetY to be max bottom value
                   targetY = maxBottomY;
                 } else if ((targetY < minTopY) && minTopY >= 0){
+                  // Case B2: The drag element is above all elements, so
+                  // set the targetY to be min top value
                   targetY = minTopY;
                 }
 
@@ -1384,6 +1427,9 @@
 
             keyupHandler = function (e) {
               if (e.keyCode === 27) {
+                // When the user clicks escape, the original code would consider it a
+                // drop. However, we want to escape to act as an abort of the drag drop
+                // so set the $$allowNodeDrop to false and end the drag.
                 scope.$$allowNodeDrop = false;
                 dragEnd(e);
               }
@@ -1422,6 +1468,9 @@
               angular.element($document).bind('mouseup', dragEndEvent);
               angular.element($document).bind('mousemove', dragMoveEvent);
               angular.element($document).bind('mouseleave', dragCancelEvent);
+              // We have to use the keyup handler since the key down is used
+              // to detect the blur in the client code. This is not ideal but
+              // it works either ways, so we have made the change here.
               angular.element($document).bind('keyup', keyupHandler);
             };
 
@@ -1435,6 +1484,9 @@
               angular.element($document).unbind('mouseup', dragEndEvent);
               angular.element($document).unbind('mousemove', dragMoveEvent);
               angular.element($document).unbind('mouseleave', dragCancelEvent);
+              // We have to use the keyup handler since the key down is used
+              // to detect the blur in the client code. This is not ideal but
+              // it works either ways, so we have made the change here.
               angular.element($document).unbind('keyup', keyupHandler);
             };
           }
