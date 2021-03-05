@@ -628,8 +628,8 @@
 
   angular.module('ui.tree')
 
-    .directive('uiTreeNode', ['treeConfig', 'UiTreeHelper', '$window', '$document', '$timeout', '$q',
-      function (treeConfig, UiTreeHelper, $window, $document, $timeout, $q) {
+    .directive('uiTreeNode', ['treeConfig', 'UiTreeHelper', '$window', '$document', '$timeout', '$q', '$interval',
+      function (treeConfig, UiTreeHelper, $window, $document, $timeout, $q, $interval) {
         return {
           require: ['^uiTreeNodes', '^uiTree'],
           restrict: 'A',
@@ -671,7 +671,11 @@
               el,
               isUiTreeRoot,
               treeOfOrigin,
-              uiTreeNodesContainer;
+              uiTreeNodesContainer,
+              // This is the last valid drag move event
+              lastValidDragMoveEventUponDragStart,
+              // This is the drag check interval
+              DRAG_CHECK_INTERVAL = 10;
 
             //Adding configured class to ui-tree-node.
             angular.extend(config, treeConfig);
@@ -731,6 +735,42 @@
               scope.collapsed = false;
             });
 
+            // This function clears out all the vars related to
+            // auto scroll improvements. See the startDragIntervalEventFire
+            // for details
+            function clearDragIntervalEventFire() {
+              if (dragTimer) {
+                // cancel the timer
+                $interval.cancel(dragTimer);
+                dragTimer = null;
+              }
+              // Clear the last recorded move event.
+              lastValidDragMoveEventUponDragStart = null;
+            }
+
+            // In this library, auto scroll is invoked based on drag
+            // move. So if the user were to drag an item, and then drag
+            // above the first task (or below the bottom most task),
+            // and then holds the mouse steady, the auto
+            // scroll would stop since there is no drag move events (since
+            // the user is holding the the mouse more or less steady).
+            // So what we will do is emulate a move event every N DRAG_CHECK_INTERVAL
+            // ms while the drag is active so that the auto scroll keeps happening.
+            // This function is called upon drag start
+            function startDragIntervalEventFire() {
+              // Clear any previous state (this is for safety only)
+              clearDragIntervalEventFire();
+
+              // Run the below function every DRAG_CHECK_INTERVAL milliseconds
+              dragTimer = $interval(function(){
+                if (lastValidDragMoveEventUponDragStart) {
+                  // If there is a valid event, use that for the
+                  // fire event
+                  dragMove(lastValidDragMoveEventUponDragStart);
+                }
+              }, DRAG_CHECK_INTERVAL, 0, false);
+            }
+
             /**
              * Called when the user has grabbed a node and started dragging it.
              *
@@ -748,6 +788,10 @@
               if (e.uiTreeDragging || (e.originalEvent && e.originalEvent.uiTreeDragging)) {
                 return;
               }
+
+              // Below function is being called on drag start.
+              // See function for details.
+              startDragIntervalEventFire();
 
               //The node being dragged.
               var eventElm = angular.element(e.target),
@@ -963,6 +1007,12 @@
                 minLeftX = -1,
                 maxBottomY = -1,
                 minTopY = -1;
+
+             // Record the last mouse move event. This will help us
+             // fire the move event for auto scroll with respect to
+             // the last known mouse position so that the auto
+             // scroll keeps working smoothing
+             lastValidDragMoveEventUponDragStart = e;
 
               //If check ensures that drag element was created.
               if (dragElm) {
@@ -1323,7 +1373,7 @@
                 }
 
                 //Triggering dragMove callback.
-                scope.$apply(function () {
+                scope.$evalAsync(function () {
                   scope.$treeScope.$callbacks.dragMove(dragInfo.eventArgs(elements, pos));
                 });
               }
@@ -1334,6 +1384,9 @@
               var dragEventArgs = dragInfo.eventArgs(elements, pos);
 
               e.preventDefault();
+
+              // Clear drag interval upon drag end
+              clearDragIntervalEventFire();
 
               //TODO(jcarter): Is dragStart need to be unbound?
               unbindDragMoveEvents();
